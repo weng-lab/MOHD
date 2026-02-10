@@ -1,0 +1,38 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import Footer from "./Footer";
+import Header from "./Header";
+
+export default function ClientAppWrapper({ children }: { children: React.ReactNode }) {
+  const [maintenance, setMaintenance] = useState(false);
+  useEffect(() => {
+    const checkAPIHealth = async () => {
+      try {
+        const res = await fetch("https://screen.api.wenglab.org/graphql", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: "{ __typename }" }),
+        });
+
+        if (!res.ok) throw new Error("API down");
+        const json = await res.json();
+        if (json.errors || !json.data) throw new Error("API returned errors");
+      } catch (err) {
+        console.error("API unreachable:", err);
+        setMaintenance(true);
+      }
+    };
+    checkAPIHealth();
+  }, []);
+
+  return (
+    <Box id="app-wrapper" display={"grid"} gridTemplateRows={"auto minmax(0, 1fr) auto"} minHeight={"100vh"}>
+      <Header maintenance={maintenance} />
+      {/* Wrap children to enure they will all be slotted together into the 1fr row if child is a fragment */}
+      <div id="main-content-wrapper">{children}</div>
+      <Footer />
+    </Box>
+  );
+}
