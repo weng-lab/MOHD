@@ -2,38 +2,32 @@
 import { Typography, Box, Grid, Link as MuiLink, Stack } from "@mui/material";
 import Image from "next/image";
 import { LinkComponent } from "./LinkComponent";
-import Link from "next/link";
 
 export default function Footer() {
   const sections = [
     {
       title: "About us",
       links: [
-        { name: "SCREEN", href: "/about" },
+        { name: "MOHD Data Portal", href: "/about" },
         { name: "Weng Lab", href: "https://www.umassmed.edu/zlab/" },
         { name: "Moore Lab", href: "https://sites.google.com/view/moore-lab/" },
-        { name: "ENCODE Consortium", href: "https://www.encodeproject.org/" },
+        { name: "MOHD Consortium", href: "https://www.mohdconsortium.org/home" },
         { name: "UMass Chan Medical School", href: "https://www.umassmed.edu/" },
       ],
     },
     {
       title: "Explore/Tools",
       links: [
+        { name: "SCREEN", href: "https://screen.wenglab.org/" },
         { name: "PsychSCREEN", href: "https://psychscreen.wenglab.org/psychscreen" },
         { name: "igSCREEN", href: "https://igscreen.vercel.app/" },
         { name: "Factorbook", href: "https://www.factorbook.org/" },
       ],
     },
     {
-      title: "Data",
-      links: [
-        { name: "Downloads", href: "/downloads" },
-        { name: "Version History", href: "/about#versions" },
-      ],
-    },
-    {
       title: "Help",
       links: [
+        { name: "Downloads", href: "/downloads" },
         { name: "API Documentation", href: "/about#api-documentation" },
         { name: "Citations", href: "/about#citations" },
         { name: "Contact Us/Feedback", href: "/about#contact-us" },
@@ -56,10 +50,17 @@ export default function Footer() {
       <Grid container spacing={6} my={3}>
         <Grid size={{ xs: 12, md: 4 }}>
           <Stack spacing={1} alignItems="flex-start">
-            <Image src={"/on-dark.svg"} alt="Logo" width={120} height={60} />
-            <Typography variant="body1" sx={{ textAlign: "left" }}>
-              Search Candidate Regulatory Elements by ENCODE
-            </Typography>
+            <Stack direction={"row"} alignItems={"flex-end"} spacing={2}>
+              <Image src={"/logo.png"} alt="Logo" width={60} height={60} />
+              <Stack>
+                <Typography variant="body1" sx={{ textAlign: "left" }}>
+                  Multiomics for Health and Diseases
+                </Typography>
+                <Typography variant="body1" sx={{ textAlign: "left" }}>
+                  Data Portal
+                </Typography>
+              </Stack>
+            </Stack>
             <Typography variant="body2">
               Copyright ©{" "}
               <MuiLink color="inherit" href="https://www.umassmed.edu/zlab/">
@@ -70,17 +71,6 @@ export default function Footer() {
                 Moore Lab
               </MuiLink>{" "}
               {new Date().getFullYear()}.
-            </Typography>
-            <Typography variant="body2" color={"#b2bcf0"}>
-              How to Cite the ENCODE Encyclopedia, the Registry of cCREs, and SCREEN: <br />
-              <Link
-                href="https://www.nature.com/articles/s41586-025-09909-9"
-                target="_blank"
-                rel="noopener"
-                style={{ color: "inherit", textDecoration: "underline" }}
-              >
-                Moore...Weng (2026) <i>Nature</i>
-              </Link>
             </Typography>
           </Stack>
         </Grid>
