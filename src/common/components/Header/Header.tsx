@@ -144,7 +144,8 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         <Image
                             priority
                             src="/logo.png"
-                            fill
+                            width={45}
+                            height={45}
                             alt="logo"
                             style={{ objectFit: "contain", objectPosition: "left center" }}
                         />
