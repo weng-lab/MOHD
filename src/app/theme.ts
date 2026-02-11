@@ -5,13 +5,13 @@ export const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#0c184a",
-      light: "#100e98",
+      main: "#848484",
+      dark: "#5f5f5f",
+      light: "#d9d9d9",
       contrastText: "#FFFFFF",
     },
     secondary: {
-      main: "#00063D",
-      light: "#e4ebff",
+      main: "#848484",
     },
   },
   components: {

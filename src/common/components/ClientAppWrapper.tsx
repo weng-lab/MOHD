@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Footer from "./Footer";
-import Header from "./Header";
+import Header from "./Header/Header";
 
 export default function ClientAppWrapper({ children }: { children: React.ReactNode }) {
   const [maintenance, setMaintenance] = useState(false);
