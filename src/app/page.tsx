@@ -19,7 +19,7 @@ export default function Home() {
         <Stack
           alignItems="center"
           justifyContent={"flex-start"}
-          gap={1}
+          spacing={1}
           textAlign={{ xs: "center", md: "left" }}
         >
           <Image
@@ -30,23 +30,25 @@ export default function Home() {
             priority
             id="header-helix"
           />
-          <Typography variant="h4">
-            <b>Multiomics for Health and Diseases</b>
-          </Typography>
-          <Typography variant="h5">
-            <b>Data Portal</b>
-          </Typography>
+          <Stack alignItems="center">
+            <Typography variant="h4">
+              <b>Multiomics for Health and Diseases</b>
+            </Typography>
+            <Typography variant="h5">
+              <b>Data Portal</b>
+            </Typography>
+          </Stack>
           <Typography variant="body1">
             Explore our extensive omics data 10,000 samples across 1,800 participants.
           </Typography>
-        </Stack>
-        <Stack direction={"row"} spacing={5}>
-          <Button variant="contained" color="primary" href="/ohms">
-            Test Molecular landing page
-          </Button>
-          <Button variant="contained" color="primary" href="/clinical">
-            Test Clinical landing page
-          </Button>
+          <Stack direction={"row"} spacing={5}>
+            <Button variant="contained" color="primary" href="/ohms">
+              Test Molecular landing page
+            </Button>
+            <Button variant="contained" color="primary" href="/clinical">
+              Test Clinical landing page
+            </Button>
+          </Stack>
         </Stack>
       </Box>
     </div>
