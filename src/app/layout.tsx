@@ -7,7 +7,7 @@ import ClientAppWrapper from "@/common/components/ClientAppWrapper";
 import { MenuControlProvider } from "@/common/components/Header/MenuContext";
 
 export const metadata = {
-  title: "MOHD Data Portal: Multiomics for Health and Disease",
+  title: "MOHD Data Portal",
   description: "MOHD Data Portal: Multiomics for Health and Disease",
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
