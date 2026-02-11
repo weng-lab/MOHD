@@ -25,9 +25,14 @@ export default function Footer() {
       ],
     },
     {
-      title: "Help",
+      title: "Data",
       links: [
         { name: "Downloads", href: "/downloads" },
+      ],
+    },
+    {
+      title: "Help",
+      links: [
         { name: "API Documentation", href: "/about#api-documentation" },
         { name: "Citations", href: "/about#citations" },
         { name: "Contact Us/Feedback", href: "/about#contact-us" },
