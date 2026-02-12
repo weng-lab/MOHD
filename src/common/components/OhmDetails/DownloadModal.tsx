@@ -12,8 +12,8 @@ export interface DownloadModalProps {
 
 const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, ref, plotTitle }) => {
   const downloadOptions = [
-    { label: "PNG", action: ref.downloadPNG },
-    { label: "SVG", action: ref.downloadSVG },
+    { label: "PNG", action: ref?.downloadPNG },
+    { label: "SVG", action: ref?.downloadSVG },
   ].filter((option) => option.action);
 
   return (
