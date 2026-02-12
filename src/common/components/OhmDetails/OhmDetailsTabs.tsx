@@ -7,10 +7,12 @@ import React from "react";
 import Image from "next/image";
 import { OhmDetailsTab, OhmsDataType } from "../../types/globalTypes";
 
-// outside the component
-function CloneProps(props) {
-  const { children, ...other } = props;
-  return children(other);
+type ClonePropsProps<T extends object> = T & {
+  children: (props: T) => React.ReactNode;
+};
+
+function CloneProps<T extends object>({ children, ...other }: ClonePropsProps<T>) {
+  return <>{children(other as T)}</>;
 }
 
 export type ElementDetailsTabsProps = {
@@ -117,7 +119,7 @@ const OhmDetailsTabs = ({ ohm, tabs, orientation }: ElementDetailsTabsProps) => 
             <CloneProps key={tab.route} value={tab.route}>
               {(tabProps) => (
                     <Tab
-                      {...tabProps}
+                      {...(tabProps as { value: string })}
                       label={tab.label}
                       value={tab.route}
                       LinkComponent={Link}
