@@ -1,7 +1,7 @@
 export const OhmsList = [
   "proteomics",
   "metabolomics",
-  "transcriptomics",
+  "exposomics",
   "lipidomics",
   "ATAC",
   "WGS",

@@ -1,20 +1,73 @@
 "use client";
 import { Box, Divider, Stack } from "@mui/material";
 import OhmDetailsTabs from "./OhmDetailsTabs";
-import { OhmsDataType } from "@/common/types/globalTypes";
+import { OhmDetailsTab, OhmsDataType } from "@/common/types/globalTypes";
 import { OhmHeader } from "./OhmHeader";
+import { usePathname } from "next/navigation";
 
 export type OhmDetailsLayoutProps = {
-    ohm: OhmsDataType;
 } & { children: React.ReactNode };
 
-const tabs = [
-    { label: "Dimensionality Reduction", iconPath: "/logo.png", route: "overview" },
-    { label: "Heat Map", iconPath: "/logo.png", route: "figures" },
-    { label: "Downloads", iconPath: "/logo.png", route: "data-table" },
-];
+const logo = "/logo.png";
 
-export default function OhmDetailsLayout({ ohm, children }: OhmDetailsLayoutProps) {
+export const OHM_TABS: Record<OhmsDataType, OhmDetailsTab[]> = {
+    WGS: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Genetic Ancestry Composition", iconPath: logo, route: "ancestryComposition" },
+        { label: "Downloads", iconPath: logo, route: "downloads" },
+    ],
+
+    WGBS: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Cell Type Decomposition", iconPath: logo, route: "cellTypeDecomposition" },
+        { label: "Genome Browser", iconPath: logo, route: "genomeBrowser" },
+        { label: "Downloads", iconPath: logo, route: "downloads" },
+    ],
+
+    ATAC: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Cell Type Decomposition", iconPath: logo, route: "cellTypeDecomposition" },
+        { label: "Genome Browser", iconPath: logo, route: "genomeBrowser" },
+        { label: "Downloads", iconPath: logo, route: "downloads" },
+    ],
+
+    RNA: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Cell Type Decomposition", iconPath: logo, route: "cellTypeDecomposition" },
+        { label: "Genome Browser", iconPath: logo, route: "genomeBrowser" },
+        { label: "Downloads", iconPath: logo, route: "downloads" },
+    ],
+
+    proteomics: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Heatmap", iconPath: logo, route: "heatmap" },
+        { label: "Downloads", iconPath: logo, route: "downloads" },
+    ],
+
+    metabolomics: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Heatmap", iconPath: logo, route: "heatmap" },
+        { label: "Downloads", iconPath: logo, route: "downloads" },
+    ],
+
+    lipidomics: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Heatmap", iconPath: logo, route: "heatmap" },
+        { label: "Downloads", iconPath: logo, route: "downloads" },
+    ],
+
+    exposomics: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Heatmap", iconPath: logo, route: "heatmap" },
+    ],
+};
+
+
+export default function OhmDetailsLayout({ children }: OhmDetailsLayoutProps) {
+    const pathname = usePathname();
+    const ohm = pathname.split("/")[2] as OhmsDataType;
+        
+    const tabs = OHM_TABS[ohm];
 
     return (
         <OhmHeader>

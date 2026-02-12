@@ -11,7 +11,7 @@ export default function MolecularDataLanding() {
           <Button
             key={ohm}
             component={Link}
-            href={`/ohms/${ohm}`}
+            href={`/ohms/${ohm}/dimensionalityReduction`}
             variant="contained"
           >
             {ohm}

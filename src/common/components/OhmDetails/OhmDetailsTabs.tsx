@@ -121,7 +121,7 @@ const OhmDetailsTabs = ({ ohm, tabs, orientation }: ElementDetailsTabsProps) => 
                       label={tab.label}
                       value={tab.route}
                       LinkComponent={Link}
-                      href={`/ohm/${ohm}/${tab.route}`}
+                      href={`/ohms/${ohm}/${tab.route}`}
                       key={tab.route}
                       icon={
                         <Image
