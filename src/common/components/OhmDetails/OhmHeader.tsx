@@ -9,7 +9,7 @@ export const OhmHeader = ({ children }: { children?: React.ReactNode }) => {
     const ohm = pathname.split("/")[2];
 
     const color = OHM_COLORS[ohm.toLowerCase()] || "gray";
-    const image = `/OhmIcons/${ohm.toLowerCase()}Icon.png`;
+    const image = `/OhmIcons/${ohm.toLowerCase()}.png`;
 
     return (
         <Box
