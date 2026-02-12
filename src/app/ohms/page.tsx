@@ -1,11 +1,23 @@
-import { Typography } from "@mui/material";
+import { OhmsList } from "@/common/types/globalTypes";
+import { Button, Link, Stack, Typography } from "@mui/material";
 
 export default function MolecularDataLanding() {
   return (
-    <div>
-     <Typography>
-        Molecular Data Landing Page
-     </Typography>
-    </div>
+     <Stack spacing={2}>
+      <Typography>Molecular Data Landing Page</Typography>
+
+      <Stack direction="row" spacing={2} flexWrap="wrap">
+        {OhmsList.map((ohm) => (
+          <Button
+            key={ohm}
+            component={Link}
+            href={`/ohms/${ohm}`}
+            variant="contained"
+          >
+            {ohm}
+          </Button>
+        ))}
+      </Stack>
+    </Stack>
   );
 }
