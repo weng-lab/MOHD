@@ -93,7 +93,7 @@ const TwoPaneLayout = ({ TableComponent, plots }: TwoPaneLayoutProps) => {
     return () => observer.disconnect();
   }, []);
 
-  const handleSetTab = (_, newTab: number) => {
+  const handleSetTab = (_: React.SyntheticEvent, newTab: number) => {
     setTab(newTab);
   };
 
