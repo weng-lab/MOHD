@@ -21,7 +21,7 @@ const OmeCards = () => {
               omeRefs.current[index] = el;
             }}
             data-index={index}
-            size={{ xs: 12, md: 4 }}
+            size={{ xs: 12, sm: 6, md: 3 }}
           >
             <Box
               component={Link}
@@ -31,13 +31,12 @@ const OmeCards = () => {
                 position: "relative",
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-between",
                 alignItems: "center",
                 borderRadius: 3,
-                backgroundColor: "primary.light",
+                backgroundColor: "primary.main",
                 color: "white",
                 height: 160,
-                p: 3,
+                p: 1.5,
                 boxShadow: 3,
                 textDecoration: "none",
                 transition: "transform 0.2s ease, box-shadow 0.2s ease",
@@ -64,7 +63,7 @@ const OmeCards = () => {
                 >
                   {ome}
                 </Typography>
-                <Button variant="contained" size="small">
+                <Button variant="contained" size="small" sx={{backgroundColor: "primary.light", color: "black", width: "fit-content"}}>
                   Explore
                 </Button>
               </Stack>
@@ -73,6 +72,10 @@ const OmeCards = () => {
                 alt={`${ome} icon`}
                 width={100}
                 height={100}
+                style={{
+                  position: "absolute",
+                    right: 0,
+                }}
               />
             </Box>
           </Grid>

@@ -137,9 +137,9 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                 </Typography>
                 <WarningAmberIcon />
             </Stack>
-            <Toolbar sx={{ justifyContent: "space-between", backgroundColor: "primary.main" }}>
+            <Toolbar sx={{ justifyContent: "space-between", backgroundColor: "white" }}>
                 {/* Main navigation items for desktop */}
-                <Stack direction={"row"} spacing={3}>
+                <Stack direction={"row"} spacing={3} >
                     <Box component={Link} href={"/"} height={45} width={45} position={"relative"}>
                         <Image
                             priority
@@ -158,13 +158,13 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                             onMouseMove={(event) => handleMouseMoveLink(event, page)}
                             onMouseLeave={(event) => handleMouseLeaveLink(event, page)}
                             id="LinkBox"
-                            sx={{ mr: 2 }}
+                            sx={{ mr: 2, }}
                             
                         >
                             <LinkComponent
                                 id="Link"
                                 display={"flex"}
-                                color="primary.contrastText"
+                                color="black"
                                 href={page.link}
                                 underline="none"
                             >
@@ -203,12 +203,34 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                     ))}
                 </Stack>
                 {/* <IconButton sx={{ color: "white", display: { xs: "none", md: "flex" } }} onClick={handleFocusSearch}> */}
-                <IconButton sx={{ color: "white", display: { xs: "none", md: "flex" } }}>
-                    <Search />
-                </IconButton>
+                <Box
+                    sx={{
+                        display: { xs: "none", md: "flex" },
+                        alignItems: "center",
+                        borderTopLeftRadius: "50px",
+                        borderBottomLeftRadius: "50px",
+                        backgroundColor: "primary.main",
+                        height: "100%",
+                        width: "450px",
+                        position: "absolute",
+                        right: 0,
+                        p: 2
+                    }}
+                >
+                    <IconButton
+                        size="small"
+                        sx={{
+                            color: "white",
+                            p: 0.5,
+                        }}
+                    >
+                        <Search />
+                    </IconButton>
+                </Box>
+
                 {/* mobile view */}
                 <Box display={{ xs: "flex", md: "none" }} alignItems={"center"} gap={2}>
-                    <IconButton size="large" onClick={openMenu} color="inherit">
+                    <IconButton size="large" onClick={openMenu} sx={{color: "primary.main"}}>
                         <MenuIcon />
                     </IconButton>
                 </Box> 
