@@ -1,4 +1,4 @@
-import { OhmsList } from "@/common/types/globalTypes";
+import { OmesList } from "@/common/types/globalTypes";
 import { Button, Link, Stack, Typography } from "@mui/material";
 
 export default function MolecularDataLanding() {
@@ -7,14 +7,14 @@ export default function MolecularDataLanding() {
       <Typography>Molecular Data Landing Page</Typography>
 
       <Stack direction="row" spacing={2} flexWrap="wrap">
-        {OhmsList.map((ohm) => (
+        {OmesList.map((ome) => (
           <Button
-            key={ohm}
+            key={ome}
             component={Link}
-            href={`/ohms/${ohm}/dimensionalityReduction`}
+            href={`/omes/${ome}/dimensionalityReduction`}
             variant="contained"
           >
-            {ohm}
+            {ome}
           </Button>
         ))}
       </Stack>

@@ -1,12 +1,12 @@
-import OhmDetailsLayout from '@/common/components/OhmDetails/OhmDetailsLayout';
+import OmeDetailsLayout from '@/common/components/OmeDetails/OmeDetailsLayout';
 import React from 'react';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     return (
-        <OhmDetailsLayout>
+        <OmeDetailsLayout>
             {children}
-        </OhmDetailsLayout>
+        </OmeDetailsLayout>
     );
 };
 

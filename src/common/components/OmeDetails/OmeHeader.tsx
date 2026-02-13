@@ -1,15 +1,15 @@
-import { OHM_COLORS } from "@/common/colors";
+import { OME_COLORS } from "@/common/colors";
 import { Stack, Paper, Box, Typography, Button } from "@mui/material";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 
-export const OhmHeader = ({ children }: { children?: React.ReactNode }) => {
+export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
     const pathname = usePathname();
-    const ohm = pathname.split("/")[2];
+    const ome = pathname.split("/")[2];
 
-    const color = OHM_COLORS[ohm.toLowerCase()] || "gray";
-    const image = `/OhmIcons/${ohm.toLowerCase()}.png`;
+    const color = OME_COLORS[ome.toLowerCase()] || "gray";
+    const image = `/OmeIcons/${ome.toLowerCase()}.png`;
 
     return (
         <Box
@@ -23,7 +23,7 @@ export const OhmHeader = ({ children }: { children?: React.ReactNode }) => {
                 elevation={1}
                 square
                 sx={{ position: "sticky", top: "var(--header-height, 64px)", zIndex: 61 }}
-                id="ohm-header"
+                id="ome-header"
             >
                 <Stack direction={"row"} justifyContent={"space-between"}>
                     <Stack direction="row" alignItems="stretch">
@@ -48,11 +48,11 @@ export const OhmHeader = ({ children }: { children?: React.ReactNode }) => {
                                     lineHeight: 1.1,
                                 }}
                             >
-                                {ohm}
+                                {ome}
                             </Typography>
                             <Image
                                 src={image}
-                                alt={`${ohm} icon`}
+                                alt={`${ome} icon`}
                                 width={40}
                                 height={40}
                             />
@@ -60,10 +60,10 @@ export const OhmHeader = ({ children }: { children?: React.ReactNode }) => {
                     </Stack>
                     <Button 
                         startIcon={<ArrowLeftIcon />}
-                        href="/ohms"
+                        href="/omes"
                         variant="text"
                     >
-                        All Ohms
+                        All Omes
                     </Button>
                 </Stack>
             </Paper>

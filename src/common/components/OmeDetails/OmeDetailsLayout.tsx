@@ -1,16 +1,16 @@
 "use client";
 import { Box, Divider, Stack } from "@mui/material";
-import OhmDetailsTabs from "./OhmDetailsTabs";
-import { OhmDetailsTab, OhmsDataType } from "@/common/types/globalTypes";
-import { OhmHeader } from "./OhmHeader";
+import OmeDetailsTabs from "./OmeDetailsTabs";
+import { OmeDetailsTab, OmesDataType } from "@/common/types/globalTypes";
+import { OmeHeader } from "./OmeHeader";
 import { usePathname } from "next/navigation";
 
-export type OhmDetailsLayoutProps = {
+export type OmeDetailsLayoutProps = {
 } & { children: React.ReactNode };
 
 const logo = "/logo.png";
 
-export const OHM_TABS: Record<OhmsDataType, OhmDetailsTab[]> = {
+export const OME_TABS: Record<OmesDataType, OmeDetailsTab[]> = {
     WGS: [
         { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
         { label: "Genetic Ancestry Composition", iconPath: logo, route: "ancestryComposition" },
@@ -63,14 +63,14 @@ export const OHM_TABS: Record<OhmsDataType, OhmDetailsTab[]> = {
 };
 
 
-export default function OhmDetailsLayout({ children }: OhmDetailsLayoutProps) {
+export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
     const pathname = usePathname();
-    const ohm = pathname.split("/")[2] as OhmsDataType;
+    const ome = pathname.split("/")[2] as OmesDataType;
         
-    const tabs = OHM_TABS[ohm];
+    const tabs = OME_TABS[ome];
 
     return (
-        <OhmHeader>
+        <OmeHeader>
             <Box
                 id="split-pane-container"
                 display={"grid"}
@@ -83,16 +83,16 @@ export default function OhmDetailsLayout({ children }: OhmDetailsLayoutProps) {
                     gridRow={1}
                     bgcolor={"#F2F2F2"}
                     position={"sticky"}
-                    top={"calc(var(--header-height, 64px) + var(--Ohm-tabs-height, 48px))"}
-                    maxHeight={"calc(100vh - var(--header-height, 64px) - var(--Ohm-tabs-height, 48px))"}
+                    top={"calc(var(--header-height, 64px) + var(--Ome-tabs-height, 48px))"}
+                    maxHeight={"calc(100vh - var(--header-height, 64px) - var(--Ome-tabs-height, 48px))"}
                     display={{ xs: "none", md: "block" }}
                 >
-                    <OhmDetailsTabs ohm={ohm} tabs={tabs} orientation="vertical" />
+                    <OmeDetailsTabs ome={ome} tabs={tabs} orientation="vertical" />
                 </Box>
                 <Stack id="main-content" spacing={2} m={2} gridColumn={{ xs: 1, md: 2 }} gridRow={{ xs: 2, md: 1 }}>
                     <Box id="horizonatal-view-tabs-container" display={{ xs: "block", md: "none" }}>
-                        <OhmDetailsTabs
-                            ohm={ohm}
+                        <OmeDetailsTabs
+                            ome={ome}
                             tabs={tabs}
                             orientation="horizontal"
                         />
@@ -101,6 +101,6 @@ export default function OhmDetailsLayout({ children }: OhmDetailsLayoutProps) {
                     {children}
                 </Stack>
             </Box>
-        </OhmHeader>
+        </OmeHeader>
     );
 }

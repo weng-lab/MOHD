@@ -1,4 +1,4 @@
-export const OHM_COLORS: Record<string, string> = {
+export const OME_COLORS: Record<string, string> = {
   atac: "#89d8e3",
   exposomics: "#f1ab9f",
   lipidomics: "#8966b4",

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import Image from "next/image";
-import { OhmDetailsTab, OhmsDataType } from "../../types/globalTypes";
+import { OmeDetailsTab, OmesDataType } from "../../types/globalTypes";
 
 type ClonePropsProps<T extends object> = T & {
   children: (props: T) => React.ReactNode;
@@ -16,12 +16,12 @@ function CloneProps<T extends object>({ children, ...other }: ClonePropsProps<T>
 }
 
 export type ElementDetailsTabsProps = {
-  ohm: OhmsDataType;
-  tabs: OhmDetailsTab[];
+  ome: OmesDataType;
+  tabs: OmeDetailsTab[];
   orientation: TabsOwnProps["orientation"];
 };
 
-const OhmDetailsTabs = ({ ohm, tabs, orientation }: ElementDetailsTabsProps) => {
+const OmeDetailsTabs = ({ ome, tabs, orientation }: ElementDetailsTabsProps) => {
   const pathname = usePathname();
   const currentTab = pathname.substring(pathname.lastIndexOf("/") + 1);
 
@@ -109,7 +109,7 @@ const OhmDetailsTabs = ({ ohm, tabs, orientation }: ElementDetailsTabsProps) => 
           },
           contain: "layout",
           position: "sticky",
-          top: "calc(var(--header-height, 64px) + var(--ohm-header-height, 48px))",
+          top: "calc(var(--header-height, 64px) + var(--ome-header-height, 48px))",
           width: verticalTabs ? 100 : "100%",
           maxHeight: "100%",
         }}
@@ -123,7 +123,7 @@ const OhmDetailsTabs = ({ ohm, tabs, orientation }: ElementDetailsTabsProps) => 
                       label={tab.label}
                       value={tab.route}
                       LinkComponent={Link}
-                      href={`/ohms/${ohm}/${tab.route}`}
+                      href={`/omes/${ome}/${tab.route}`}
                       key={tab.route}
                       icon={
                         <Image
@@ -144,4 +144,4 @@ const OhmDetailsTabs = ({ ohm, tabs, orientation }: ElementDetailsTabsProps) => 
   );
 };
 
-export default OhmDetailsTabs;
+export default OmeDetailsTabs;

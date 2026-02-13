@@ -42,7 +42,7 @@ export default function Home() {
             Explore our extensive omics data 10,000 samples across 1,800 participants.
           </Typography>
           <Stack direction={"row"} spacing={5}>
-            <Button variant="contained" color="primary" href="/ohms">
+            <Button variant="contained" color="primary" href="/omes">
               Test Molecular landing page
             </Button>
             <Button variant="contained" color="primary" href="/clinical">

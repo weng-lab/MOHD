@@ -1,4 +1,4 @@
-export const OhmsList = [
+export const OmesList = [
   "proteomics",
   "metabolomics",
   "exposomics",
@@ -9,9 +9,9 @@ export const OhmsList = [
   "RNA",
 ] as const;
 
-export type OhmsDataType = (typeof OhmsList)[number];
+export type OmesDataType = (typeof OmesList)[number];
 
-export type OhmDetailsTab = {
+export type OmeDetailsTab = {
     label: string;
     iconPath: string;
     route: string;
