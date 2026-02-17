@@ -18,7 +18,12 @@ export default function Home() {
           alignItems: "center",
           flexDirection: "column",
           gap: 2,
-          backgroundColor: "primary.main",
+          background: (theme) =>
+            `linear-gradient(
+              to bottom,
+              ${theme.palette.primary.dark},
+              ${theme.palette.primary.main}
+            )`,
         }}
         color={"white"}
       >
@@ -63,7 +68,7 @@ export default function Home() {
         >
           <AtAGlance
             stats={[
-              { value: "100+", label: "Lorem ipsum" },
+              { value: "100+", label: "Stuff" },
               { value: "8", label: "Omes" },
               { value: "12K", label: "Lorem" },
             ]}

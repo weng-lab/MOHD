@@ -33,7 +33,13 @@ const OmeCards = () => {
                 flexDirection: "row",
                 alignItems: "center",
                 borderRadius: 3,
-                backgroundColor: "primary.main",
+                background: (theme) =>
+                `linear-gradient(
+                    to bottom,
+                    ${theme.palette.primary.main} 0%,
+                    ${theme.palette.primary.main}CC 60%,
+                    ${theme.palette.primary.light} 100%
+                )`,
                 color: "white",
                 height: 160,
                 p: 1.5,
@@ -63,15 +69,15 @@ const OmeCards = () => {
                 >
                   {ome}
                 </Typography>
-                <Button variant="contained" size="small" sx={{backgroundColor: "primary.light", color: "black", width: "fit-content"}}>
+                <Button variant="contained" size="small" sx={{backgroundColor: "primary.main", color: "white", width: "fit-content"}}>
                   Explore
                 </Button>
               </Stack>
               <Image 
                 src={`/OmeIcons/${ome.toLowerCase()}.png`}
                 alt={`${ome} icon`}
-                width={100}
-                height={100}
+                width={160}
+                height={160}
                 style={{
                   position: "absolute",
                     right: 0,

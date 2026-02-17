@@ -1,5 +1,5 @@
 "use client";
-import { Grid, Grow, Box, Stack, Typography, Button } from "@mui/material";
+import { Grid, Grow, Box, Typography, Button } from "@mui/material";
 import Link from "next/link";
 import { useGrowOnScroll } from "@/common/hooks/useGrowOnScroll";
 
@@ -37,14 +37,19 @@ const LandingPageCards = () => {
                         <Box
                             component={Link}
                             href={page.link}
-                            scroll={true}
+                            scroll
                             sx={{
                                 position: "relative",
-                                display: "flex",
-                                flexDirection: "row",
-                                alignItems: "center",
+                                display: "grid",
+                                gridTemplateColumns: "1fr 1fr",
                                 borderRadius: 3,
-                                backgroundColor: "grey",
+                                background: (theme) =>
+                                `linear-gradient(
+                                    to bottom,
+                                    ${theme.palette.primary.main} 0%,
+                                    ${theme.palette.primary.main}CC 60%,
+                                    ${theme.palette.primary.light} 100%
+                                )`,
                                 color: "white",
                                 height: 350,
                                 p: 1.5,
@@ -52,6 +57,7 @@ const LandingPageCards = () => {
                                 textDecoration: "none",
                                 transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                 transformOrigin: "center",
+                                overflow: "hidden",
                                 "&:hover": {
                                     transform: "scale(1.02)",
                                     boxShadow: 6,
@@ -59,8 +65,15 @@ const LandingPageCards = () => {
                                 },
                             }}
                         >
-                            <Stack height={"100%"} justifyContent={"space-between"}>
-                                <Stack>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "space-between",
+                                    pr: 2,
+                                }}
+                            >
+                                <Box>
                                     <Typography
                                         variant="h6"
                                         sx={{
@@ -87,11 +100,29 @@ const LandingPageCards = () => {
                                     >
                                         {page.description}
                                     </Typography>
-                                </Stack>
-                                <Button variant="contained" size="small" sx={{ backgroundColor: "primary.main", color: "white", width: "fit-content" }}>
+                                </Box>
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    sx={{
+                                        alignSelf: "flex-start",
+                                        width: "fit-content",
+                                    }}
+                                >
                                     Explore
                                 </Button>
-                            </Stack>
+                            </Box>
+                            <Box
+                                component="img"
+                                src="/placeholder.png"
+                                alt="placeholder"
+                                sx={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                    borderRadius: 2,
+                                }}
+                            />
                         </Box>
                     </Grid>
                 </Grow>

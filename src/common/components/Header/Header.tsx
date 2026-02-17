@@ -12,6 +12,7 @@ import { LinkComponent } from "../LinkComponent";
 import { useMenuControl } from "./MenuContext";
 import MobileMenu from "./MobileMenu";
 import { PageInfo } from "./types";
+import AutoComplete from "../autocomplete";
 
 const pageLinks: PageInfo[] = [
     {
@@ -207,6 +208,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                     sx={{
                         display: { xs: "none", md: "flex" },
                         alignItems: "center",
+                        justifyContent: "center",
                         borderTopLeftRadius: "50px",
                         borderBottomLeftRadius: "50px",
                         backgroundColor: "primary.main",
@@ -214,10 +216,10 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         width: "450px",
                         position: "absolute",
                         right: 0,
-                        p: 2
+                        p: 2,
                     }}
                 >
-                    <IconButton
+                    {/* <IconButton
                         size="small"
                         sx={{
                             color: "white",
@@ -225,7 +227,43 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         }}
                     >
                         <Search />
-                    </IconButton>
+                    </IconButton> */}
+                    <AutoComplete
+                        style={{ width: 415 }}
+                        id="desktop-search-component"
+                        slots={{
+                            button: (
+                                <IconButton sx={{ color: "white" }}>
+                                    <Search />
+                                </IconButton>
+                            ),
+                        }}
+                        assembly={"GRCh38"}
+                        slotProps={{
+                            box: { gap: 1 },
+                            input: {
+                                size: "small",
+                                label: `Enter a ...`,
+                                placeholder: "Enter a gene, cCRE, variant or locus",
+                                sx: {
+                                    "& .MuiOutlinedInput-root": {
+                                        backgroundColor: "#ffffff",
+                                        borderRadius: "999px",
+                                        "& fieldset": { border: "none" },
+                                        "&:hover fieldset": { border: "none" },
+                                        "&.Mui-focused fieldset": { border: "none" },
+                                    },
+                                    "& .MuiInputLabel-root": {
+                                        color: "#666666",
+                                        "&.Mui-focused": { color: "#444444" },
+                                    },
+                                    "& .MuiInputLabel-shrink": {
+                                        display: "none",
+                                    },
+                                },
+                            },
+                        }}
+                    />
                 </Box>
 
                 {/* mobile view */}
