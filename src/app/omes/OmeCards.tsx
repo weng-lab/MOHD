@@ -44,6 +44,7 @@ const OmeCardsCircle = () => {
                             }}
                         >
                             <Typography
+                                className="ome-title"
                                 variant="subtitle1"
                                 sx={{
                                     fontSize: { xs: "0.75rem", md: "1rem" },
@@ -58,12 +59,11 @@ const OmeCardsCircle = () => {
                             >
                                 {ome}
                             </Typography>
-
                             <Box
                                 className="ome-circle"
                                 sx={{
-                                    width: {xs: 75, md: 100},
-                                    height: {xs: 75, md: 100},
+                                    width: { xs: 75, md: 100 },
+                                    height: { xs: 75, md: 100 },
                                     borderRadius: "50%",
                                     boxShadow: 3,
                                     overflow: "hidden",

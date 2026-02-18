@@ -19,7 +19,7 @@ export default function AtAGlance({ stats }: AtAGlanceProps) {
                     borderRadius: "999px",
                     px: {xs: 3, md: 6},
                     py: {xs: 1.5, md: 3},
-                    maxHeight: {xs: 95, md: 115}
+                    maxHeight: 100
                 }}
             >
                 <Stack
@@ -35,8 +35,8 @@ export default function AtAGlance({ stats }: AtAGlanceProps) {
                     alignItems="center"
                 >
                     {stats.map((stat) => {
-                        const numericValue = parseInt(stat.value.replace(/[^\d]/g, ""), 10);
-                        const suffix = stat.value.replace(/[\d,]/g, "");
+                        const numericValue = parseFloat(stat.value.replace(/[^\d.]/g, ""));
+                        const suffix = stat.value.replace(/[\d.,]/g, "");
 
                         const digitCount = numericValue.toString().length;
                         return (
