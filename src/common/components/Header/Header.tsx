@@ -160,7 +160,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                             onMouseLeave={(event) => handleMouseLeaveLink(event, page)}
                             id="LinkBox"
                             sx={{ mr: 2, }}
-                            
+
                         >
                             <LinkComponent
                                 id="Link"
@@ -219,15 +219,6 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         p: 2,
                     }}
                 >
-                    {/* <IconButton
-                        size="small"
-                        sx={{
-                            color: "white",
-                            p: 0.5,
-                        }}
-                    >
-                        <Search />
-                    </IconButton> */}
                     <AutoComplete
                         style={{ width: 415 }}
                         id="desktop-search-component"
@@ -238,13 +229,12 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                                 </IconButton>
                             ),
                         }}
-                        assembly={"GRCh38"}
                         slotProps={{
                             box: { gap: 1 },
                             input: {
                                 size: "small",
-                                label: `Enter a ...`,
-                                placeholder: "Enter a gene, cCRE, variant or locus",
+                                label: `Search MOHD or SCREEN`,
+                                placeholder: "Search MOHD or SCREEN",
                                 sx: {
                                     "& .MuiOutlinedInput-root": {
                                         backgroundColor: "#ffffff",
@@ -268,10 +258,10 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
 
                 {/* mobile view */}
                 <Box display={{ xs: "flex", md: "none" }} alignItems={"center"} gap={2}>
-                    <IconButton size="large" onClick={openMenu} sx={{color: "primary.main"}}>
+                    <IconButton size="large" onClick={openMenu} sx={{ color: "primary.main" }}>
                         <MenuIcon />
                     </IconButton>
-                </Box> 
+                </Box>
                 <MobileMenu pageLinks={pageLinks} />
             </Toolbar>
         </AppBar>

@@ -1,7 +1,6 @@
 "use client";
 import { GenomeSearch, GenomeSearchProps, Result } from "@weng-lab/ui-components";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
 
 export type AutoCompleteProps = Partial<GenomeSearchProps> & {
   closeDrawer?: () => void;
@@ -56,59 +55,27 @@ export const defaultHumanResults: Result[] = [
   },
 ];
 
-export const defaultMouseResults: Result[] = [
-  {
-    title: "chr7:19,696,109-19,699,188",
-    domain: {
-      chromosome: "chr7",
-      start: 19696109,
-      end: 19699188,
-    },
-    description: "chr7:19,696,109-19,699,188",
-    type: "Coordinate",
-  },
-  {
-    title: "Sp1",
-    description: "Sp1 Transcription Factor\nENSMUSG00000001280.13\nchr15:102406143-102436404",
-    domain: {
-      chromosome: "chr15",
-      start: 102406143,
-      end: 102436404,
-    },
-    type: "Gene",
-  },
-  {
-    title: "EM10E1179536",
-    description: "chr7:19698911-19699257",
-    domain: {
-      chromosome: "chr7",
-      start: 19698911,
-      end: 19699257,
-    },
-    type: "cCRE",
-  },
-];
-
-export function makeResultLink(result: Result, assembly){
+export function makeResultLink(result: Result) {
   let url = "";
+  const base = "https://screen.wenglab.org/GRCh38";
   switch (result.type) {
     case "Gene":
-      url = `/${assembly}/gene/${result.title}`;
+      url = `${base}/gene/${result.title}`;
       break;
     case "cCRE":
-      url = `/${assembly}/ccre/${result.title}`;
+      url = `${base}/ccre/${result.title}`;
       break;
     case "Coordinate":
-      url = `/${assembly}/region/${result.domain.chromosome}:${result.domain.start}-${result.domain.end}`;
+      url = `${base}/region/${result.domain?.chromosome}:${result.domain?.start}-${result.domain?.end}`;
       break;
     case "SNP":
-      url = `/${assembly}/variant/${result.title}`;
+      url = `${base}/variant/${result.title}`;
       break;
     case "Study":
-      url = `/GRCh38/gwas/${result.id}`;
+      url = `${base}/gwas/${result.id}`;
       break;
     case "Legacy cCRE":
-      url = `/search?q=${result.title}&assembly=${assembly}`;
+      url = `https://screen.wenglab.org/search?q=${result.title}&assembly=GRCh38`;
   }
   return url;
 }
@@ -121,24 +88,23 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
   const router = useRouter();
 
   const handleSearchSubmit = (r: Result) => {
+    const link = makeResultLink(r)
     //needed to trigger closing the mobile menu drawer
     if (closeDrawer) {
       closeDrawer();
     }
-    router.push(makeResultLink(r, props.assembly), { scroll: false });
+    if (link.startsWith("https://screen.wenglab.org")) {
+      window.open(makeResultLink(r))
+    } else {
+      router.push(link, { scroll: false });
+    }
   };
 
-  const defaultResults: Result[] = useMemo(() => {
-    if (props.assembly === "GRCh38") {
-      return defaultHumanResults;
-    } else return defaultMouseResults;
-  }, [props.assembly]);
-
-  const geneVersion = props.assembly === "GRCh38" ? [29, 40] : 25;
+  const geneVersion = [29, 40];
 
   return (
     <GenomeSearch
-      assembly={props.assembly}
+      assembly={"GRCh38"}
       geneVersion={geneVersion}
       ccreLimit={3}
       showiCREFlag={false}
@@ -155,7 +121,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
           elevation: 1,
         },
       }}
-      defaultResults={defaultResults}
+      defaultResults={defaultHumanResults}
       openOnFocus
       {...props}
     />
