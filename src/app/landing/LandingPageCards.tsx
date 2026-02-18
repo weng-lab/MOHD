@@ -46,9 +46,9 @@ const LandingPageCards = () => {
                                 background: (theme) =>
                                 `linear-gradient(
                                     to bottom,
-                                    ${theme.palette.primary.main} 0%,
-                                    ${theme.palette.primary.main}CC 60%,
-                                    ${theme.palette.primary.light} 100%
+                                    ${theme.palette.primary.dark} 0%,
+                                    ${theme.palette.primary.dark}CC 60%,
+                                    ${theme.palette.primary.main}CC 100%
                                 )`,
                                 color: "white",
                                 height: 350,
