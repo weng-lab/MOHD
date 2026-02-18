@@ -41,7 +41,7 @@ const LandingPageCards = () => {
                             sx={{
                                 position: "relative",
                                 display: "grid",
-                                gridTemplateColumns: "1fr 1fr",
+                                gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
                                 borderRadius: 3,
                                 background: (theme) =>
                                 `linear-gradient(
@@ -67,10 +67,22 @@ const LandingPageCards = () => {
                         >
                             <Box
                                 sx={{
+                                    display: { xs: "block", sm: "none" },
+                                    position: "absolute",
+                                    inset: 0,
+                                    backgroundImage: "url('/placeholder.png')",
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    zIndex: 0,
+                                }}
+                            />
+                            <Box
+                                sx={{
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "space-between",
                                     pr: 2,
+                                    zIndex: 2
                                 }}
                             >
                                 <Box>
@@ -117,6 +129,7 @@ const LandingPageCards = () => {
                                 src="/placeholder.png"
                                 alt="placeholder"
                                 sx={{
+                                    display: { xs: "none", sm: "block" },
                                     width: "100%",
                                     height: "100%",
                                     objectFit: "cover",

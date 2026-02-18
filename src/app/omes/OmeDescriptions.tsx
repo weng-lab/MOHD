@@ -22,9 +22,9 @@ const descriptions: Record<string, string> = {
 export default function OmeDescriptions() {
 
     return (
-        <Box width="100%" py={4} display="flex" justifyContent="center">
+        <Box width="100%" py={4} px={{xs: 2, md: 0}} display="flex" justifyContent="center">
             <Box width="100%" maxWidth={1250}>
-                <Stack spacing={2}>
+                <Stack width="100%" spacing={2}>
                     <Divider
                         sx={{
                             width: "100%",

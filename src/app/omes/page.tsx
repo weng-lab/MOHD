@@ -9,16 +9,17 @@ export default function MolecularDataLanding() {
       <Box
         sx={{
           display: "flex",
-          gap: 6,
-          py: 5,
-          px: 10,
+          flexDirection: { xs: "column", md: "row" },
+          gap: { xs: 4, md: 6 },
+          py: { xs: 4, md: 5 },
+          px: { xs: 3, md: 10 },
           alignItems: "stretch",
           background: (theme) =>
             `linear-gradient(
-              to bottom,
-              ${theme.palette.primary.dark},
-              ${theme.palette.primary.main}
-            )`,
+          to bottom,
+          ${theme.palette.primary.dark},
+          ${theme.palette.primary.main}
+        )`,
         }}
         color="white"
       >
@@ -26,20 +27,19 @@ export default function MolecularDataLanding() {
           spacing={3}
           sx={{
             flex: 1,
-            minHeight: 500,
+            minHeight: { xs: "auto", md: 500 },
           }}
         >
           <Typography variant="h4">
             <b>Molecular Data</b>
           </Typography>
-
           <Box
             component="img"
             src="/placeholder.png"
             alt="placeholder"
             sx={{
-              flex: 1,
               width: "100%",
+              height: { xs: 250, md: "auto" }, // control image height on mobile
               objectFit: "cover",
               borderRadius: 2,
             }}

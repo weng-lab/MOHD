@@ -15,12 +15,11 @@ export default function AtAGlance({ stats }: AtAGlanceProps) {
         <Stack alignItems="center" spacing={2}>
             <Box
                 sx={{
-                    width: 445,
                     backgroundColor: "primary.light",
                     borderRadius: "999px",
-                    px: 6,
-                    py: 3,
-                    maxHeight: 115
+                    px: {xs: 3, md: 6},
+                    py: {xs: 1.5, md: 3},
+                    maxHeight: {xs: 95, md: 115}
                 }}
             >
                 <Stack
@@ -32,7 +31,7 @@ export default function AtAGlance({ stats }: AtAGlanceProps) {
                             sx={{ borderColor: "black" }}
                         />
                     }
-                    spacing={5}
+                    spacing={{xs: 2, md: 5}}
                     alignItems="center"
                 >
                     {stats.map((stat) => {
@@ -51,7 +50,7 @@ export default function AtAGlance({ stats }: AtAGlanceProps) {
                                     sx={{
                                         color: "#000000",
                                         fontWeight: 700,
-                                        fontSize: 36,
+                                        fontSize: {xs: 25, md: 36},
                                         lineHeight: 1,
                                         fontVariantNumeric: "tabular-nums",
                                         display: "flex",

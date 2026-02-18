@@ -11,6 +11,7 @@ export default function Home() {
         width="100%"
         paddingBottom={10}
         paddingTop={5}
+        paddingX={{xs: 2, md: 0}}
         sx={{
           position: "relative",
           display: "flex",
@@ -27,7 +28,6 @@ export default function Home() {
         }}
         color={"white"}
       >
-
         <Box
           sx={{
             backgroundColor: "white",
@@ -44,7 +44,7 @@ export default function Home() {
             id="header-helix"
           />
         </Box>
-        <Stack alignItems="center">
+        <Stack alignItems="center" flexWrap={"wrap"} textAlign={"center"}>
           <Typography variant="h4">
             <b>Multiomics for Health and Diseases</b>
           </Typography>
@@ -52,7 +52,7 @@ export default function Home() {
             <b>Data Portal</b>
           </Typography>
         </Stack>
-        <Typography variant="body1">
+        <Typography variant="body1" textAlign={"center"}>
           Explore our extensive omics data 10,000 samples across 1,800 participants.
         </Typography>
         <Box

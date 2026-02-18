@@ -26,7 +26,7 @@ const OmeCardsCircle = () => {
                                 omeRefs.current[index] = el;
                             }}
                             data-index={index}
-                            size={{ xs: 12, sm: 6, md: 3 }}
+                            size={3}
                             sx={{
                                 display: "flex",
                                 flexDirection: "column",
@@ -44,9 +44,9 @@ const OmeCardsCircle = () => {
                             }}
                         >
                             <Typography
-                                className="ome-title"
                                 variant="subtitle1"
                                 sx={{
+                                    fontSize: { xs: "0.75rem", md: "1rem" },
                                     fontWeight: "bold",
                                     textTransform: "capitalize",
                                     color: "white",
@@ -62,8 +62,8 @@ const OmeCardsCircle = () => {
                             <Box
                                 className="ome-circle"
                                 sx={{
-                                    width: 100,
-                                    height: 100,
+                                    width: {xs: 75, md: 100},
+                                    height: {xs: 75, md: 100},
                                     borderRadius: "50%",
                                     boxShadow: 3,
                                     overflow: "hidden",
