@@ -29,6 +29,15 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
                     <Stack direction="row" alignItems="stretch">
                         <Box
                             sx={{
+                                position: "absolute",
+                                inset: 0,
+                                backgroundColor: color,
+                                opacity: 0.08,
+                                pointerEvents: "none",
+                            }}
+                        />
+                        <Box
+                            sx={{
                                 width: 12,
                                 backgroundColor: color,
                             }}
@@ -44,7 +53,7 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
                                 sx={{
                                     fontWeight: 700,
                                     textTransform: "capitalize",
-                                    color: color,
+                                    // color: color,
                                     lineHeight: 1.1,
                                 }}
                             >
