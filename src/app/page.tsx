@@ -68,9 +68,9 @@ export default function Home() {
         >
           <AtAGlance
             stats={[
-              { value: "13", label: "Sites" },
-              { value: "1.8K", label: "Participants" },
-              { value: "8", label: "Omes" },
+              { value: "13", label: "Sites", link: "/about" },
+              { value: "1.8K", label: "Participants", link: "/about" },
+              { value: "8", label: "Omes", link: "/omes" },
             ]}
           />
         </Box>

@@ -1,9 +1,11 @@
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { AnimatedNumber } from "./AnimatedNumber";
+import Link from "next/link";
 
 interface StatItem {
     value: string;
     label: string;
+    link?: string;
 }
 
 interface AtAGlanceProps {
@@ -44,7 +46,18 @@ export default function AtAGlance({ stats }: AtAGlanceProps) {
                                 key={stat.label}
                                 alignItems="center"
                                 spacing={0.5}
-                                sx={{ flex: 1 }}
+                                sx={{
+                                    flex: 1,
+                                    textDecoration: "none",
+                                    color: "inherit",
+                                    transition: "all 0.2s ease",
+                                    cursor: stat.link ? "pointer" : "default",
+                                    "&:hover": {
+                                        transform: "translateY(-2px)",
+                                    },
+                                }}
+                                component={Link}
+                                href={stat.link ?? ""}
                             >
                                 <Typography
                                     sx={{
