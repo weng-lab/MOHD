@@ -60,6 +60,10 @@ export const OME_TABS: Record<OmesDataType, OmeDetailsTab[]> = {
         { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
         { label: "Heatmap", iconPath: logo, route: "heatmap" },
     ],
+
+    metallomics: [
+        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+    ]
 };
 
 

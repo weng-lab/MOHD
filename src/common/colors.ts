@@ -4,6 +4,7 @@ export const OME_COLORS: Record<string, string> = {
   lipidomics: "#8966b4",
   metabolomics: "#ab6bba",
   proteomics: "#ffa15b",
+  metallomics: "#da7bbe",
   rna: "#309b47",
   wgbs: "#62c1ca",
   wgs: "#59acd8",

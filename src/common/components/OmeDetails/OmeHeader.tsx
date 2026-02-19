@@ -7,9 +7,10 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
     const pathname = usePathname();
     const ome = pathname.split("/")[2];
+    const seq = ome === "RNA" || ome === "ATAC"
 
     const color = OME_COLORS[ome.toLowerCase()] || "gray";
-    const image = `/OmeIcons/${ome.toLowerCase()}.png`;
+    const image = `/OmeIcons/${ome.toLowerCase().split("-")[0]}.png`;
 
     return (
         <Box
@@ -52,13 +53,19 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
                                 variant="h5"
                                 sx={{
                                     fontWeight: 700,
-                                    textTransform: "capitalize",
-                                    // color: color,
+                                    textTransform: seq ? "none" : "capitalize",
                                     lineHeight: 1.1,
                                 }}
                             >
-                                {ome}
+                                {seq ? ome + "-seq" : ome}
                             </Typography>
+                            {(ome === "WGS" || ome === "WGBS") && (
+                                <Typography
+                                    variant="body1"
+                                >
+                                    {ome === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
+                                </Typography>
+                            )}
                             <Image
                                 src={image}
                                 alt={`${ome} icon`}

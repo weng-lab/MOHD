@@ -11,6 +11,7 @@ const OmeCardsCircle = () => {
     return (
         <Grid container spacing={5} justifyContent="flex-start" marginTop={6} width={"100%"}>
             {OmesList.map((ome, index) => {
+                const seq = ome === "RNA" || ome === "ATAC";
                 return (
                     <Grow
                         in={omesVisible[index]}
@@ -26,7 +27,7 @@ const OmeCardsCircle = () => {
                                 omeRefs.current[index] = el;
                             }}
                             data-index={index}
-                            size={3}
+                            size={4}
                             sx={{
                                 display: "flex",
                                 flexDirection: "column",
@@ -49,7 +50,7 @@ const OmeCardsCircle = () => {
                                 sx={{
                                     fontSize: { xs: "0.75rem", md: "1rem" },
                                     fontWeight: "bold",
-                                    textTransform: "capitalize",
+                                    textTransform: seq ? "none" : "capitalize",
                                     color: "white",
                                     mb: 1,
                                     textAlign: "center",
@@ -57,7 +58,7 @@ const OmeCardsCircle = () => {
                                     textShadow: "0 0 6px rgba(0,0,0,0.8)",
                                 }}
                             >
-                                {ome}
+                                {seq ? ome + "-seq" : ome}
                             </Typography>
                             <Box
                                 className="ome-circle"
@@ -68,7 +69,7 @@ const OmeCardsCircle = () => {
                                     boxShadow: 3,
                                     overflow: "hidden",
                                     backgroundColor: "white",
-                                    backgroundImage: `url(/OmeIcons/NoBgrnd/${ome.toLowerCase()}.png)`,
+                                    backgroundImage: `url(/OmeIcons/NoBgrnd/${ome.toLowerCase().split("-")[0]}.png)`,
                                     backgroundSize: "cover",
                                     backgroundPosition: "center",
                                     transition: "transform 0.3s ease, box-shadow 0.3s ease",

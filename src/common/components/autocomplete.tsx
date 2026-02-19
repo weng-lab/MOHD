@@ -8,6 +8,55 @@ export type AutoCompleteProps = Partial<GenomeSearchProps> & {
 
 export const defaultHumanResults: Result[] = [
   {
+    title: "WGS",
+    description: "Whole Genome Sequencing",
+    id: "WGS",
+    type: "Ome",
+  },
+  {
+    title: "WGBS",
+    description: "Whole Genome Bisulfite Sequencing",
+    id: "WGBS",
+    type: "Ome",
+  },
+  {
+    title: "ATAC",
+    description: "ATAC-seq",
+    id: "ATAC",
+    type: "Ome",
+  },
+  {
+    title: "RNA",
+    description: "RNA-seq",
+    id: "RNA",
+    type: "Ome",
+  },
+  {
+    title: "Proteomics",
+    id: "proteomics",
+    type: "Ome",
+  },
+  {
+    title: "Metabolomics",
+    id: "metabolomics",
+    type: "Ome",
+  },
+  {
+    title: "Lipidomics",
+    id: "lipidomics",
+    type: "Ome",
+  },
+  {
+    title: "Exposomics",
+    id: "exposomics",
+    type: "Ome",
+  },
+  {
+    title: "Metallomics",
+    id: "metallomics",
+    type: "Ome",
+  },
+  {
     title: "chr19:44,905,754-44,909,393",
     domain: {
       chromosome: "chr19",
@@ -76,6 +125,8 @@ export function makeResultLink(result: Result) {
       break;
     case "Legacy cCRE":
       url = `https://screen.wenglab.org/search?q=${result.title}&assembly=GRCh38`;
+    case "Ome":
+      url = `/omes/${result.id}/dimensionalityReduction`
   }
   return url;
 }
@@ -93,8 +144,8 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
     if (closeDrawer) {
       closeDrawer();
     }
-    if (link.startsWith("https://screen.wenglab.org")) {
-      window.open(makeResultLink(r))
+    if (r.type !== "Ome") {
+      window.open(link)
     } else {
       router.push(link, { scroll: false });
     }
@@ -108,7 +159,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
       geneVersion={geneVersion}
       ccreLimit={3}
       showiCREFlag={false}
-      queries={["Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
+      queries={["Ome", "Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
       onSearchSubmit={handleSearchSubmit}
       //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton
       onKeyDown={(e) => {

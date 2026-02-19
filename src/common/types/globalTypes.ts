@@ -1,12 +1,13 @@
 export const OmesList = [
-  "proteomics",
-  "metabolomics",
-  "exposomics",
-  "lipidomics",
-  "ATAC",
   "WGS",
   "WGBS",
+  "ATAC",
   "RNA",
+  "proteomics",
+  "metabolomics",
+  "lipidomics",
+  "exposomics",
+  "metallomics"
 ] as const;
 
 export type OmesDataType = (typeof OmesList)[number];
