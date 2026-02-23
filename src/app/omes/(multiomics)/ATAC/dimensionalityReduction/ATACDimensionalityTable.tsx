@@ -1,4 +1,4 @@
-import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColDef, gridFilteredSortedRowEntriesSelector, GridRowSelectionModel, GridSortDirection, GridSortModel, Table, useGridApiRef } from "@weng-lab/ui-components";
+import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColDef, GridColumnHeaderParams, gridFilteredSortedRowEntriesSelector, GridRowSelectionModel, GridSortDirection, GridSortModel, Table, useGridApiRef } from "@weng-lab/ui-components";
 import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery, useTheme } from "@mui/material";
@@ -19,7 +19,7 @@ const ATACDimensionalityTable = ({
     const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
     //This is used to prevent sorting from happening when clicking on the header checkbox
-    const StopPropagationWrapper = (params) => (
+    const StopPropagationWrapper = (params: GridColumnHeaderParams<ATACMetadata>) => (
         <div id={"StopPropagationWrapper"} onClick={(e) => e.stopPropagation()}>
             {GRID_CHECKBOX_SELECTION_COL_DEF.renderHeader
                 ? GRID_CHECKBOX_SELECTION_COL_DEF.renderHeader(params)
@@ -59,7 +59,10 @@ const ATACDimensionalityTable = ({
     const handleRowSelectionModelChange = (newRowSelectionModel: GridRowSelectionModel) => {
         if (newRowSelectionModel.type === "include") {
             const newIds = Array.from(newRowSelectionModel.ids);
-            const selectedRows = newIds.map((id) => rows.find((row) => row.sample_id === id));
+            const selectedRows = newIds
+                .map((id) => rows.find((row) => row.sample_id === id))
+                .filter((row): row is ATACMetadata[number] => row !== undefined);
+
             setSelected(selectedRows);
         } else {
             // if type is exclude, it's always with 0 ids (aka select all)
