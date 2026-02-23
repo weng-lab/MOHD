@@ -22,7 +22,7 @@ export type TwoPanePlotConfig = {
   tabTitle: string;
   icon?: TabOwnProps["icon"];
   plotComponent: React.ReactNode;
-  ref?: React.RefObject<DownloadPlotHandle>;
+  ref?: React.RefObject<DownloadPlotHandle> | null;
 };
 
 export type TwoPaneLayoutProps = {
@@ -74,6 +74,9 @@ const TwoPaneLayout = ({ TableComponent, plots }: TwoPaneLayoutProps) => {
   const isXs = useMediaQuery(theme.breakpoints.down("sm"));
   const isMd = useMediaQuery(theme.breakpoints.down("lg"));
 
+  // Ensure tab index is always valid based on plots length
+  const validTab = Math.min(tab, plots.length - 1);
+
   //listens for changes in the size of the table component and passes that height into the figure container
   useEffect(() => {
     if (!tableRef.current) return;
@@ -104,14 +107,7 @@ const TwoPaneLayout = ({ TableComponent, plots }: TwoPaneLayoutProps) => {
   const plotTabs = useMemo(() => plots.map((x) => ({ tabTitle: x.tabTitle, icon: x.icon })), [plots]);
   const figures = useMemo(() => plots.map((x) => ({ title: x.tabTitle, component: x.plotComponent })), [plots]);
 
-  //  Handles unavailable index being selected due to hidden plot
-  useEffect(() => {
-    if (tab > plots.length - 1) {
-      setTab(plots.length - 1);
-    }
-  }, [plots, tab]);
-
-  const tabValue = tab > plots.length - 1 ? plots.length - 1 : tab;
+  const tabValue = validTab;
 
   return (
     <Stack spacing={2} direction={{ xs: "column", lg: "row" }} id="two-pane-layout">

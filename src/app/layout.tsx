@@ -5,6 +5,8 @@ import { Suspense } from "react";
 import { theme } from "./theme";
 import ClientAppWrapper from "@/common/components/ClientAppWrapper";
 import { MenuControlProvider } from "@/common/components/Header/MenuContext";
+import MuiXLicense from "@/common/components/MuiXLicense";
+import { ApolloWrapper } from "@/common/apollo/apollo-wrapper";
 
 export const metadata = {
   title: "MOHD Data Portal",
@@ -16,15 +18,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Suspense>
-          <AppRouterCacheProvider>
-            <ThemeProvider theme={theme}>
-              <MenuControlProvider>
-                {/* Overall wrapper set to be screen height */}
-                <ClientAppWrapper>{children}</ClientAppWrapper>
-              </MenuControlProvider>
-            </ThemeProvider>
-          </AppRouterCacheProvider>
+          <ApolloWrapper>
+            <AppRouterCacheProvider>
+              <ThemeProvider theme={theme}>
+                <MenuControlProvider>
+                  {/* Overall wrapper set to be screen height */}
+                  <ClientAppWrapper>{children}</ClientAppWrapper>
+                </MenuControlProvider>
+              </ThemeProvider>
+            </AppRouterCacheProvider>
+          </ApolloWrapper>
         </Suspense>
+        <MuiXLicense />
         <CssBaseline />
       </body>
     </html>
