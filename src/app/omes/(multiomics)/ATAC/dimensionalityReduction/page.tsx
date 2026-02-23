@@ -52,7 +52,7 @@ const ATACDimensionalityReduction = () => {
                     tabTitle: "UMAP",
                     icon: <ScatterPlot />,
                     plotComponent: <ATACDimensionalityScatterPlot ref={scatterRef} {...SharedATACDimenionalityProps} />,
-                    ref: scatterRef,
+                    plotRef: scatterRef,
                 },
             ]}
         />

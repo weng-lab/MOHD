@@ -3,18 +3,30 @@ import { Modal, Box, IconButton, Stack, Typography, Divider, Button } from "@mui
 import DownloadIcon from "@mui/icons-material/Download";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
 
-export interface DownloadModalProps {
+export type DownloadModalProps = {
   open: boolean;
   onClose: () => void;
-  ref: DownloadPlotHandle | undefined;
+  plotRef?: React.RefObject<DownloadPlotHandle | null>;
   plotTitle: string;
 }
 
-const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, ref, plotTitle }) => {
+const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, plotRef, plotTitle }) => {
+  const handleDownload = (type: "PNG" | "SVG") => {
+    if (!plotRef?.current) return;
+
+    if (type === "PNG") {
+      plotRef.current.downloadPNG();
+    }
+
+    if (type === "SVG") {
+      plotRef.current.downloadSVG();
+    }
+  };
+
   const downloadOptions = [
-    { label: "PNG", action: ref?.downloadPNG },
-    { label: "SVG", action: ref?.downloadSVG },
-  ].filter((option) => option.action);
+    { label: "PNG", type: "PNG" as const },
+    { label: "SVG", type: "SVG" as const },
+  ];
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -41,7 +53,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, ref, plotT
           {downloadOptions.map((option) => (
             <Stack key={option.label} direction="row" alignItems="center" justifyContent="space-between">
               <Typography variant="body1">{option.label}</Typography>
-              <IconButton color="primary" onClick={option.action} aria-label={`Download ${option.label}`}>
+              <IconButton color="primary" onClick={() => handleDownload(option.type)} aria-label={`Download ${option.label}`}>
                 <DownloadIcon />
               </IconButton>
             </Stack>

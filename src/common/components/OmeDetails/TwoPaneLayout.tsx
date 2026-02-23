@@ -22,7 +22,7 @@ export type TwoPanePlotConfig = {
   tabTitle: string;
   icon?: TabOwnProps["icon"];
   plotComponent: React.ReactNode;
-  ref?: React.RefObject<DownloadPlotHandle> | null;
+  plotRef?: React.RefObject<DownloadPlotHandle | null>;
 };
 
 export type TwoPaneLayoutProps = {
@@ -159,7 +159,7 @@ const TwoPaneLayout = ({ TableComponent, plots }: TwoPaneLayoutProps) => {
           <DownloadModal
             open={modalOpen}
             onClose={() => setModalOpen(false)}
-            ref={plots[tabValue]?.ref?.current}
+            plotRef={plots[tabValue]?.plotRef}
             plotTitle={plots[tabValue]?.tabTitle}
           />
         )}
