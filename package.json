@@ -6,9 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "gen-types": "graphql-codegen",
+    "gen-types -w": "graphql-codegen -w"
   },
   "dependencies": {
+    "@apollo/client": "^3.11.8",
+    "@apollo/experimental-nextjs-app-support": "^0.11.3",
     "@emotion/cache": "^11",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -26,12 +30,16 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/client-preset": "^4",
+    "@graphql-typed-document-node/core": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "graphql": "^16",
     "typescript": "^5"
   }
 }
