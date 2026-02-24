@@ -2,7 +2,7 @@ import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
 import { Point, ScatterPlot, ChartProps } from "@weng-lab/visualization";
 import { useMemo, useState } from "react";
 import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
-import { Typography, Stack, SelectChangeEvent, Box } from "@mui/material";
+import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
 import UMAPLegend from "@/common/components/UMAPLegend";
@@ -28,8 +28,9 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
     ref,
     ...rest
 }: ATACDimensionalityUmapProps<S, Z>) => {
-    const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol">("status");
+    const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol">("site");
     const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
     const { loading, data } = ATACData;
 
@@ -106,13 +107,10 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                     <b>Site:</b> {point.metaData?.site}
                 </Typography>
                 <Typography>
-                    <b>Sex:</b> {point.metaData?.sex}
+                    <b>Sex:</b> {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ''}
                 </Typography>
                 <Typography>
-                    <b>Protocol:</b> {point.metaData?.protocol}
-                </Typography>
-                <Typography>
-                    <b>Kit:</b> {point.metaData?.opc_id}
+                    <b>Protocol:</b> {point.metaData?.protocol.replaceAll(" method", "")}
                 </Typography>
             </>
         );
@@ -128,7 +126,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
             {scatterData &&
                 scatterData.length > 0 && (
                     <>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Stack direction={{xs: "column", md: "row"}} justifyContent="space-between" alignItems="center">
                             <ColorBySelect colorScheme={colorScheme} handleColorSchemeChange={handleColorSchemeChange} />
                             <UMAPLegend
                                 colorScheme={colorScheme}
@@ -141,6 +139,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                                 onSelectionChange={handlePointsSelected}
                                 onPointClicked={handlePointSelected}
                                 controlsHighlight={theme.palette.primary.main}
+                                controlsPosition={isXs ? "bottom" : "left"}
                                 pointData={scatterData}
                                 selectable
                                 loading={loading}

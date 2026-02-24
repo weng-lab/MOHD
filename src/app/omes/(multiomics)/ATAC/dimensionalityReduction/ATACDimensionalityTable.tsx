@@ -39,24 +39,22 @@ const ATACDimensionalityTable = ({
             headerName: "Dataset",
         },
         {
-            field: "opc_id",
-            headerName: "Kit",
+            field: "site",
+            headerName: "Site",
         },
         {
             field: "status",
             headerName: "Status",
         },
         {
-            field: "site",
-            headerName: "Site",
-        },
-        {
             field: "sex",
             headerName: "Sex",
+            renderCell: (params) => (params.value === "female" ? "F" : "M"),
         },
         {
             field: "protocol",
             headerName: "Protocol",
+            renderCell: (params) => (params.value.replaceAll(" method", "")),
         }
     ];
 

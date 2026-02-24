@@ -17,8 +17,8 @@ export const ColorBySelect = ({ colorScheme, handleColorSchemeChange }: ColorByS
       MenuProps={{ disableScrollLock: true }}
       size="small"
     >
-      <MenuItem value={"status"}>Status</MenuItem>
       <MenuItem value={"site"}>Site</MenuItem>
+      <MenuItem value={"status"}>Status</MenuItem>
       <MenuItem value={"sex"}>Sex</MenuItem>
       <MenuItem value={"protocol"}>Protocol</MenuItem>
     </Select>
