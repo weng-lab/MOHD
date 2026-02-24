@@ -36,7 +36,11 @@ const ATACDimensionalityTable = ({
         },
         {
             field: "sample_id",
-            headerName: "Sample ID",
+            headerName: "Dataset",
+        },
+        {
+            field: "opc_id",
+            headerName: "Kit",
         },
         {
             field: "status",
