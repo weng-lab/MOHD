@@ -33,7 +33,7 @@ export default function FigurePanel({ value, figures, tableOpen, tableHeight }: 
             //use table height unless its not open, then set px height for umap so it doesnt slowly resize
             height={tableOpen ? tableHeight : Figure.title === "UMAP" ? "700px" : "100%"}
             maxHeight={Figure.title !== "Bar Plot" ? "700px" : "none"}
-            minHeight="580px"
+            minHeight="700px"
           >
             {isMounted && Figure.component}
           </Box>

@@ -131,7 +131,7 @@ const TwoPaneLayout = ({ TableComponent, plots }: TwoPaneLayoutProps) => {
           {/* Used to force this container to have the same height as the below tabs. Prevents layout shift when closing the table */}
           <Tab sx={{ visibility: "hidden", minWidth: 0, px: 0 }} />
         </Stack>
-        <div ref={tableRef} style={{ height: isMd ? "580px" : "60vh" }}>
+        <div ref={tableRef} style={{ height: isMd ? "700px" : "60vh" }}>
           {TableComponent}
         </div>
       </Box>

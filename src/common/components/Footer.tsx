@@ -56,7 +56,7 @@ export default function Footer() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Stack spacing={1} alignItems="flex-start">
             <Stack direction={"row"} alignItems={"flex-end"} spacing={2}>
-              <Image src={"/logo.png"} alt="Logo" width={60} height={60} />
+              <Image src={"/logo_on_dark.png"} alt="Logo" width={60} height={60} />
               <Stack>
                 <Typography variant="body1" sx={{ textAlign: "left" }}>
                   Multiomics for Health and Diseases
