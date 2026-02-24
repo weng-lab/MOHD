@@ -4,12 +4,14 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Point } from "@weng-lab/visualization";
 import { ATACMetadata } from "@/app/omes/(multiomics)/ATAC/dimensionalityReduction/page";
 import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
-type UMAPLegendProps<T extends ATACMetadata[number]> = {
+import { RNAMetadata } from "@/app/omes/(multiomics)/RNA/dimensionalityReduction/page";
+type UMAPLegendProps<T extends ATACMetadata[number] | RNAMetadata[number]> = {
   colorScheme: "sex" | "status" | "site" | "protocol";
   scatterData: Point<T>[];
 };
 
-export default function UMAPLegend<T extends ATACMetadata[number]>({
+export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[number]>({
+
   colorScheme,
   scatterData,
 }: UMAPLegendProps<T>) {
@@ -36,7 +38,7 @@ export default function UMAPLegend<T extends ATACMetadata[number]>({
           key = meta.site;
           break;
         case "protocol":
-          key = meta.protocol;
+          key = "protocol" in meta ? meta.protocol : meta.kit;
           break;
         default:
           key = "missing";

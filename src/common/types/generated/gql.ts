@@ -15,9 +15,11 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\nquery fetchATACMetadata {\n  atac_metadata {\n    sample_id\n    status\n    site\n    sex\n    protocol\n    umap_x\n    umap_y\n    opc_id\n  }\n}\n ": typeof types.FetchAtacMetadataDocument,
+    "\nquery fetchRNAMetadata {\n  rna_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n    umap_x\n    umap_y\n  }\n}\n ": typeof types.FetchRnaMetadataDocument,
 };
 const documents: Documents = {
     "\nquery fetchATACMetadata {\n  atac_metadata {\n    sample_id\n    status\n    site\n    sex\n    protocol\n    umap_x\n    umap_y\n    opc_id\n  }\n}\n ": types.FetchAtacMetadataDocument,
+    "\nquery fetchRNAMetadata {\n  rna_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n    umap_x\n    umap_y\n  }\n}\n ": types.FetchRnaMetadataDocument,
 };
 
 /**
@@ -38,6 +40,10 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nquery fetchATACMetadata {\n  atac_metadata {\n    sample_id\n    status\n    site\n    sex\n    protocol\n    umap_x\n    umap_y\n    opc_id\n  }\n}\n "): (typeof documents)["\nquery fetchATACMetadata {\n  atac_metadata {\n    sample_id\n    status\n    site\n    sex\n    protocol\n    umap_x\n    umap_y\n    opc_id\n  }\n}\n "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery fetchRNAMetadata {\n  rna_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n    umap_x\n    umap_y\n  }\n}\n "): (typeof documents)["\nquery fetchRNAMetadata {\n  rna_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n    umap_x\n    umap_y\n  }\n}\n "];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

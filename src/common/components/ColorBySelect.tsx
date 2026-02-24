@@ -3,9 +3,10 @@ import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@m
 type ColorBySelectProps = {
   colorScheme: "sex" | "status" | "site" | "protocol";
   handleColorSchemeChange: (event: SelectChangeEvent) => void;
+  protocol: boolean;
 };
 
-export const ColorBySelect = ({ colorScheme, handleColorSchemeChange }: ColorBySelectProps) => (
+export const ColorBySelect = ({ colorScheme, handleColorSchemeChange, protocol }: ColorBySelectProps) => (
   <FormControl sx={{ alignSelf: "flex-start" }}>
     <InputLabel>Color By</InputLabel>
     <Select
@@ -20,7 +21,9 @@ export const ColorBySelect = ({ colorScheme, handleColorSchemeChange }: ColorByS
       <MenuItem value={"site"}>Site</MenuItem>
       <MenuItem value={"status"}>Status</MenuItem>
       <MenuItem value={"sex"}>Sex</MenuItem>
-      <MenuItem value={"protocol"}>Protocol</MenuItem>
+      {protocol && (
+        <MenuItem value={"protocol"}>Protocol</MenuItem>
+      )}
     </Select>
   </FormControl>
 );
