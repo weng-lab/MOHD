@@ -36,23 +36,33 @@ const ATACDimensionalityTable = ({
         },
         {
             field: "sample_id",
-            headerName: "Sample ID",
-        },
-        {
-            field: "status",
-            headerName: "Status",
+            headerName: "Dataset",
         },
         {
             field: "site",
             headerName: "Site",
+            type: "singleSelect",
+            valueOptions: Array.from(new Set(rows.map((row) => row.site))),
+        },
+        {
+            field: "status",
+            headerName: "Status",
+            type: "singleSelect",
+            valueOptions: Array.from(new Set(rows.map((row) => row.status))),
         },
         {
             field: "sex",
             headerName: "Sex",
+            renderCell: (params) => (params.value === "female" ? "F" : "M"),
+            type: "singleSelect",
+            valueOptions: Array.from(new Set(rows.map((row) => row.sex))),
         },
         {
             field: "protocol",
             headerName: "Protocol",
+            renderCell: (params) => (params.value.replaceAll(" method", "")),
+            type: "singleSelect",
+            valueOptions: Array.from(new Set(rows.map((row) => row.protocol))),
         }
     ];
 

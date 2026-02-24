@@ -2,7 +2,7 @@
 import TwoPaneLayout from "@/common/components/OmeDetails/TwoPaneLayout"
 import ATACDimensionalityTable from "./ATACDimensionalityTable"
 import { ScatterPlot } from "@mui/icons-material"
-import ATACDimensionalityScatterPlot from "./ATACScatterPlot"
+import ATACDimensionalityScatterPlot from "./ATACUMAP"
 import { useMemo, useRef, useState } from "react"
 import { DownloadPlotHandle } from "@weng-lab/visualization"
 import { useATACData, UseATACDataReturn } from "@/common/hooks/omeHooks/useATACData";

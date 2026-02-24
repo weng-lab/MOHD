@@ -93,7 +93,7 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                 >
                     <OmeDetailsTabs ome={ome} tabs={tabs} orientation="vertical" />
                 </Box>
-                <Stack id="main-content" spacing={2} m={2} gridColumn={{ xs: 1, md: 2 }} gridRow={{ xs: 2, md: 1 }}>
+                <Stack id="main-content" spacing={2} mx={2} mb={2} gridColumn={{ xs: 1, md: 2 }} gridRow={{ xs: 2, md: 1 }}>
                     <Box id="horizonatal-view-tabs-container" display={{ xs: "block", md: "none" }}>
                         <OmeDetailsTabs
                             ome={ome}
