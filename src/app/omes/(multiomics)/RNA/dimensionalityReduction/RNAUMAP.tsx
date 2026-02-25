@@ -1,18 +1,18 @@
-import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
+import { RNAMetadata, SharedRNADimenionalityProps } from "./page";
 import { Point, ScatterPlot, ChartProps } from "@weng-lab/visualization";
 import { useMemo, useState } from "react";
-import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
+import { sex_color_map, status_color_map, site_color_map } from "@/common/colors";
 import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
 import UMAPLegend from "@/common/components/UMAPLegend";
 
-export type ATACDimensionalityUmapProps<
+export type RNADimensionalityUmapProps<
     S extends boolean | undefined,
     Z extends boolean | undefined
 > =
-    SharedATACDimenionalityProps &
-    Partial<ChartProps<ATACMetadata[number], S, Z>>;
+    SharedRNADimenionalityProps &
+    Partial<ChartProps<RNAMetadata[number], S, Z>>;
 
 const map = {
     position: {
@@ -21,27 +21,27 @@ const map = {
     },
 };
 
-const ATACUMAP = <S extends true, Z extends boolean | undefined>({
+const RNAUMAP = <S extends true, Z extends boolean | undefined>({
     selected,
-    ATACData,
+    RNAData,
     setSelected,
     ref,
     ...rest
-}: ATACDimensionalityUmapProps<S, Z>) => {
-    const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol">("site");
+}: RNADimensionalityUmapProps<S, Z>) => {
+    const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site">("site");
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const { loading, data } = ATACData;
+    const { loading, data } = RNAData;
 
     const handleColorSchemeChange = (event: SelectChangeEvent) => {
-        setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol");
+        setColorScheme(event.target.value as "sex" | "status" | "site");
     };
 
-    const scatterData: Point<ATACMetadata[number]>[] = useMemo(() => {
+    const scatterData: Point<RNAMetadata[number]>[] = useMemo(() => {
         if (!data) return [];
 
-        const isHighlighted = (x: ATACMetadata[number]) => selected.some((y) => y.sample_id === x.sample_id);
+        const isHighlighted = (x: RNAMetadata[number]) => selected.some((y) => y.sample_id === x.sample_id);
 
         return data.map((x) => {
 
@@ -53,8 +53,6 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                         return status_color_map[x.status as keyof typeof status_color_map];
                     } else if (colorScheme === "site") {
                         return site_color_map[x.site as keyof typeof site_color_map];
-                    } else if (colorScheme === "protocol") {
-                        return protocol_color_map[x.protocol as keyof typeof protocol_color_map];
                     }
                 } else return "#CCCCCC";
             };
@@ -70,18 +68,18 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
     }, [data, selected, colorScheme]);
 
     const handlePointsSelected = (
-        selectedPoints: Point<ATACMetadata[number]>[]
+        selectedPoints: Point<RNAMetadata[number]>[]
     ) => {
         setSelected([
             ...selected,
             ...selectedPoints
                 .map((point) => point.metaData)
-                .filter(Boolean) as ATACMetadata[number][],
+                .filter(Boolean) as RNAMetadata[number][],
         ]);
     };
 
     const handlePointSelected = (
-        selectedPoint: Point<ATACMetadata[number]>
+        selectedPoint: Point<RNAMetadata[number]>
     ) => {
         if (!selectedPoint.metaData) return;
 
@@ -94,7 +92,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
         }
     };
 
-    const TooltipBody = (point: Point<ATACMetadata[number]>) => {
+    const TooltipBody = (point: Point<RNAMetadata[number]>) => {
         return (
             <>
                 <Typography>
@@ -108,9 +106,6 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                 </Typography>
                 <Typography>
                     <b>Sex:</b> {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ''}
-                </Typography>
-                <Typography>
-                    <b>Protocol:</b> {point.metaData?.protocol.replaceAll(" method", "")}
                 </Typography>
             </>
         );
@@ -130,7 +125,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                             <ColorBySelect 
                                 colorScheme={colorScheme} 
                                 handleColorSchemeChange={handleColorSchemeChange}
-                                protocol={true} 
+                                protocol={false} 
                             />
                             <UMAPLegend
                                 colorScheme={colorScheme}
@@ -152,7 +147,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                                 leftAxisLabel="UMAP-2"
                                 bottomAxisLabel="UMAP-1"
                                 ref={ref}
-                                downloadFileName={`ATAC_dimesionality_reduction_UMAP`}
+                                downloadFileName={`RNA_dimesionality_reduction_UMAP`}
                                 animation="scale"
                                 animationBuffer={0.025}
                                 animationGroupSize={5}
@@ -164,4 +159,4 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
     );
 }
 
-export default ATACUMAP;
+export default RNAUMAP;

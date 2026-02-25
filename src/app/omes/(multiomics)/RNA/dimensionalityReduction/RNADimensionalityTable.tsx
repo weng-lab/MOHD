@@ -1,0 +1,159 @@
+import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColDef, GridColumnHeaderParams, gridFilteredSortedRowEntriesSelector, GridRowSelectionModel, GridSortDirection, GridSortModel, Table, useGridApiRef } from "@weng-lab/ui-components";
+import { RNAMetadata, SharedRNADimenionalityProps } from "./page";
+import { useEffect, useMemo, useState } from "react";
+import { useMediaQuery, useTheme } from "@mui/material";
+import AutoSortSwitch from "@/common/components/AutoSortSwitch";
+
+const RNADimensionalityTable = ({
+    rows,
+    RNAData,
+    selected,
+    setSelected,
+    setSortedFilteredData,
+    sortedFilteredData,
+}: SharedRNADimenionalityProps) => {
+    const [autoSort, setAutoSort] = useState<boolean>(false);
+
+    const { loading, error } = RNAData;
+    const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+
+    //This is used to prevent sorting from happening when clicking on the header checkbox
+    const StopPropagationWrapper = (params: GridColumnHeaderParams<RNAMetadata>) => (
+        <div id={"StopPropagationWrapper"} onClick={(e) => e.stopPropagation()}>
+            {GRID_CHECKBOX_SELECTION_COL_DEF.renderHeader
+                ? GRID_CHECKBOX_SELECTION_COL_DEF.renderHeader(params)
+                : null}
+        </div>
+    );
+
+    const columns: GridColDef<RNAMetadata>[] = [
+        {
+            ...(GRID_CHECKBOX_SELECTION_COL_DEF as GridColDef<RNAMetadata>), //Override checkbox column https://mui.com/x/react-data-grid/row-selection/#custom-checkbox-column
+            sortable: true,
+            hideable: false,
+            renderHeader: StopPropagationWrapper,
+        },
+        {
+            field: "sample_id",
+            headerName: "Dataset",
+        },
+        {
+            field: "site",
+            headerName: "Site",
+            type: "singleSelect",
+            valueOptions: Array.from(new Set(rows.map((row) => row.site))),
+        },
+        {
+            field: "status",
+            headerName: "Status",
+            type: "singleSelect",
+            valueOptions: Array.from(new Set(rows.map((row) => row.status))),
+        },
+        {
+            field: "sex",
+            headerName: "Sex",
+            renderCell: (params) => (params.value === "female" ? "F" : "M"),
+            type: "singleSelect",
+            valueOptions: Array.from(new Set(rows.map((row) => row.sex))),
+        },
+    ];
+
+    const handleRowSelectionModelChange = (newRowSelectionModel: GridRowSelectionModel) => {
+        if (newRowSelectionModel.type === "include") {
+            const newIds = Array.from(newRowSelectionModel.ids);
+            const selectedRows = newIds
+                .map((id) => rows.find((row) => row.sample_id === id))
+                .filter((row): row is RNAMetadata[number] => row !== undefined);
+
+            setSelected(selectedRows);
+        } else {
+            // if type is exclude, it's always with 0 ids (aka select all)
+            setSelected(rows);
+        }
+    };
+
+    const apiRef = useGridApiRef();
+
+    const arraysAreEqual = (arr1: RNAMetadata, arr2: RNAMetadata): boolean => {
+        if (arr1.length !== arr2.length) {
+            return false;
+        }
+
+        const isEqual = JSON.stringify(arr1[0]) === JSON.stringify(arr2[0]);
+        if (!isEqual) {
+            return false;
+        }
+
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i].sample_id !== arr2[i].sample_id) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const handleSync = () => {
+        const syncrows = gridFilteredSortedRowEntriesSelector(apiRef).map((x) => x.model) as RNAMetadata;
+        if (!arraysAreEqual(sortedFilteredData, syncrows)) {
+            setSortedFilteredData(syncrows);
+        }
+    };
+
+    const AutoSortToolbar = useMemo(() => {
+        return <AutoSortSwitch autoSort={autoSort} setAutoSort={setAutoSort} />;
+    }, [autoSort]);
+
+    const initialSort: GridSortModel = useMemo(() => [{ field: "tpm", sort: "desc" as GridSortDirection }], []);
+
+    // handle auto sorting
+    useEffect(() => {
+        const api = apiRef?.current;
+        if (!api) return;
+
+        const hasSelection = selected?.length > 0;
+
+        // all other views
+        if (!autoSort) {
+            //reset sort if none selected
+            api.setSortModel(initialSort);
+            return;
+        }
+
+        //sort by checkboxes if some selected, otherwise sort by tpm
+        api.setSortModel(hasSelection ? [{ field: "__check__", sort: "desc" }] : initialSort);
+    }, [apiRef, autoSort, initialSort, selected]);
+
+    const rowSelectionModel: GridRowSelectionModel = useMemo(() => {
+        return { type: "include", ids: new Set(selected.map((x) => x.sample_id)) };
+    }, [selected]);
+
+    return (
+        <Table
+            apiRef={apiRef}
+            label={`RNA-seq Dimensionality Reduction`}
+            rows={rows}
+            columns={columns}
+            loading={loading}
+            error={!!error}
+            pageSizeOptions={[10, 25, 50]}
+            initialState={{
+                sorting: {
+                    sortModel: initialSort,
+                },
+            }}
+            // -- Selection Props --
+            checkboxSelection
+            getRowId={(row: typeof rows[number]) => row.sample_id} //needed to match up data with the ids returned by onRowSelectionModelChange
+            onRowSelectionModelChange={handleRowSelectionModelChange}
+            rowSelectionModel={rowSelectionModel}
+            keepNonExistentRowsSelected // Needed to prevent clearing selections on changing filters
+            // -- End Selection Props --
+            onStateChange={handleSync} // Not really supposed to be using this, is not documented by MUI. Not using its structure, just the callback trigger
+            divHeight={{ height: "100%", minHeight: isXs ? "none" : "700px" }}
+            toolbarSlot={AutoSortToolbar}
+        />
+    );
+}
+
+export default RNADimensionalityTable;
