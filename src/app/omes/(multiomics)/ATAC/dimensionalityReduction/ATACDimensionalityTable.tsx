@@ -111,7 +111,7 @@ const ATACDimensionalityTable = ({
         return <AutoSortSwitch autoSort={autoSort} setAutoSort={setAutoSort} />;
     }, [autoSort]);
 
-    const initialSort: GridSortModel = useMemo(() => [{ field: "tpm", sort: "desc" as GridSortDirection }], []);
+    const initialSort: GridSortModel = useMemo(() => [{ field: "sample_id", sort: "asc" as GridSortDirection }], []);
 
     // handle auto sorting
     useEffect(() => {
