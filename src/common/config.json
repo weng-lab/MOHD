@@ -3,5 +3,82 @@
     "MOHDAPI": "https://mohd-api-251345758618.us-east4.run.app/graphql"
   },
   "Downloads": {
+    "ATAC": [
+      {
+        "type": "sequenced reads",
+        "filename": "[sample_id]_R1.fastq.gz",
+        "anvil_download": true
+      },
+      {
+        "type": "sequenced reads",
+        "filename": "[sample_id]_R2.fastq.gz",
+        "anvil_download": true
+      },
+      {
+        "type": "aligned reads",
+        "filename": "[sample_id]_filtered_GRCh38_v0.bam",
+        "anvil_download": true
+      },
+      {
+        "type": "aligned reads",
+        "filename": "[sample_id]_unfiltered_GRCh38_v0.bam",
+        "anvil_download": true
+      },
+      {
+        "type": "fold change signal",
+        "filename": "[sample_id]_signal-FC_GRCh38_v0.bigWig",
+        "anvil_download": false,
+        "url": "https://downloads.wenglab.org/mohd/[sample_id]_signal-FC_GRCh38_v0.bigWig"
+      },
+      {
+        "type": "p-value signal",
+        "filename": "[sample_id]_signal-pvalue_GRCh38_v0.bigWig",
+        "anvil_download": false,
+        "url": "https://downloads.wenglab.org/mohd/[sample_id]_signal-pvalue_GRCh38_v0.bigWig"
+      },
+      {
+        "type": "FDR 0.05 peaks",
+        "filename": "[sample_id]_peaks-FDR5_GRCh38_v0.bed.gz",
+        "anvil_download": false,
+        "url": "https://downloads.wenglab.org/mohd/[sample_id]_peaks-FDR5_GRCh38_v0.bed.gz"
+      },
+      {
+        "type": "pseudorep peaks",
+        "filename": "[sample_id]_peaks-pseudorep_GRCh38_v0.bed.gz",
+        "anvil_download": false,
+        "url": "https://downloads.wenglab.org/mohd/[sample_id]_peaks-pseudorep_GRCh38_v0.bed.gz"
+      }
+    ],
+    "RNA": [
+      {
+        "type": "Unique Signal Plus",
+        "filename": "[sample_id]_signal-plus-unique_GRCh38_v0.bigWig",
+        "anvil_download": false,
+        "url": "https://downloads.wenglab.org/mohd/[sample_id]_signal-plus-unique_GRCh38_v0.bigWig"
+      },
+      {
+        "type": "Unique Signal Minus",
+        "filename": "[sample_id]_signal-minus-unique_GRCh38_v0.bigWig",
+        "anvil_download": false,
+        "url": "https://downloads.wenglab.org/mohd/[sample_id]_signal-minus-unique_GRCh38_v0.bigWig"
+      },
+      {
+        "type": "All Signal Plus",
+        "filename": "[sample_id]_signal-plus-all_GRCh38_v0.bigWig",
+        "anvil_download": false,
+        "url": "https://downloads.wenglab.org/mohd/[sample_id]_signal-plus-all_GRCh38_v0.bigWig"
+      },
+      {
+        "type": "All Signal Minus",
+        "filename": "[sample_id]_signal-minus-all_GRCh38_v0.bigWig",
+        "anvil_download": false,
+        "url": "https://downloads.wenglab.org/mohd/[sample_id]_signal-minus-all_GRCh38_v0.bigWig"
+      },
+      {
+        "type": "Alignments",
+        "filename": "[sample_id]_align_GRCh38_v0.bam",
+        "anvil_download": true
+      }
+    ]
   }
 }
