@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Button, IconButton} from "@mui/material";
 import Config from "@/common/config.json";
 import DownloadIcon from '@mui/icons-material/Download';
+import Image from "next/image";
 
 const groupingColDef: GridGroupingColDefOverride<RNAMetadata> = {
     leafField: "sample_id",
@@ -118,16 +119,22 @@ const RNADownloadsTable = ({
 
                 if (anvil_download) {
                     return (
-                        <Button
+                        <IconButton
                             component="a"
-                            href={"https://anvilproject.org/"}
-                            color="primary"
+                            href="https://anvilproject.org/"
                             target="_blank"
                             rel="noopener noreferrer"
+                            color="primary"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            AnVIL
-                        </Button>
+                            <Image
+                                src="/logo-mark-Anvil.png"
+                                alt="AnVIL"
+                                width={28}
+                                height={28}
+                                style={{ objectFit: "contain" }}
+                            />
+                        </IconButton>
                     );
                 }
 
