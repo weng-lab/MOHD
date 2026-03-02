@@ -136,7 +136,18 @@ const ATACDownloadsTable = ({
                 const { anvil_download, url } = params.row;
 
                 if (anvil_download) {
-                    return "AnVIL";
+                    return (
+                        <Button
+                            component="a"
+                            href={"https://anvilproject.org/"}
+                            color="primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            AnVIL
+                        </Button>
+                    );
                 }
 
                 if (!url) return null;

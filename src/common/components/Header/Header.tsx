@@ -25,12 +25,7 @@ const pageLinks: PageInfo[] = [
     },
     {
         pageName: "About",
-        link: "/about",
-        dropdownID: 0,
-        subPages: [
-            { pageName: "Overview", link: "/about" },
-            { pageName: "Contact Us", link: "/about#contact-us" },
-        ],
+        link: "https://www.mohdconsortium.org/home",
     },
     {
         pageName: "Help",

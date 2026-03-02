@@ -68,8 +68,8 @@ export default function Home() {
         >
           <AtAGlance
             stats={[
-              { value: "13", label: "Sites", link: "/about" },
-              { value: "1.8K", label: "Participants", link: "/about" },
+              { value: "13", label: "Sites", link: "https://www.mohdconsortium.org/projects-sites" },
+              { value: "1.8K", label: "Participants", link: "https://www.mohdconsortium.org/data" },
               { value: "8", label: "Omes", link: "/omes" },
             ]}
           />
