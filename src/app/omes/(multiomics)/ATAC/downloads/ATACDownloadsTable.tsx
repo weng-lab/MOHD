@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Button, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import Config from "@/common/config.json";
 import DownloadIcon from '@mui/icons-material/Download';
+import Image from "next/image";
 
 const groupingColDef: GridGroupingColDefOverride<ATACMetadata> = {
     leafField: "sample_id",
@@ -121,7 +122,7 @@ const ATACDownloadsTable = ({
         },
         {
             field: "file_type",
-            headerName: "File Type",
+            headerName: "Description",
         },
         {
             field: "filename",
@@ -137,16 +138,22 @@ const ATACDownloadsTable = ({
 
                 if (anvil_download) {
                     return (
-                        <Button
+                        <IconButton
                             component="a"
-                            href={"https://anvilproject.org/"}
-                            color="primary"
+                            href="https://anvilproject.org/"
                             target="_blank"
                             rel="noopener noreferrer"
+                            color="primary"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            AnVIL
-                        </Button>
+                            <Image
+                                src="/logo-mark-Anvil.png"
+                                alt="AnVIL"
+                                width={28}
+                                height={28}
+                                style={{ objectFit: "contain" }}
+                            />
+                        </IconButton>
                     );
                 }
 

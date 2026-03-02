@@ -102,7 +102,7 @@ const RNADownloadsTable = ({
         },
         {
             field: "file_type",
-            headerName: "File Type",
+            headerName: "Description",
         },
         {
             field: "filename",
