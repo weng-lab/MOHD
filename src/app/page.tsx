@@ -66,13 +66,7 @@ export default function Home() {
             justifyContent: "center",
           }}
         >
-          <AtAGlance
-            stats={[
-              { value: "13", label: "Sites", link: "https://www.mohdconsortium.org/projects-sites" },
-              { value: "1.8K", label: "Participants", link: "https://www.mohdconsortium.org/data" },
-              { value: "8", label: "Omes", link: "/omes" },
-            ]}
-          />
+          <AtAGlance />
         </Box>
       </Box>
       <Box p={5}>

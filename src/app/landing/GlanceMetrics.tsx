@@ -2,25 +2,23 @@ import { Box, Divider, Stack, Typography } from "@mui/material";
 import { AnimatedNumber } from "./AnimatedNumber";
 import Link from "next/link";
 
-interface StatItem {
-    value: string;
-    label: string;
-    link?: string;
-}
+const stats =
+    [
+        { value: "13", label: "Sites", link: "https://www.mohdconsortium.org/projects-sites" },
+        { value: "1.8K", label: "Participants", link: "https://www.mohdconsortium.org/data" },
+        { value: "8", label: "Omes", link: "/omes" },
+    ]
 
-interface AtAGlanceProps {
-    stats: StatItem[];
-}
 
-export default function AtAGlance({ stats }: AtAGlanceProps) {
+export default function AtAGlance() {
     return (
         <Stack alignItems="center" spacing={2}>
             <Box
                 sx={{
                     backgroundColor: "primary.light",
                     borderRadius: "999px",
-                    px: {xs: 3, md: 6},
-                    py: {xs: 1.5, md: 3},
+                    px: { xs: 3, md: 6 },
+                    py: { xs: 1.5, md: 3 },
                     maxHeight: 100
                 }}
             >
@@ -33,7 +31,7 @@ export default function AtAGlance({ stats }: AtAGlanceProps) {
                             sx={{ borderColor: "black" }}
                         />
                     }
-                    spacing={{xs: 2, md: 5}}
+                    spacing={{ xs: 2, md: 5 }}
                     alignItems="center"
                 >
                     {stats.map((stat) => {
@@ -58,12 +56,14 @@ export default function AtAGlance({ stats }: AtAGlanceProps) {
                                 }}
                                 component={Link}
                                 href={stat.link ?? ""}
+                                target={stat.link && stat.link.startsWith("http") ? "_blank" : undefined}
+                                rel={stat.link && stat.link.startsWith("http") ? "noopener noreferrer" : undefined}
                             >
                                 <Typography
                                     sx={{
                                         color: "#000000",
                                         fontWeight: 700,
-                                        fontSize: {xs: 25, md: 36},
+                                        fontSize: { xs: 25, md: 36 },
                                         lineHeight: 1,
                                         fontVariantNumeric: "tabular-nums",
                                         display: "flex",
