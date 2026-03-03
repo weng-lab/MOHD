@@ -16,10 +16,6 @@ import AutoComplete from "../autocomplete";
 
 const pageLinks: PageInfo[] = [
     {
-        pageName: "Home",
-        link: "/",
-    },
-    {
         pageName: "Downloads",
         link: "/downloads",
     },
