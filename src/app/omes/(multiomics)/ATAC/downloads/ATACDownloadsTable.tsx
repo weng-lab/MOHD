@@ -216,7 +216,7 @@ const ATACDownloadsTable = ({
                     model: ["sample_id"],
                 },
             }}
-            divHeight={{ height: "800px", minHeight: isXs ? "none" : "800px" }}
+            divHeight={{ height: "650px", minHeight: isXs ? "none" : "650px" }}
             groupingColDef={groupingColDef}
             toolbarSlot={bulkDownloadToolbar}
         />

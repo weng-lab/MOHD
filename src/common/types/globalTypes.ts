@@ -17,3 +17,11 @@ export type OmeDetailsTab = {
     iconPath: string;
     route: string;
 }
+
+export type Site = "CCH" | "CKD" | "EXP" | "MOM" | "UIC";
+
+export type Status = "case" | "control" | "unknown";
+
+export type Sex = "male"  | "female";
+
+export type Protocol = "Buffy Coat" | "OPC" | "CPT";

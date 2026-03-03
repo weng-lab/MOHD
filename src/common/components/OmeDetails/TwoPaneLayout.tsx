@@ -1,4 +1,4 @@
-import { CloseFullscreenRounded, TableChartRounded } from "@mui/icons-material";
+import { CloseFullscreenRounded, TableChartRounded, OpenInFull } from "@mui/icons-material";
 import {
   Stack,
   Box,

@@ -197,7 +197,7 @@ const RNADownloadsTable = ({
                     model: ["sample_id"],
                 },
             }}
-            divHeight={{ maxHeight: "800px" }}
+            divHeight={{ maxHeight: "650px" }}
             groupingColDef={groupingColDef}
             toolbarSlot={bulkDownloadToolbar}
         />
