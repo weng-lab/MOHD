@@ -8,10 +8,9 @@ export default function Footer() {
     {
       title: "About us",
       links: [
-        { name: "MOHD Data Portal", href: "/about" },
+        { name: "MOHD Consortium", href: "https://www.mohdconsortium.org/home" },
         { name: "Weng Lab", href: "https://www.umassmed.edu/zlab/" },
         { name: "Moore Lab", href: "https://sites.google.com/view/moore-lab/" },
-        { name: "MOHD Consortium", href: "https://www.mohdconsortium.org/home" },
         { name: "UMass Chan Medical School", href: "https://www.umassmed.edu/" },
       ],
     },
@@ -33,9 +32,7 @@ export default function Footer() {
     {
       title: "Help",
       links: [
-        { name: "API Documentation", href: "/about#api-documentation" },
-        { name: "Citations", href: "/about#citations" },
-        { name: "Contact Us/Feedback", href: "/about#contact-us" },
+        { name: "Contact Us/Feedback", href: "/help" },
       ],
     },
   ];
@@ -50,9 +47,10 @@ export default function Footer() {
         zIndex: (theme) => theme.zIndex.appBar,
         color: "#fff",
         paddingX: 6,
+        paddingY: 2,
       }}
     >
-      <Grid container spacing={6} my={3}>
+      <Grid container spacing={6}>
         <Grid size={{ xs: 12, md: 4 }}>
           <Stack spacing={1} alignItems="flex-start">
             <Stack direction={"row"} alignItems={"flex-end"} spacing={2}>

@@ -1,5 +1,5 @@
 import { Box, Grid, Link, Typography } from "@mui/material";
-import ContactForm from "./ContactForms";
+import ContactForm from "./ContactForm1";
 
 export default function About() {
   return (
@@ -28,7 +28,7 @@ export default function About() {
               </Typography>
               <Link
                 display={"inline"}
-                href="https://github.com/weng-lab/SCREEN3.0/issues"
+                href="https://github.com/weng-lab/MOHD/issues"
                 target="_blank"
                 rel="noopener noreferrer"
               >
