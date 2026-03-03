@@ -93,6 +93,8 @@ export default function Footer() {
                       color="inherit"
                       width={"fit-content"}
                       variant="subtitle2"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       {link.name}
                     </LinkComponent>

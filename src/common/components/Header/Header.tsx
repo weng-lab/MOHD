@@ -159,6 +159,8 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                                 color="black"
                                 href={page.link}
                                 underline="none"
+                                target={page.link.startsWith("http") ? "_blank" : undefined}
+                                rel={page.link.startsWith("http") ? "noopener noreferrer" : undefined}
                             >
                                 {page.pageName}
                                 {page.subPages && <ArrowDropDownIcon />}
