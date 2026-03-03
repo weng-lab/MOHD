@@ -1,7 +1,7 @@
 import { GridColDef, GridGroupingColDefOverride, Table } from "@weng-lab/ui-components";
 import { RNADownloadsProps, RNAMetadata } from "./page";
 import { useMemo } from "react";
-import { Button, IconButton} from "@mui/material";
+import { Button, IconButton, Tooltip} from "@mui/material";
 import Config from "@/common/config.json";
 import DownloadIcon from '@mui/icons-material/Download';
 import Image from "next/image";
@@ -115,6 +115,18 @@ const RNADownloadsTable = ({
             sortable: false,
             filterable: false,
             renderCell: (params) => {
+                if (params.rowNode.type === "group") {
+                    return (
+                        <Tooltip title="Download all open-access files for this dataset" placement="left" arrow>
+                            <IconButton
+                                color="primary"
+                            >
+                                <DownloadIcon fontSize="medium" />
+                            </IconButton>
+                        </Tooltip>
+                    );
+                }
+
                 const { anvil_download, url } = params.row;
 
                 if (anvil_download) {
@@ -157,16 +169,18 @@ const RNADownloadsTable = ({
 
     const bulkDownloadToolbar = useMemo(() => {
         return (
-            <Button
-                variant="outlined"
-                color="primary"
-                startIcon={<DownloadIcon />}
-                onClick={(e) => {
-                    e.stopPropagation();
-                }}
-            >
-                Bulk Download
-            </Button>
+            <Tooltip title="Download all open-access files for all datasets" placement="left" arrow>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<DownloadIcon />}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                >
+                    Bulk Download
+                </Button>
+            </Tooltip>
         );
     }, []);
 
