@@ -1,5 +1,5 @@
 import { Box, Grid, Link, Typography } from "@mui/material";
-import ContactForm from "./ContactForm1";
+import ContactForm from "./temp";
 
 export default function About() {
   return (
