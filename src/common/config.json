@@ -3,6 +3,85 @@
     "MOHDAPI": "https://mohd-api-251345758618.us-east4.run.app/graphql"
   },
   "Downloads": {
+    "WGS": [
+      {
+        "type": "Sequenced Reads",
+        "filename": "[sample_id]_R1.fastq.gz",
+        "anvil_download": true
+        
+      },
+      {
+        "type": "Sequenced Reads",
+        "filename": "[sample_id]_R2.fastq.gz",
+        "anvil_download": true
+      },
+      {
+        "type": "Compressed Aligned Reads",
+        "filename": "[sample_id]_align_GRCh38_v0.cram",
+        "anvil_download": true
+      },
+      {
+        "type": "Reblocked gVCF",
+        "filename": "[sample_id]_reblock-gvcf_GRCh38_v0.vcf.gz",
+        "anvil_download": true
+      }
+    ],
+    "WGBS": [
+      {
+        "type": "Sequenced Reads",
+        "filename": "[sample_id]_R1.fastq.gz",
+        "anvil_download": true
+      },
+      {
+        "type": "Sequenced Reads",
+        "filename": "[sample_id]_R2.fastq.gz",
+        "anvil_download": true
+      },
+      {
+        "type": "Aligned Reads",
+        "filename": "[sample_id]_align_GRCh38_v0.bam",
+        "anvil_download": true
+      },
+      {
+        "type": "Pileup Signal Plus",
+        "filename": "[sample_id]_coverage-plus_GRCh38_v0.bigWig",
+        "anvil_download": false
+      },
+      {
+        "type": "Pileup Signal Minus",
+        "filename": "[sample_id]_coverage-minus_GRCh38_v0.bigWig",
+        "anvil_download": false
+      },
+      {
+        "type": "Methylation Estimation Signal Minus CHG Context",
+        "filename": "[sample_id]_DNAme-CHG-minus_GRCh38_v0.bigWig",
+        "anvil_download": false
+      },
+      {
+        "type": "Methylation Estimation Signal Plus CHG Context",
+        "filename": "[sample_id]_DNAme-CHG-plus_GRCh38_v0.bigWig",
+        "anvil_download": false
+      },
+       {
+        "type": "Methylation Estimation Signal Minus CHH Context",
+        "filename": "[sample_id]_DNAme-CHH-minus_GRCh38_v0.bigWig",
+        "anvil_download": false
+      },
+      {
+        "type": "Methylation Estimation Signal Plus CHH Context",
+        "filename": "[sample_id]-CHH-plus_GRCh38_v0.bigWig",
+        "anvil_download": false
+      }, {
+        "type": "Methylation Estimation Signal Minus CpG Context",
+        "filename": "[sample_id]_DNAme-CpG-minus_GRCh38_v0.bigWig",
+        "anvil_download": false
+      },
+      {
+        "type": "Methylation Estimation Signal Plus CpG Context",
+        "filename": "[sample_id]_DNAme-CpG-plus_GRCh38_v0.bigWig",
+        "anvil_download": false
+      }
+    ],
     "ATAC": [
       {
         "type": "sequenced reads",
