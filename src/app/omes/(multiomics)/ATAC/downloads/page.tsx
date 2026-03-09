@@ -21,8 +21,7 @@ const ATACDownloads = () => {
     const [protocol, setProtocol] = useState<Protocol[]>(["Buffy Coat", "OPC", "CPT"]);
 
     const ATACData = useATACData({ skip: false });
-
-    console.log("ATACData:", ATACData.data);
+    
 
     const rows: ATACMetadata = useMemo(() => {
         if (!ATACData.data) return [];
