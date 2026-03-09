@@ -1,56 +1,55 @@
+import { Button, IconButton, Tooltip } from "@mui/material";
 import { GridColDef, GridGroupingColDefOverride, Table } from "@weng-lab/ui-components";
-import { RNADownloadsProps, RNAMetadata } from "./page";
 import { useMemo, useState } from "react";
-import { Button, IconButton, Tooltip} from "@mui/material";
-import Config from "@/common/config.json";
-import DownloadIcon from '@mui/icons-material/Download';
 import Image from "next/image";
-import BulkDownloadModal from "@/common/components/Downloads/BulkDownloadModal";
+import DownloadIcon from '@mui/icons-material/Download';
+import { ApolloError } from "@apollo/client";
+import BulkDownloadModal from "./BulkDownloadModal";
 
-const groupingColDef: GridGroupingColDefOverride<RNAMetadata> = {
-    leafField: "sample_id",
-    headerName: "Dataset",
-    maxWidth: 400,
-    display: "flex",
-} as const;
+type BaseSample = {
+    sample_id: string;
+    site: string;
+    status: string;
+    sex: string;
+    protocol?: string;
+};
 
-type DownloadRow = RNAMetadata[number] & {
+type DownloadRow<T> = T & {
     file_type: string;
     filename: string;
     anvil_download: boolean;
     url?: string;
 };
 
-const RNADownloadsTable = ({
+type DownloadTableProps<T extends BaseSample> = {
+    rows: T[];
+    loading?: boolean;
+    error?: ApolloError;
+    buildRows: (rows: T[]) => DownloadRow<T>[];
+    label: string;
+    ome: string;
+};
+
+export function OmeDownloadTable<T extends BaseSample>({
     rows,
-    RNAData,
-}: RNADownloadsProps) => {
+    loading,
+    error,
+    buildRows,
+    label,
+    ome,
+}: DownloadTableProps<T>) {
     const [open, setOpen] = useState(false);
-    const { loading, error } = RNAData;
+    const expandedRows = useMemo(() => buildRows(rows), [rows, buildRows]);
 
-    const expandedRows: DownloadRow[] = useMemo(() => {
-        return rows.flatMap((sample) =>
-            Config.Downloads.RNA.map((download) => ({
-                ...sample,
-                file_type: download.type,
-                filename: download.filename.replace(
-                    "[sample_id]",
-                    sample.sample_id
-                ),
-                anvil_download: download.anvil_download,
-                url: download.url?.replace(
-                    "[sample_id]",
-                    sample.sample_id
-                ),
-            }))
-        );
-    }, [rows]);
+    const groupingColDef: GridGroupingColDefOverride<T> = {
+        leafField: "sample_id",
+        headerName: "Dataset",
+        maxWidth: 400,
+        display: "flex",
+    } as const;
 
-    const columns: GridColDef<DownloadRow>[] = [
-        {
-            field: "sample_id",
-            headerName: "Dataset",
-        },
+    const columns: GridColDef<DownloadRow<T>>[] = [
+        { field: "sample_id", headerName: "Dataset" },
         {
             field: "site",
             headerName: "Site",
@@ -58,15 +57,13 @@ const RNADownloadsTable = ({
                 if (params.rowNode.type === "group") {
                     const firstChild = params.api.getRow(
                         params.rowNode.children[0]
-                    ) as DownloadRow;
+                    ) as DownloadRow<T>;
 
                     return firstChild.site;
                 }
 
                 return params.value;
             },
-            type: "singleSelect",
-            valueOptions: Array.from(new Set(rows.map((row) => row.site))),
         },
         {
             field: "status",
@@ -75,15 +72,13 @@ const RNADownloadsTable = ({
                 if (params.rowNode.type === "group") {
                     const firstChild = params.api.getRow(
                         params.rowNode.children[0]
-                    ) as DownloadRow;
+                    ) as DownloadRow<T>;
 
                     return firstChild.status;
                 }
 
                 return params.value;
             },
-            type: "singleSelect",
-            valueOptions: Array.from(new Set(rows.map((row) => row.status))),
         },
         {
             field: "sex",
@@ -92,24 +87,16 @@ const RNADownloadsTable = ({
                 if (params.rowNode.type === "group") {
                     const firstChild = params.api.getRow(
                         params.rowNode.children[0]
-                    ) as DownloadRow;
+                    ) as DownloadRow<T>;
 
                     return firstChild.sex === "female" ? "F" : "M";
                 }
 
                 return params.value === "female" ? "F" : "M";
             },
-            type: "singleSelect",
-            valueOptions: Array.from(new Set(rows.map((row) => row.sex))),
         },
-        {
-            field: "file_type",
-            headerName: "Description",
-        },
-        {
-            field: "filename",
-            headerName: "Filename",
-        },
+        { field: "file_type", headerName: "Description" },
+        { field: "filename", headerName: "Filename" },
         {
             field: "download",
             headerName: "Download",
@@ -137,15 +124,12 @@ const RNADownloadsTable = ({
                             href="https://anvilproject.org/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            color="primary"
-                            onClick={(e) => e.stopPropagation()}
                         >
                             <Image
                                 src="/logo-mark-Anvil.png"
                                 alt="AnVIL"
                                 width={28}
                                 height={28}
-                                style={{ objectFit: "contain" }}
                             />
                         </IconButton>
                     );
@@ -154,18 +138,12 @@ const RNADownloadsTable = ({
                 if (!url) return null;
 
                 return (
-                    <IconButton
-                        component="a"
-                        href={url}
-                        download
-                        color="primary"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <DownloadIcon fontSize="medium" />
+                    <IconButton component="a" href={url} download>
+                        <DownloadIcon />
                     </IconButton>
                 );
             },
-        }
+        },
     ];
 
     const bulkDownloadToolbar = useMemo(() => {
@@ -189,24 +167,19 @@ const RNADownloadsTable = ({
     return (
         <>
             <Table
-                label={`Download RNA-seq Data`}
+                label={label}
                 rows={expandedRows}
                 columns={columns}
                 loading={loading}
                 error={!!error}
-                pageSizeOptions={[10, 25, 50]}
                 initialState={{
-                    rowGrouping: {
-                        model: ["sample_id"],
-                    },
+                    rowGrouping: { model: ["sample_id"] },
                 }}
                 divHeight={{ maxHeight: "650px" }}
                 groupingColDef={groupingColDef}
                 toolbarSlot={bulkDownloadToolbar}
             />
-            <BulkDownloadModal open={open} onClose={() => setOpen(false)} ome="RNA-seq" />
+            <BulkDownloadModal open={open} onClose={() => setOpen(false)} ome={ome} />
         </>
     );
 }
-
-export default RNADownloadsTable;
