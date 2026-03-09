@@ -1,17 +1,6 @@
-import { GridColDef, GridGroupingColDefOverride, Table } from "@weng-lab/ui-components";
 import { WGSDownloadsProps, RNAMetadata } from "./page";
-import { useMemo } from "react";
-import { Button, IconButton, Tooltip} from "@mui/material";
 import Config from "@/common/config.json";
-import DownloadIcon from '@mui/icons-material/Download';
-import Image from "next/image";
-
-const groupingColDef: GridGroupingColDefOverride<RNAMetadata> = {
-    leafField: "sample_id",
-    headerName: "Dataset",
-    maxWidth: 400,
-    display: "flex",
-} as const;
+import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
 
 type DownloadRow = RNAMetadata[number] & {
     file_type: string;
@@ -27,177 +16,31 @@ const WGSDownloadsTable = ({
 
     const { loading, error } = RNAData;
 
-    const expandedRows: DownloadRow[] = useMemo(() => {
+    const buildWGSRows = (
+        rows: RNAMetadata[number][]
+    ): DownloadRow[] => {
         return rows.flatMap((sample) =>
             Config.Downloads.WGS.map((download) => ({
                 ...sample,
-                sample_id: sample.sample_id.replace("ER","EG"),
+                sample_id: sample.sample_id.replace("ER", "EG"),
                 file_type: download.type,
                 filename: download.filename.replace(
                     "[sample_id]",
-                    sample.sample_id.replace("ER","EG")
+                    sample.sample_id.replace("ER", "EG")
                 ),
                 anvil_download: download.anvil_download,
-                
             }))
         );
-    }, [rows]);
-
-    const columns: GridColDef<DownloadRow>[] = [
-        {
-            field: "sample_id",
-            headerName: "Dataset",
-        },
-        {
-            field: "site",
-            headerName: "Site",
-            renderCell: (params) => {
-                if (params.rowNode.type === "group") {
-                    const firstChild = params.api.getRow(
-                        params.rowNode.children[0]
-                    ) as DownloadRow;
-
-                    return firstChild.site;
-                }
-
-                return params.value;
-            },
-            type: "singleSelect",
-            valueOptions: Array.from(new Set(rows.map((row) => row.site))),
-        },
-        {
-            field: "status",
-            headerName: "Status",
-            renderCell: (params) => {
-                if (params.rowNode.type === "group") {
-                    const firstChild = params.api.getRow(
-                        params.rowNode.children[0]
-                    ) as DownloadRow;
-
-                    return firstChild.status;
-                }
-
-                return params.value;
-            },
-            type: "singleSelect",
-            valueOptions: Array.from(new Set(rows.map((row) => row.status))),
-        },
-        {
-            field: "sex",
-            headerName: "Sex",
-            renderCell: (params) => {
-                if (params.rowNode.type === "group") {
-                    const firstChild = params.api.getRow(
-                        params.rowNode.children[0]
-                    ) as DownloadRow;
-
-                    return firstChild.sex === "female" ? "F" : "M";
-                }
-
-                return params.value === "female" ? "F" : "M";
-            },
-            type: "singleSelect",
-            valueOptions: Array.from(new Set(rows.map((row) => row.sex))),
-        },
-        {
-            field: "file_type",
-            headerName: "Description",
-        },
-        {
-            field: "filename",
-            headerName: "Filename",
-        },
-        {
-            field: "download",
-            headerName: "Download",
-            sortable: false,
-            filterable: false,
-            renderCell: (params) => {
-                if (params.rowNode.type === "group") {
-                    return (
-                        <Tooltip title="Download all open-access files for this dataset" placement="left" arrow>
-                            <IconButton
-                                color="primary"
-                            >
-                                <DownloadIcon fontSize="medium" />
-                            </IconButton>
-                        </Tooltip>
-                    );
-                }
-
-                const { anvil_download, url } = params.row;
-
-                if (anvil_download) {
-                    return (
-                        <IconButton
-                            component="a"
-                            href="https://anvilproject.org/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            color="primary"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <Image
-                                src="/logo-mark-Anvil.png"
-                                alt="AnVIL"
-                                width={28}
-                                height={28}
-                                style={{ objectFit: "contain" }}
-                            />
-                        </IconButton>
-                    );
-                }
-
-                if (!url) return null;
-
-                return (
-                    <IconButton
-                        component="a"
-                        href={url}
-                        download
-                        color="primary"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <DownloadIcon fontSize="medium" />
-                    </IconButton>
-                );
-            },
-        }
-    ];
-
-    const bulkDownloadToolbar = useMemo(() => {
-        return (
-            <Tooltip title="Download all open-access files for all datasets" placement="left" arrow>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<DownloadIcon />}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                    }}
-                >
-                    Bulk Download
-                </Button>
-            </Tooltip>
-        );
-    }, []);
+    };
 
     return (
-        <Table
-            label={`Download WGS Data`}
-            rows={expandedRows}
-            columns={columns}
+        <OmeDownloadTable
+            label="Download WGS Data"
+            rows={rows}
             loading={loading}
-            error={!!error}
-            pageSizeOptions={[10, 25, 50]}
-            initialState={{
-                rowGrouping: {
-                    model: ["sample_id"],
-                },
-            }}
-            divHeight={{ maxHeight: "650px" }}
-            groupingColDef={groupingColDef}
-            toolbarSlot={bulkDownloadToolbar}
+            error={error}
+            buildRows={buildWGSRows}
+            ome="WGS"
         />
     );
 }

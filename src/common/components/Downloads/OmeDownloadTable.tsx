@@ -95,6 +95,25 @@ export function OmeDownloadTable<T extends BaseSample>({
                 return params.value === "female" ? "F" : "M";
             },
         },
+        ...(expandedRows.some((row) => row.protocol)
+            ? [
+                {
+                    field: "protocol",
+                    headerName: "Protocol",
+                    renderCell: (params) => {
+                        if (params.rowNode.type === "group") {
+                            const firstChild = params.api.getRow(
+                                params.rowNode.children[0]
+                            ) as DownloadRow<T>;
+
+                            return firstChild.protocol;
+                        }
+
+                        return params.value;
+                    },
+                } as GridColDef<DownloadRow<T>>,
+            ]
+            : []),
         { field: "file_type", headerName: "Description" },
         { field: "filename", headerName: "Filename" },
         {
@@ -138,7 +157,7 @@ export function OmeDownloadTable<T extends BaseSample>({
                 if (!url) return null;
 
                 return (
-                    <IconButton component="a" href={url} download>
+                    <IconButton component="a" href={url} download color="primary">
                         <DownloadIcon />
                     </IconButton>
                 );

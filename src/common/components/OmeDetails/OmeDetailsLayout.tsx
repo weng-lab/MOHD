@@ -59,6 +59,7 @@ export const OME_TABS: Record<OmesDataType, OmeDetailsTab[]> = {
     exposomics: [
         { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
         { label: "Heatmap", iconPath: logo, route: "heatmap" },
+        { label: "Downloads", iconPath: logo, route: "downloads" },
     ],
 
     metallomics: [
