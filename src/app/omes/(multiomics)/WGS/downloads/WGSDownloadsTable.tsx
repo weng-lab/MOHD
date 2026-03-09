@@ -38,10 +38,7 @@ const WGSDownloadsTable = ({
                     sample.sample_id.replace("ER","EG")
                 ),
                 anvil_download: download.anvil_download,
-                url: download.url?.replace(
-                    "[sample_id]",
-                    sample.sample_id.replace("ER","EG")
-                ),
+                
             }))
         );
     }, [rows]);
