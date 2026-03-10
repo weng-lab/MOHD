@@ -1,61 +1,39 @@
 "use client";
-import { useMemo, useState } from "react"
-import { useATACData, UseATACDataReturn } from "@/common/hooks/omeHooks/useATACData";
+import { useATACData } from "@/common/hooks/omeHooks/useATACData";
 import ATACDownloadsTable from "./ATACDownloadsTable";
-import { Site, Status, Sex, Protocol } from "@/common/types/globalTypes";
-import OmeDownloadsControls from "@/common/components/OmeDownloadsControls";
-import { Stack } from "@mui/system";
+import { Protocol, Sex, Site, Status } from "@/common/types/globalTypes";
+import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 
-export type ATACMetadata =
-    NonNullable<UseATACDataReturn["data"]>;
-
-export type ATACDownloadsProps = {
-    rows: ATACMetadata;
-    ATACData: UseATACDataReturn;
-}
+const ATACDescriptions = [
+  "sequenced reads",
+  "aligned reads",
+  "fold change signal",
+  "p-value signal",
+  "FDR 0.05 peaks",
+  "pseudorep peaks",
+];
 
 const ATACDownloads = () => {
-    const [site, setSite] = useState<Site[]>(["CCH", "CKD", "EXP", "MOM", "UIC"]);
-    const [status, setStatus] = useState<Status[]>(["case", "control", "unknown"]);
-    const [sex, setSex] = useState<Sex[]>(["male", "female"]);
-    const [protocol, setProtocol] = useState<Protocol[]>(["Buffy Coat", "OPC", "CPT"]);
+  const ATACData = useATACData({ skip: false });
 
-    const ATACData = useATACData({ skip: false });
-    
+  const rows = ATACData.data ?? [];
 
-    const rows: ATACMetadata = useMemo(() => {
-        if (!ATACData.data) return [];
-        return ATACData.data.filter((row) =>
-            site.includes(row.site as Site) &&
-            status.includes(row.status as Status) &&
-            sex.includes(row.sex as Sex) &&
-            protocol.includes(row.protocol.replace(" method", "") as Protocol)
-        );
-    }, [ATACData.data, protocol, sex, site, status]);
-
-    const SharedATACDownloadsProps: ATACDownloadsProps = useMemo(
-        () => ({
-            rows,
-            ATACData,
-        }),
-        [ATACData, rows]
-    );
-
-    return (
-        <Stack direction="column" spacing={2}>
-            <OmeDownloadsControls
-                site={site}
-                status={status}
-                sex={sex}
-                protocol={protocol}
-                setSite={setSite}
-                setStatus={setStatus}
-                setSex={setSex}
-                setProtocol={setProtocol}
-            />
-            <ATACDownloadsTable {...SharedATACDownloadsProps} />
-        </Stack>
-    )
-}
+  return (
+    <OmeDownloadLayout
+      rows={rows}
+      descriptions={ATACDescriptions}
+      includeProtocolFilter
+      getFilterFields={(row) => ({
+        site: row.site as Site,
+        status: row.status as Status,
+        sex: row.sex as Sex,
+        protocol: row.protocol?.replace(" method", "") as Protocol,
+      })}
+      renderTable={(filteredRows) => (
+        <ATACDownloadsTable rows={filteredRows} ATACData={ATACData} />
+      )}
+    />
+  );
+};
 
 export default ATACDownloads;

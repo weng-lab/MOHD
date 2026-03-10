@@ -1,6 +1,9 @@
-import { WGSDownloadsProps, RNAMetadata } from "./page";
 import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
+import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
+
+type RNAMetadata =
+    NonNullable<UseRNADataReturn["data"]>;
 
 type DownloadRow = RNAMetadata[number] & {
     file_type: string;
@@ -8,6 +11,11 @@ type DownloadRow = RNAMetadata[number] & {
     anvil_download: boolean;
     url?: string;
 };
+
+type WGSDownloadsProps = {
+    rows: RNAMetadata;
+    RNAData: UseRNADataReturn;
+}
 
 const WGSDownloadsTable = ({
     rows,

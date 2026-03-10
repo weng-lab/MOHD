@@ -1,6 +1,14 @@
-import { LipidomicsDownloadsProps, RNAMetadata } from "./page";
 import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
+import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
+
+type RNAMetadata =
+    NonNullable<UseRNADataReturn["data"]>;
+
+type LipidomicsDownloadsProps = {
+    rows: RNAMetadata;
+    RNAData: UseRNADataReturn;
+}
 
 type DownloadRow = RNAMetadata[number] & {
     file_type: string;

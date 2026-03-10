@@ -6,10 +6,13 @@ type OmeDownloadsControlsProps = {
     site: Site[];
     status: Status[];
     sex: Sex[];
+    description: string[];
+    descriptions: string[];
     protocol?: Protocol[];
     setSite: React.Dispatch<React.SetStateAction<Site[]>>;
     setStatus: React.Dispatch<React.SetStateAction<Status[]>>;
     setSex: React.Dispatch<React.SetStateAction<Sex[]>>;
+    setDescription: React.Dispatch<React.SetStateAction<string[]>>;
     setProtocol?: React.Dispatch<React.SetStateAction<Protocol[]>>;
 };
 
@@ -131,6 +134,26 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                         </ToggleButtonGroup>
                     </FormControl>
                 )}
+                <FormControl>
+                    <FormLabel>Description</FormLabel>
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={props.description}
+                        onChange={(_event, value) => {
+                            if (value !== null) {
+                                props.setDescription(value);
+                            }
+                        }}
+                        aria-label="View By"
+                        size="small"
+                    >
+                        {props.descriptions.map((desc) => (
+                            <ToggleButton key={desc} sx={{ textTransform: "none" }} value={desc}>
+                                {desc.charAt(0).toUpperCase() + desc.slice(1)}
+                            </ToggleButton>
+                        ))}
+                    </ToggleButtonGroup>
+                </FormControl>
             </Stack>
         </Box>
     );

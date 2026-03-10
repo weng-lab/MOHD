@@ -1,6 +1,9 @@
-import { ATACDownloadsProps, ATACMetadata } from "./page";
 import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
+import { UseATACDataReturn } from "@/common/hooks/omeHooks/useATACData";
+
+type ATACMetadata =
+    NonNullable<UseATACDataReturn["data"]>;
 
 type DownloadRow = ATACMetadata[number] & {
     file_type: string;
@@ -8,6 +11,11 @@ type DownloadRow = ATACMetadata[number] & {
     anvil_download: boolean;
     url?: string;
 };
+
+type ATACDownloadsProps = {
+    rows: ATACMetadata;
+    ATACData: UseATACDataReturn;
+}
 
 const ATACDownloadsTable = ({
     rows,
