@@ -1,4 +1,4 @@
-import { Typography, FormControl, FormLabel, ToggleButtonGroup, ToggleButton } from "@mui/material";
+import { Typography, FormControl, FormLabel, ToggleButtonGroup, ToggleButton, Autocomplete, TextField } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { Site, Status, Sex, Protocol } from "../../common/types/globalTypes";
 
@@ -137,23 +137,24 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                 {props.descriptions.length > 0 && (
                     <FormControl>
                         <FormLabel>Description</FormLabel>
-                        <ToggleButtonGroup
-                            color="primary"
-                            value={props.description}
-                            onChange={(_event, value) => {
-                                if (value !== null) {
-                                    props.setDescription(value);
-                                }
-                            }}
-                            aria-label="View By"
+                        <Autocomplete
+                            multiple
                             size="small"
-                        >
-                            {props.descriptions.map((desc) => (
-                                <ToggleButton key={desc} sx={{ textTransform: "none" }} value={desc}>
-                                    {desc.charAt(0).toUpperCase() + desc.slice(1)}
-                                </ToggleButton>
-                            ))}
-                        </ToggleButtonGroup>
+                            options={props.descriptions}
+                            value={props.description}
+                            onChange={(_, value) => props.setDescription(value)}
+                            limitTags={2}
+                            renderInput={(params) => <TextField {...params} />}
+                            sx={{
+                                maxWidth: 600,
+                                minWidth: 250,
+                                height: "38.75px",
+                                "& .MuiAutocomplete-inputRoot": {
+                                    flexWrap: "nowrap",
+                                    overflow: "hidden",
+                                },
+                            }}
+                        />
                     </FormControl>
                 )}
             </Stack>
