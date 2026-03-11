@@ -49,7 +49,21 @@ export function OmeDownloadTable<T extends BaseSample>({
     } as const;
 
     const columns: GridColDef<DownloadRow<T>>[] = [
-        { field: "sample_id", headerName: "Dataset" },
+        { 
+            field: "sample_id",
+            headerName: "Dataset",
+            renderCell: (params) => {
+                if (params.rowNode.type === "group") {
+                    const firstChild = params.api.getRow(
+                        params.rowNode.children[0]
+                    ) as DownloadRow<T>;
+
+                    return firstChild.sample_id;
+                }
+
+                return null;
+            }
+        },
         {
             field: "site",
             headerName: "Site",
@@ -62,8 +76,8 @@ export function OmeDownloadTable<T extends BaseSample>({
                     return firstChild.site;
                 }
 
-                return params.value;
-            },
+                return null;
+            }
         },
         {
             field: "status",
@@ -77,7 +91,7 @@ export function OmeDownloadTable<T extends BaseSample>({
                     return firstChild.status;
                 }
 
-                return params.value;
+                return null;
             },
         },
         {
@@ -92,7 +106,7 @@ export function OmeDownloadTable<T extends BaseSample>({
                     return firstChild.sex === "female" ? "F" : "M";
                 }
 
-                return params.value === "female" ? "F" : "M";
+                return null;
             },
         },
         ...(expandedRows.some((row) => row.protocol)
@@ -109,7 +123,7 @@ export function OmeDownloadTable<T extends BaseSample>({
                             return firstChild.protocol;
                         }
 
-                        return params.value;
+                        return null;
                     },
                 } as GridColDef<DownloadRow<T>>,
             ]
