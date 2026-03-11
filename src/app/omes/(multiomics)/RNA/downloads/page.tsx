@@ -5,8 +5,6 @@ import { Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 
 const RNADescriptions = [
-    "sequenced reads",
-    "aligned reads",
     "gene quantifications",
     "isoform quantifications",
     "all signal minus",

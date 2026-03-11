@@ -5,14 +5,15 @@ import { Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 
 const WGBSDescriptions = [
-    "sequenced reads",
-    "aligned reads",
-    "gene quantifications",
-    "isoform quantifications",
-    "all signal minus",
-    "unique signal minus",
-    "all signal plus",
-    "unique signal plus"
+    "cytosine-level DNA methylation measurements",
+    "pileup signal minus",
+    "pileup signal plus",
+    "methylation estimation signal minus CHG context",
+    "methylation estimation signal plus CHG context",
+    "methylation estimation signal minus CHH context",
+    "methylation estimation signal plus CHH context",
+    "methylation estimation signal minus CpG context",
+    "methylation estimation signal plus CpG context",
 ];
 
 const WGBSDownloads = () => {

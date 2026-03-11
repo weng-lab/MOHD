@@ -5,8 +5,6 @@ import { Protocol, Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 
 const ATACDescriptions = [
-  "sequenced reads",
-  "aligned reads",
   "fold change signal",
   "p-value signal",
   "FDR 0.05 peaks",

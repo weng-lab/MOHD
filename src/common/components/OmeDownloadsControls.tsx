@@ -32,7 +32,7 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
             <Typography variant="body1" component="h2">
                 <strong>Filter Downloadable Files</strong>
             </Typography>
-            <Stack direction={"row"} spacing={2} flexWrap={"wrap"}>
+            <Stack direction={"row"} spacing={2} flexWrap={"wrap"} useFlexGap>
                 <FormControl>
                     <FormLabel>Site</FormLabel>
                     <ToggleButtonGroup
@@ -134,26 +134,28 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                         </ToggleButtonGroup>
                     </FormControl>
                 )}
-                <FormControl>
-                    <FormLabel>Description</FormLabel>
-                    <ToggleButtonGroup
-                        color="primary"
-                        value={props.description}
-                        onChange={(_event, value) => {
-                            if (value !== null) {
-                                props.setDescription(value);
-                            }
-                        }}
-                        aria-label="View By"
-                        size="small"
-                    >
-                        {props.descriptions.map((desc) => (
-                            <ToggleButton key={desc} sx={{ textTransform: "none" }} value={desc}>
-                                {desc.charAt(0).toUpperCase() + desc.slice(1)}
-                            </ToggleButton>
-                        ))}
-                    </ToggleButtonGroup>
-                </FormControl>
+                {props.descriptions.length > 0 && (
+                    <FormControl>
+                        <FormLabel>Description</FormLabel>
+                        <ToggleButtonGroup
+                            color="primary"
+                            value={props.description}
+                            onChange={(_event, value) => {
+                                if (value !== null) {
+                                    props.setDescription(value);
+                                }
+                            }}
+                            aria-label="View By"
+                            size="small"
+                        >
+                            {props.descriptions.map((desc) => (
+                                <ToggleButton key={desc} sx={{ textTransform: "none" }} value={desc}>
+                                    {desc.charAt(0).toUpperCase() + desc.slice(1)}
+                                </ToggleButton>
+                            ))}
+                        </ToggleButtonGroup>
+                    </FormControl>
+                )}
             </Stack>
         </Box>
     );

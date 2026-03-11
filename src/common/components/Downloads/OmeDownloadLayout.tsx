@@ -13,7 +13,7 @@ type FilterFields = {
 
 export type OmeDownloadLayoutProps<T> = {
   rows: T[];
-  descriptions: string[];
+  descriptions?: string[];
   includeProtocolFilter?: boolean;
   getFilterFields: (row: T) => FilterFields;
   renderTable: (rows: T[]) => React.ReactNode;
@@ -21,7 +21,7 @@ export type OmeDownloadLayoutProps<T> = {
 
 const OmeDownloadLayout = <T,>({
   rows,
-  descriptions,
+  descriptions = [],
   includeProtocolFilter = false,
   getFilterFields,
   renderTable,
