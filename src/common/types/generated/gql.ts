@@ -15,6 +15,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\nquery fetchATACMetadata {\n  atac_metadata {\n    sample_id\n    status\n    site\n    sex\n    protocol\n    umap_x\n    umap_y\n    opc_id\n  }\n}\n ": typeof types.FetchAtacMetadataDocument,
+    "\nquery fetchExposomicsMetadata {\n  exposomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": typeof types.FetchExposomicsMetadataDocument,
+    "\nquery fetchLipidomicsMetadata {\n  lipidomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": typeof types.FetchLipidomicsMetadataDocument,
+    "\nquery fetchMetabolomicsMetadata {\n  metabolomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": typeof types.FetchMetabolomicsMetadataDocument,
+    "\nquery fetchProteomicsMetadata {\n  proteomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": typeof types.FetchProteomicsMetadataDocument,
     "\nquery fetchRNAMetadata {\n  rna_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n    umap_x\n    umap_y\n  }\n}\n ": typeof types.FetchRnaMetadataDocument,
     "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": typeof types.FetchWgbsMetadataDocument,
     "\nquery fetchWGSMetadata {\n  wgs_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n  }\n}\n ": typeof types.FetchWgsMetadataDocument,
@@ -22,6 +26,10 @@ type Documents = {
 };
 const documents: Documents = {
     "\nquery fetchATACMetadata {\n  atac_metadata {\n    sample_id\n    status\n    site\n    sex\n    protocol\n    umap_x\n    umap_y\n    opc_id\n  }\n}\n ": types.FetchAtacMetadataDocument,
+    "\nquery fetchExposomicsMetadata {\n  exposomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": types.FetchExposomicsMetadataDocument,
+    "\nquery fetchLipidomicsMetadata {\n  lipidomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": types.FetchLipidomicsMetadataDocument,
+    "\nquery fetchMetabolomicsMetadata {\n  metabolomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": types.FetchMetabolomicsMetadataDocument,
+    "\nquery fetchProteomicsMetadata {\n  proteomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": types.FetchProteomicsMetadataDocument,
     "\nquery fetchRNAMetadata {\n  rna_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n    umap_x\n    umap_y\n  }\n}\n ": types.FetchRnaMetadataDocument,
     "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": types.FetchWgbsMetadataDocument,
     "\nquery fetchWGSMetadata {\n  wgs_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n  }\n}\n ": types.FetchWgsMetadataDocument,
@@ -46,6 +54,22 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nquery fetchATACMetadata {\n  atac_metadata {\n    sample_id\n    status\n    site\n    sex\n    protocol\n    umap_x\n    umap_y\n    opc_id\n  }\n}\n "): (typeof documents)["\nquery fetchATACMetadata {\n  atac_metadata {\n    sample_id\n    status\n    site\n    sex\n    protocol\n    umap_x\n    umap_y\n    opc_id\n  }\n}\n "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery fetchExposomicsMetadata {\n  exposomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "): (typeof documents)["\nquery fetchExposomicsMetadata {\n  exposomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery fetchLipidomicsMetadata {\n  lipidomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "): (typeof documents)["\nquery fetchLipidomicsMetadata {\n  lipidomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery fetchMetabolomicsMetadata {\n  metabolomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "): (typeof documents)["\nquery fetchMetabolomicsMetadata {\n  metabolomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery fetchProteomicsMetadata {\n  proteomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "): (typeof documents)["\nquery fetchProteomicsMetadata {\n  proteomics_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

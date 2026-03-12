@@ -9,7 +9,6 @@ const WGSDownloads = () => {
 
     const WGSData = useWGSData({ skip: false });
     const { data: downloadFiles, loading } = useOmeDownloadFiles("WGS");
-    console.log(downloadFiles)
 
     const rows = WGSData.data ?? [];
 

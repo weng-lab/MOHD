@@ -1,43 +1,38 @@
-import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
-import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
+import { UseExposomicsDataReturn } from "@/common/hooks/omeHooks/useExposomicsData";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
-type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
+type ExposomicsMetadata =
+    NonNullable<UseExposomicsDataReturn["data"]>;
 
-type DownloadRow = RNAMetadata[number] & {
-    file_type: string;
-    filename: string;
-    anvil_download: boolean;
-    url?: string;
-};
+type DownloadRow = ExposomicsMetadata[number] & DownloadFile;
 
 type ExposomicsDownloadsProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
+    rows: ExposomicsMetadata;
+    ExposomicsData: UseExposomicsDataReturn;
+    files: DownloadFile[];
+    loadingFiles: boolean;
 }
 
 const ExposomicsDownloadsTable = ({
     rows,
-    RNAData,
+    ExposomicsData,
+    files,
+    loadingFiles,
 }: ExposomicsDownloadsProps) => {
 
-    const { loading, error } = RNAData;
+    const { loading, error } = ExposomicsData;
 
     const buildExposomicsRows = (
-        rows: RNAMetadata[number][]
+        rows: ExposomicsMetadata[number][]
     ): DownloadRow[] => {
         return rows.flatMap((sample) =>
-            Config.Downloads.Exposomics.map((download) => ({
-                ...sample,
-                sample_id: sample.sample_id.replace("ER", "EE"),
-                file_type: download.type,
-                filename: download.filename.replace(
-                    "[sample_id]",
-                    sample.sample_id.replace("ER", "EE")
-                ),
-                anvil_download: download.anvil_download
-            }))
+            files
+                .filter((file) => file.sample_id === sample.sample_id)
+                .map((file) => ({
+                    ...sample,
+                    ...file,
+                }))
         );
     };
 
@@ -45,7 +40,7 @@ const ExposomicsDownloadsTable = ({
         <OmeDownloadTable
             label="Download Exposomics Data"
             rows={rows}
-            loading={loading}
+            loading={loading || loadingFiles}
             error={error}
             buildRows={buildExposomicsRows}
             ome="Exposomics"

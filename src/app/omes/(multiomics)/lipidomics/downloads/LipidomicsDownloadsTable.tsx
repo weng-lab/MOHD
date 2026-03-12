@@ -1,43 +1,38 @@
-import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
-import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
+import { UseLipidomicsDataReturn } from "@/common/hooks/omeHooks/useLipidomicsData";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
-type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
+type LipidomicsMetadata =
+    NonNullable<UseLipidomicsDataReturn["data"]>;
 
 type LipidomicsDownloadsProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
+    rows: LipidomicsMetadata;
+    LipidomicsData: UseLipidomicsDataReturn;
+    files: DownloadFile[];
+    loadingFiles: boolean;
 }
 
-type DownloadRow = RNAMetadata[number] & {
-    file_type: string;
-    filename: string;
-    anvil_download: boolean;
-    url?: string;
-};
+type DownloadRow = LipidomicsMetadata[number] & DownloadFile;
 
 const LipidomicsDownloadsTable = ({
     rows,
-    RNAData,
+    LipidomicsData,
+    files,
+    loadingFiles,
 }: LipidomicsDownloadsProps) => {
 
-    const { loading, error } = RNAData;
+    const { loading, error } = LipidomicsData;
 
     const buildLipidomicsRows = (
-        rows: RNAMetadata[number][]
+        rows: LipidomicsMetadata[number][]
     ): DownloadRow[] => {
         return rows.flatMap((sample) =>
-            Config.Downloads.Lipidomics.map((download) => ({
-                ...sample,
-                sample_id: sample.sample_id.replace("ER", "EL"),
-                file_type: download.type,
-                filename: download.filename.replace(
-                    "[sample_id]",
-                    sample.sample_id.replace("ER", "EL")
-                ),
-                anvil_download: download.anvil_download
-            }))
+            files
+                .filter((file) => file.sample_id === sample.sample_id)
+                .map((file) => ({
+                    ...sample,
+                    ...file,
+                }))
         );
     };
 
@@ -45,7 +40,7 @@ const LipidomicsDownloadsTable = ({
         <OmeDownloadTable
             label="Download Lipidomics Data"
             rows={rows}
-            loading={loading}
+            loading={loading || loadingFiles}
             error={error}
             buildRows={buildLipidomicsRows}
             ome="Lipidomics"

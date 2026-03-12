@@ -1,43 +1,38 @@
-import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
-import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
+import { UseProteomicsDataReturn } from "@/common/hooks/omeHooks/useProteomicsData";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
-type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
+type ProteomicsMetadata =
+    NonNullable<UseProteomicsDataReturn["data"]>;
 
-type DownloadRow = RNAMetadata[number] & {
-    file_type: string;
-    filename: string;
-    anvil_download: boolean;
-    url?: string;
-};
+type DownloadRow = ProteomicsMetadata[number] & DownloadFile;
 
 type ProteomicsDownloadsProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
+    rows: ProteomicsMetadata;
+    ProteomicsData: UseProteomicsDataReturn;
+    files: DownloadFile[];
+    loadingFiles: boolean;
 }
 
 const ProteomicsDownloadsTable = ({
     rows,
-    RNAData,
+    ProteomicsData,
+    files,
+    loadingFiles,
 }: ProteomicsDownloadsProps) => {
 
-    const { loading, error } = RNAData;
+    const { loading, error } = ProteomicsData;
 
     const buildProteomicsRows = (
-        rows: RNAMetadata[number][]
+        rows: ProteomicsMetadata[number][]
     ): DownloadRow[] => {
         return rows.flatMap((sample) =>
-            Config.Downloads.Proteomics.map((download) => ({
-                ...sample,
-                sample_id: sample.sample_id.replace("ER", "EP"),
-                file_type: download.type,
-                filename: download.filename.replace(
-                    "[sample_id]",
-                    sample.sample_id.replace("ER", "EP")
-                ),
-                anvil_download: download.anvil_download
-            }))
+            files
+                .filter((file) => file.sample_id === sample.sample_id)
+                .map((file) => ({
+                    ...sample,
+                    ...file,
+                }))
         );
     };
 
@@ -45,7 +40,7 @@ const ProteomicsDownloadsTable = ({
         <OmeDownloadTable
             label="Download Proteomics Data"
             rows={rows}
-            loading={loading}
+            loading={loading || loadingFiles}
             error={error}
             buildRows={buildProteomicsRows}
             ome="Proteomics"

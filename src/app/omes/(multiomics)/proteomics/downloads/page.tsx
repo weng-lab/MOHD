@@ -1,25 +1,33 @@
 "use client";
-import { useRNAData } from "@/common/hooks/omeHooks/useRNAData";
 import ProteomicsDownloadsTable from "./ProteomicsDownloadsTable";
 import { Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
+import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
+import { useProteomicsData } from "@/common/hooks/omeHooks/useProteomicsData";
 
 const ProteomicsDownloads = () => {
 
-    const RNAData = useRNAData({ skip: false });
+    const ProteomicsData = useProteomicsData({ skip: false });
+    const { data: downloadFiles, loading } = useOmeDownloadFiles("PROTEOMICS");
 
-    const rows = RNAData.data ?? [];
+    const rows = ProteomicsData.data ?? [];
 
     return (
         <OmeDownloadLayout
             rows={rows}
+            downloadFiles={downloadFiles}
             getFilterFields={(row) => ({
                 site: row.site as Site,
                 status: row.status as Status,
                 sex: row.sex as Sex,
             })}
-            renderTable={(filteredRows) => (
-                <ProteomicsDownloadsTable rows={filteredRows} RNAData={RNAData} />
+            renderTable={(filteredRows, filteredDownloadFiles) => (
+                <ProteomicsDownloadsTable 
+                    rows={filteredRows} 
+                    ProteomicsData={ProteomicsData} 
+                    files={filteredDownloadFiles}
+                    loadingFiles={loading}
+                />
             )}
         />
     )
