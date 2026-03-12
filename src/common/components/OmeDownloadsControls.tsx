@@ -1,6 +1,7 @@
-import { Typography, FormControl, FormLabel, ToggleButtonGroup, ToggleButton, Autocomplete, TextField } from "@mui/material";
+import { Typography, FormControl, FormLabel, ToggleButtonGroup, ToggleButton, Autocomplete, TextField, Button } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { Site, Status, Sex, Protocol } from "../../common/types/globalTypes";
+import ClearIcon from '@mui/icons-material/Clear';
 
 type OmeDownloadsControlsProps = {
     site: Site[];
@@ -17,6 +18,19 @@ type OmeDownloadsControlsProps = {
 };
 
 const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
+
+    const resetFilters = () => {
+        props.setSite(["CCH", "CKD", "EXP", "MOM", "UIC"]);
+        props.setStatus(["case", "control", "unknown"]);
+        props.setSex(["male", "female"]);
+
+        if (props.setProtocol) {
+            props.setProtocol(["Buffy Coat", "OPC", "CPT"]);
+        }
+
+        props.setDescription(props.descriptions);
+    };
+
     return (
         <Box
             sx={{
@@ -29,9 +43,32 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                 gap: 2,
             }}
         >
-            <Typography variant="body1" component="h2">
-                <strong>Filter Downloadable Files</strong>
-            </Typography>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                }}
+            >
+                <Typography variant="body1" component="h2">
+                    <strong>Filter Downloadable Files</strong>
+                </Typography>
+
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<ClearIcon />}
+                    onClick={() => { resetFilters() }}
+                    disabled={
+                        props.site.length === 5 &&
+                        props.status.length === 3 &&
+                        props.sex.length === 2 &&
+                        props.description.length === props.descriptions.length
+                    }
+                >
+                    Reset Filters
+                </Button>
+            </Box>
             <Stack direction={"row"} spacing={2} flexWrap={"wrap"} useFlexGap>
                 <FormControl>
                     <FormLabel>Site</FormLabel>

@@ -1,43 +1,38 @@
-import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
-import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
+import { UseWGSDataReturn } from "@/common/hooks/omeHooks/useWGSData";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
-type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
+type WGSMetadata =
+    NonNullable<UseWGSDataReturn["data"]>;
 
-type DownloadRow = RNAMetadata[number] & {
-    file_type: string;
-    filename: string;
-    anvil_download: boolean;
-    url?: string;
-};
+type DownloadRow = WGSMetadata[number] & DownloadFile;
 
 type WGSDownloadsProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
+    rows: WGSMetadata;
+    WGSData: UseWGSDataReturn;
+    files: DownloadFile[];
+    loadingFiles: boolean;
 }
 
 const WGSDownloadsTable = ({
     rows,
-    RNAData,
+    WGSData,
+    files,
+    loadingFiles,
 }: WGSDownloadsProps) => {
 
-    const { loading, error } = RNAData;
+    const { loading, error } = WGSData;
 
     const buildWGSRows = (
-        rows: RNAMetadata[number][]
+        rows: WGSMetadata[number][]
     ): DownloadRow[] => {
         return rows.flatMap((sample) =>
-            Config.Downloads.WGS.map((download) => ({
-                ...sample,
-                sample_id: sample.sample_id.replace("ER", "EG"),
-                file_type: download.type,
-                filename: download.filename.replace(
-                    "[sample_id]",
-                    sample.sample_id.replace("ER", "EG")
-                ),
-                anvil_download: download.anvil_download,
-            }))
+            files
+                .filter((file) => file.sample_id === sample.sample_id)
+                .map((file) => ({
+                    ...sample,
+                    ...file,
+                }))
         );
     };
 
@@ -45,7 +40,7 @@ const WGSDownloadsTable = ({
         <OmeDownloadTable
             label="Download WGS Data"
             rows={rows}
-            loading={loading}
+            loading={loading || loadingFiles}
             error={error}
             buildRows={buildWGSRows}
             ome="WGS"

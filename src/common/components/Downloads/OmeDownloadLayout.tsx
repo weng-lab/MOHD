@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Site, Status, Sex, Protocol } from "@/common/types/globalTypes";
 import OmeDownloadsControls from "@/common/components/OmeDownloadsControls";
 import { Stack } from "@mui/system";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
 type FilterFields = {
   site: Site;
@@ -14,14 +15,16 @@ type FilterFields = {
 export type OmeDownloadLayoutProps<T> = {
   rows: T[];
   descriptions?: string[];
+  downloadFiles: DownloadFile[];
   includeProtocolFilter?: boolean;
   getFilterFields: (row: T) => FilterFields;
-  renderTable: (rows: T[]) => React.ReactNode;
+  renderTable: (rows: T[], files: DownloadFile[]) => React.ReactNode;
 };
 
 const OmeDownloadLayout = <T,>({
   rows,
   descriptions = [],
+  downloadFiles,
   includeProtocolFilter = false,
   getFilterFields,
   renderTable,
@@ -47,6 +50,13 @@ const OmeDownloadLayout = <T,>({
     });
   }, [rows, site, status, sex, protocol, includeProtocolFilter, getFilterFields]);
 
+  const filteredDownloadFiles = useMemo(() => {
+    return downloadFiles.filter((file) => {
+      if (!file.open_access) return true;
+      return description.includes(file.file_type);
+    });
+  }, [downloadFiles, description]);
+
   return (
     <Stack direction="column" spacing={2}>
       <OmeDownloadsControls
@@ -63,7 +73,7 @@ const OmeDownloadLayout = <T,>({
         setDescription={setDescription}
       />
 
-      {renderTable(filteredRows)}
+      {renderTable(filteredRows, filteredDownloadFiles)}
     </Stack>
   );
 };

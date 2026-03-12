@@ -1,25 +1,24 @@
-import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
 import { UseATACDataReturn } from "@/common/hooks/omeHooks/useATACData";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
 type ATACMetadata =
     NonNullable<UseATACDataReturn["data"]>;
 
-type DownloadRow = ATACMetadata[number] & {
-    file_type: string;
-    filename: string;
-    anvil_download: boolean;
-    url?: string;
-};
+type DownloadRow = ATACMetadata[number] & DownloadFile;
 
 type ATACDownloadsProps = {
     rows: ATACMetadata;
     ATACData: UseATACDataReturn;
+    files: DownloadFile[];
+    loadingFiles: boolean;
 }
 
 const ATACDownloadsTable = ({
     rows,
     ATACData,
+    files,
+    loadingFiles,
 }: ATACDownloadsProps) => {
 
     const { loading, error } = ATACData;
@@ -28,19 +27,12 @@ const ATACDownloadsTable = ({
         rows: ATACMetadata[number][]
     ): DownloadRow[] => {
         return rows.flatMap((sample) =>
-            Config.Downloads.ATAC.map((download) => ({
-                ...sample,
-                file_type: download.type,
-                filename: download.filename.replace(
-                    "[sample_id]",
-                    sample.sample_id
-                ),
-                anvil_download: download.anvil_download,
-                url: download.url?.replace(
-                    "[sample_id]",
-                    sample.sample_id
-                ),
-            }))
+            files
+                .filter((file) => file.sample_id === sample.sample_id)
+                .map((file) => ({
+                    ...sample,
+                    ...file,
+                }))
         );
     };
 
@@ -48,7 +40,7 @@ const ATACDownloadsTable = ({
         <OmeDownloadTable
             label="Download ATAC-seq Data"
             rows={rows}
-            loading={loading}
+            loading={loading || loadingFiles}
             error={error}
             buildRows={buildATACRows}
             ome="ATAC-seq"

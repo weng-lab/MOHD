@@ -5,6 +5,7 @@ import Image from "next/image";
 import DownloadIcon from '@mui/icons-material/Download';
 import { ApolloError } from "@apollo/client";
 import BulkDownloadModal from "./BulkDownloadModal";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
 type BaseSample = {
     sample_id: string;
@@ -14,12 +15,7 @@ type BaseSample = {
     protocol?: string;
 };
 
-type DownloadRow<T> = T & {
-    file_type: string;
-    filename: string;
-    anvil_download: boolean;
-    url?: string;
-};
+type DownloadRow<T> = T & DownloadFile;
 
 type DownloadTableProps<T extends BaseSample> = {
     rows: T[];
@@ -131,12 +127,39 @@ export function OmeDownloadTable<T extends BaseSample>({
         { field: "file_type", headerName: "Description" },
         { field: "filename", headerName: "Filename" },
         {
+            field: "size",
+            headerName: "File Size",
+            renderCell: (params) => {
+                const bytes = params.value;
+                if (!bytes) return "";
+
+                const units = ["B", "KB", "MB", "GB", "TB"];
+                let i = 0;
+                let value = bytes;
+
+                while (value >= 1024 && i < units.length - 1) {
+                    value /= 1024;
+                    i++;
+                }
+
+                return `${value.toFixed(1)} ${units[i]}`;
+            },
+        },
+        {
             field: "download",
             headerName: "Download",
             sortable: false,
             filterable: false,
             renderCell: (params) => {
                 if (params.rowNode.type === "group") {
+                    const children = params.rowNode.children ?? [];
+
+                    const hasOpenAccess = children.some((id) => {
+                        const row = params.api.getRow(id);
+                        return row?.open_access;
+                    });
+
+                    if (!hasOpenAccess) return null;
                     return (
                         <Tooltip title="Download all open-access files for this dataset" placement="left" arrow>
                             <IconButton
@@ -148,9 +171,11 @@ export function OmeDownloadTable<T extends BaseSample>({
                     );
                 }
 
-                const { anvil_download, url } = params.row;
+                const { open_access, sample_id, filename } = params.row;
+                const index = ome === "ATAC-seq" ? 2 : ome === "RNA-seq" ? 3 : 1;
+                const url = `https://downloads.mohdconsortium.org/${index}_${ome.replace("-seq", "")}/${sample_id}/${filename}`;
 
-                if (anvil_download) {
+                if (!open_access) {
                     return (
                         <IconButton
                             component="a"

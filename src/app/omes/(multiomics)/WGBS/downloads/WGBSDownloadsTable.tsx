@@ -1,47 +1,38 @@
-import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
-import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData"
+import { UseWGBSDataReturn } from "@/common/hooks/omeHooks/useWGBSData"
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
-type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
+type WGBSMetadata =
+    NonNullable<UseWGBSDataReturn["data"]>;
 
-type DownloadRow = RNAMetadata[number] & {
-    file_type: string;
-    filename: string;
-    anvil_download: boolean;
-    url?: string;
-};
+type DownloadRow = WGBSMetadata[number] & DownloadFile;
 
 type WGBSDownloadsProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
+    rows: WGBSMetadata;
+    WGBSData: UseWGBSDataReturn;
+    files: DownloadFile[];
+    loadingFiles: boolean;
 }
 
 const WGBSDownloadsTable = ({
     rows,
-    RNAData,
+    WGBSData,
+    files,
+    loadingFiles,
 }: WGBSDownloadsProps) => {
 
-    const { loading, error } = RNAData;
+    const { loading, error } = WGBSData;
 
     const buildWGBSRows = (
-        rows: RNAMetadata[number][]
+        rows: WGBSMetadata[number][]
     ): DownloadRow[] => {
         return rows.flatMap((sample) =>
-            Config.Downloads.WGBS.map((download) => ({
-                ...sample,
-                sample_id: sample.sample_id.replace("ER", "EG"),
-                file_type: download.type,
-                filename: download.filename.replace(
-                    "[sample_id]",
-                    sample.sample_id.replace("ER", "EG")
-                ),
-                anvil_download: download.anvil_download,
-                url: download.url?.replace(
-                    "[sample_id]",
-                    sample.sample_id.replace("ER", "EG")
-                ),
-            }))
+            files
+                .filter((file) => file.sample_id === sample.sample_id)
+                .map((file) => ({
+                    ...sample,
+                    ...file,
+                }))
         );
     };
 
@@ -49,7 +40,7 @@ const WGBSDownloadsTable = ({
         <OmeDownloadTable
             label="Download WGBS Data"
             rows={rows}
-            loading={loading}
+            loading={loading || loadingFiles}
             error={error}
             buildRows={buildWGBSRows}
             ome="WGBS"

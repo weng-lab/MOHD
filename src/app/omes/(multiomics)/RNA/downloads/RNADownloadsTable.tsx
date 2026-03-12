@@ -1,25 +1,24 @@
-import Config from "@/common/config.json";
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
 import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 
 type RNAMetadata =
     NonNullable<UseRNADataReturn["data"]>;
 
-type DownloadRow = RNAMetadata[number] & {
-    file_type: string;
-    filename: string;
-    anvil_download: boolean;
-    url?: string;
-};
+type DownloadRow = RNAMetadata[number] & DownloadFile;
 
 type RNADownloadsProps = {
     rows: RNAMetadata;
     RNAData: UseRNADataReturn;
+    files: DownloadFile[];
+    loadingFiles: boolean;
 }
 
 const RNADownloadsTable = ({
     rows,
     RNAData,
+    files,
+    loadingFiles,
 }: RNADownloadsProps) => {
     const { loading, error } = RNAData;
 
@@ -27,19 +26,12 @@ const RNADownloadsTable = ({
         rows: RNAMetadata[number][]
     ): DownloadRow[] => {
         return rows.flatMap((sample) =>
-            Config.Downloads.RNA.map((download) => ({
-                ...sample,
-                file_type: download.type,
-                filename: download.filename.replace(
-                    "[sample_id]",
-                    sample.sample_id
-                ),
-                anvil_download: download.anvil_download,
-                url: download.url?.replace(
-                    "[sample_id]",
-                    sample.sample_id
-                ),
-            }))
+            files
+                .filter((file) => file.sample_id === sample.sample_id)
+                .map((file) => ({
+                    ...sample,
+                    ...file,
+                }))
         );
     };
 
@@ -47,7 +39,7 @@ const RNADownloadsTable = ({
         <OmeDownloadTable
             label="Download RNA-seq Data"
             rows={rows}
-            loading={loading}
+            loading={loading || loadingFiles}
             error={error}
             buildRows={buildRNARows}
             ome="RNA-seq"
