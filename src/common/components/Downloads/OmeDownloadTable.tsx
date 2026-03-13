@@ -60,8 +60,11 @@ export function OmeDownloadTable<T extends BaseSample>({
         display: "flex",
     } as const;
 
-    const getCompressedFile = (sampleId: string) =>
-        compressedFiles.find((file) => file.sample_id === sampleId);
+    const compressedMap = useMemo(() => {
+        return new Map(
+            compressedFiles.map((f) => [f.sample_id, f])
+        );
+    }, [compressedFiles]);
 
     const columns: GridColDef<DownloadRow<T>>[] = [
         {
@@ -152,11 +155,11 @@ export function OmeDownloadTable<T extends BaseSample>({
                         params.rowNode.children[0]
                     ) as DownloadRow<T>;
 
-                    const compressed = getCompressedFile(firstChild.sample_id);
+                    const compressed = compressedMap.get(firstChild.sample_id);
                     return compressed?.file_type ?? null;
                 }
 
-                const compressed = getCompressedFile(params.row.sample_id);
+                const compressed = compressedMap.get(params.row.sample_id);
                 if (compressed?.filename === params.row.filename) return null;
 
                 return params.value;
@@ -171,11 +174,11 @@ export function OmeDownloadTable<T extends BaseSample>({
                         params.rowNode.children[0]
                     ) as DownloadRow<T>;
 
-                    const compressed = getCompressedFile(firstChild.sample_id);
+                    const compressed = compressedMap.get(firstChild.sample_id);
                     return compressed?.filename ?? null;
                 }
 
-                const compressed = getCompressedFile(params.row.sample_id);
+                const compressed = compressedMap.get(params.row.sample_id);
                 if (compressed?.filename === params.row.filename) return null;
 
                 return params.value;
@@ -190,11 +193,11 @@ export function OmeDownloadTable<T extends BaseSample>({
                         params.rowNode.children[0]
                     ) as DownloadRow<T>;
 
-                    const compressed = getCompressedFile(firstChild.sample_id);
+                    const compressed = compressedMap.get(firstChild.sample_id);
                     return compressed ? formatBytes(compressed.size) : null;
                 }
 
-                const compressed = getCompressedFile(params.row.sample_id);
+                const compressed = compressedMap.get(params.row.sample_id);
                 if (compressed?.filename === params.row.filename) return null;
 
                 return formatBytes(params.value);
@@ -222,12 +225,12 @@ export function OmeDownloadTable<T extends BaseSample>({
                         params.rowNode.children[0]
                     ) as DownloadRow<T>;
 
-                    const compressedFile = getCompressedFile(firstChild.sample_id);
+                    const compressedFile = compressedMap.get(firstChild.sample_id);
                     const compressedUrl = compressedFile ? `https://downloads.mohdconsortium.org/${index}_${ome.replace("-seq", "")}/${compressedFile.sample_id}/${compressedFile.filename}` : "";
 
                     return (
                         <Tooltip title="Download all open-access files for this dataset" placement="left" arrow>
-                            <IconButton color="primary" component="a" href={compressedUrl} download>
+                            <IconButton color="primary" component="a" href={compressedUrl} download disabled={compressedUrl === ""}>
                                 <DownloadIcon fontSize="medium" />
                             </IconButton>
                         </Tooltip>
