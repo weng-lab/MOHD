@@ -6,6 +6,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { ApolloError } from "@apollo/client";
 import BulkDownloadModal from "./BulkDownloadModal";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
+import { formatBytes } from "@/common/downloads";
 
 type BaseSample = {
     sample_id: string;
@@ -24,6 +25,7 @@ type DownloadTableProps<T extends BaseSample> = {
     buildRows: (rows: T[]) => DownloadRow<T>[];
     label: string;
     ome: string;
+    compressedFiles?: DownloadFile[];
 };
 
 export function OmeDownloadTable<T extends BaseSample>({
@@ -33,9 +35,23 @@ export function OmeDownloadTable<T extends BaseSample>({
     buildRows,
     label,
     ome,
+    compressedFiles = [],
 }: DownloadTableProps<T>) {
     const [open, setOpen] = useState(false);
-    const expandedRows = useMemo(() => buildRows(rows), [rows, buildRows]);
+    //build rows and filter out compressed files
+    const expandedRows = useMemo(() => {
+        const compressedNames = new Set(
+            compressedFiles?.map((f) => f.filename) ?? []
+        );
+
+        return buildRows(rows).filter(
+            (row) => !compressedNames.has(row.filename)
+        );
+    }, [rows, buildRows, compressedFiles]);
+
+    const allDatasetsCompressedFile = useMemo(() => {
+        return compressedFiles.find((file) => file.filename.split("_")[1] === "all");
+    }, [compressedFiles]);
 
     const groupingColDef: GridGroupingColDefOverride<T> = {
         leafField: "sample_id",
@@ -44,8 +60,11 @@ export function OmeDownloadTable<T extends BaseSample>({
         display: "flex",
     } as const;
 
+    const getCompressedFile = (sampleId: string) =>
+        compressedFiles.find((file) => file.sample_id === sampleId);
+
     const columns: GridColDef<DownloadRow<T>>[] = [
-        { 
+        {
             field: "sample_id",
             headerName: "Dataset",
             renderCell: (params) => {
@@ -124,25 +143,61 @@ export function OmeDownloadTable<T extends BaseSample>({
                 } as GridColDef<DownloadRow<T>>,
             ]
             : []),
-        { field: "file_type", headerName: "Description" },
-        { field: "filename", headerName: "Filename" },
+        {
+            field: "file_type",
+            headerName: "Description",
+            renderCell: (params) => {
+                if (params.rowNode.type === "group") {
+                    const firstChild = params.api.getRow(
+                        params.rowNode.children[0]
+                    ) as DownloadRow<T>;
+
+                    const compressed = getCompressedFile(firstChild.sample_id);
+                    return compressed?.file_type ?? null;
+                }
+
+                const compressed = getCompressedFile(params.row.sample_id);
+                if (compressed?.filename === params.row.filename) return null;
+
+                return params.value;
+            },
+        },
+        {
+            field: "filename",
+            headerName: "Filename",
+            renderCell: (params) => {
+                if (params.rowNode.type === "group") {
+                    const firstChild = params.api.getRow(
+                        params.rowNode.children[0]
+                    ) as DownloadRow<T>;
+
+                    const compressed = getCompressedFile(firstChild.sample_id);
+                    return compressed?.filename ?? null;
+                }
+
+                const compressed = getCompressedFile(params.row.sample_id);
+                if (compressed?.filename === params.row.filename) return null;
+
+                return params.value;
+            },
+        },
         {
             field: "size",
             headerName: "File Size",
             renderCell: (params) => {
-                const bytes = params.value;
-                if (!bytes) return "";
+                if (params.rowNode.type === "group") {
+                    const firstChild = params.api.getRow(
+                        params.rowNode.children[0]
+                    ) as DownloadRow<T>;
 
-                const units = ["B", "KB", "MB", "GB", "TB"];
-                let i = 0;
-                let value = bytes;
-
-                while (value >= 1024 && i < units.length - 1) {
-                    value /= 1024;
-                    i++;
+                    const compressed = getCompressedFile(firstChild.sample_id);
+                    return compressed ? formatBytes(compressed.size) : null;
                 }
 
-                return `${value.toFixed(1)} ${units[i]}`;
+                const compressed = getCompressedFile(params.row.sample_id);
+                if (compressed?.filename === params.row.filename) return null;
+
+                return formatBytes(params.value);
             },
         },
         {
@@ -151,6 +206,8 @@ export function OmeDownloadTable<T extends BaseSample>({
             sortable: false,
             filterable: false,
             renderCell: (params) => {
+                const index = ome === "ATAC-seq" ? 2 : ome === "RNA-seq" ? 3 : 1;
+
                 if (params.rowNode.type === "group") {
                     const children = params.rowNode.children ?? [];
 
@@ -160,11 +217,17 @@ export function OmeDownloadTable<T extends BaseSample>({
                     });
 
                     if (!hasOpenAccess) return null;
+
+                    const firstChild = params.api.getRow(
+                        params.rowNode.children[0]
+                    ) as DownloadRow<T>;
+
+                    const compressedFile = getCompressedFile(firstChild.sample_id);
+                    const compressedUrl = compressedFile ? `https://downloads.mohdconsortium.org/${index}_${ome.replace("-seq", "")}/${compressedFile.sample_id}/${compressedFile.filename}` : "";
+
                     return (
                         <Tooltip title="Download all open-access files for this dataset" placement="left" arrow>
-                            <IconButton
-                                color="primary"
-                            >
+                            <IconButton color="primary" component="a" href={compressedUrl} download>
                                 <DownloadIcon fontSize="medium" />
                             </IconButton>
                         </Tooltip>
@@ -172,7 +235,6 @@ export function OmeDownloadTable<T extends BaseSample>({
                 }
 
                 const { open_access, sample_id, filename } = params.row;
-                const index = ome === "ATAC-seq" ? 2 : ome === "RNA-seq" ? 3 : 1;
                 const url = `https://downloads.mohdconsortium.org/${index}_${ome.replace("-seq", "")}/${sample_id}/${filename}`;
 
                 if (!open_access) {
@@ -206,21 +268,32 @@ export function OmeDownloadTable<T extends BaseSample>({
 
     const bulkDownloadToolbar = useMemo(() => {
         return (
-            <Tooltip title="Download all open-access files for all datasets" placement="left" arrow>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<DownloadIcon />}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setOpen(true);
-                    }}
-                >
-                    Bulk Download
-                </Button>
+            <Tooltip
+                title={
+                    compressedFiles.length === 0
+                        ? "No open-access datasets available to download"
+                        : "Download all open-access files for all datasets"
+                }
+                placement="left"
+                arrow
+            >
+                <span>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<DownloadIcon />}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setOpen(true);
+                        }}
+                        disabled={compressedFiles.length === 0}
+                    >
+                        Bulk Download
+                    </Button>
+                </span>
             </Tooltip>
         );
-    }, []);
+    }, [compressedFiles]);
 
     return (
         <>
@@ -237,7 +310,12 @@ export function OmeDownloadTable<T extends BaseSample>({
                 groupingColDef={groupingColDef}
                 toolbarSlot={bulkDownloadToolbar}
             />
-            <BulkDownloadModal open={open} onClose={() => setOpen(false)} ome={ome} />
+            <BulkDownloadModal
+                open={open}
+                onClose={() => setOpen(false)}
+                ome={ome}
+                allDatasetsCompressedFile={allDatasetsCompressedFile}
+            />
         </>
     );
 }

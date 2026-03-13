@@ -1,6 +1,7 @@
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
 import { UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
+import { useMemo } from "react";
 
 type RNAMetadata =
     NonNullable<UseRNADataReturn["data"]>;
@@ -35,6 +36,10 @@ const RNADownloadsTable = ({
         );
     };
 
+    const compressedFiles = useMemo(() => {
+        return files.filter((file) => file.file_type === "Compressed Tar File");
+    }, [files]);
+
     return (
         <OmeDownloadTable
             label="Download RNA-seq Data"
@@ -43,6 +48,7 @@ const RNADownloadsTable = ({
             error={error}
             buildRows={buildRNARows}
             ome="RNA-seq"
+            compressedFiles={compressedFiles}
         />
     );
 }

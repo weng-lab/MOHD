@@ -1,6 +1,7 @@
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
 import { UseWGBSDataReturn } from "@/common/hooks/omeHooks/useWGBSData"
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
+import { useMemo } from "react";
 
 type WGBSMetadata =
     NonNullable<UseWGBSDataReturn["data"]>;
@@ -36,6 +37,10 @@ const WGBSDownloadsTable = ({
         );
     };
 
+    const compressedFiles = useMemo(() => {
+        return files.filter((file) => file.file_type === "Compressed Tar File");
+    }, [files]);
+
     return (
         <OmeDownloadTable
             label="Download WGBS Data"
@@ -44,6 +49,7 @@ const WGBSDownloadsTable = ({
             error={error}
             buildRows={buildWGBSRows}
             ome="WGBS"
+            compressedFiles={compressedFiles}
         />
     );
 }

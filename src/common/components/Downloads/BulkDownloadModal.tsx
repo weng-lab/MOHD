@@ -1,20 +1,29 @@
 import React from "react";
 import { Modal, Box, IconButton, Stack, Typography, Divider, Button } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
+import { formatBytes } from "@/common/downloads";
 
 export type DownloadModalProps = {
   open: boolean;
   onClose: () => void;
   ome: string;
+  allDatasetsCompressedFile?: DownloadFile;
+  filteredDatasetCompressedFile?: DownloadFile;
 }
 
-const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, ome }) => {
-  const handleDownload = (type: "PNG" | "SVG") => {
-  };
+const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, ome, allDatasetsCompressedFile, filteredDatasetCompressedFile }) => {
+
+  const constuctUrl = (file: DownloadFile | undefined) => {
+    if (!file) return "#";
+    const index = ome === "ATAC-seq" ? 2 : ome === "RNA-seq" ? 3 : 1;
+    const url = `https://downloads.mohdconsortium.org/${index}_${ome.replace("-seq", "")}/${file.filename}`
+    return url;
+  }
 
   const downloadOptions = [
-    { label: "Filtered table open access files", type: "PNG" as const },
-    { label: "All open access files", type: "SVG" as const },
+    { label: "Filtered table open access files", url: constuctUrl(filteredDatasetCompressedFile), size: filteredDatasetCompressedFile ? filteredDatasetCompressedFile.size : undefined },
+    { label: "All open access files", url: constuctUrl(allDatasetsCompressedFile), size: allDatasetsCompressedFile ? allDatasetsCompressedFile.size : undefined },
   ];
 
   return (
@@ -41,8 +50,22 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, ome }) => 
         <Stack spacing={1.5} divider={<Divider flexItem />}>
           {downloadOptions.map((option) => (
             <Stack key={option.label} direction="row" alignItems="center" justifyContent="space-between">
-              <Typography variant="body1">{option.label}</Typography>
-              <IconButton color="primary" onClick={() => handleDownload(option.type)} aria-label={`Download ${option.label}`}>
+              <Stack>
+                <Typography variant="body1">{option.label}</Typography>
+                {option.size && (
+                  <Typography variant="body2" color="text.secondary">
+                    {formatBytes(option.size)}
+                  </Typography>
+                )}
+              </Stack>
+              <IconButton 
+                color="primary" 
+                aria-label={`Download ${option.label}`} 
+                href={option.url} 
+                download 
+                component={"a"}
+                disabled={option.url === "#"}
+              >
                 <DownloadIcon />
               </IconButton>
             </Stack>

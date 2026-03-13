@@ -35,6 +35,7 @@ const OmeDownloadLayout = <T,>({
   const [protocol, setProtocol] = useState<Protocol[]>(["Buffy Coat", "OPC", "CPT"]);
   const [description, setDescription] = useState<string[]>(descriptions);
 
+  //filter rows based on toggle button groups in header
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
       const f = getFilterFields(row);
@@ -52,7 +53,8 @@ const OmeDownloadLayout = <T,>({
 
   const filteredDownloadFiles = useMemo(() => {
     return downloadFiles.filter((file) => {
-      if (!file.open_access) return true;
+      //dont filter out anvil files or compressed files
+      if (!file.open_access || file.file_type === "Compressed Tar File") return true;
       return description.includes(file.file_type);
     });
   }, [downloadFiles, description]);
@@ -72,7 +74,6 @@ const OmeDownloadLayout = <T,>({
         setProtocol={setProtocol}
         setDescription={setDescription}
       />
-
       {renderTable(filteredRows, filteredDownloadFiles)}
     </Stack>
   );

@@ -1,6 +1,7 @@
 import { OmeDownloadTable } from "@/common/components/Downloads/OmeDownloadTable";
 import { UseATACDataReturn } from "@/common/hooks/omeHooks/useATACData";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
+import { useMemo } from "react";
 
 type ATACMetadata =
     NonNullable<UseATACDataReturn["data"]>;
@@ -36,6 +37,10 @@ const ATACDownloadsTable = ({
         );
     };
 
+    const compressedFiles = useMemo(() => {
+        return files.filter((file) => file.file_type === "Compressed Tar File");
+    }, [files]);
+
     return (
         <OmeDownloadTable
             label="Download ATAC-seq Data"
@@ -44,6 +49,7 @@ const ATACDownloadsTable = ({
             error={error}
             buildRows={buildATACRows}
             ome="ATAC-seq"
+            compressedFiles={compressedFiles}
         />
     );
 }
