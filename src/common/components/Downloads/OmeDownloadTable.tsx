@@ -314,6 +314,7 @@ export function OmeDownloadTable<T extends BaseSample>({
                     disableDensitySelector
                     initialState={{
                         rowGrouping: { model: ["sample_id"] },
+                        sorting: { sortModel: [{ field: "file_type", sort: "asc" }] },
                     }}
                     slots={{ toolbar: DownloadToolbar }}
                     divHeight={{ maxHeight: "650px" }}
