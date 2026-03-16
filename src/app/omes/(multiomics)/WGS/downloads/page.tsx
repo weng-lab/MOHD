@@ -1,62 +1,35 @@
 "use client";
-import { useMemo, useState } from "react"
-import { useRNAData, UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
 import WGSDownloadsTable from "./WGSDownloadsTable";
-import { Stack } from "@mui/system";
 import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadsControls from "@/common/components/OmeDownloadsControls";
-
-export type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
-
-export type WGSDownloadsProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
-    site: Site[];
-    status: Status[];
-    sex: Sex[];
-}
+import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
+import { useWGSData } from "@/common/hooks/omeHooks/useWGSData";
+import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
 
 const WGSDownloads = () => {
-    const [site, setSite] = useState<Site[]>(["CCH", "CKD", "EXP", "MOM", "UIC"]);
-    const [status, setStatus] = useState<Status[]>(["case", "control", "unknown"]);
-    const [sex, setSex] = useState<Sex[]>(["male", "female"]);
 
-    const RNAData = useRNAData({ skip: false });
+    const WGSData = useWGSData({ skip: false });
+    const { data: downloadFiles, loading } = useOmeDownloadFiles("WGS");
 
-    const rows: RNAMetadata = useMemo(() => {
-        if (!RNAData.data) return [];
-
-        return RNAData.data.filter((row) =>
-            site.includes(row.site as Site) &&
-            status.includes(row.status as Status) &&
-            sex.includes(row.sex as Sex)
-        );
-    }, [RNAData.data, site, status, sex]);
-
-    const SharedWGSDownloadsProps: WGSDownloadsProps = useMemo(
-        () => ({
-            rows,
-            RNAData,
-            site,
-            status,
-            sex,
-        }),
-        [RNAData, rows, sex, site, status]
-    );
+    const rows = WGSData.data ?? [];
 
     return (
-        <Stack direction="column" spacing={2}>
-            <OmeDownloadsControls 
-                site={site} 
-                status={status} 
-                sex={sex} 
-                setSite={setSite} 
-                setStatus={setStatus} 
-                setSex={setSex} 
-            />
-            <WGSDownloadsTable {...SharedWGSDownloadsProps} />
-        </Stack>
+        <OmeDownloadLayout
+            rows={rows}
+            downloadFiles={downloadFiles}
+            getFilterFields={(row) => ({
+                site: row.site as Site,
+                status: row.status as Status,
+                sex: row.sex as Sex,
+            })}
+            renderTable={(filteredRows, filteredDownloadFiles) => (
+                <WGSDownloadsTable
+                    rows={filteredRows}
+                    WGSData={WGSData}
+                    files={filteredDownloadFiles}
+                    loadingFiles={loading}
+                />
+            )}
+        />
     )
 }
 

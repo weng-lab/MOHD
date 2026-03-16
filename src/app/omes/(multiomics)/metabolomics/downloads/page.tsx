@@ -1,62 +1,35 @@
 "use client";
-import { useMemo, useState } from "react"
-import { useRNAData, UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
 import MetabolomicsDownloadsTable from "./MetabolomicsDownloadsTable";
-import { Stack } from "@mui/system";
 import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadsControls from "@/common/components/OmeDownloadsControls";
-
-export type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
-
-export type MetabolomicsDownloadsProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
-    site: Site[];
-    status: Status[];
-    sex: Sex[];
-}
+import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
+import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
+import { useMetabolomicsData } from "@/common/hooks/omeHooks/useMetabolomicsData";
 
 const MetabolomicsDownloads = () => {
-    const [site, setSite] = useState<Site[]>(["CCH", "CKD", "EXP", "MOM", "UIC"]);
-    const [status, setStatus] = useState<Status[]>(["case", "control", "unknown"]);
-    const [sex, setSex] = useState<Sex[]>(["male", "female"]);
 
-    const RNAData = useRNAData({ skip: false });
+    const MetabolomicsData = useMetabolomicsData({ skip: false });
+    const { data: downloadFiles, loading } = useOmeDownloadFiles("METABOLOMICS");
 
-    const rows: RNAMetadata = useMemo(() => {
-        if (!RNAData.data) return [];
-
-        return RNAData.data.filter((row) =>
-            site.includes(row.site as Site) &&
-            status.includes(row.status as Status) &&
-            sex.includes(row.sex as Sex)
-        );
-    }, [RNAData.data, site, status, sex]);
-
-    const SharedMetabolomicsDownloadsProps: MetabolomicsDownloadsProps = useMemo(
-        () => ({
-            rows,
-            RNAData,
-            site,
-            status,
-            sex,
-        }),
-        [RNAData, rows, sex, site, status]
-    );
+    const rows = MetabolomicsData.data ?? [];
 
     return (
-        <Stack direction="column" spacing={2}>
-            <OmeDownloadsControls 
-                site={site} 
-                status={status} 
-                sex={sex} 
-                setSite={setSite} 
-                setStatus={setStatus} 
-                setSex={setSex} 
-            />
-            <MetabolomicsDownloadsTable {...SharedMetabolomicsDownloadsProps} />
-        </Stack>
+        <OmeDownloadLayout
+            rows={rows}
+            downloadFiles={downloadFiles}
+            getFilterFields={(row) => ({
+                site: row.site as Site,
+                status: row.status as Status,
+                sex: row.sex as Sex,
+            })}
+            renderTable={(filteredRows, filteredDownloadFiles) => (
+                <MetabolomicsDownloadsTable 
+                    rows={filteredRows} 
+                    MetabolomicsData={MetabolomicsData} 
+                    files={filteredDownloadFiles}
+                    loadingFiles={loading}
+                />
+            )}
+        />
     )
 }
 

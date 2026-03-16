@@ -1,62 +1,48 @@
 "use client";
-import { useMemo, useState } from "react"
-import { useRNAData, UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
+import { useWGBSData } from "@/common/hooks/omeHooks/useWGBSData";
 import WGBSDownloadsTable from "./WGBSDownloadsTable";
-import { Stack } from "@mui/system";
 import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadsControls from "@/common/components/OmeDownloadsControls";
+import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
+import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
 
-export type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
-
-export type WGBSDownloadsProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
-    site: Site[];
-    status: Status[];
-    sex: Sex[];
-}
+const WGBSDescriptions = [
+    "Cytosine-level DNA methylation measurements",
+    "Pileup Signal Minus",
+    "Pileup Signal Plus",
+    "Methylation Estimation Signal Minus CHG Context",
+    "Methylation Estimation Signal Plus CHG Context",
+    "Methylation Estimation Signal Minus CHH Context",
+    "Methylation Estimation Signal Plus CHH Context",
+    "Methylation Estimation Signal Minus CpG Context",
+    "Methylation Estimation Signal Plus CpG Context",
+];
 
 const WGBSDownloads = () => {
-    const [site, setSite] = useState<Site[]>(["CCH", "CKD", "EXP", "MOM", "UIC"]);
-    const [status, setStatus] = useState<Status[]>(["case", "control", "unknown"]);
-    const [sex, setSex] = useState<Sex[]>(["male", "female"]);
 
-    const RNAData = useRNAData({ skip: false });
+    const WGBSData = useWGBSData({ skip: false });
+    const { data: downloadFiles, loading } = useOmeDownloadFiles("WGBS");
 
-    const rows: RNAMetadata = useMemo(() => {
-        if (!RNAData.data) return [];
-
-        return RNAData.data.filter((row) =>
-            site.includes(row.site as Site) &&
-            status.includes(row.status as Status) &&
-            sex.includes(row.sex as Sex)
-        );
-    }, [RNAData.data, site, status, sex]);
-
-    const SharedWGBSDownloadsProps: WGBSDownloadsProps = useMemo(
-        () => ({
-            rows,
-            RNAData,
-            site,
-            status,
-            sex,
-        }),
-        [RNAData, rows, sex, site, status]
-    );
+    const rows = WGBSData.data ?? [];
 
     return (
-        <Stack direction="column" spacing={2}>
-            <OmeDownloadsControls 
-                site={site} 
-                status={status} 
-                sex={sex} 
-                setSite={setSite} 
-                setStatus={setStatus} 
-                setSex={setSex} 
-            />
-            <WGBSDownloadsTable {...SharedWGBSDownloadsProps} />
-        </Stack>
+        <OmeDownloadLayout
+            rows={rows}
+            downloadFiles={downloadFiles}
+            descriptions={WGBSDescriptions}
+            getFilterFields={(row) => ({
+                site: row.site as Site,
+                status: row.status as Status,
+                sex: row.sex as Sex,
+            })}
+            renderTable={(filteredRows, filteredDownloadFiles) => (
+                <WGBSDownloadsTable 
+                    rows={filteredRows} 
+                    WGBSData={WGBSData} 
+                    files={filteredDownloadFiles} 
+                    loadingFiles={loading} 
+                />
+            )}
+        />
     )
 }
 
