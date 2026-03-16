@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Site, Status, Sex, Protocol } from "@/common/types/globalTypes";
-import OmeDownloadsControls from "@/common/components/OmeDownloadsControls";
+import OmeDownloadsControls from "@/common/components/Downloads/OmeDownloadsControls";
 import { Stack } from "@mui/system";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 

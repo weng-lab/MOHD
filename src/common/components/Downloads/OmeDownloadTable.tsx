@@ -7,6 +7,7 @@ import { ApolloError } from "@apollo/client";
 import BulkDownloadModal from "./BulkDownloadModal";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 import { formatBytes } from "@/common/downloads";
+import { DownloadToolbar, DownloadToolbarProvider } from "./OmeDownloadToolbar";
 
 type BaseSample = {
     sample_id: string;
@@ -300,19 +301,25 @@ export function OmeDownloadTable<T extends BaseSample>({
 
     return (
         <>
-            <Table
-                label={label}
-                rows={expandedRows}
-                columns={columns}
-                loading={loading}
-                error={!!error}
-                initialState={{
-                    rowGrouping: { model: ["sample_id"] },
-                }}
-                divHeight={{ maxHeight: "650px" }}
-                groupingColDef={groupingColDef}
-                toolbarSlot={bulkDownloadToolbar}
-            />
+            <DownloadToolbarProvider label={label} toolbarSlot={bulkDownloadToolbar}>
+                <Table
+                    label={label}
+                    rows={expandedRows}
+                    columns={columns}
+                    loading={loading}
+                    error={!!error}
+                    disableColumnFilter
+                    disableColumnSelector
+                    disableColumnMenu
+                    disableDensitySelector
+                    initialState={{
+                        rowGrouping: { model: ["sample_id"] },
+                    }}
+                    slots={{ toolbar: DownloadToolbar }}
+                    divHeight={{ maxHeight: "650px" }}
+                    groupingColDef={groupingColDef}
+                />
+            </DownloadToolbarProvider>
             <BulkDownloadModal
                 open={open}
                 onClose={() => setOpen(false)}

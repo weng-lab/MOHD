@@ -1,6 +1,6 @@
 import { Typography, FormControl, FormLabel, ToggleButtonGroup, ToggleButton, Autocomplete, TextField, Button } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import { Site, Status, Sex, Protocol } from "../../common/types/globalTypes";
+import { Site, Status, Sex, Protocol } from "../../types/globalTypes";
 import ClearIcon from '@mui/icons-material/Clear';
 
 type OmeDownloadsControlsProps = {
@@ -40,7 +40,6 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                 borderColor: "divider",
                 borderRadius: 1,
                 padding: 2,
-                gap: 2,
             }}
         >
             <Box
