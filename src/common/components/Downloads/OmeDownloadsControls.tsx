@@ -1,5 +1,5 @@
 import { Typography, FormControl, FormLabel, ToggleButtonGroup, ToggleButton, Autocomplete, TextField, Button } from "@mui/material";
-import { Box, Stack } from "@mui/system";
+import { alpha, Box, Stack } from "@mui/system";
 import { Site, Status, Sex, Protocol } from "../../types/globalTypes";
 import ClearIcon from '@mui/icons-material/Clear';
 
@@ -189,6 +189,16 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                                     flexWrap: "nowrap",
                                     overflow: "hidden",
                                 },
+                                "& .MuiChip-root": (theme) => ({
+                                    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                                    color: theme.palette.primary.main,
+                                }),
+                                "& .MuiChip-deleteIcon": () => ({
+                                    color: "white",
+                                    "&:hover": {
+                                        color: "white",
+                                    },
+                                }),
                             }}
                         />
                     </FormControl>
