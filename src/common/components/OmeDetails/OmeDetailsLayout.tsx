@@ -9,61 +9,66 @@ export type OmeDetailsLayoutProps = {
 } & { children: React.ReactNode };
 
 const logo = "/logo.png";
+const dimesnionalityReductionIcon = "/TabIcons/DimensionReduction.png";
+const cellTypeDecompositionIcon = "/TabIcons/CellTypeDeconvolution.png";
+const downloadIcon = "/TabIcons/DataDownload.png";
+const genomeBrowserIcon = "/TabIcons/genomeBrowser.png";
+const heatmapIcon = "/TabIcons/Heatmap.png";
 
 export const OME_TABS: Record<OmesDataType, OmeDetailsTab[]> = {
     WGS: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
         { label: "Genetic Ancestry Composition", iconPath: logo, route: "ancestryComposition" },
-        { label: "Downloads", iconPath: logo, route: "downloads" },
+        { label: "Downloads", iconPath: downloadIcon, route: "downloads" },
     ],
 
     WGBS: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
-        { label: "Cell Type Decomposition", iconPath: logo, route: "cellTypeDecomposition" },
-        { label: "Genome Browser", iconPath: logo, route: "genomeBrowser" },
-        { label: "Downloads", iconPath: logo, route: "downloads" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
+        { label: "Cell Type Decomposition", iconPath: cellTypeDecompositionIcon, route: "cellTypeDecomposition" },
+        { label: "Genome Browser", iconPath: genomeBrowserIcon, route: "genomeBrowser" },
+        { label: "Downloads", iconPath: downloadIcon, route: "downloads" },
     ],
 
     ATAC: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
-        { label: "Cell Type Decomposition", iconPath: logo, route: "cellTypeDecomposition" },
-        { label: "Genome Browser", iconPath: logo, route: "genomeBrowser" },
-        { label: "Downloads", iconPath: logo, route: "downloads" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
+        { label: "Cell Type Decomposition", iconPath: cellTypeDecompositionIcon, route: "cellTypeDecomposition" },
+        { label: "Genome Browser", iconPath: genomeBrowserIcon, route: "genomeBrowser" },
+        { label: "Downloads", iconPath: downloadIcon, route: "downloads" },
     ],
 
     RNA: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
-        { label: "Cell Type Decomposition", iconPath: logo, route: "cellTypeDecomposition" },
-        { label: "Genome Browser", iconPath: logo, route: "genomeBrowser" },
-        { label: "Downloads", iconPath: logo, route: "downloads" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
+        { label: "Cell Type Decomposition", iconPath: cellTypeDecompositionIcon, route: "cellTypeDecomposition" },
+        { label: "Genome Browser", iconPath: genomeBrowserIcon, route: "genomeBrowser" },
+        { label: "Downloads", iconPath: downloadIcon, route: "downloads" },
     ],
 
     proteomics: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
-        { label: "Heatmap", iconPath: logo, route: "heatmap" },
-        { label: "Downloads", iconPath: logo, route: "downloads" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
+        { label: "Heatmap", iconPath: heatmapIcon, route: "heatmap" },
+        { label: "Downloads", iconPath: downloadIcon, route: "downloads" },
     ],
 
     metabolomics: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
-        { label: "Heatmap", iconPath: logo, route: "heatmap" },
-        { label: "Downloads", iconPath: logo, route: "downloads" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
+        { label: "Heatmap", iconPath: heatmapIcon, route: "heatmap" },
+        { label: "Downloads", iconPath: downloadIcon, route: "downloads" },
     ],
 
     lipidomics: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
-        { label: "Heatmap", iconPath: logo, route: "heatmap" },
-        { label: "Downloads", iconPath: logo, route: "downloads" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
+        { label: "Heatmap", iconPath: heatmapIcon, route: "heatmap" },
+        { label: "Downloads", iconPath: downloadIcon, route: "downloads" },
     ],
 
     exposomics: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
-        { label: "Heatmap", iconPath: logo, route: "heatmap" },
-        { label: "Downloads", iconPath: logo, route: "downloads" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
+        { label: "Heatmap", iconPath: heatmapIcon, route: "heatmap" },
+        { label: "Downloads", iconPath: downloadIcon, route: "downloads" },
     ],
 
     metallomics: [
-        { label: "Dimensionality Reduction", iconPath: logo, route: "dimensionalityReduction" },
+        { label: "Dimensionality Reduction", iconPath: dimesnionalityReductionIcon, route: "dimensionalityReduction" },
     ]
 };
 
