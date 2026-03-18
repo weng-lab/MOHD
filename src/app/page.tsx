@@ -3,6 +3,9 @@ import { Box, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import AtAGlance from "./landing/GlanceMetrics";
 import LandingPageCards from "./landing/LandingPageCards";
+import LandingPageCards7 from "./landing/LandingPageCards7";
+import LandingPageCards5 from "./landing/LandingPageCard5";
+import LandingPageCards2 from "./landing/LandingPageCards2";
 
 export default function Home() {
   return (
@@ -71,6 +74,9 @@ export default function Home() {
       </Box>
       <Box p={5}>
         <LandingPageCards />
+        <LandingPageCards7 />
+        <LandingPageCards5 />
+        <LandingPageCards2 />
       </Box>
     </div>
   );

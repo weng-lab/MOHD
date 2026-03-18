@@ -18,7 +18,7 @@ const pages = [
     }
 ]
 
-const LandingPageCards = () => {
+const LandingPageCards2 = () => {
     const { visible, refs } = useGrowOnScroll(pages.length);
 
     return (
@@ -35,7 +35,7 @@ const LandingPageCards = () => {
                         }}
                         data-index={index}
                         size={{ xs: 12, lg: 6 }}
-                        sx={{ maxWidth: 700 }}
+                        sx={{ maxWidth: 600 }}
                     >
                         <Box
                             component={Link}
@@ -44,10 +44,15 @@ const LandingPageCards = () => {
                             sx={{
                                 position: "relative",
                                 display: "grid",
-                                gridTemplateColumns: { xs: "1fr", sm: "52% 48%" },
+                                gridTemplateColumns: "1fr",
+                                gridTemplateRows: { xs: "auto auto", sm: "auto 1fr" },
                                 borderRadius: 4,
+                                backgroundImage: `url(${page.image})`,
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
                                 backgroundColor: "#fffdf8",
-                                minHeight: 240,
+                                minHeight: 500,
+                                maxHeight: 500,
                                 boxShadow: "0 10px 28px rgba(16, 24, 40, 0.08)",
                                 border: "1px solid #ece4d9",
                                 textDecoration: "none",
@@ -62,24 +67,14 @@ const LandingPageCards = () => {
                             }}
                         >
                             <Box
-                                component="img"
-                                src={page.image}
-                                alt={page.title}
-                                sx={{
-                                    display: { xs: "none", sm: "block" },
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "contain",
-                                    backgroundColor: "#faf6ef",
-                                }}
-                            />
-                            <Box
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "space-between",
                                     zIndex: 2,
-                                    backgroundColor: "#ffffff",
+                                    backgroundColor: "rgba(255, 255, 255, 0.75)",
+                                    backdropFilter: "blur(4px)",
+                                    WebkitBackdropFilter: "blur(8px)",
                                     p: { xs: 2, sm: 2.5 },
                                 }}
                             >
@@ -128,6 +123,7 @@ const LandingPageCards = () => {
                                     Explore
                                 </Button>
                             </Box>
+                            <Box sx={{ display: { xs: "none", sm: "block" }, minHeight: 160 }} />
                         </Box>
                     </Grid>
                 </Grow>
@@ -136,4 +132,4 @@ const LandingPageCards = () => {
     );
 };
 
-export default LandingPageCards;
+export default LandingPageCards2;
