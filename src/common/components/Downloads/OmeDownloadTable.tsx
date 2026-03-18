@@ -1,10 +1,9 @@
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { GridColDef, GridGroupingColDefOverride, Table } from "@weng-lab/ui-components";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import DownloadIcon from '@mui/icons-material/Download';
 import { ApolloError } from "@apollo/client";
-import BulkDownloadModal from "./BulkDownloadModal";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 import { formatBytes } from "@/common/downloads";
 import { DownloadToolbar, DownloadToolbarProvider } from "./OmeDownloadToolbar";
@@ -38,7 +37,6 @@ export function OmeDownloadTable<T extends BaseSample>({
     ome,
     compressedFiles = [],
 }: DownloadTableProps<T>) {
-    const [open, setOpen] = useState(false);
     //build rows and filter out compressed files
     const expandedRows = useMemo(() => {
         const compressedNames = new Set(
@@ -49,10 +47,6 @@ export function OmeDownloadTable<T extends BaseSample>({
             (row) => !compressedNames.has(row.filename)
         );
     }, [rows, buildRows, compressedFiles]);
-
-    const allDatasetsCompressedFile = useMemo(() => {
-        return compressedFiles.find((file) => file.filename.split("_")[1] === "all");
-    }, [compressedFiles]);
 
     const groupingColDef: GridGroupingColDefOverride<T> = {
         leafField: "sample_id",
@@ -270,38 +264,9 @@ export function OmeDownloadTable<T extends BaseSample>({
         },
     ];
 
-    const bulkDownloadToolbar = useMemo(() => {
-        return (
-            <Tooltip
-                title={
-                    compressedFiles.length === 0
-                        ? "No open-access datasets available to download"
-                        : "Download all open-access files for all datasets"
-                }
-                placement="left"
-                arrow
-            >
-                <span>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<DownloadIcon />}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setOpen(true);
-                        }}
-                        disabled={compressedFiles.length === 0}
-                    >
-                        Bulk Download
-                    </Button>
-                </span>
-            </Tooltip>
-        );
-    }, [compressedFiles]);
-
     return (
         <>
-            <DownloadToolbarProvider label={label} toolbarSlot={bulkDownloadToolbar}>
+            <DownloadToolbarProvider label={label}>
                 <Table
                     label={label}
                     rows={expandedRows}
@@ -321,12 +286,6 @@ export function OmeDownloadTable<T extends BaseSample>({
                     groupingColDef={groupingColDef}
                 />
             </DownloadToolbarProvider>
-            <BulkDownloadModal
-                open={open}
-                onClose={() => setOpen(false)}
-                ome={ome}
-                allDatasetsCompressedFile={allDatasetsCompressedFile}
-            />
         </>
     );
 }

@@ -1,7 +1,11 @@
-import { Typography, FormControl, FormLabel, ToggleButtonGroup, ToggleButton, Autocomplete, TextField, Button } from "@mui/material";
+import { Typography, FormControl, FormLabel, ToggleButtonGroup, ToggleButton, Autocomplete, TextField, Button, Tooltip } from "@mui/material";
 import { alpha, Box, Stack } from "@mui/system";
 import { Site, Status, Sex, Protocol } from "../../types/globalTypes";
 import ClearIcon from '@mui/icons-material/Clear';
+import DownloadIcon from '@mui/icons-material/Download';
+import { useMemo, useState } from "react";
+import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
+import BulkDownloadModal from "./BulkDownloadModal";
 
 type OmeDownloadsControlsProps = {
     site: Site[];
@@ -15,9 +19,19 @@ type OmeDownloadsControlsProps = {
     setSex: React.Dispatch<React.SetStateAction<Sex[]>>;
     setDescription: React.Dispatch<React.SetStateAction<string[]>>;
     setProtocol?: React.Dispatch<React.SetStateAction<Protocol[]>>;
+    files?: DownloadFile[];
 };
 
 const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
+    const [open, setOpen] = useState(false);
+
+    const compressedFiles = useMemo(() => {
+        return props.files?.filter((file) => file.file_type === "Compressed Tar File") ?? [];
+    }, [props.files]);
+
+    const allDatasetsCompressedFile = useMemo(() => {
+        return compressedFiles?.find((file) => file.filename.split("_")[1] === "all");
+    }, [compressedFiles]);
 
     const resetFilters = () => {
         props.setSite(["CCH", "CKD", "EXP", "MOM", "UIC"]);
@@ -52,21 +66,46 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                 <Typography variant="body1" component="h2">
                     <strong>Filter Downloadable Files</strong>
                 </Typography>
-
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<ClearIcon />}
-                    onClick={() => { resetFilters() }}
-                    disabled={
-                        props.site.length === 5 &&
-                        props.status.length === 3 &&
-                        props.sex.length === 2 &&
-                        props.description.length === props.descriptions.length
-                    }
-                >
-                    Reset Filters
-                </Button>
+                <Stack direction={"row"} spacing={2} flexWrap={"wrap"}>
+                    <Tooltip
+                        title={
+                            compressedFiles?.length === 0
+                                ? "No open-access datasets available to download"
+                                : "Download all open-access files for all datasets"
+                        }
+                        placement="left"
+                        arrow
+                    >
+                        <span>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<DownloadIcon />}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpen(true);
+                                }}
+                                disabled={compressedFiles?.length === 0}
+                            >
+                                Bulk Download
+                            </Button>
+                        </span>
+                    </Tooltip>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<ClearIcon />}
+                        onClick={() => { resetFilters() }}
+                        disabled={
+                            props.site.length === 5 &&
+                            props.status.length === 3 &&
+                            props.sex.length === 2 &&
+                            props.description.length === props.descriptions.length
+                        }
+                    >
+                        Reset Filters
+                    </Button>
+                </Stack>
             </Box>
             <Stack direction={"row"} spacing={2} flexWrap={"wrap"} useFlexGap>
                 <FormControl>
@@ -204,6 +243,11 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                     </FormControl>
                 )}
             </Stack>
+            <BulkDownloadModal
+                open={open}
+                onClose={() => setOpen(false)}
+                allDatasetsCompressedFile={allDatasetsCompressedFile}
+            />
         </Box>
     );
 };

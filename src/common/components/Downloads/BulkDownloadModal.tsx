@@ -3,16 +3,18 @@ import { Modal, Box, IconButton, Stack, Typography, Divider, Button } from "@mui
 import DownloadIcon from "@mui/icons-material/Download";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 import { formatBytes } from "@/common/downloads";
+import { usePathname } from "next/navigation";
 
 export type DownloadModalProps = {
   open: boolean;
   onClose: () => void;
-  ome: string;
   allDatasetsCompressedFile?: DownloadFile;
   filteredDatasetCompressedFile?: DownloadFile;
 }
 
-const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, ome, allDatasetsCompressedFile, filteredDatasetCompressedFile }) => {
+const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, allDatasetsCompressedFile, filteredDatasetCompressedFile }) => {
+  const pathname = usePathname();
+  const ome = pathname.includes("atac") ? "ATAC-seq" : pathname.includes("rna") ? "RNA-seq" : pathname.split("/")[2];
 
   const constuctUrl = (file: DownloadFile | undefined) => {
     if (!file) return "#";
