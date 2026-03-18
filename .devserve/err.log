@@ -1,0 +1,90 @@
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+*************************************************************
+
+MUI X: Missing license key.
+
+The license key is missing. You might not be allowed to use `@mui/x-data-grid-premium` which is part of MUI X Premium.
+
+To solve the issue, you can check the free trial conditions: https://mui.com/r/x-license-trial.
+If you are eligible no actions are required. If you are not eligible to the free trial, you need to purchase a license https://mui.com/r/x-get-license or stop using the software immediately.
+
+*************************************************************
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+*************************************************************
+
+MUI X: Missing license key.
+
+The license key is missing. You might not be allowed to use `@mui/x-data-grid-premium` which is part of MUI X Premium.
+
+To solve the issue, you can check the free trial conditions: https://mui.com/r/x-license-trial.
+If you are eligible no actions are required. If you are not eligible to the free trial, you need to purchase a license https://mui.com/r/x-get-license or stop using the software immediately.
+
+*************************************************************
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+⚠ Fast Refresh had to perform a full reload when ./src/common/config.json (json) changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BulkDownloadModal (src/common/components/Downloads/BulkDownloadModal.tsx:82:22)
+  80 |         </Typography>
+  81 |         <Typography variant="body2" color="text.secondary" mb={2}>
+> 82 |           {filePaths.length} file{filePaths.length !== 1 ? "s" : ""} &middot; {formatBytes(totalSize)}
+     |                      ^
+  83 |         </Typography>
+  84 |
+  85 |         <Divider sx={{ mb: 2 }} /> {
+  digest: '45838782'
+}
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+⨯ ReferenceError: allDatasetsCompressedFile is not defined
+    at OmeDownloadsControls (src/common/components/Downloads/OmeDownloadsControls.tsx:263:44)
+  261 |                 open={open}
+  262 |                 onClose={() => setOpen(false)}
+> 263 |                 allDatasetsCompressedFile={allDatasetsCompressedFile}
+      |                                            ^
+  264 |             />
+  265 |         </Box>
+  266 |     ); {
+  digest: '431206151'
+}
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+⨯ Error: useDownloadJobs must be used within DownloadJobsProvider
+    at useDownloadJobs (src/common/context/DownloadJobsContext.tsx:198:19)
+    at useBulkDownloadJob (src/common/hooks/useBulkDownloadJob.ts:17:37)
+    at BulkDownloadModal (src/common/components/Downloads/BulkDownloadModal.tsx:37:55)
+  196 | export function useDownloadJobs(): DownloadJobsContextValue {
+  197 |   const ctx = useContext(DownloadJobsContext);
+> 198 |   if (!ctx) throw new Error("useDownloadJobs must be used within DownloadJobsProvider");
+      |                   ^
+  199 |   return ctx;
+  200 | }
+  201 | {
+  digest: '793493392'
+}
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+⨯ Error: useDownloadJobs must be used within DownloadJobsProvider
+    at useDownloadJobs (src/common/context/DownloadJobsContext.tsx:198:19)
+    at useBulkDownloadJob (src/common/hooks/useBulkDownloadJob.ts:17:37)
+    at BulkDownloadModal (src/common/components/Downloads/BulkDownloadModal.tsx:37:55)
+  196 | export function useDownloadJobs(): DownloadJobsContextValue {
+  197 |   const ctx = useContext(DownloadJobsContext);
+> 198 |   if (!ctx) throw new Error("useDownloadJobs must be used within DownloadJobsProvider");
+      |                   ^
+  199 |   return ctx;
+  200 | }
+  201 | {
+  digest: '793493392'
+}
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D
+An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A104%2C%22args%22%3A%5B%22ApolloClient%22%2C%22connectToDevTools%22%2C%22Please%20use%20%60devtools.enabled%60%20instead.%22%5D%7D

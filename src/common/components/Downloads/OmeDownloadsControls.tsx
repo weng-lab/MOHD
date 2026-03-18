@@ -6,6 +6,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useMemo, useState } from "react";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 import BulkDownloadModal from "./BulkDownloadModal";
+import { buildBulkFilePath } from "@/common/downloads";
+import { usePathname } from "next/navigation";
 
 type OmeDownloadsControlsProps = {
     site: Site[];
@@ -24,14 +26,26 @@ type OmeDownloadsControlsProps = {
 
 const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
     const [open, setOpen] = useState(false);
+    const pathname = usePathname();
+    const ome = pathname.includes("ATAC") ? "ATAC-seq" : pathname.includes("RNA") ? "RNA-seq" : pathname.split("/")[2];
 
     const compressedFiles = useMemo(() => {
         return props.files?.filter((file) => file.file_type === "Compressed Tar File") ?? [];
     }, [props.files]);
 
-    const allDatasetsCompressedFile = useMemo(() => {
-        return compressedFiles?.find((file) => file.filename.split("_")[1] === "all");
-    }, [compressedFiles]);
+    const openAccessFiles = useMemo(() => {
+        return props.files?.filter(
+            (file) => file.open_access && file.file_type !== "Compressed Tar File"
+        ) ?? [];
+    }, [props.files]);
+
+    const filePaths = useMemo(() => {
+        return openAccessFiles.map((file) => buildBulkFilePath(file.filename, ome));
+    }, [openAccessFiles, ome]);
+
+    const totalSize = useMemo(() => {
+        return openAccessFiles.reduce((sum, file) => sum + (Number(file.size) || 0), 0);
+    }, [openAccessFiles]);
 
     const resetFilters = () => {
         props.setSite(["CCH", "CKD", "EXP", "MOM", "UIC"]);
@@ -246,7 +260,8 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
             <BulkDownloadModal
                 open={open}
                 onClose={() => setOpen(false)}
-                allDatasetsCompressedFile={allDatasetsCompressedFile}
+                filePaths={filePaths}
+                totalSize={totalSize}
             />
         </Box>
     );

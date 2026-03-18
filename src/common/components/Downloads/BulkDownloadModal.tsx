@@ -1,32 +1,59 @@
-import React from "react";
-import { Modal, Box, IconButton, Stack, Typography, Divider, Button } from "@mui/material";
+import React, { useEffect } from "react";
+import {
+  Modal,
+  Box,
+  Stack,
+  Typography,
+  Button,
+  ToggleButtonGroup,
+  ToggleButton,
+  CircularProgress,
+  Divider,
+} from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
+import { BulkDownloadFormat, useBulkDownloadJob } from "@/common/hooks/useBulkDownloadJob";
 import { formatBytes } from "@/common/downloads";
-import { usePathname } from "next/navigation";
 
-export type DownloadModalProps = {
+export type BulkDownloadModalProps = {
   open: boolean;
   onClose: () => void;
-  allDatasetsCompressedFile?: DownloadFile;
-  filteredDatasetCompressedFile?: DownloadFile;
-}
+  filePaths: string[];
+  totalSize: number;
+};
 
-const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, allDatasetsCompressedFile, filteredDatasetCompressedFile }) => {
-  const pathname = usePathname();
-  const ome = pathname.includes("ATAC") ? "ATAC-seq" : pathname.includes("RNA") ? "RNA-seq" : pathname.split("/")[2];
+const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
+  zip: "ZIP",
+  tarball: "Tarball (.tar.gz)",
+  script: "Shell Script (.sh)",
+};
 
-  const constuctUrl = (file: DownloadFile | undefined) => {
-    if (!file) return "#";
-    const index = ome === "ATAC-seq" ? 2 : ome === "RNA-seq" ? 3 : 1;
-    const url = `https://downloads.mohdconsortium.org/${index}_${ome.replace("-seq", "")}/${file.filename}`
-    return url;
-  }
+const BulkDownloadModal: React.FC<BulkDownloadModalProps> = ({
+  open,
+  onClose,
+  filePaths,
+  totalSize,
+}) => {
+  const [format, setFormat] = React.useState<BulkDownloadFormat>("zip");
+  const { submit, status, reset } = useBulkDownloadJob();
 
-  const downloadOptions = [
-    { label: "Filtered table open access files", url: constuctUrl(filteredDatasetCompressedFile), size: filteredDatasetCompressedFile ? filteredDatasetCompressedFile.size : undefined },
-    { label: "All open access files", url: constuctUrl(allDatasetsCompressedFile), size: allDatasetsCompressedFile ? allDatasetsCompressedFile.size : undefined },
-  ];
+  // Close modal and reset after job is submitted to tray
+  useEffect(() => {
+    if (status === "submitted") {
+      reset();
+      onClose();
+    }
+  }, [status, onClose, reset]);
+
+  // Reset when modal closes
+  useEffect(() => {
+    if (!open) reset();
+  }, [open]);
+
+  const handleSubmit = () => {
+    submit(filePaths, format);
+  };
+
+  const isSubmitting = status === "submitting";
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -40,45 +67,65 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, allDataset
           boxShadow: 24,
           borderRadius: 2,
           p: 3,
-          width: 360,
+          width: 400,
+          outline: "none",
         }}
       >
-        <Typography variant="h6" fontWeight={600} mb={1}>
-          Download {ome} data
+        <Typography variant="h6" fontWeight={600} mb={0.5}>
+          Bulk Download
         </Typography>
         <Typography variant="body2" color="text.secondary" mb={2}>
-          Choose what data to export.
+          Downloads open-access files only — AnVIL-restricted files are not included.
+          Pick your format: ZIP or Tarball for a direct archive download, or Shell Script to pull the files yourself.
         </Typography>
-        <Stack spacing={1.5} divider={<Divider flexItem />}>
-          {downloadOptions.map((option) => (
-            <Stack key={option.label} direction="row" alignItems="center" justifyContent="space-between">
-              <Stack>
-                <Typography variant="body1">{option.label}</Typography>
-                {option.size && (
-                  <Typography variant="body2" color="text.secondary">
-                    {formatBytes(option.size)}
-                  </Typography>
-                )}
-              </Stack>
-              <IconButton 
-                color="primary" 
-                aria-label={`Download ${option.label}`} 
-                href={option.url} 
-                download 
-                component={"a"}
-                disabled={option.url === "#"}
-              >
-                <DownloadIcon />
-              </IconButton>
-            </Stack>
-          ))}
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Typography variant="body2" color="text.secondary" mb={2}>
+          {filePaths.length} file{filePaths.length !== 1 ? "s" : ""} &middot; {formatBytes(totalSize)}
+        </Typography>
+
+        <Stack spacing={2}>
+          <Stack spacing={1}>
+            <Typography variant="body2" fontWeight={500}>
+              Format
+            </Typography>
+            <ToggleButtonGroup
+              value={format}
+              exclusive
+              onChange={(_, val) => { if (val) setFormat(val); }}
+              size="small"
+              fullWidth
+            >
+              {(Object.keys(FORMAT_LABELS) as BulkDownloadFormat[]).map((f) => (
+                <ToggleButton key={f} value={f} sx={{ textTransform: "none", flex: 1 }}>
+                  {FORMAT_LABELS[f]}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Stack>
+
+          {status === "failed" && (
+            <Typography variant="body2" color="error">
+              Failed to submit job. Please try again.
+            </Typography>
+          )}
+
+          <Stack direction="row" justifyContent="flex-end" spacing={1}>
+            <Button onClick={onClose} disabled={isSubmitting}>Cancel</Button>
+            <Button
+              variant="contained"
+              startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : <DownloadIcon />}
+              onClick={handleSubmit}
+              disabled={filePaths.length === 0 || isSubmitting}
+            >
+              {isSubmitting ? "Submitting…" : "Start Download"}
+            </Button>
+          </Stack>
         </Stack>
-        <Box mt={3} textAlign="right">
-          <Button onClick={onClose}>Close</Button>
-        </Box>
       </Box>
     </Modal>
   );
 };
 
-export default DownloadModal;
+export default BulkDownloadModal;
