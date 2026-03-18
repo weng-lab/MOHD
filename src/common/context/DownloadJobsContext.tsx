@@ -1,6 +1,7 @@
 "use client";
 
-import React, {
+import {
+  type ReactNode,
   createContext,
   useCallback,
   useContext,
@@ -19,6 +20,8 @@ export type DownloadJob = {
   files: string[];
   status: BulkJobStatus;
   expiresAt: string;
+  ome: string;
+  fileCount: number;
 };
 
 type StatusResponse = {
@@ -47,10 +50,16 @@ function loadFromStorage(): DownloadJob[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    const jobs: DownloadJob[] = JSON.parse(raw);
-    // Drop expired jobs on load
+    const parsed: DownloadJob[] = JSON.parse(raw);
+    // Drop expired jobs on load, backfill fields added after initial release
     const now = Date.now();
-    return jobs.filter((j) => Date.parse(j.expiresAt) > now);
+    return parsed
+      .filter((j) => Date.parse(j.expiresAt) > now)
+      .map((j) => ({
+        ...j,
+        ome: j.ome ?? "Download",
+        fileCount: j.fileCount ?? j.files?.length ?? 0,
+      }));
   } catch {
     return [];
   }
@@ -64,7 +73,7 @@ function saveToStorage(jobs: DownloadJob[]) {
   }
 }
 
-export function DownloadJobsProvider({ children }: { children: React.ReactNode }) {
+export function DownloadJobsProvider({ children }: { children: ReactNode }) {
   const [jobs, setJobs] = useState<DownloadJob[]>([]);
   const intervalsRef = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
 
@@ -163,6 +172,7 @@ export function DownloadJobsProvider({ children }: { children: React.ReactNode }
         const res = await fetch(`${BASE_URL}/${job.format}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          // TODO: replace test payload with actual files — body: JSON.stringify({ files: job.files })
           body: JSON.stringify({ files: ["testdata/alpha.txt", "testdata/bravo.txt"] }),
         });
         if (!res.ok) throw new Error(`Retry submission failed: ${res.status}`);
@@ -173,6 +183,8 @@ export function DownloadJobsProvider({ children }: { children: React.ReactNode }
           id: data.id,
           status: "pending",
           expiresAt: data.expires_at,
+          ome: job.ome,
+          fileCount: job.fileCount,
         };
 
         // Replace old job with new one

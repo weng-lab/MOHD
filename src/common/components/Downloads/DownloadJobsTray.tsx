@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   Box,
   Stack,
@@ -56,9 +56,9 @@ function JobRow({ job }: { job: DownloadJob }) {
             fontWeight={500}
             noWrap
             sx={{ maxWidth: 180 }}
-            title={job.id}
+            title={`${job.ome || "Download"} \u00b7 ${job.fileCount ?? 0} file${job.fileCount !== 1 ? "s" : ""}`}
           >
-            {job.id}
+            {job.ome || "Download"}
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={0.5}>
@@ -174,10 +174,10 @@ export default function DownloadJobsTray() {
       <Collapse in={expanded}>
         <Box sx={{ maxHeight: 360, overflowY: "auto" }}>
           {jobs.map((job, i) => (
-            <React.Fragment key={job.id}>
+            <Fragment key={job.id}>
               {i > 0 && <Divider />}
               <JobRow job={job} />
-            </React.Fragment>
+            </Fragment>
           ))}
         </Box>
       </Collapse>

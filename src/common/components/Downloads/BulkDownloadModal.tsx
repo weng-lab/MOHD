@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -9,6 +9,8 @@ import {
   ToggleButton,
   CircularProgress,
   Divider,
+  Fade,
+  Alert,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import { BulkDownloadFormat, useBulkDownloadJob } from "@/common/hooks/useBulkDownloadJob";
@@ -19,6 +21,8 @@ export type BulkDownloadModalProps = {
   onClose: () => void;
   filePaths: string[];
   totalSize: number;
+  filterSummary?: string | null;
+  ome?: string;
 };
 
 const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
@@ -27,13 +31,15 @@ const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
   script: "Shell Script (.sh)",
 };
 
-const BulkDownloadModal: React.FC<BulkDownloadModalProps> = ({
+const BulkDownloadModal = ({
   open,
   onClose,
   filePaths,
   totalSize,
-}) => {
-  const [format, setFormat] = React.useState<BulkDownloadFormat>("zip");
+  filterSummary,
+  ome,
+}: BulkDownloadModalProps) => {
+  const [format, setFormat] = useState<BulkDownloadFormat>("zip");
   const { submit, status, reset } = useBulkDownloadJob();
 
   // Close modal and reset after job is submitted to tray
@@ -47,83 +53,109 @@ const BulkDownloadModal: React.FC<BulkDownloadModalProps> = ({
   // Reset when modal closes
   useEffect(() => {
     if (!open) reset();
-  }, [open]);
+  }, [open, reset]);
 
   const handleSubmit = () => {
-    submit(filePaths, format);
+    submit(filePaths, format, ome);
   };
 
   const isSubmitting = status === "submitting";
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          borderRadius: 2,
-          p: 3,
-          width: 400,
-          outline: "none",
-        }}
-      >
-        <Typography variant="h6" fontWeight={600} mb={0.5}>
-          Bulk Download
-        </Typography>
-        <Typography variant="body2" color="text.secondary" mb={2}>
-          Downloads open-access files only — AnVIL-restricted files are not included.
-          Pick your format: ZIP or Tarball for a direct archive download, or Shell Script to pull the files yourself.
-        </Typography>
+      <Fade in={open}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: 2,
+            p: 3,
+            width: 420,
+            outline: "none",
+          }}
+        >
+          <Typography variant="h6" fontWeight={600} mb={0.5}>
+            Bulk Download
+          </Typography>
+          <Typography variant="body2" color="text.secondary" mb={2}>
+            Downloads open-access files only — AnVIL-restricted files are not
+            included. Pick your format: ZIP or Tarball for a direct archive
+            download, or Shell Script to pull the files yourself.
+          </Typography>
 
-        <Divider sx={{ mb: 2 }} />
+          <Divider sx={{ mb: 2 }} />
 
-        <Typography variant="body2" color="text.secondary" mb={2}>
-          {filePaths.length} file{filePaths.length !== 1 ? "s" : ""} &middot; {formatBytes(totalSize)}
-        </Typography>
-
-        <Stack spacing={2}>
-          <Stack spacing={1}>
-            <Typography variant="body2" fontWeight={500}>
-              Format
-            </Typography>
-            <ToggleButtonGroup
-              value={format}
-              exclusive
-              onChange={(_, val) => { if (val) setFormat(val); }}
-              size="small"
-              fullWidth
-            >
-              {(Object.keys(FORMAT_LABELS) as BulkDownloadFormat[]).map((f) => (
-                <ToggleButton key={f} value={f} sx={{ textTransform: "none", flex: 1 }}>
-                  {FORMAT_LABELS[f]}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </Stack>
-
-          {status === "failed" && (
-            <Typography variant="body2" color="error">
-              Failed to submit job. Please try again.
+          {filterSummary && (
+            <Typography variant="body2" color="text.secondary" mb={1} sx={{ fontStyle: "italic" }}>
+              Filtered by: {filterSummary}
             </Typography>
           )}
 
-          <Stack direction="row" justifyContent="flex-end" spacing={1}>
-            <Button onClick={onClose} disabled={isSubmitting}>Cancel</Button>
-            <Button
-              variant="contained"
-              startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : <DownloadIcon />}
-              onClick={handleSubmit}
-              disabled={filePaths.length === 0 || isSubmitting}
-            >
-              {isSubmitting ? "Submitting…" : "Start Download"}
-            </Button>
+          <Typography variant="body2" color="text.secondary" mb={2}>
+            {filePaths.length} file{filePaths.length !== 1 ? "s" : ""} &middot;{" "}
+            {formatBytes(totalSize)}
+          </Typography>
+
+          <Stack spacing={2}>
+            <Stack spacing={1}>
+              <Typography variant="body2" fontWeight={500}>
+                Format
+              </Typography>
+              <ToggleButtonGroup
+                value={format}
+                exclusive
+                onChange={(_, val) => {
+                  if (val) setFormat(val);
+                }}
+                size="small"
+                fullWidth
+              >
+                {(Object.keys(FORMAT_LABELS) as BulkDownloadFormat[]).map(
+                  (f) => (
+                    <ToggleButton
+                      key={f}
+                      value={f}
+                      sx={{ textTransform: "none", flex: 1 }}
+                    >
+                      {FORMAT_LABELS[f]}
+                    </ToggleButton>
+                  )
+                )}
+              </ToggleButtonGroup>
+            </Stack>
+
+            {status === "failed" && (
+              <Alert severity="error" sx={{ py: 0.5 }}>
+                Couldn&apos;t start download. Check your connection and try again.
+              </Alert>
+            )}
+
+            <Stack direction="row" justifyContent="flex-end" spacing={1}>
+              <Button onClick={onClose} disabled={isSubmitting}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={
+                  isSubmitting ? (
+                    <CircularProgress size={16} color="inherit" />
+                  ) : (
+                    <DownloadIcon />
+                  )
+                }
+                onClick={handleSubmit}
+                disabled={filePaths.length === 0 || isSubmitting}
+              >
+                {isSubmitting ? "Submitting\u2026" : "Start Download"}
+              </Button>
+            </Stack>
           </Stack>
-        </Stack>
-      </Box>
+        </Box>
+      </Fade>
     </Modal>
   );
 };

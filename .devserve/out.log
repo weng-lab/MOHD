@@ -57,3 +57,55 @@
  GET /omes/WGBS/downloads 200 in 78ms (compile: 58ms, render: 19ms)
  GET /omes/WGBS/downloads 200 in 10ms (compile: 1062µs, render: 9ms)
 ✓ Compiled in 59ms
+✓ Compiled in 113ms
+✓ Compiled in 57ms
+✓ Compiled in 50ms
+✓ Compiled in 64ms
+✓ Compiled in 51ms
+✓ Compiled in 128ms
+✓ Compiled in 117ms
+✓ Compiled in 143ms
+✓ Compiled in 142ms
+✓ Compiled in 110ms
+✓ Compiled in 119ms
+✓ Compiled in 167ms
+✓ Compiled in 134ms
+✓ Compiled in 125ms
+✓ Compiled in 163ms
+✓ Compiled in 140ms
+✓ Compiled in 120ms
+✓ Compiled in 103ms
+✓ Compiled in 13ms
+✓ Compiled in 16ms
+✓ Compiled in 14ms
+✓ Compiled in 43ms
+✓ Compiled in 27ms
+✓ Compiled in 62ms
+✓ Compiled in 206ms
+✓ Compiled in 27ms
+✓ Compiled in 62ms
+✓ Compiled in 12ms
+✓ Compiled in 11ms
+✓ Compiled in 19ms
+ GET /omes/WGBS/downloads 200 in 305ms (compile: 26ms, render: 279ms)
+ GET /omes 200 in 245ms (compile: 31ms, render: 214ms)
+ GET /omes/WGS/dimensionalityReduction 200 in 523ms (compile: 513ms, render: 11ms)
+ GET /omes/WGS/dimensionalityReduction 200 in 12ms (compile: 1248µs, render: 10ms)
+ GET /omes/WGS/downloads 200 in 489ms (compile: 481ms, render: 8ms)
+ GET /omes 200 in 66ms (compile: 1657µs, render: 64ms)
+ GET /omes/ATAC/dimensionalityReduction 200 in 1501ms (compile: 1489ms, render: 12ms)
+ GET /omes/ATAC/downloads 200 in 412ms (compile: 402ms, render: 10ms)
+✓ Compiled in 93ms
+✓ Compiled in 83ms
+ GET /omes/ATAC/downloads 200 in 303ms (compile: 32ms, render: 271ms)
+✓ Compiled in 159ms
+✓ Compiled in 161ms
+✓ Compiled in 49ms
+✓ Compiled in 45ms
+✓ Compiled in 147ms
+ GET /omes/ATAC/downloads 200 in 43ms (compile: 29ms, render: 14ms)
+✓ Compiled in 147ms
+ GET /omes/ATAC/downloads 200 in 313ms (compile: 32ms, render: 281ms)
+✓ Compiled in 18ms
+✓ Compiled in 25ms
+ GET /omes/ATAC/downloads 200 in 283ms (compile: 29ms, render: 254ms)

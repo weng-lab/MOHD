@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Config from "../config.json";
 import { useDownloadJobs } from "@/common/context/DownloadJobsContext";
 
@@ -16,16 +16,16 @@ export function useBulkDownloadJob() {
   const [status, setStatus] = useState<ModalJobStatus>("idle");
   const { addJob } = useDownloadJobs();
 
-  const reset = () => setStatus("idle");
+  const reset = useCallback(() => setStatus("idle"), []);
 
-  const submit = async (files: string[], format: BulkDownloadFormat) => {
+  const submit = async (files: string[], format: BulkDownloadFormat, ome?: string) => {
     setStatus("submitting");
-    console.log("Bulk download files:", files);
 
     try {
       const res = await fetch(`${BASE_URL}/${format}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        // TODO: replace test payload with actual files — body: JSON.stringify({ files })
         body: JSON.stringify({ files: ["testdata/alpha.txt", "testdata/bravo.txt"] }),
       });
 
@@ -39,6 +39,8 @@ export function useBulkDownloadJob() {
         files,
         status: "pending",
         expiresAt: data.expires_at,
+        ome: ome ?? "Unknown",
+        fileCount: files.length,
       });
 
       setStatus("submitted");
