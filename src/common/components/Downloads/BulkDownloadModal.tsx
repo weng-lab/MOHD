@@ -14,7 +14,7 @@ export type DownloadModalProps = {
 
 const DownloadModal: React.FC<DownloadModalProps> = ({ open, onClose, allDatasetsCompressedFile, filteredDatasetCompressedFile }) => {
   const pathname = usePathname();
-  const ome = pathname.includes("atac") ? "ATAC-seq" : pathname.includes("rna") ? "RNA-seq" : pathname.split("/")[2];
+  const ome = pathname.includes("ATAC") ? "ATAC-seq" : pathname.includes("RNA") ? "RNA-seq" : pathname.split("/")[2];
 
   const constuctUrl = (file: DownloadFile | undefined) => {
     if (!file) return "#";
