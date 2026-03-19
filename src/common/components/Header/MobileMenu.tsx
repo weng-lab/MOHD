@@ -6,7 +6,6 @@ import {
   IconButton,
   List,
   ListItem,
-  Stack,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -16,6 +15,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useMenuControl } from "./MenuContext";
 import { useEffect } from "react";
 import { PageInfo } from "./types";
+import { Search } from "@mui/icons-material";
+import AutoComplete from "../autocomplete";
 
 export type MobileMenuProps = {
   pageLinks: PageInfo[];
@@ -52,12 +53,57 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
         }}
       >
         <Box sx={{ width: 350, p: 2 }}>
-          <Stack direction={"row"} spacing={1} alignItems={"center"}>
-            <IconButton sx={{ color: "black" }} onClick={handleCloseDrawer}>
-              <CloseIcon />
-            </IconButton>
-            
-          </Stack>
+          <IconButton sx={{ color: "primary.main" }} onClick={handleCloseDrawer}>
+            <CloseIcon />
+          </IconButton>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "50px",
+              backgroundColor: "primary.main",
+              height: "60px",
+              width: "100%",
+              p: 2,
+            }}
+          >
+          <AutoComplete
+            style={{ width: "100%" }}
+            id="desktop-search-component"
+            slots={{
+              button: (
+                <IconButton sx={{ color: "white" }}>
+                  <Search />
+                </IconButton>
+              ),
+            }}
+            slotProps={{
+              box: { gap: 1 },
+              input: {
+                size: "small",
+                label: `Search MOHD or SCREEN`,
+                placeholder: "Search MOHD or SCREEN",
+                sx: {
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "#ffffff",
+                    borderRadius: "999px",
+                    "& fieldset": { border: "none" },
+                    "&:hover fieldset": { border: "none" },
+                    "&.Mui-focused fieldset": { border: "none" },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#666666",
+                    "&.Mui-focused": { color: "#444444" },
+                  },
+                  "& .MuiInputLabel-shrink": {
+                    display: "none",
+                  },
+                },
+              },
+            }}
+          />
+          </Box>
           <List>
             {pageLinks.map((page) => (
               <Box key={page.pageName} sx={{ mb: 1 }}>

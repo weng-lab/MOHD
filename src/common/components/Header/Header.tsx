@@ -248,7 +248,6 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         }}
                     />
                 </Box>
-
                 {/* mobile view */}
                 <Box display={{ xs: "flex", md: "none" }} alignItems={"center"} gap={2}>
                     <IconButton size="large" onClick={openMenu} sx={{ color: "primary.main" }}>
