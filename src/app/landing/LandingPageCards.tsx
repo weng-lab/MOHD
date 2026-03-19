@@ -22,7 +22,7 @@ const LandingPageCards = () => {
     const { visible, refs } = useGrowOnScroll(pages.length);
 
     return (
-        <Grid container spacing={3} justifyContent="center" marginTop={6} width={"100%"}>
+        <Grid container spacing={5} justifyContent="center" marginTop={6} width={"100%"}>
             {pages.map((page, index) => (
                 <Grow
                     in={visible[index]}
@@ -35,7 +35,7 @@ const LandingPageCards = () => {
                         }}
                         data-index={index}
                         size={{ xs: 12, lg: 6 }}
-                        sx={{ maxWidth: 700 }}
+                        sx={{ maxWidth: 600 }}
                     >
                         <Box
                             component={Link}
@@ -44,10 +44,15 @@ const LandingPageCards = () => {
                             sx={{
                                 position: "relative",
                                 display: "grid",
-                                gridTemplateColumns: { xs: "1fr", sm: "52% 48%" },
+                                gridTemplateColumns: "1fr",
+                                gridTemplateRows: "auto 1fr",
                                 borderRadius: 4,
+                                backgroundImage: `url(${page.image})`,
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
                                 backgroundColor: "#fffdf8",
-                                minHeight: 240,
+                                minHeight: 500,
+                                maxHeight: 500,
                                 boxShadow: "0 10px 28px rgba(16, 24, 40, 0.08)",
                                 border: "1px solid #ece4d9",
                                 textDecoration: "none",
@@ -62,56 +67,43 @@ const LandingPageCards = () => {
                             }}
                         >
                             <Box
-                                component="img"
-                                src={page.image}
-                                alt={page.title}
-                                sx={{
-                                    display: { xs: "none", sm: "block" },
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "contain",
-                                    backgroundColor: "#faf6ef",
-                                }}
-                            />
-                            <Box
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "space-between",
                                     zIndex: 2,
-                                    backgroundColor: "#ffffff",
-                                    p: { xs: 2, sm: 2.5 },
+                                    backgroundImage:
+                                        "linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.82) 45%, rgba(255, 255, 255, 0) 100%)",
+                                    p: 2,
                                 }}
                             >
-                                <Box>
-                                    <Typography
-                                        variant="h5"
-                                        sx={{
-                                            fontWeight: 700,
-                                            overflow: "hidden",
-                                            display: "-webkit-box",
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: "vertical",
-                                            letterSpacing: 0.2,
-                                            color: "#0b3b2f",
-                                        }}
-                                    >
-                                        {page.title}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            mt: 1,
-                                            overflow: "hidden",
-                                            display: "-webkit-box",
-                                            WebkitBoxOrient: "vertical",
-                                            color: "#3c4a46",
-                                            lineHeight: 1.6,
-                                        }}
-                                    >
-                                        {page.description}
-                                    </Typography>
-                                </Box>
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        fontWeight: 700,
+                                        overflow: "hidden",
+                                        display: "-webkit-box",
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: "vertical",
+                                        letterSpacing: 0.2,
+                                        color: "#0b3b2f",
+                                    }}
+                                >
+                                    {page.title}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        mt: 1,
+                                        overflow: "hidden",
+                                        display: "-webkit-box",
+                                        WebkitBoxOrient: "vertical",
+                                        color: "#3c4a46",
+                                        lineHeight: 1.6,
+                                    }}
+                                >
+                                    {page.description}
+                                </Typography>
                                 <Button
                                     variant="contained"
                                     size="medium"
@@ -119,6 +111,7 @@ const LandingPageCards = () => {
                                         alignSelf: "flex-start",
                                         fontWeight: 700,
                                         fontSize: 12,
+                                        mt: 1,
                                         backgroundColor: "primary.dark",
                                         "&:hover": {
                                             backgroundColor: "primary.main",

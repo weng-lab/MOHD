@@ -18,7 +18,7 @@ export default function AtAGlance() {
                     backgroundColor: "primary.light",
                     borderRadius: "999px",
                     px: { xs: 3, md: 6 },
-                    py: { xs: 1.5, md: 3 },
+                    py: { xs: 1.5, md: 2 },
                     maxHeight: 100
                 }}
             >
