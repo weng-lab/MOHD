@@ -12,12 +12,10 @@ import { ReactElement, ReactNode, createContext, useContext } from "react";
 
 type DownloadToolbarContextValue = {
     label?: string | ReactElement;
-    toolbarSlot?: ReactNode;
 };
 
 const DownloadToolbarContext = createContext<DownloadToolbarContextValue>({
     label: undefined,
-    toolbarSlot: undefined,
 });
 
 type ToolbarOwnerState = {
@@ -54,7 +52,7 @@ const StyledTextField = styled(TextField)<{ ownerState: ToolbarOwnerState }>(
 );
 
 export const DownloadToolbar = () => {
-    const { label, toolbarSlot } = useContext(DownloadToolbarContext);
+    const { label } = useContext(DownloadToolbarContext);
     const iconColor = "inherit";
 
     return (
@@ -79,7 +77,6 @@ export const DownloadToolbar = () => {
                 label ?? null
             )}
             <Box sx={{ alignItems: "center", display: "flex", gap: 1 }}>
-                {toolbarSlot ?? null}
                 <StyledQuickFilter>
                     <QuickFilterTrigger
                         render={(triggerProps, state) => (
@@ -138,11 +135,10 @@ export const DownloadToolbar = () => {
 
 export const DownloadToolbarProvider = ({
     label,
-    toolbarSlot,
     children,
 }: DownloadToolbarContextValue & { children: ReactNode }) => {
     return (
-        <DownloadToolbarContext.Provider value={{ label, toolbarSlot }}>
+        <DownloadToolbarContext.Provider value={{ label }}>
             {children}
         </DownloadToolbarContext.Provider>
     );

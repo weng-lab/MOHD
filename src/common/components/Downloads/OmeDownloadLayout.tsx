@@ -73,6 +73,7 @@ const OmeDownloadLayout = <T,>({
         setSex={setSex}
         setProtocol={setProtocol}
         setDescription={setDescription}
+        files={filteredDownloadFiles}
       />
       {renderTable(filteredRows, filteredDownloadFiles)}
     </Stack>
