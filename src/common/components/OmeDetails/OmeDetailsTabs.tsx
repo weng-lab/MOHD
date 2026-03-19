@@ -133,7 +133,7 @@ const OmeDetailsTabs = ({ ome, tabs, orientation }: ElementDetailsTabsProps) => 
                           alt={tab.label + " icon"}
                         />
                       }
-                      sx={{ fontSize: "12px", width: "100%" }}
+                      sx={{ fontSize: "12px" }}
                     />
               )}
             </CloneProps>
