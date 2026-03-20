@@ -18,7 +18,11 @@ export function useBulkDownloadJob() {
 
   const reset = useCallback(() => setStatus("idle"), []);
 
-  const submit = async (files: string[], format: BulkDownloadFormat, ome?: string) => {
+  const submit = async (
+    files: string[],
+    format: BulkDownloadFormat,
+    ome?: string,
+  ) => {
     setStatus("submitting");
 
     try {
@@ -26,7 +30,13 @@ export function useBulkDownloadJob() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // TODO: replace test payload with actual files — body: JSON.stringify({ files })
-        body: JSON.stringify({ files: ["testdata/alpha.txt", "testdata/bravo.txt"] }),
+        body: JSON.stringify({
+          files: [
+            "testdata/eb01.bigWig",
+            "testdata/eb02.bigWig",
+            "testdata/eb03.bigWig",
+          ],
+        }),
       });
 
       if (!res.ok) throw new Error(`Job submission failed: ${res.status}`);
@@ -38,6 +48,7 @@ export function useBulkDownloadJob() {
         format,
         files,
         status: "pending",
+        progress: 0,
         expiresAt: data.expires_at,
         ome: ome ?? "Unknown",
         fileCount: files.length,

@@ -19,6 +19,7 @@ export type DownloadJob = {
   format: BulkDownloadFormat;
   files: string[];
   status: BulkJobStatus;
+  progress: number;
   expiresAt: string;
   ome: string;
   fileCount: number;
@@ -27,6 +28,7 @@ export type DownloadJob = {
 type StatusResponse = {
   id: string;
   status: BulkJobStatus;
+  progress: number;
   expires_at: string;
   filename: string;
   error: string;
@@ -35,16 +37,21 @@ type StatusResponse = {
 type DownloadJobsContextValue = {
   jobs: DownloadJob[];
   addJob: (job: DownloadJob) => void;
-  updateJob: (id: string, patch: Partial<Pick<DownloadJob, "status">>) => void;
+  updateJob: (
+    id: string,
+    patch: Partial<Pick<DownloadJob, "status" | "progress">>,
+  ) => void;
   removeJob: (id: string) => void;
   retryJob: (id: string) => Promise<void>;
 };
 
 const STORAGE_KEY = "mohd_download_jobs";
-const POLL_INTERVAL_MS = 2000;
+const POLL_INTERVAL_MS = 500;
 const BASE_URL = Config.BULK_DOWNLOAD;
 
-const DownloadJobsContext = createContext<DownloadJobsContextValue | null>(null);
+const DownloadJobsContext = createContext<DownloadJobsContextValue | null>(
+  null,
+);
 
 function loadFromStorage(): DownloadJob[] {
   try {
@@ -59,10 +66,17 @@ function loadFromStorage(): DownloadJob[] {
         ...j,
         ome: j.ome ?? "Download",
         fileCount: j.fileCount ?? j.files?.length ?? 0,
+        progress: Math.max(0, Math.min(100, j.progress ?? 0)),
       }));
   } catch {
     return [];
   }
+}
+
+function normalizeProgress(progress?: number, status?: BulkJobStatus) {
+  if (status === "done") return 100;
+  if (typeof progress !== "number" || Number.isNaN(progress)) return 0;
+  return Math.max(0, Math.min(100, Math.round(progress)));
 }
 
 function saveToStorage(jobs: DownloadJob[]) {
@@ -75,7 +89,9 @@ function saveToStorage(jobs: DownloadJob[]) {
 
 export function DownloadJobsProvider({ children }: { children: ReactNode }) {
   const [jobs, setJobs] = useState<DownloadJob[]>([]);
-  const intervalsRef = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
+  const intervalsRef = useRef<Map<string, ReturnType<typeof setInterval>>>(
+    new Map(),
+  );
 
   // Rehydrate from localStorage on mount, then start polling for active jobs
   useEffect(() => {
@@ -116,28 +132,33 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
           const res = await fetch(`${BASE_URL}/status/${id}`);
           if (!res.ok) throw new Error(`Status check failed: ${res.status}`);
           const data: StatusResponse = await res.json();
+          const progress = normalizeProgress(data.progress, data.status);
 
           if (data.status === "done" || data.status === "failed") {
             clearPoller(id);
             setJobs((prev) =>
-              prev.map((j) => (j.id === id ? { ...j, status: data.status } : j))
+              prev.map((j) =>
+                j.id === id ? { ...j, status: data.status, progress } : j,
+              ),
             );
           } else {
             setJobs((prev) =>
-              prev.map((j) => (j.id === id ? { ...j, status: data.status } : j))
+              prev.map((j) =>
+                j.id === id ? { ...j, status: data.status, progress } : j,
+              ),
             );
           }
         } catch {
           clearPoller(id);
           setJobs((prev) =>
-            prev.map((j) => (j.id === id ? { ...j, status: "failed" } : j))
+            prev.map((j) => (j.id === id ? { ...j, status: "failed" } : j)),
           );
         }
       }, POLL_INTERVAL_MS);
 
       intervalsRef.current.set(id, interval);
     },
-    [clearPoller]
+    [clearPoller],
   );
 
   const addJob = useCallback(
@@ -145,14 +166,16 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
       setJobs((prev) => [job, ...prev]);
       startPolling(job.id);
     },
-    [startPolling]
+    [startPolling],
   );
 
   const updateJob = useCallback(
-    (id: string, patch: Partial<Pick<DownloadJob, "status">>) => {
-      setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, ...patch } : j)));
+    (id: string, patch: Partial<Pick<DownloadJob, "status" | "progress">>) => {
+      setJobs((prev) =>
+        prev.map((j) => (j.id === id ? { ...j, ...patch } : j)),
+      );
     },
-    []
+    [],
   );
 
   const removeJob = useCallback(
@@ -160,7 +183,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
       clearPoller(id);
       setJobs((prev) => prev.filter((j) => j.id !== id));
     },
-    [clearPoller]
+    [clearPoller],
   );
 
   const retryJob = useCallback(
@@ -173,7 +196,9 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           // TODO: replace test payload with actual files — body: JSON.stringify({ files: job.files })
-          body: JSON.stringify({ files: ["testdata/alpha.txt", "testdata/bravo.txt"] }),
+          body: JSON.stringify({
+            files: ["testdata/alpha.txt", "testdata/bravo.txt"],
+          }),
         });
         if (!res.ok) throw new Error(`Retry submission failed: ${res.status}`);
         const data: { id: string; expires_at: string } = await res.json();
@@ -182,6 +207,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
           ...job,
           id: data.id,
           status: "pending",
+          progress: 0,
           expiresAt: data.expires_at,
           ome: job.ome,
           fileCount: job.fileCount,
@@ -195,11 +221,13 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
         // leave job as failed if retry POST itself fails
       }
     },
-    [jobs, clearPoller, startPolling]
+    [jobs, clearPoller, startPolling],
   );
 
   return (
-    <DownloadJobsContext.Provider value={{ jobs, addJob, updateJob, removeJob, retryJob }}>
+    <DownloadJobsContext.Provider
+      value={{ jobs, addJob, updateJob, removeJob, retryJob }}
+    >
       {children}
     </DownloadJobsContext.Provider>
   );
@@ -207,6 +235,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
 
 export function useDownloadJobs(): DownloadJobsContextValue {
   const ctx = useContext(DownloadJobsContext);
-  if (!ctx) throw new Error("useDownloadJobs must be used within DownloadJobsProvider");
+  if (!ctx)
+    throw new Error("useDownloadJobs must be used within DownloadJobsProvider");
   return ctx;
 }

@@ -39,6 +39,8 @@ function JobRow({ job }: { job: DownloadJob }) {
   const isActive = job.status === "pending" || job.status === "processing";
   const isDone = job.status === "done";
   const isFailed = job.status === "failed";
+  const progress = Math.max(0, Math.min(100, job.progress ?? 0));
+  const activeLabel = job.status === "processing" ? `Processing... ${progress}%` : STATUS_LABEL[job.status];
 
   return (
     <Stack spacing={0.75} sx={{ py: 1.5, px: 2 }}>
@@ -99,11 +101,17 @@ function JobRow({ job }: { job: DownloadJob }) {
           variant="caption"
           color={isFailed ? "error" : isActive ? "text.secondary" : "success.main"}
         >
-          {STATUS_LABEL[job.status]}
+          {isActive ? activeLabel : STATUS_LABEL[job.status]}
         </Typography>
       </Stack>
 
-      {isActive && <LinearProgress sx={{ borderRadius: 1, height: 3 }} />}
+      {isActive && (
+        <LinearProgress
+          variant="determinate"
+          value={progress}
+          sx={{ borderRadius: 1, height: 3 }}
+        />
+      )}
     </Stack>
   );
 }

@@ -13,7 +13,10 @@ import {
   Alert,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import { BulkDownloadFormat, useBulkDownloadJob } from "@/common/hooks/useBulkDownloadJob";
+import {
+  BulkDownloadFormat,
+  useBulkDownloadJob,
+} from "@/common/hooks/useBulkDownloadJob";
 import { formatBytes } from "@/common/downloads";
 
 export type BulkDownloadModalProps = {
@@ -82,15 +85,20 @@ const BulkDownloadModal = ({
             Bulk Download
           </Typography>
           <Typography variant="body2" color="text.secondary" mb={2}>
-            Downloads open-access files only — AnVIL-restricted files are not
-            included. Pick your format: ZIP or Tarball for a direct archive
-            download, or Shell Script to pull the files yourself.
+            Downloads open-access files only. AnVIL-restricted files are not
+            included. Pick your format: .zip or tar.gz for a direct archive
+            download, or shell script to pull the files yourself.
           </Typography>
 
           <Divider sx={{ mb: 2 }} />
 
           {filterSummary && (
-            <Typography variant="body2" color="text.secondary" mb={1} sx={{ fontStyle: "italic" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              mb={1}
+              sx={{ fontStyle: "italic" }}
+            >
               Filtered by: {filterSummary}
             </Typography>
           )}
@@ -123,14 +131,15 @@ const BulkDownloadModal = ({
                     >
                       {FORMAT_LABELS[f]}
                     </ToggleButton>
-                  )
+                  ),
                 )}
               </ToggleButtonGroup>
             </Stack>
 
             {status === "failed" && (
               <Alert severity="error" sx={{ py: 0.5 }}>
-                Couldn&apos;t start download. Check your connection and try again.
+                Couldn&apos;t start download. Check your connection and try
+                again.
               </Alert>
             )}
 
