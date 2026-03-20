@@ -1,3 +1,9 @@
+export const buildBulkFilePath = (filename: string, ome: string): string => {
+  const index = ome === "ATAC-seq" ? 2 : ome === "RNA-seq" ? 3 : 1;
+  const folder = `${index}_${ome.replace("-seq", "")}`;
+  return `${folder}/${filename}`;
+};
+
 export const formatBytes = (bytes?: number): string => {
   if (!bytes) return "";
 

@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import { Site, Status, Sex, Protocol } from "@/common/types/globalTypes";
 import OmeDownloadsControls from "@/common/components/Downloads/OmeDownloadsControls";
 import { Stack } from "@mui/system";
@@ -12,16 +12,16 @@ type FilterFields = {
   protocol?: string;
 };
 
-export type OmeDownloadLayoutProps<T> = {
+export type OmeDownloadLayoutProps<T extends { sample_id: string }> = {
   rows: T[];
   descriptions?: string[];
   downloadFiles: DownloadFile[];
   includeProtocolFilter?: boolean;
   getFilterFields: (row: T) => FilterFields;
-  renderTable: (rows: T[], files: DownloadFile[]) => React.ReactNode;
+  renderTable: (rows: T[], files: DownloadFile[]) => ReactNode;
 };
 
-const OmeDownloadLayout = <T,>({
+const OmeDownloadLayout = <T extends { sample_id: string }>({
   rows,
   descriptions = [],
   downloadFiles,
@@ -51,6 +51,11 @@ const OmeDownloadLayout = <T,>({
     });
   }, [rows, site, status, sex, protocol, includeProtocolFilter, getFilterFields]);
 
+  // Sample IDs that pass the row-level filters — used to scope bulk downloads
+  const filteredSampleIds = useMemo(() => {
+    return new Set(filteredRows.map((row) => row.sample_id));
+  }, [filteredRows]);
+
   const filteredDownloadFiles = useMemo(() => {
     return downloadFiles.filter((file) => {
       //dont filter out anvil files or compressed files
@@ -74,6 +79,7 @@ const OmeDownloadLayout = <T,>({
         setProtocol={setProtocol}
         setDescription={setDescription}
         files={filteredDownloadFiles}
+        filteredSampleIds={filteredSampleIds}
       />
       {renderTable(filteredRows, filteredDownloadFiles)}
     </Stack>
