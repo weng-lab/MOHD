@@ -1,5 +1,6 @@
 import { IconButton, Tooltip } from "@mui/material";
-import { GridColDef, GridGroupingColDefOverride, Table } from "@weng-lab/ui-components";
+import { Table } from "@weng-lab/ui-components";
+import { GridColDef, GridGroupingColDefOverride } from "@mui/x-data-grid-premium";
 import { useMemo } from "react";
 import Image from "next/image";
 import DownloadIcon from '@mui/icons-material/Download';

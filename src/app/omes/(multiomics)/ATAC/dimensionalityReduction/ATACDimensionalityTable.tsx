@@ -1,4 +1,5 @@
-import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColDef, GridColumnHeaderParams, gridFilteredSortedRowEntriesSelector, GridRowSelectionModel, GridSortDirection, GridSortModel, Table, useGridApiRef } from "@weng-lab/ui-components";
+import { Table } from "@weng-lab/ui-components";
+import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColDef, GridColumnHeaderParams, gridFilteredSortedRowEntriesSelector, GridRowSelectionModel, GridSortDirection, GridSortModel, useGridApiRef } from "@mui/x-data-grid-premium";
 import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery, useTheme } from "@mui/material";
