@@ -50,6 +50,7 @@ const RNADimensionalityReduction = () => {
     return (
         <TwoPaneLayout
             direction={{ xs: "column", lg: "row" }}
+            rowHeight="max(60vh, 700px)"
             TableComponent={<RNADimensionalityTable {...SharedRNADimenionalityProps} />}
             plots={[
                 {
