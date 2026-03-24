@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import Config from "../config.json";
 import { useDownloadJobs } from "@/common/context/DownloadJobsContext";
+import { getMockBulkDownloadFiles } from "@/common/bulkDownloadMocks";
 
 export type BulkDownloadFormat = "zip" | "tarball" | "script";
 export type ModalJobStatus = "idle" | "submitting" | "submitted" | "failed";
@@ -24,18 +25,15 @@ export function useBulkDownloadJob() {
     ome?: string,
   ) => {
     setStatus("submitting");
+    const mockFiles = getMockBulkDownloadFiles(format);
 
     try {
-      const res = await fetch(`${BASE_URL}/${format}`, {
+      const res = await fetch(`${BASE_URL}/jobs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // TODO: replace test payload with actual files — body: JSON.stringify({ files })
         body: JSON.stringify({
-          files: [
-            "testdata/eb01.bigWig",
-            "testdata/eb02.bigWig",
-            "testdata/eb03.bigWig",
-          ],
+          type: format,
+          files: mockFiles,
         }),
       });
 

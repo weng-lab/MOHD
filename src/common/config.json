@@ -2,5 +2,5 @@
   "API": {
     "MOHDAPI": "https://mohd-api-251345758618.us-east4.run.app/graphql"
   },
-  "BULK_DOWNLOAD": "http://localhost:8080"
+  "BULK_DOWNLOAD": "https://arch.crane-tawny.ts.net:8080"
 }

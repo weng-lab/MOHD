@@ -11,6 +11,7 @@ import {
 } from "react";
 import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
 import Config from "@/common/config.json";
+import { getMockBulkDownloadFiles } from "@/common/bulkDownloadMocks";
 
 export type BulkJobStatus = "pending" | "processing" | "done" | "failed";
 
@@ -23,15 +24,18 @@ export type DownloadJob = {
   expiresAt: string;
   ome: string;
   fileCount: number;
+  filename?: string;
+  error?: string;
 };
 
 type StatusResponse = {
   id: string;
+  type: BulkDownloadFormat;
   status: BulkJobStatus;
   progress: number;
   expires_at: string;
-  filename: string;
-  error: string;
+  filename?: string;
+  error?: string;
 };
 
 type DownloadJobsContextValue = {
@@ -67,6 +71,8 @@ function loadFromStorage(): DownloadJob[] {
         ome: j.ome ?? "Download",
         fileCount: j.fileCount ?? j.files?.length ?? 0,
         progress: Math.max(0, Math.min(100, j.progress ?? 0)),
+        filename: j.filename,
+        error: j.error,
       }));
   } catch {
     return [];
@@ -138,13 +144,31 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
             clearPoller(id);
             setJobs((prev) =>
               prev.map((j) =>
-                j.id === id ? { ...j, status: data.status, progress } : j,
+                j.id === id
+                  ? {
+                      ...j,
+                      status: data.status,
+                      progress,
+                      expiresAt: data.expires_at,
+                      filename: data.filename,
+                      error: data.error,
+                    }
+                  : j,
               ),
             );
           } else {
             setJobs((prev) =>
               prev.map((j) =>
-                j.id === id ? { ...j, status: data.status, progress } : j,
+                j.id === id
+                  ? {
+                      ...j,
+                      status: data.status,
+                      progress,
+                      expiresAt: data.expires_at,
+                      filename: data.filename,
+                      error: data.error,
+                    }
+                  : j,
               ),
             );
           }
@@ -192,12 +216,13 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
       if (!job) return;
 
       try {
-        const res = await fetch(`${BASE_URL}/${job.format}`, {
+        const mockFiles = getMockBulkDownloadFiles(job.format);
+        const res = await fetch(`${BASE_URL}/jobs`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          // TODO: replace test payload with actual files — body: JSON.stringify({ files: job.files })
           body: JSON.stringify({
-            files: ["testdata/alpha.txt", "testdata/bravo.txt"],
+            type: job.format,
+            files: mockFiles,
           }),
         });
         if (!res.ok) throw new Error(`Retry submission failed: ${res.status}`);
@@ -211,6 +236,8 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
           expiresAt: data.expires_at,
           ome: job.ome,
           fileCount: job.fileCount,
+          filename: undefined,
+          error: undefined,
         };
 
         // Replace old job with new one
