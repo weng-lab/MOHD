@@ -15,7 +15,7 @@ export default function AtAGlance() {
         <Stack alignItems="center" spacing={2}>
             <Box
                 sx={{
-                    backgroundColor: "primary.dark",
+                    backgroundColor: "primary.main",
                     borderRadius: "999px",
                     px: { xs: 3, md: 6 },
                     py: { xs: 1.5, md: 2 },
@@ -62,8 +62,8 @@ export default function AtAGlance() {
                                 <Typography
                                     sx={{
                                         color: "white",
-                                        fontWeight: 700,
-                                        fontSize: { xs: 25, md: 36 },
+                                        fontWeight: 500,
+                                        fontSize: { xs: 25, md: 30 },
                                         lineHeight: 1,
                                         fontVariantNumeric: "tabular-nums",
                                         display: "flex",

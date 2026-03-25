@@ -23,7 +23,7 @@ export default function Home() {
             gap: 2,
             background: `linear-gradient(
             to bottom,
-            ${theme.palette.primary.dark},
+            ${theme.palette.primary.main},
             ${theme.palette.primary.light}
           )`,
             "&::before, &::after": {

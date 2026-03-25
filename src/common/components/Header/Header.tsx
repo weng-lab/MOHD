@@ -230,15 +230,23 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                                 placeholder: "Search MOHD or SCREEN",
                                 sx: {
                                     "& .MuiOutlinedInput-root": {
-                                        backgroundColor: "#ffffff",
+                                        backgroundColor: "primary.light",
                                         borderRadius: "999px",
+                                        color: "white",
                                         "& fieldset": { border: "none" },
                                         "&:hover fieldset": { border: "none" },
                                         "&.Mui-focused fieldset": { border: "none" },
+                                        "& input": {
+                                            color: "white",
+                                        },
+                                        "& input::placeholder": {
+                                            color: "rgba(255, 255, 255, 0.85)",
+                                            opacity: 1,
+                                        },
                                     },
                                     "& .MuiInputLabel-root": {
-                                        color: "#666666",
-                                        "&.Mui-focused": { color: "#444444" },
+                                        color: "rgba(255, 255, 255, 0.85)",
+                                        "&.Mui-focused": { color: "white" },
                                     },
                                     "& .MuiInputLabel-shrink": {
                                         display: "none",
