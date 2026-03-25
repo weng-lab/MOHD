@@ -22,7 +22,7 @@ const LandingPageCards = () => {
     const { visible, refs } = useGrowOnScroll(pages.length);
 
     return (
-        <Grid container spacing={5} justifyContent="center" marginTop={6} width={"100%"}>
+        <Grid container spacing={5} justifyContent="center" width={"100%"}>
             {pages.map((page, index) => (
                 <Grow
                     in={visible[index]}
