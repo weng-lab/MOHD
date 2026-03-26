@@ -11,7 +11,7 @@ type JobResponse = {
   expires_at: string;
 };
 
-const BASE_URL = Config.BULK_DOWNLOAD;
+const BASE_URL = Config.API.BULK_DOWNLOAD;
 
 export function useBulkDownloadJob() {
   const [status, setStatus] = useState<ModalJobStatus>("idle");
