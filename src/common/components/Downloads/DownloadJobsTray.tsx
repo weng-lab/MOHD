@@ -70,7 +70,7 @@ function JobRow({ job }: { job: DownloadJob }) {
                 size="small"
                 color="primary"
                 component="a"
-                href={`${Config.BULK_DOWNLOAD}/download/${job.id}`}
+                href={`${Config.API.BULK_DOWNLOAD}/download/${job.id}`}
                 download
               >
                 <DownloadIcon fontSize="small" />
