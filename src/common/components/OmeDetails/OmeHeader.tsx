@@ -1,4 +1,3 @@
-import { OME_COLORS } from "@/common/colors";
 import { Stack, Paper, Box, Typography, Button } from "@mui/material";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -8,9 +7,7 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
     const pathname = usePathname();
     const ome = pathname.split("/")[2];
     const seq = ome === "RNA" || ome === "ATAC"
-
-    const color = OME_COLORS[ome.toLowerCase()] || "gray";
-    const image = `/OmeIcons/${ome.toLowerCase().split("-")[0]}.png`;
+    const image = `/OmeIcons/NoBgrnd/${ome.toLowerCase().split("-")[0]}.png`;
 
     return (
         <Box
@@ -28,26 +25,11 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
             >
                 <Stack direction={"row"} justifyContent={"space-between"}>
                     <Stack direction="row" alignItems="stretch">
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                inset: 0,
-                                backgroundColor: color,
-                                opacity: 0.08,
-                                pointerEvents: "none",
-                            }}
-                        />
-                        <Box
-                            sx={{
-                                width: 12,
-                                backgroundColor: color,
-                            }}
-                        />
                         <Stack
                             direction="row"
                             alignItems="center"
-                            spacing={2}
-                            sx={{ px: 2, py: 1, flex: 1 }}
+                            spacing={1}
+                            sx={{ p: 1, flex: 1 }}
                         >
                             <Typography
                                 variant="h5"
@@ -69,8 +51,8 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
                             <Image
                                 src={image}
                                 alt={`${ome} icon`}
-                                width={40}
-                                height={40}
+                                width={50}
+                                height={50}
                             />
                         </Stack>
                     </Stack>

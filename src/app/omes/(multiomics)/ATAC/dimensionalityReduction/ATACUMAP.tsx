@@ -120,8 +120,6 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
         <Stack
             width={"100%"}
             height={"100%"}
-            padding={1}
-            sx={{ border: "1px solid", borderColor: "divider", borderRadius: 1, position: "relative" }}
         >
             {scatterData &&
                 scatterData.length > 0 && (

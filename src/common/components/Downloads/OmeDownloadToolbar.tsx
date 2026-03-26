@@ -7,7 +7,7 @@ import {
     QuickFilterClear,
     QuickFilterControl,
     QuickFilterTrigger,
-} from "@weng-lab/ui-components";
+} from "@mui/x-data-grid-premium";
 import { ReactElement, ReactNode, createContext, useContext } from "react";
 
 type DownloadToolbarContextValue = {
