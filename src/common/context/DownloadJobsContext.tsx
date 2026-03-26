@@ -51,7 +51,7 @@ type DownloadJobsContextValue = {
 
 const STORAGE_KEY = "mohd_download_jobs";
 const POLL_INTERVAL_MS = 500;
-const BASE_URL = Config.BULK_DOWNLOAD;
+const BASE_URL = Config.API.BULK_DOWNLOAD;
 
 const DownloadJobsContext = createContext<DownloadJobsContextValue | null>(
   null,
