@@ -15,10 +15,10 @@ export default function AtAGlance() {
         <Stack alignItems="center" spacing={2}>
             <Box
                 sx={{
-                    backgroundColor: "primary.light",
+                    backgroundColor: "primary.main",
                     borderRadius: "999px",
                     px: { xs: 3, md: 6 },
-                    py: { xs: 1.5, md: 3 },
+                    py: { xs: 1.5, md: 2 },
                     maxHeight: 100
                 }}
             >
@@ -28,7 +28,7 @@ export default function AtAGlance() {
                         <Divider
                             orientation="vertical"
                             flexItem
-                            sx={{ borderColor: "black" }}
+                            sx={{ borderColor: "white" }}
                         />
                     }
                     spacing={{ xs: 2, md: 5 }}
@@ -61,9 +61,9 @@ export default function AtAGlance() {
                             >
                                 <Typography
                                     sx={{
-                                        color: "#000000",
-                                        fontWeight: 700,
-                                        fontSize: { xs: 25, md: 36 },
+                                        color: "white",
+                                        fontWeight: 500,
+                                        fontSize: { xs: 25, md: 30 },
                                         lineHeight: 1,
                                         fontVariantNumeric: "tabular-nums",
                                         display: "flex",
@@ -85,7 +85,7 @@ export default function AtAGlance() {
                                 </Typography>
                                 <Typography
                                     sx={{
-                                        color: "black",
+                                        color: "white",
                                         fontSize: 14,
                                     }}
                                 >
