@@ -1,86 +1,105 @@
 "use client";
-import { Box, Grow, Typography, Grid } from "@mui/material";
+import { Box, Grow, Typography } from "@mui/material";
 import Link from "next/link";
 import { useGrowOnScroll } from "@/common/hooks/useGrowOnScroll";
 import { OmesList } from "@/common/types/globalTypes";
 import { OME_COLORS } from "@/common/colors";
 
 const OmeCardsCircle = () => {
-    const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
+  const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
 
-    return (
-        <Grid container spacing={5} justifyContent="flex-start" marginTop={6} width={"100%"}>
-            {OmesList.map((ome, index) => {
-                const seq = ome === "RNA" || ome === "ATAC";
-                return (
-                    <Grow
-                        in={omesVisible[index]}
-                        timeout={800 + index * 300}
-                        style={{ transformOrigin: "center" }}
-                        key={`${ome}-${index}`}
-                    >
-                        <Grid
-                            component={Link}
-                            href={`/omes/${ome}/dimensionalityReduction`}
-                            scroll
-                            ref={(el) => {
-                                omeRefs.current[index] = el;
-                            }}
-                            data-index={index}
-                            size={4}
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                textDecoration: "none",
-                                color: "inherit",
-                                "&:hover .ome-title": {
-                                    color: OME_COLORS[ome.toLowerCase()] ?? "white",
-                                },
-                                "&:hover .ome-circle": {
-                                    transform: "scale(1.1)",
-                                    boxShadow: 6,
-                                },
-                            }}
-                        >
-                            <Typography
-                                className="ome-title"
-                                variant="subtitle1"
-                                sx={{
-                                    fontSize: { xs: "0.75rem", md: "1rem" },
-                                    fontWeight: "bold",
-                                    textTransform: seq ? "none" : "capitalize",
-                                    color: "white",
-                                    mb: 1,
-                                    textAlign: "center",
-                                    transition: "color 0.3s ease",
-                                    textShadow: "0 0 6px rgba(0,0,0,0.8)",
-                                }}
-                            >
-                                {seq ? ome + "-seq" : ome}
-                            </Typography>
-                            <Box
-                                className="ome-circle"
-                                sx={{
-                                    width: { xs: 75, md: 100 },
-                                    height: { xs: 75, md: 100 },
-                                    borderRadius: "50%",
-                                    boxShadow: 3,
-                                    overflow: "hidden",
-                                    backgroundColor: "white",
-                                    backgroundImage: `url(/OmeIcons/NoBgrnd/${ome.toLowerCase().split("-")[0]}.png)`,
-                                    backgroundSize: "cover",
-                                    backgroundPosition: "center",
-                                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                                }}
-                            />
-                        </Grid>
-                    </Grow>
-                );
-            })}
-        </Grid>
-    );
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" },
+        gap: 2,
+        width: "100%",
+        maxWidth: 760,
+        mt: 1,
+      }}
+    >
+      {OmesList.map((ome, index) => {
+        const isSeq = ome === "RNA" || ome === "ATAC";
+        const label = isSeq ? `${ome}-seq` : ome.charAt(0).toUpperCase() + ome.slice(1);
+        const iconName = ome.toLowerCase().split("-")[0];
+
+        return (
+          <Grow
+            in={omesVisible[index]}
+            timeout={500 + index * 120}
+            style={{ transformOrigin: "left center" }}
+            key={`${ome}-${index}`}
+          >
+            <Box
+              component={Link}
+              href={`/omes/${ome}/dimensionalityReduction`}
+              scroll
+              ref={(el: HTMLAnchorElement | null) => {
+                omeRefs.current[index] = el;
+              }}
+              data-index={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                minHeight: 72,
+                px: { xs: 2, md: 2.25 },
+                py: 1.5,
+                borderRadius: 1.5,
+                backgroundColor: "rgba(240, 250, 250, 0.96)",
+                border: "1px solid rgba(12, 64, 60, 0.12)",
+                boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
+                textDecoration: "none",
+                color: "text.primary",
+                transition:
+                  "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
+                "&:hover": {
+                  transform: "translateY(-3px)",
+                  boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
+                  backgroundColor: "rgba(255,255,255,0.98)",
+                },
+                "&:hover .ome-icon": {
+                  transform: "scale(1.08)",
+                },
+                "&:hover .ome-label": {
+                  color: OME_COLORS[ome.toLowerCase()] ?? "primary.main",
+                },
+              }}
+            >
+              <Box
+                className="ome-icon"
+                sx={{
+                  width: 34,
+                  height: 34,
+                  flexShrink: 0,
+                  backgroundImage: `url(/OmeIcons/NoBgrnd/${iconName}.png)`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "contain",
+                  backgroundPosition: "center",
+                  transition: "transform 0.25s ease",
+                }}
+              />
+              <Typography
+                className="ome-label"
+                variant="h6"
+                sx={{
+                  fontSize: { xs: "1rem", md: "1.05rem" },
+                  fontWeight: 500,
+                  lineHeight: 1.2,
+                  color: "rgba(33, 53, 51, 0.92)",
+                  textTransform: ome === "WGS" || ome === "WGBS" ? "uppercase" : "none",
+                  transition: "color 0.25s ease",
+                }}
+              >
+                {label}
+              </Typography>
+            </Box>
+          </Grow>
+        );
+      })}
+    </Box>
+  );
 };
 
 export default OmeCardsCircle;

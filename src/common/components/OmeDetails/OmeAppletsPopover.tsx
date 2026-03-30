@@ -32,8 +32,7 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
             slotProps={{
                 paper: {
                     sx: {
-                        mt: 1,
-                        p: 1,
+                        p: 2,
                         borderRadius: 3,
                         width: 320,
                         boxShadow: "0 18px 48px rgba(0, 0, 0, 0.18)",
@@ -48,7 +47,6 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
                 >
                     Omes
                 </Typography>
-
                 <Box
                     sx={{
                         display: "grid",
@@ -88,26 +86,12 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
                                     },
                                 }}
                             >
-                                <Box
-                                    sx={{
-                                        width: 42,
-                                        height: 42,
-                                        borderRadius: "50%",
-                                        backgroundColor: "white",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.10)",
-                                        overflow: "hidden",
-                                    }}
-                                >
                                     <Image
                                         src={omeImage}
                                         alt={`${omeLabel} icon`}
                                         width={42}
                                         height={42}
                                     />
-                                </Box>
                                 <Typography
                                     variant="caption"
                                     sx={{
@@ -123,16 +107,13 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
                         );
                     })}
                 </Box>
-
                 <Divider sx={{ my: 0.5 }} />
-
                 <Typography
                     variant="subtitle2"
                     sx={{ fontWeight: 700, px: 1.5, color: "text.secondary" }}
                 >
                     Navigate
                 </Typography>
-
                 <Box
                     sx={{
                         display: "grid",
