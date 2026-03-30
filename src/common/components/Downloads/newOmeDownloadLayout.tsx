@@ -15,7 +15,7 @@ type FilterFields = {
 export type OmeDownloadLayoutProps<T extends { sample_id: string }> = {
   rows: T[];
   descriptions?: string[];
-  downloadFiles?: DownloadFile[];
+  downloadFiles: DownloadFile[];
   /**
    * This also feels unnecessary, can't we just check the existance of `.protocol`?
    */
@@ -63,7 +63,7 @@ const OmeDownloadLayout = <T extends { sample_id: string }>({
   }, [filteredRows]);
 
   const filteredDownloadFiles = useMemo(() => {
-    return (downloadFiles ?? []).filter((file) => {
+    return downloadFiles.filter((file) => {
       //dont filter out anvil files or compressed files
       if (!file.open_access || file.file_type === "Compressed Tar File") return true;
       return description.includes(file.file_type);

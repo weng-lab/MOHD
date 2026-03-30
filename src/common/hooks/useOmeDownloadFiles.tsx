@@ -1,6 +1,8 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+import { gql } from "@/common/types/generated/gql";
+import { OmeEnum } from "../types/generated/graphql";
 
-export const FETCH_DOWNLOAD_FILES = gql`
+export const FETCH_DOWNLOAD_FILES = gql(`
     query FetchDownloadFiles($ome: OmeEnum!) {
         fetch_download_files(ome: $ome) {
             filename
@@ -11,36 +13,25 @@ export const FETCH_DOWNLOAD_FILES = gql`
             open_access
         }
     }
-`;
+`);
 
-export type DownloadFile = {
-    filename: string;
-    file_type: string;
-    size: number;
-    file_ome: string;
-    sample_id: string;
-    open_access: boolean;
-};
+export type DownloadFile = NonNullable<ReturnType<typeof useOmeDownloadFiles>["data"]>[number]
 
-type FetchDownloadFilesData = {
-    fetch_download_files: DownloadFile[];
-};
-
-type FetchDownloadFilesProps = {
-    ome: string;
-};
-
-export function useOmeDownloadFiles(ome: FetchDownloadFilesProps["ome"]) {
-    const { data, loading, error } = useQuery<
-        FetchDownloadFilesData,
-        FetchDownloadFilesProps
-    >(FETCH_DOWNLOAD_FILES, {
+export function useOmeDownloadFiles(ome: OmeEnum) {
+    const { data, loading, error } = useQuery(FETCH_DOWNLOAD_FILES, {
         variables: { ome },
     });
 
-    return {
-        data: data?.fetch_download_files ?? [],
+    //thanks ts strict mode
+    if (data && data.fetch_download_files !== null && data.fetch_download_files !== undefined) {
+      return {
+        data: data.fetch_download_files.filter(x => x !== null),
         loading,
         error,
-    };
+      };
+    } else return {
+        data: undefined,
+        loading,
+        error,
+    }
 }

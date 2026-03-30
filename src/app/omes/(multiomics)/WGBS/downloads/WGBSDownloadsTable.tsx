@@ -10,21 +10,27 @@ type DownloadRow = WGBSMetadata[number] & DownloadFile;
 
 type WGBSDownloadsProps = {
     rows: WGBSMetadata;
-    WGBSData: UseWGBSDataReturn;
+    loading: boolean;
+    error: boolean;
     files: DownloadFile[];
     loadingFiles: boolean;
 }
 
 const WGBSDownloadsTable = ({
     rows,
-    WGBSData,
+    loading,
+    error,
     files,
     loadingFiles,
 }: WGBSDownloadsProps) => {
 
-    const { loading, error } = WGBSData;
-
+    /**
+     * So the file information is combined here...
+     */
     const buildWGBSRows = (
+        /**
+         * why [number][] it cancels out right
+         */
         rows: WGBSMetadata[number][]
     ): DownloadRow[] => {
         return rows.flatMap((sample) =>

@@ -13,6 +13,7 @@ type OmeDownloadsControlsProps = {
     site: Site[];
     status: Status[];
     sex: Sex[];
+    //lets give either description or descriptions a better name this is confusing
     description: string[];
     descriptions: string[];
     protocol?: Protocol[];

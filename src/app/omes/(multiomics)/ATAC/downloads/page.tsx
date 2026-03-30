@@ -4,6 +4,7 @@ import ATACDownloadsTable from "./ATACDownloadsTable";
 import { Protocol, Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
+import { OmeEnum } from "@/common/types/generated/graphql";
 
 const ATACDescriptions = [
   "Fold change signal",
@@ -14,14 +15,14 @@ const ATACDescriptions = [
 
 const ATACDownloads = () => {
   const ATACData = useATACData({ skip: false });
-  const { data: downloadFiles, loading } = useOmeDownloadFiles("ATAC_SEQ");
+  const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.AtacSeq);
 
   const rows = ATACData.data ?? [];
 
   return (
     <OmeDownloadLayout
       rows={rows}
-      downloadFiles={downloadFiles}
+      downloadFiles={downloadFiles ?? []}
       descriptions={ATACDescriptions}
       includeProtocolFilter
       getFilterFields={(row) => ({
