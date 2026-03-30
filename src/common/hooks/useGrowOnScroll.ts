@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 export function useGrowOnScroll(length: number) {
   const [visible, setVisible] = useState<boolean[]>(() => Array(length).fill(false));
-  const refs = useRef<(HTMLDivElement | HTMLAnchorElement | null)[]>([]);
+  const refs = useRef<(HTMLDivElement | HTMLAnchorElement | HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

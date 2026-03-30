@@ -1,11 +1,15 @@
 "use client";
 import { Box, Grow, Typography } from "@mui/material";
-import Link from "next/link";
 import { useGrowOnScroll } from "@/common/hooks/useGrowOnScroll";
-import { OmesList } from "@/common/types/globalTypes";
+import { OmesDataType, OmesList } from "@/common/types/globalTypes";
 import { OME_COLORS } from "@/common/colors";
+import { getOmeIconName, getOmeLabel } from "./omeContent";
 
-const OmeCardsCircle = () => {
+type OmeCardsCircleProps = {
+  onSelect: (ome: OmesDataType) => void;
+};
+
+const OmeCardsCircle = ({ onSelect }: OmeCardsCircleProps) => {
   const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
 
   return (
@@ -20,9 +24,8 @@ const OmeCardsCircle = () => {
       }}
     >
       {OmesList.map((ome, index) => {
-        const isSeq = ome === "RNA" || ome === "ATAC";
-        const label = isSeq ? `${ome}-seq` : ome.charAt(0).toUpperCase() + ome.slice(1);
-        const iconName = ome.toLowerCase().split("-")[0];
+        const label = getOmeLabel(ome);
+        const iconName = getOmeIconName(ome);
 
         return (
           <Grow
@@ -32,13 +35,13 @@ const OmeCardsCircle = () => {
             key={`${ome}-${index}`}
           >
             <Box
-              component={Link}
-              href={`/omes/${ome}/dimensionalityReduction`}
-              scroll
-              ref={(el: HTMLAnchorElement | null) => {
+              component="button"
+              type="button"
+              ref={(el: HTMLButtonElement | null) => {
                 omeRefs.current[index] = el;
               }}
               data-index={index}
+              onClick={() => onSelect(ome)}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -50,8 +53,11 @@ const OmeCardsCircle = () => {
                 backgroundColor: "rgba(240, 250, 250, 0.96)",
                 border: "1px solid rgba(12, 64, 60, 0.12)",
                 boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
-                textDecoration: "none",
                 color: "text.primary",
+                textAlign: "left",
+                cursor: "pointer",
+                appearance: "none",
+                width: "100%",
                 transition:
                   "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
                 "&:hover": {
@@ -64,6 +70,10 @@ const OmeCardsCircle = () => {
                 },
                 "&:hover .ome-label": {
                   color: OME_COLORS[ome.toLowerCase()] ?? "primary.main",
+                },
+                "&:focus-visible": {
+                  outline: "2px solid rgba(255,255,255,0.8)",
+                  outlineOffset: 3,
                 },
               }}
             >
