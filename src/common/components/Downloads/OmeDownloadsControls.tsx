@@ -41,7 +41,7 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
     }, [props.files, props.filteredSampleIds]);
 
     const filePaths = useMemo(() => {
-        return openAccessFiles.map((file) => buildBulkFilePath(file.filename, ome));
+        return openAccessFiles.map((file) => buildBulkFilePath(file.sample_id, file.filename, ome));
     }, [openAccessFiles, ome]);
 
     const totalSize = useMemo(() => {

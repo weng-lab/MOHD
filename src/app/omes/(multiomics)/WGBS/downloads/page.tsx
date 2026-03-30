@@ -478,10 +478,11 @@ const WGBSDownloads = () => {
   ];
 
   const filePaths: string[] = useMemo(() => {
-    return [...selectedFiles.ids.values()].map((filename) =>
-      buildBulkFilePath(filename as string, "WGBS"),
-    );
-  }, [selectedFiles]);
+    return [...selectedFiles.ids.values()]
+      .map((filename) => files.find((file) => file.filename === filename))
+      .filter((file) => !!file)
+      .map((file) => buildBulkFilePath(file.sample_id, file.filename, "WGBS"));
+  }, [selectedFiles, files]);
 
   const totalSize: number = useMemo(() => {
     return [...selectedFiles.ids.values()]
