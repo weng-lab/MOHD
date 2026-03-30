@@ -100,7 +100,6 @@ const MultiSelect = <
       options={options}
       disableCloseOnSelect
       slotProps={{ popper: { sx: { zIndex: 1 } } }}
-      style={{ width: lockedWidth ?? undefined }}
       renderInput={(params) => (
         <TextField {...params} placeholder={placeholder} />
       )}

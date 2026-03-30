@@ -25,7 +25,7 @@ export function useBulkDownloadJob() {
     ome?: string,
   ) => {
     setStatus("submitting");
-    const mockFiles = getMockBulkDownloadFiles(format);
+    // const mockFiles = getMockBulkDownloadFiles(format);
 
     try {
       const res = await fetch(`${BASE_URL}/jobs`, {
@@ -33,7 +33,8 @@ export function useBulkDownloadJob() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: format,
-          files: mockFiles,
+          // files: mockFiles,
+          files
         }),
       });
 
