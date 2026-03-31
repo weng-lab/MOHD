@@ -122,7 +122,7 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
 export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   config: OmeDownloadsConfig<T>
 ): OmeDownloadsState<T> {
-  const { ome, datasetFilters, extraDatasetColumns, excludeRow } = config;
+  const { ome, datasetFilters, excludeRow } = config;
 
   // Data fetching
   const { data: rawData, loading: loadingData, error: errorData } = config.useData();
@@ -418,9 +418,8 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     return [
       { field: "sample_id", headerName: "Dataset", flex: 1, minWidth: 120 },
       ...filterCols,
-      ...(extraDatasetColumns ?? []),
     ];
-  }, [datasetFilters, datasetOptionsMap, extraDatasetColumns]);
+  }, [datasetFilters, datasetOptionsMap]);
 
   const fileColumns: TableColDef<MergedFile>[] = useMemo(() => [
     {
