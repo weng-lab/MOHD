@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 import BulkDownloadModal from "./BulkDownloadModal";
 import { buildBulkFilePath } from "@/common/downloads";
+import { OmeEnum } from "@/common/types/generated/graphql";
 import { usePathname } from "next/navigation";
 
 type OmeDownloadsControlsProps = {
@@ -29,7 +30,7 @@ type OmeDownloadsControlsProps = {
 const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
-    const ome = pathname.includes("ATAC") ? "ATAC-seq" : pathname.includes("RNA") ? "RNA-seq" : pathname.split("/")[2];
+    const ome = pathname.includes("ATAC") ? OmeEnum.AtacSeq : pathname.includes("RNA") ? OmeEnum.RnaSeq : pathname.split("/")[2] as OmeEnum;
 
     const openAccessFiles = useMemo(() => {
         return props.files?.filter(

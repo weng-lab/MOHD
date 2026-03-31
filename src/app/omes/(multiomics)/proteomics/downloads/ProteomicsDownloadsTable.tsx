@@ -5,7 +5,7 @@ import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 type ProteomicsMetadata =
     NonNullable<UseProteomicsDataReturn["data"]>;
 
-type DownloadRow = ProteomicsMetadata[number] & DownloadFile;
+type DownloadRow = ProteomicsMetadata[number] & Omit<DownloadFile, "__typename">;
 
 type ProteomicsDownloadsProps = {
     rows: ProteomicsMetadata;
@@ -29,7 +29,8 @@ const ProteomicsDownloadsTable = ({
         return rows.flatMap((sample) =>
             files
                 .filter((file) => file.sample_id === sample.sample_id)
-                .map((file) => ({
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .map(({ __typename, ...file }) => ({
                     ...sample,
                     ...file,
                 }))
@@ -41,7 +42,7 @@ const ProteomicsDownloadsTable = ({
             label="Download Proteomics Data"
             rows={rows}
             loading={loading || loadingFiles}
-            error={error}
+            error={!!error}
             buildRows={buildProteomicsRows}
             ome="Proteomics"
         />

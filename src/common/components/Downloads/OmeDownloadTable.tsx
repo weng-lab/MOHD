@@ -16,7 +16,7 @@ type BaseSample = {
     protocol?: string;
 };
 
-type DownloadRow<T> = T & DownloadFile;
+type DownloadRow<T> = T & Omit<DownloadFile, "__typename">;
 
 type DownloadTableProps<T extends BaseSample> = {
     rows: T[];
@@ -196,7 +196,7 @@ export function OmeDownloadTable<T extends BaseSample>({
                     ) as DownloadRow<T>;
 
                     const compressed = compressedMap.get(firstChild.sample_id);
-                    return compressed ? formatBytes(compressed.size) : null;
+                    return compressed ? formatBytes(Number(compressed.size)) : null;
                 }
 
                 const compressed = compressedMap.get(params.row.sample_id);
