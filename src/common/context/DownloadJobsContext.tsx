@@ -11,7 +11,6 @@ import {
 } from "react";
 import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
 import Config from "@/common/config.json";
-import { getMockBulkDownloadFiles } from "@/common/bulkDownloadMocks";
 
 export type BulkJobStatus = "pending" | "processing" | "done" | "failed";
 
@@ -206,8 +205,12 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
     (id: string) => {
       clearPoller(id);
       setJobs((prev) => prev.filter((j) => j.id !== id));
+      const job = jobs.find((j) => j.id === id);
+      if (job?.status === "pending" || job?.status === "processing") {
+        window.alert("need to implement actually cancelling the job")
+      }
     },
-    [clearPoller],
+    [clearPoller, jobs],
   );
 
   const retryJob = useCallback(
@@ -216,13 +219,12 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
       if (!job) return;
 
       try {
-        const mockFiles = getMockBulkDownloadFiles(job.format);
         const res = await fetch(`${BASE_URL}/jobs`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type: job.format,
-            files: mockFiles,
+            files: job.files,
           }),
         });
         if (!res.ok) throw new Error(`Retry submission failed: ${res.status}`);

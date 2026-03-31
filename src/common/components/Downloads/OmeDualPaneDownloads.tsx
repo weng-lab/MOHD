@@ -1,5 +1,5 @@
 "use client";
-import { type ReactNode, useState } from "react";
+import React, { type ReactNode, useRef, useState } from "react";
 import { Table } from "@weng-lab/ui-components";
 import { buildBulkFilePath, formatBytes } from "@/common/downloads";
 import {
@@ -15,8 +15,11 @@ import {
   AccordionDetails,
   Chip,
   Button,
+  Divider,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import { Download, ExpandMore, FilterList, FilterListOff } from "@mui/icons-material";
+import { Download, DragHandle, ExpandMore, FilterList, FilterListOff } from "@mui/icons-material";
 import Image from "next/image";
 import MultiSelect from "@/common/components/Downloads/MultiSelect";
 import BulkDownloadModal from "@/common/components/Downloads/BulkDownloadModal";
@@ -37,6 +40,27 @@ const accordionSx = {
   borderRadius: 1,
 };
 
+// --- Responsive direction hook ---
+
+type Direction = "row" | "column";
+type ResponsiveDirection = Direction | Partial<Record<"xs" | "sm" | "md" | "lg" | "xl", Direction>>;
+
+function useResolvedDirection(direction: ResponsiveDirection): Direction {
+  const theme = useTheme();
+  const matches = {
+    xs: useMediaQuery(theme.breakpoints.up("xs")),
+    sm: useMediaQuery(theme.breakpoints.up("sm")),
+    md: useMediaQuery(theme.breakpoints.up("md")),
+    lg: useMediaQuery(theme.breakpoints.up("lg")),
+    xl: useMediaQuery(theme.breakpoints.up("xl")),
+  };
+  if (typeof direction === "string") return direction;
+  for (const bp of ["xl", "lg", "md", "sm", "xs"] as const) {
+    if (matches[bp] && direction[bp]) return direction[bp];
+  }
+  return "column";
+}
+
 // --- Main component ---
 
 type OmeDualPaneDownloadsProps<T extends BaseSampleMetadata> = {
@@ -47,6 +71,10 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
   config,
 }: OmeDualPaneDownloadsProps<T>) => {
   const [open, setOpen] = useState(false);
+  const [leftPct, setLeftPct] = useState(60);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const resolvedDirection = useResolvedDirection({ xs: "column", lg: "row" });
+  const isColumn = resolvedDirection === "column";
   const state = useOmeDownloadsState(config);
 
   const {
@@ -83,6 +111,23 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     fileColumns,
     ome,
   } = state;
+
+  const handleDividerPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handleDividerPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const newPct = ((e.clientX - rect.left) / rect.width) * 100;
+    setLeftPct(Math.min(85, Math.max(15, newPct)));
+  };
+
+  const handleDividerPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
 
   // Build the select column for the dataset table (needs render functions, so defined here)
   const datasetColumnsWithSelect = [
@@ -164,15 +209,30 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
 
   return (
     <Box>
-      <Box sx={{ display: "flex", gap: 1, height: 700 }}>
+      <Box
+        ref={containerRef}
+        sx={{
+          display: "grid",
+          gridTemplateColumns: isColumn
+            ? "minmax(0, 1fr)"
+            : (theme) => `${leftPct}% ${theme.spacing(2)} minmax(0, 1fr)`,
+          gridTemplateRows: isColumn ? "auto auto" : "1fr",
+          rowGap: 1,
+          columnGap: 0,
+          height: isColumn ? "auto" : 700,
+        }}
+      >
         {/* Left pane: Datasets */}
         <Box
           sx={{
-            flex: "0 0 40%",
-            minWidth: 300,
+            gridColumn: 1,
+            gridRow: 1,
             display: "flex",
             flexDirection: "column",
             gap: 1,
+            minWidth: 0,
+            minHeight: 0,
+            height: isColumn ? 500 : "100%",
           }}
         >
           <Accordion disableGutters elevation={0} sx={accordionSx}>
@@ -258,14 +318,48 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
           </Box>
         </Box>
 
+        {/* Divider */}
+        {!isColumn && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gridRow: 1,
+              gridColumn: 2,
+              cursor: "col-resize",
+            }}
+            onPointerDown={handleDividerPointerDown}
+            onPointerMove={handleDividerPointerMove}
+            onPointerUp={handleDividerPointerUp}
+          >
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{
+                "& .MuiDivider-wrapperVertical": {
+                  padding: 0,
+                  display: "flex",
+                },
+                mx: "auto",
+              }}
+            >
+              <DragHandle sx={{ transform: "rotate(90deg)", color: "divider" }} />
+            </Divider>
+          </Box>
+        )}
+
         {/* Right pane: Files for active dataset */}
         <Box
           sx={{
-            flex: 1,
-            minWidth: 400,
+            gridColumn: isColumn ? 1 : 3,
+            gridRow: isColumn ? 2 : 1,
             display: "flex",
             flexDirection: "column",
             gap: 1,
+            minWidth: 0,
+            minHeight: 0,
+            height: isColumn ? 500 : "100%",
           }}
         >
           <Accordion disableGutters elevation={0} sx={accordionSx}>

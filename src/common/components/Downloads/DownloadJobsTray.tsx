@@ -82,13 +82,11 @@ function JobRow({ job }: { job: DownloadJob }) {
               Retry
             </Button>
           )}
-          {!isActive && (
-            <Tooltip title="Dismiss" arrow placement="left">
-              <IconButton size="small" onClick={() => removeJob(job.id)}>
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
+          <Tooltip title={isActive ? "Cancel" : "Dismiss"} arrow placement="left">
+            <IconButton size="small" onClick={() => removeJob(job.id)}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </Stack>
       </Stack>
 
