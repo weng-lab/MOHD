@@ -1,5 +1,7 @@
-export const buildBulkFilePath = (sampleId: string, filename: string, ome: string): string => {
-  const index = ome === "ATAC-seq" ? 2 : ome === "RNA-seq" ? 3 : 1;
+import { OmeEnum } from "./types/generated/graphql";
+
+export const buildBulkFilePath = (sampleId: string, filename: string, ome: OmeEnum): string => {
+  const index = ome === OmeEnum.AtacSeq ? 2 : ome === OmeEnum.RnaSeq ? 3 : 1;
   const folder = `${index}_${ome.replace("-seq", "")}`;
   return `${folder}/${sampleId}/${filename}`;
 };

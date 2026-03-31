@@ -382,6 +382,7 @@ const WGBSDownloads = () => {
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
+      display: 'flex',
       renderHeader: () => (
         <Checkbox
           checked={allCheckState === "checked"}
@@ -435,11 +436,13 @@ const WGBSDownloads = () => {
     {
       field: "open_access",
       headerName: "Download",
+      display: 'flex',
       sortable: false,
       filterable: false,
       renderCell: (params) => {
         const { open_access, sample_id, filename } = params.row;
-        const url = `https://downloads.mohdconsortium.org/1_WGBS/${sample_id}/${filename}`;
+        const path = buildBulkFilePath(sample_id, filename, OmeEnum.Wgbs)
+        const url = `https://downloads.mohdconsortium.org/${path}`;
 
         if (!open_access) {
           return (
@@ -477,11 +480,18 @@ const WGBSDownloads = () => {
     },
   ];
 
+  const hasActiveDatasetFilter = datasetFilterModel.items.some(
+    (item) => item.value !== undefined || item.operator === "isEmpty" || item.operator === "isNotEmpty"
+  );
+  const hasActiveFileFilter = fileFilterModel.items.some(
+    (item) => item.value !== undefined || item.operator === "isEmpty" || item.operator === "isNotEmpty"
+  );
+
   const filePaths: string[] = useMemo(() => {
     return [...selectedFiles.ids.values()]
       .map((filename) => files.find((file) => file.filename === filename))
       .filter((file) => !!file)
-      .map((file) => buildBulkFilePath(file.sample_id, file.filename, "WGBS"));
+      .map((file) => buildBulkFilePath(file.sample_id, file.filename, OmeEnum.Wgbs));
   }, [selectedFiles, files]);
 
   const totalSize: number = useMemo(() => {
@@ -515,25 +525,14 @@ const WGBSDownloads = () => {
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}
               >
-                <FilterList />
+                <FilterList fontSize="small" />
                 <Typography>Dataset Filters</Typography>
-                {datasetFilterModel.items.length > 0 && (
-                  <>
-                    <Chip
-                      size="small"
-                      label={datasetFilterModel.items.length}
-                      color="primary"
-                    />
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDatasetFilterModel({ items: [] });
-                      }}
-                    >
-                      <FilterListOff fontSize="small" />
-                    </IconButton>
-                  </>
+                {hasActiveDatasetFilter && (
+                  <Chip
+                    size="small"
+                    label={datasetFilterModel.items.length}
+                    color="primary"
+                  />
                 )}
               </Box>
             </AccordionSummary>
@@ -580,6 +579,18 @@ const WGBSDownloads = () => {
                   placeholder="Site"
                 />
               </ControlLabelWrapper>
+              {hasActiveDatasetFilter && (
+                <Box sx={{ width: "100%" }}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<FilterListOff />}
+                    onClick={() => setDatasetFilterModel({ items: [] })}
+                  >
+                    Reset Filters
+                  </Button>
+                </Box>
+              )}
             </AccordionDetails>
           </Accordion>
           <Box sx={{ flex: 1, minHeight: 0 }}>
@@ -626,25 +637,14 @@ const WGBSDownloads = () => {
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}
               >
-                <FilterList />
+                <FilterList fontSize="small" />
                 <Typography>File Filters</Typography>
-                {fileFilterModel.items.length > 0 && (
-                  <>
-                    <Chip
-                      size="small"
-                      label={fileFilterModel.items.length}
-                      color="primary"
-                    />
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setFileFilterModel({ items: [] });
-                      }}
-                    >
-                      <FilterListOff fontSize="small" />
-                    </IconButton>
-                  </>
+                {hasActiveFileFilter && (
+                  <Chip
+                    size="small"
+                    label={fileFilterModel.items.length}
+                    color="primary"
+                  />
                 )}
               </Box>
             </AccordionSummary>
@@ -666,6 +666,18 @@ const WGBSDownloads = () => {
                   placeholder="File Type"
                 />
               </ControlLabelWrapper>
+              {hasActiveFileFilter && (
+                <Box sx={{ width: "100%" }}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<FilterListOff />}
+                    onClick={() => setFileFilterModel({ items: [] })}
+                  >
+                    Reset Filters
+                  </Button>
+                </Box>
+              )}
             </AccordionDetails>
           </Accordion>
           <Box sx={{ flex: 1, minHeight: 0 }}>
@@ -732,7 +744,7 @@ const WGBSDownloads = () => {
         onClose={() => setOpen(false)}
         filePaths={filePaths}
         totalSize={totalSize}
-        ome={"WGBS"}
+        ome={OmeEnum.Wgbs}
       />
     </Box>
   );
