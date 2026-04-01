@@ -1,6 +1,6 @@
 "use client";
 import React, { type ReactNode, useRef, useState } from "react";
-import { Table } from "@weng-lab/ui-components";
+import { Table, TableColDef } from "@weng-lab/ui-components";
 import { buildBulkFilePath, formatBytes } from "@/common/downloads";
 import {
   IconButton,
@@ -18,13 +18,15 @@ import {
   Divider,
   useMediaQuery,
   useTheme,
+  Tooltip,
 } from "@mui/material";
-import { Download, DragHandle, ExpandMore, FilterList, FilterListOff } from "@mui/icons-material";
+import { Download, DragHandle, ExpandMore, FilterList, FilterListOff, FolderZip } from "@mui/icons-material";
 import Image from "next/image";
 import MultiSelect from "@/common/components/Downloads/MultiSelect";
 import BulkDownloadModal from "@/common/components/Downloads/BulkDownloadModal";
 import { useOmeDownloadsState } from "@/common/hooks/useOmeDownloadsState";
 import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
+import { GRID_CHECKBOX_SELECTION_COL_DEF } from "@mui/x-data-grid-premium";
 
 // --- Small helper components ---
 
@@ -130,28 +132,38 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
   };
 
   // Build the select column for the dataset table (needs render functions, so defined here)
-  const datasetColumnsWithSelect = [
+  const datasetColumnsWithSelect: TableColDef[] = [
     {
-      field: "_select" as keyof T & string,
+      field: "_select",
       headerName: "",
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
-      display: "flex" as const,
+      display: "flex",
+      align: 'left',
+      cellClassName: "MuiDataGrid-cellCheckbox",
+      headerClassName: "MuiDataGrid-columnHeaderCheckbox",
       renderHeader: () => (
-        <Checkbox
-          checked={allCheckState === "checked"}
-          indeterminate={allCheckState === "indeterminate"}
-          disabled={
-            allCheckState === "unchecked" &&
-            visibleDatasets.every((d) => !(selectableByDataset.get(d.sample_id)?.size))
-          }
-          onClick={toggleAll}
-        />
+        <>
+          <Checkbox
+            checked={allCheckState === "checked"}
+            indeterminate={allCheckState === "indeterminate"}
+            disabled={
+              allCheckState === "unchecked" &&
+              visibleDatasets.every(
+                (d) => !selectableByDataset.get(d.sample_id)?.size,
+              )
+            }
+            onClick={toggleAll}
+          />
+          <Tooltip title={"Bulk Download"}>
+            <FolderZip />
+          </Tooltip>
+        </>
       ),
       renderCell: (params: { row: T }) => {
         const checkState = datasetCheckState.get(params.row.sample_id);
-        const disabled = !(selectableByDataset.get(params.row.sample_id)?.size);
+        const disabled = !selectableByDataset.get(params.row.sample_id)?.size;
         return (
           <Checkbox
             checked={checkState === "checked"}
@@ -169,7 +181,25 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
   ];
 
   // Build the download column for the file table
-  const fileColumnsWithDownload = [
+  const fileColumnsWithDownload: TableColDef[] = [
+    {
+      ...GRID_CHECKBOX_SELECTION_COL_DEF,
+      align: 'left',
+      headerAlign: 'left',
+      display: 'flex',
+      renderHeader: (params) => {
+        const DefaultCheckbox = GRID_CHECKBOX_SELECTION_COL_DEF.renderHeader;
+        if (!DefaultCheckbox) return null;
+        return (
+          <>
+            <DefaultCheckbox {...params} />
+            <Tooltip title={"Bulk Download"}>
+              <FolderZip />
+            </Tooltip>
+          </>
+        );
+      }
+    },
     {
       field: "open_access",
       headerName: "Download",

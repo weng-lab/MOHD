@@ -108,6 +108,8 @@ const BulkDownloadModal = ({
             {formatBytes(totalSize)}
           </Typography>
 
+          {/* Want to add tree view here */}
+
           <Stack spacing={2}>
             <Stack spacing={1}>
               <Typography variant="body2" fontWeight={500}>
