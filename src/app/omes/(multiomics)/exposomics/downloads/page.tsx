@@ -4,11 +4,12 @@ import ExposomicsDownloadsTable from "./ExposomicsDownloadsTable";
 import { Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
+import { OmeEnum } from "@/common/types/generated/graphql";
 
 const ExposomicsDownloads = () => {
 
     const exposomicsData = useExposomicsData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles("EXPOSOMICS");
+    const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.Exposomics);
 
     const rows = exposomicsData.data ?? [];
 

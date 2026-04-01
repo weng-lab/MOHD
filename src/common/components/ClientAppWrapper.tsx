@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Footer from "./Footer";
 import Header from "./Header/Header";
+import { DownloadJobsProvider } from "@/common/context/DownloadJobsContext";
+import DownloadJobsTray from "@/common/components/Downloads/DownloadJobsTray";
 
 export default function ClientAppWrapper({ children }: { children: React.ReactNode }) {
   const [maintenance, setMaintenance] = useState(false);
@@ -28,11 +30,14 @@ export default function ClientAppWrapper({ children }: { children: React.ReactNo
   }, []);
 
   return (
-    <Box id="app-wrapper" display={"grid"} gridTemplateRows={"auto minmax(0, 1fr) auto"} minHeight={"100vh"}>
-      <Header maintenance={maintenance} />
-      {/* Wrap children to enure they will all be slotted together into the 1fr row if child is a fragment */}
-      <div id="main-content-wrapper">{children}</div>
-      <Footer />
-    </Box>
+    <DownloadJobsProvider>
+      <Box id="app-wrapper" display={"grid"} gridTemplateRows={"auto minmax(0, 1fr) auto"} minHeight={"100vh"}>
+        <Header maintenance={maintenance} />
+        {/* Wrap children to enure they will all be slotted together into the 1fr row if child is a fragment */}
+        <div id="main-content-wrapper">{children}</div>
+        <Footer />
+      </Box>
+      <DownloadJobsTray />
+    </DownloadJobsProvider>
   );
 }

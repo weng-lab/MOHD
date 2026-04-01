@@ -4,6 +4,7 @@ import RNADownloadsTable from "./RNADownloadsTable";
 import { Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
+import { OmeEnum } from "@/common/types/generated/graphql";
 
 const RNADescriptions = [
     "Gene quantifications",
@@ -17,7 +18,7 @@ const RNADescriptions = [
 const RNADownloads = () => {
 
     const RNAData = useRNAData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles("RNA_SEQ");
+    const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.RnaSeq);
 
     const rows = RNAData.data ?? [];
 
