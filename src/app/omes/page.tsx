@@ -1,22 +1,59 @@
 "use client";
-import { useMemo, useState } from "react";
-import { Stack, Typography, Box, Divider, Button } from "@mui/material";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { Stack, Typography, Box, Divider } from "@mui/material";
 import OmeCards from "./OmeCards";
-import { OmesDataType, OmesList } from "@/common/types/globalTypes";
-import { OME_COLORS } from "@/common/colors";
-import {
-  OME_DESCRIPTIONS,
-  getGenomeBrowserHref,
-  getOmeIconName,
-  getOmeInfoHref,
-  getOmeLabel,
-} from "./omeContent";
+import { OmesDataType } from "@/common/types/globalTypes";
+import OmeInfoCard from "./OmeInfoCard";
+
+const CARD_FADE_DURATION_MS = 320;
 
 export default function MolecularDataLanding() {
-  const [selectedOme, setSelectedOme] = useState<OmesDataType>(OmesList[0]);
-  const selectedColor = OME_COLORS[selectedOme.toLowerCase()] ?? "#3f7f79";
-  const genomeBrowserHref = useMemo(() => getGenomeBrowserHref(selectedOme), [selectedOme]);
+  const [selectedOme, setSelectedOme] = useState<OmesDataType | null>(null);
+  const [displayedOme, setDisplayedOme] = useState<OmesDataType | null>(null);
+  const [isCardVisible, setIsCardVisible] = useState(false);
+  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (fadeTimerRef.current) {
+      clearTimeout(fadeTimerRef.current);
+      fadeTimerRef.current = null;
+    }
+
+    if (!selectedOme) {
+      setIsCardVisible(false);
+      fadeTimerRef.current = setTimeout(() => {
+        setDisplayedOme(null);
+      }, CARD_FADE_DURATION_MS);
+      return;
+    }
+
+    if (!displayedOme) {
+      setDisplayedOme(selectedOme);
+      setIsCardVisible(false);
+      fadeTimerRef.current = setTimeout(() => {
+        setIsCardVisible(true);
+      }, 20);
+      return;
+    }
+
+    if (selectedOme === displayedOme) {
+      setIsCardVisible(true);
+      return;
+    }
+
+    setIsCardVisible(false);
+    fadeTimerRef.current = setTimeout(() => {
+      setDisplayedOme(selectedOme);
+      setIsCardVisible(true);
+    }, CARD_FADE_DURATION_MS);
+
+    return () => {
+      if (fadeTimerRef.current) {
+        clearTimeout(fadeTimerRef.current);
+        fadeTimerRef.current = null;
+      }
+    };
+  }, [selectedOme, displayedOme]);
 
   return (
     <Box width="100%">
@@ -28,13 +65,13 @@ export default function MolecularDataLanding() {
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           alignItems: "stretch",
-          height: { xs: "auto", md: "80vh" },  
+          height: { xs: "auto", md: "80vh" },
           backgroundColor: theme.palette.primary.main,
         })}
         color="white"
       >
         <Stack
-          spacing={3}
+          spacing={5}
           sx={{
             position: "relative",
             zIndex: 2,
@@ -76,7 +113,7 @@ export default function MolecularDataLanding() {
               }}
             />
           </Box>
-          <OmeCards onSelect={setSelectedOme} />
+          <OmeCards onSelect={setSelectedOme} selectedOme={displayedOme} />
         </Stack>
         <Box
           sx={{
@@ -85,7 +122,7 @@ export default function MolecularDataLanding() {
             minHeight: { xs: 280, md: "auto" },
             overflow: "hidden",
             display: "flex",
-            alignItems: "flex-start",
+            alignItems: "center",
             justifyContent: "center",
             px: { xs: 2.5, sm: 4, md: 4 },
             py: { xs: 2.5, md: 4 },
@@ -107,111 +144,13 @@ export default function MolecularDataLanding() {
             },
           }}
         >
-          <Box
-            sx={{
-              position: "relative",
-              zIndex: 1,
-              width: "100%",
-              maxWidth: 520,
-              borderRadius: 3,
-              border: "1px solid rgba(255,255,255,0.22)",
-              background: "linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(242,249,248,0.9) 100%)",
-              boxShadow: "0 24px 60px rgba(0, 0, 0, 0.18)",
-              backdropFilter: "blur(10px)",
-              color: "text.primary",
-              p: { xs: 2.5, md: 3 },
-            }}
-          >
-            <Stack spacing={2.5}>
-              <Stack direction="row" spacing={1.5} alignItems="center">
-                <Box
-                  sx={{
-                    width: 56,
-                    height: 56,
-                    flexShrink: 0,
-                    borderRadius: "18px",
-                    backgroundColor: `${selectedColor}18`,
-                    border: `1px solid ${selectedColor}33`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 38,
-                      height: 38,
-                      backgroundImage: `url(/OmeIcons/NoBgrnd/${getOmeIconName(selectedOme)}.png)`,
-                      backgroundRepeat: "no-repeat",
-                      backgroundSize: "contain",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                </Box>
-                <Box>
-                  <Typography
-                    variant="overline"
-                    sx={{ color: selectedColor, letterSpacing: "0.12em", fontWeight: 700 }}
-                  >
-                    OME Description
-                  </Typography>
-                  <Typography
-                    variant="h4"
-                    sx={{
-                      fontWeight: 700,
-                      color: "rgba(20, 39, 37, 0.96)",
-                      textTransform:
-                        selectedOme === "WGS" || selectedOme === "WGBS" ? "uppercase" : "none",
-                    }}
-                  >
-                    {getOmeLabel(selectedOme)}
-                  </Typography>
-                </Box>
-              </Stack>
-
-              <Typography
-                variant="body1"
-                sx={{
-                  color: "rgba(33, 53, 51, 0.86)",
-                  lineHeight: 1.75,
-                  minHeight: { md: 168 },
-                }}
-              >
-                {OME_DESCRIPTIONS[selectedOme] ?? "Description coming soon."}
-              </Typography>
-
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                <Button
-                  component={Link}
-                  href={getOmeInfoHref(selectedOme)}
-                  variant="contained"
-                  sx={{
-                    minWidth: 170,
-                    backgroundColor: selectedColor,
-                    "&:hover": {
-                      backgroundColor: selectedColor,
-                      filter: "brightness(0.94)",
-                    },
-                  }}
-                >
-                  OME Info
-                </Button>
-                <Button
-                  component={genomeBrowserHref ? Link : "button"}
-                  href={genomeBrowserHref ?? undefined}
-                  variant="outlined"
-                  disabled={!genomeBrowserHref}
-                  sx={{
-                    minWidth: 170,
-                    borderColor: `${selectedColor}66`,
-                    color: selectedColor,
-                  }}
-                >
-                  Genome Browser
-                </Button>
-              </Stack>
-            </Stack>
-          </Box>
+          {displayedOme ? (
+            <OmeInfoCard
+              selectedOme={displayedOme}
+              isVisible={isCardVisible}
+              onClose={() => setSelectedOme(null)}
+            />
+          ) : null}
         </Box>
       </Box>
     </Box>

@@ -8,6 +8,9 @@ export const theme = createTheme({
       light: "#00766c",
       dark: "#01373a",
     },
+    secondary: {
+      main: "#ca5702",
+    },
   },
   components: {
     MuiButton: {

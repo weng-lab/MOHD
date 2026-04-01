@@ -7,9 +7,10 @@ import { getOmeIconName, getOmeLabel } from "./omeContent";
 
 type OmeCardsCircleProps = {
   onSelect: (ome: OmesDataType) => void;
+  selectedOme?: OmesDataType | null;
 };
 
-const OmeCardsCircle = ({ onSelect }: OmeCardsCircleProps) => {
+const OmeCardsCircle = ({ onSelect, selectedOme  }: OmeCardsCircleProps) => {
   const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
 
   return (
@@ -26,6 +27,7 @@ const OmeCardsCircle = ({ onSelect }: OmeCardsCircleProps) => {
       {OmesList.map((ome, index) => {
         const label = getOmeLabel(ome);
         const iconName = getOmeIconName(ome);
+        const isSelected = selectedOme === ome;
 
         return (
           <Grow
@@ -46,12 +48,12 @@ const OmeCardsCircle = ({ onSelect }: OmeCardsCircleProps) => {
                 display: "flex",
                 alignItems: "center",
                 gap: 1.5,
-                minHeight: 72,
-                px: { xs: 2, md: 2.25 },
-                py: 1.5,
+                minHeight: 70,
+                p: 1,
                 borderRadius: 1.5,
                 backgroundColor: "rgba(240, 250, 250, 0.96)",
-                border: "1px solid rgba(12, 64, 60, 0.12)",
+                border: isSelected ? "3px solid" : "1px solid",
+                borderColor: isSelected ? "primary.light" : "rgba(12, 64, 60, 0.12)",
                 boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
                 color: "text.primary",
                 textAlign: "left",
@@ -80,8 +82,8 @@ const OmeCardsCircle = ({ onSelect }: OmeCardsCircleProps) => {
               <Box
                 className="ome-icon"
                 sx={{
-                  width: 34,
-                  height: 34,
+                  width: 40,
+                  height: 40,
                   flexShrink: 0,
                   backgroundImage: `url(/OmeIcons/NoBgrnd/${iconName}.png)`,
                   backgroundRepeat: "no-repeat",
