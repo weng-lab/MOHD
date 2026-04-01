@@ -5,6 +5,7 @@ import { useOmeDownloadFiles, type DownloadFile } from "@/common/hooks/useOmeDow
 import { buildBulkFilePath, formatBytes } from "@/common/downloads";
 import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
 import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
+import type { TreeViewDefaultItemModelProperties } from "@mui/x-tree-view/models";
 
 // --- Shared utilities ---
 
@@ -110,6 +111,7 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
 
   filePaths: string[];
   totalSize: number;
+  fileTreeItems: TreeViewDefaultItemModelProperties[];
 
   datasetColumns: TableColDef<T>[];
   fileColumns: TableColDef<MergedFile>[];
@@ -453,6 +455,41 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
       .reduce((sum, file) => sum + Number(file?.size), 0);
   }, [selectedFiles, files]);
 
+  const fileTreeItems: TreeViewDefaultItemModelProperties[] = useMemo(() => {
+    const selectedFileObjects = [...selectedFiles.ids.values()]
+      .map((filename) => files.find((file) => file.filename === filename))
+      .filter((file): file is MergedFile => !!file);
+
+    const grouped = new Map<string, MergedFile[]>();
+    for (const file of selectedFileObjects) {
+      const arr = grouped.get(file.sample_id) ?? [];
+      arr.push(file);
+      grouped.set(file.sample_id, arr);
+    }
+
+    return [...grouped.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([datasetId, datasetFiles]) => {
+        const typeCount = new Map<string, number>();
+        for (const f of datasetFiles) {
+          typeCount.set(f.file_type, (typeCount.get(f.file_type) ?? 0) + 1);
+        }
+
+        const children = datasetFiles.map((f) => ({
+          id: f.filename,
+          label: typeCount.get(f.file_type)! > 1
+            ? `${f.file_type} (${f.filename})`
+            : f.file_type,
+        }));
+
+        return {
+          id: `dataset-${datasetId}`,
+          label: `${datasetId} (${datasetFiles.length} file${datasetFiles.length !== 1 ? "s" : ""})`,
+          children,
+        };
+      });
+  }, [selectedFiles, files]);
+
   return {
     loading,
     error,
@@ -484,6 +521,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     visibleDatasets,
     filePaths,
     totalSize,
+    fileTreeItems,
     datasetColumns,
     fileColumns,
     ome,

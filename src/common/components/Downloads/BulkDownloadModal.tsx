@@ -13,6 +13,8 @@ import {
   Alert,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import { RichTreeView } from "@mui/x-tree-view/RichTreeView";
+import type { TreeViewDefaultItemModelProperties } from "@mui/x-tree-view/models";
 import {
   BulkDownloadFormat,
   useBulkDownloadJob,
@@ -26,6 +28,7 @@ export type BulkDownloadModalProps = {
   totalSize: number;
   filterSummary?: string | null;
   ome?: string;
+  fileTreeItems?: TreeViewDefaultItemModelProperties[];
 };
 
 const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
@@ -41,6 +44,7 @@ const BulkDownloadModal = ({
   totalSize,
   filterSummary,
   ome,
+  fileTreeItems,
 }: BulkDownloadModalProps) => {
   const [format, setFormat] = useState<BulkDownloadFormat>("zip");
   const { submit, status, reset } = useBulkDownloadJob();
@@ -108,7 +112,20 @@ const BulkDownloadModal = ({
             {formatBytes(totalSize)}
           </Typography>
 
-          {/* Want to add tree view here */}
+          {fileTreeItems && fileTreeItems.length > 0 && (
+            <Box
+              sx={{
+                maxHeight: 350,
+                overflowY: "auto",
+                mb: 2,
+                border: 1,
+                borderColor: "divider",
+                borderRadius: 1,
+              }}
+            >
+              <RichTreeView items={fileTreeItems} />
+            </Box>
+          )}
 
           <Stack spacing={2}>
             <Stack spacing={1}>

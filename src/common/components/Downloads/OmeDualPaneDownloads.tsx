@@ -109,6 +109,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     visibleDatasets,
     filePaths,
     totalSize,
+    fileTreeItems,
     datasetColumns,
     fileColumns,
     ome,
@@ -499,6 +500,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
         filePaths={filePaths}
         totalSize={totalSize}
         ome={ome}
+        fileTreeItems={fileTreeItems}
       />
     </Box>
   );
