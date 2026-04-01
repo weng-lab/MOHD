@@ -59,15 +59,18 @@ export default function MolecularDataLanding() {
     <Box width="100%">
       <Box
         width="100%"
-        sx={(theme) => ({
+        sx={{
           position: "relative",
           overflow: "hidden",
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           alignItems: "stretch",
           height: { xs: "auto", md: "80vh" },
-          backgroundColor: theme.palette.primary.main,
-        })}
+          backgroundImage: "url('/backgrounds/molecular-landing.png')",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+        }}
         color="white"
       >
         <Stack
@@ -120,28 +123,11 @@ export default function MolecularDataLanding() {
             position: "relative",
             flex: { xs: "0 0 320px", md: "1 1 44%" },
             minHeight: { xs: 280, md: "auto" },
-            overflow: "hidden",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             px: { xs: 2.5, sm: 4, md: 4 },
             py: { xs: 2.5, md: 4 },
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              top: { xs: 0, md: 0 },
-              right: 0,
-              bottom: 0,
-              left: { xs: "22%", md: "2%" },
-              backgroundImage: "url('/molecularPlaceholder.png')",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: { xs: "cover", md: "cover" },
-              backgroundPosition: { xs: "center right", md: "center left" },
-              opacity: 0.18,
-              filter: "grayscale(1) brightness(1.95) contrast(0.99)",
-              pointerEvents: "none",
-              zIndex: 0,
-            },
           }}
         >
           {displayedOme ? (

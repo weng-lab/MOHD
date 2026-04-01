@@ -13,45 +13,18 @@ export default function Home() {
           paddingBottom={10}
           paddingTop={5}
           paddingX={{ xs: 2, md: 0 }}
-          sx={(theme) => ({
-            position: "relative",
-            overflow: "hidden",
+          sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
             gap: 2,
-            background: `linear-gradient(
-            to bottom,
-            ${theme.palette.primary.main},
-            ${theme.palette.primary.light}
-          )`,
-            "&::before, &::after": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              width: { xs: "50%", md: 550 },
-              backgroundImage: "url('/molecularBackground.png')",
-              backgroundRepeat: "repeat-y",
-              backgroundSize: { xs: "260px auto", md: "550px auto" },
-              opacity: 0.15,
-              filter: "grayscale(1) brightness(1.95) contrast(0.99)",
-              pointerEvents: "none",
-            },
-            "&::before": {
-              left: 0,
-              backgroundPosition: "left center",
-            },
-            "&::after": {
-              right: 0,
-              backgroundPosition: "right center",
-            },
-            "& > *": {
-              position: "relative",
-              zIndex: 1,
-            },
-          })}
+            minHeight: 700,
+            backgroundImage: "url('/backgrounds/hero.png')",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+          }}
           color="white"
         >
           <Box
