@@ -65,11 +65,12 @@ export default function MolecularDataLanding() {
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           alignItems: "stretch",
-          height: { xs: "auto", md: "80vh" },
+          height: { xs: "auto", md: "70vh" },
           backgroundImage: "url('/backgrounds/molecular-landing.png')",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          backgroundSize: "cover",
+          backgroundPosition: "right",
+          backgroundSize: "contain",
+          backgroundColor: "primary.main"
         }}
         color="white"
       >

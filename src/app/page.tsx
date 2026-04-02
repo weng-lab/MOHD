@@ -10,17 +10,21 @@ export default function Home() {
       <Box sx={{ backgroundColor: "primary.light" }}>
         <Box
           width="100%"
-          paddingBottom={10}
-          paddingTop={5}
+          paddingBottom={{ xs: 6, md: 8 }}
+          paddingTop={{ xs: 4, md: 5 }}
           paddingX={{ xs: 2, md: 0 }}
+          maxHeight={500}
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
             gap: 2,
-            minHeight: 700,
-            backgroundImage: "url('/backgrounds/hero.png')",
+            height: {
+              xs: "clamp(360px, 58vw, 440px)",
+              md: "clamp(420px, 46vw, 540px)",
+            },
+            backgroundImage: "url('/Backgrounds/hero.png')",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
             backgroundSize: "cover",
