@@ -51,7 +51,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme  }: OmeCardsCircleProps) => {
                 minHeight: 70,
                 p: 1,
                 borderRadius: 1.5,
-                backgroundColor: "rgba(240, 250, 250, 0.96)",
+                backgroundColor: "#e8fffd",
                 border: isSelected ? "3px solid" : "1px solid",
                 borderColor: isSelected ? "primary.light" : "rgba(12, 64, 60, 0.12)",
                 boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",

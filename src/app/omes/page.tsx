@@ -13,13 +13,18 @@ export default function MolecularDataLanding() {
   const [isCardVisible, setIsCardVisible] = useState(false);
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
+  const clearFadeTimer = () => {
     if (fadeTimerRef.current) {
       clearTimeout(fadeTimerRef.current);
       fadeTimerRef.current = null;
     }
+  };
 
-    if (!selectedOme) {
+  const handleSelectOme = (ome: OmesDataType | null) => {
+    clearFadeTimer();
+    setSelectedOme(ome);
+
+    if (!ome) {
       setIsCardVisible(false);
       fadeTimerRef.current = setTimeout(() => {
         setDisplayedOme(null);
@@ -28,32 +33,30 @@ export default function MolecularDataLanding() {
     }
 
     if (!displayedOme) {
-      setDisplayedOme(selectedOme);
-      setIsCardVisible(false);
+      setDisplayedOme(ome);
       fadeTimerRef.current = setTimeout(() => {
         setIsCardVisible(true);
       }, 20);
       return;
     }
 
-    if (selectedOme === displayedOme) {
+    if (ome === displayedOme) {
       setIsCardVisible(true);
       return;
     }
 
     setIsCardVisible(false);
     fadeTimerRef.current = setTimeout(() => {
-      setDisplayedOme(selectedOme);
+      setDisplayedOme(ome);
       setIsCardVisible(true);
     }, CARD_FADE_DURATION_MS);
+  };
 
+  useEffect(() => {
     return () => {
-      if (fadeTimerRef.current) {
-        clearTimeout(fadeTimerRef.current);
-        fadeTimerRef.current = null;
-      }
+      clearFadeTimer();
     };
-  }, [selectedOme, displayedOme]);
+  }, []);
 
   return (
     <Box width="100%">
@@ -117,7 +120,7 @@ export default function MolecularDataLanding() {
               }}
             />
           </Box>
-          <OmeCards onSelect={setSelectedOme} selectedOme={displayedOme} />
+          <OmeCards onSelect={handleSelectOme} selectedOme={selectedOme} />
         </Stack>
         <Box
           sx={{
@@ -135,7 +138,7 @@ export default function MolecularDataLanding() {
             <OmeInfoCard
               selectedOme={displayedOme}
               isVisible={isCardVisible}
-              onClose={() => setSelectedOme(null)}
+              onClose={() => handleSelectOme(null)}
             />
           ) : null}
         </Box>

@@ -1,4 +1,4 @@
-import { Box, Divider, Popover, Typography } from "@mui/material";
+import { Box, Popover, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { OmesList, OmesDataType } from "@/common/types/globalTypes";
@@ -8,12 +8,6 @@ type OmeAppletsPopoverProps = {
     currentOme: OmesDataType;
     onClose: () => void;
 };
-
-const navigationItems = [
-    { label: "Clinical Data", href: "/clinical" },
-    { label: "Downloads", href: "/downloads" },
-    { label: "Molecular Data", href: "/omes" },
-];
 
 export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: OmeAppletsPopoverProps) {
     return (
@@ -43,7 +37,7 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
             <Box sx={{ display: "grid", gap: 1 }}>
                 <Typography
                     variant="subtitle2"
-                    sx={{ fontWeight: 700, px: 1.5, color: "text.secondary" }}
+                    sx={{ fontWeight: 700, color: "text.secondary" }}
                 >
                     Omes
                 </Typography>
@@ -79,6 +73,7 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
                                     color: "text.primary",
                                     border: "1px solid",
                                     borderColor: isCurrent ? "primary.main" : "grey.300",
+                                    backgroundColor: isCurrent ? "#e8fffd" : "transparent",
                                     transition: "background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease",
                                     "&:hover": {
                                         backgroundColor: "grey.200",
@@ -106,51 +101,6 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
                             </Box>
                         );
                     })}
-                </Box>
-                <Divider sx={{ my: 0.5 }} />
-                <Typography
-                    variant="subtitle2"
-                    sx={{ fontWeight: 700, px: 1.5, color: "text.secondary" }}
-                >
-                    Navigate
-                </Typography>
-                <Box
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                        gap: 1,
-                    }}
-                >
-                    {navigationItems.map((item) => (
-                        <Box
-                            key={item.label}
-                            component={Link}
-                            href={item.href}
-                            onClick={onClose}
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                minHeight: 72,
-                                p: 1,
-                                borderRadius: 3,
-                                textDecoration: "none",
-                                color: "text.primary",
-                                border: "1px solid",
-                                borderColor: "grey.300",
-                                backgroundColor: "grey.100",
-                                transition: "background-color 0.2s ease, transform 0.2s ease",
-                                "&:hover": {
-                                    backgroundColor: "grey.200",
-                                    transform: "translateY(-1px)",
-                                },
-                            }}
-                        >
-                            <Typography variant="caption" sx={{ fontWeight: 600, textAlign: "center" }}>
-                                {item.label}
-                            </Typography>
-                        </Box>
-                    ))}
                 </Box>
             </Box>
         </Popover>
