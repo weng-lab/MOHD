@@ -67,8 +67,8 @@ export default function MolecularDataLanding() {
         sx={{
           position: "relative",
           overflow: "hidden",
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "minmax(0, 7fr) minmax(0, 5fr)" },
           alignItems: "stretch",
           minHeight: { xs: "100dvh", md: "70vh" },
           backgroundImage: "url('/Backgrounds/molecular-landing.png')",
@@ -84,8 +84,7 @@ export default function MolecularDataLanding() {
           sx={{
             position: "relative",
             zIndex: 2,
-            flex: { xs: "1 1 auto", md: "0 0 56%" },
-            justifyContent: "center",
+            justifyContent: {xs: "flex-start", md: "center"},
             px: { xs: 3, sm: 4, md: 8, lg: 10 },
             py: 5,
             minHeight: { xs: "100dvh", md: "auto" },
@@ -141,13 +140,11 @@ export default function MolecularDataLanding() {
           <Box
             sx={{
               position: "relative",
-              flex: { xs: "0 0 320px", md: "1 1 44%" },
-              minHeight: { xs: 280, md: "auto" },
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              px: { xs: 2.5, sm: 4, md: 4 },
-              py: { xs: 2.5, md: 4 },
+              px: { md: 4, lg: 5 },
+              py: { md: 4 },
             }}
           >
             <OmeInfoCard

@@ -10,7 +10,7 @@ type OmeCardsCircleProps = {
   selectedOme?: OmesDataType | null;
 };
 
-const OmeCardsCircle = ({ onSelect, selectedOme  }: OmeCardsCircleProps) => {
+const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
   const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -19,8 +19,13 @@ const OmeCardsCircle = ({ onSelect, selectedOme  }: OmeCardsCircleProps) => {
     <Box
       sx={{
         display: "grid",
-        gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" },
-        gap: 2,
+        gridTemplateColumns: {
+          xs: "repeat(3, minmax(0, 1fr))",
+          sm: "repeat(3, minmax(0, 1fr))",
+          md: "repeat(2, minmax(0, 1fr))",
+          lg: "repeat(3, minmax(0, 1fr))",
+        },
+        gap: { xs: 1.5, md: 2 },
         width: "100%",
         maxWidth: 760,
         mt: 1,
@@ -39,74 +44,106 @@ const OmeCardsCircle = ({ onSelect, selectedOme  }: OmeCardsCircleProps) => {
             key={`${ome}-${index}`}
           >
             <Box
-              component="button"
-              type="button"
-              ref={(el: HTMLButtonElement | null) => {
-                omeRefs.current[index] = el;
-              }}
-              data-index={index}
-              onClick={() => onSelect(ome)}
               sx={{
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                gap: 1.5,
-                minHeight: 70,
-                p: 1,
-                borderRadius: 1.5,
-                backgroundColor: isSelected ? "#e8fffd" : "white",
-                border: isSelected ? "3px solid" : "1px solid",
-                borderColor: isSelected ? "primary.light" : "rgba(12, 64, 60, 0.12)",
-                boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
-                color: "text.primary",
-                textAlign: "left",
-                cursor: "pointer",
-                appearance: "none",
                 width: "100%",
-                transition:
-                  "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
-                "&:hover": {
-                  transform: "translateY(-3px)",
-                  boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
-                  backgroundColor: "rgba(255,255,255,0.98)",
-                },
-                "&:hover .ome-icon": {
-                  transform: "scale(1.08)",
-                },
-                "&:hover .ome-label": {
-                  color: OME_COLORS[ome.toLowerCase()] ?? "primary.main",
-                },
-                "&:focus-visible": {
-                  outline: "2px solid rgba(255,255,255,0.8)",
-                  outlineOffset: 3,
-                },
+                gap: { xs: 1, md: 0 },
               }}
             >
               <Box
-                className="ome-icon"
-                sx={{
-                  width: 40,
-                  height: 40,
-                  flexShrink: 0,
-                  backgroundImage: `url(/OmeIcons/NoBgrnd/${iconName}.png)`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "contain",
-                  backgroundPosition: "center",
-                  transition: "transform 0.25s ease",
+                component="button"
+                type="button"
+                ref={(el: HTMLButtonElement | null) => {
+                  omeRefs.current[index] = el;
                 }}
-              />
-              <Typography
-                className="ome-label"
-                variant="h6"
+                data-index={index}
+                onClick={() => onSelect(ome)}
                 sx={{
-                  fontSize: { xs: "1rem", md: "1.05rem" },
-                  fontWeight: 500,
-                  lineHeight: 1.2,
-                  color: "rgba(33, 53, 51, 0.92)",
-                  transition: "color 0.25s ease",
+                  display: "flex",
+                  flexDirection: { xs: "column", md: "row" },
+                  alignItems: "center",
+                  justifyContent: { xs: "center", md: "flex-start" },
+                  gap: 1.5,
+                  minHeight: { xs: 88, md: 70 },
+                  width: "100%",
+                  maxWidth: { xs: 88, md: "none" },
+                  p: { xs: 1, md: 1 },
+                  borderRadius: { xs: "50%", md: 1.5 },
+                  backgroundColor: isSelected ? "#e8fffd" : "white",
+                  border: isSelected ? "3px solid" : "1px solid",
+                  borderColor: isSelected ? "primary.light" : "rgba(12, 64, 60, 0.12)",
+                  boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
+                  color: "text.primary",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  appearance: "none",
+                  transition:
+                    "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
+                  "&:hover": {
+                    transform: "translateY(-3px)",
+                    boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
+                    backgroundColor: "#e8fffd",
+                  },
+                  "&:hover .ome-icon": {
+                    transform: "scale(1.08)",
+                  },
+                  "&:hover + .ome-label, &:hover .ome-label": {
+                    color: OME_COLORS[ome.toLowerCase()] ?? "primary.main",
+                  },
+                  "&:focus-visible": {
+                    outline: "2px solid rgba(255,255,255,0.8)",
+                    outlineOffset: 3,
+                  },
                 }}
               >
-                {!isMobile? label === "WGS" ? "Whole Genome Sequencing" : label === "WGBS" ? "Whole Genome Bisulfite Sequencing" : label : label}
-              </Typography>
+                <Box
+                  className="ome-icon"
+                  sx={{
+                    width: { xs: 42, md: 40 },
+                    height: { xs: 42, md: 40 },
+                    flexShrink: 0,
+                    borderRadius: 99,
+                    backgroundImage: `url(/OmeIcons/NoBgrnd/${iconName}.png)`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    transition: "transform 0.25s ease",
+                  }}
+                />
+                {!isMobile && (
+                  <Typography
+                    className="ome-label"
+                    variant="body1"
+                    sx={{
+                      transition: "color 0.25s ease",
+                    }}
+                  >
+                    {label === "WGS"
+                      ? "Whole Genome Sequencing"
+                      : label === "WGBS"
+                        ? "Whole Genome Bisulfite Sequencing"
+                        : label}
+                  </Typography>
+                )}
+              </Box>
+              {isMobile && (
+                <Typography
+                  className="ome-label"
+                  variant="body2"
+                  sx={{
+                    color: "white",
+                    transition: "color 0.25s ease",
+                    textAlign: "center",
+                    textWrap: "balance",
+                    maxWidth: 110,
+                    minHeight: 34,
+                  }}
+                >
+                  {label}
+                </Typography>
+              )}
             </Box>
           </Grow>
         );
