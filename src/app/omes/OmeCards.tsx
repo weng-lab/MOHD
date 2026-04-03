@@ -1,86 +1,158 @@
 "use client";
-import { Box, Grow, Typography, Grid } from "@mui/material";
-import Link from "next/link";
+import { Box, Grow, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useGrowOnScroll } from "@/common/hooks/useGrowOnScroll";
-import { OmesList } from "@/common/types/globalTypes";
+import { OmesDataType, OmesList } from "@/common/types/globalTypes";
 import { OME_COLORS } from "@/common/colors";
+import { getOmeIconName, getOmeLabel } from "./omeContent";
 
-const OmeCardsCircle = () => {
-    const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
+type OmeCardsCircleProps = {
+  onSelect: (ome: OmesDataType) => void;
+  selectedOme?: OmesDataType | null;
+};
 
-    return (
-        <Grid container spacing={5} justifyContent="flex-start" marginTop={6} width={"100%"}>
-            {OmesList.map((ome, index) => {
-                const seq = ome === "RNA" || ome === "ATAC";
-                return (
-                    <Grow
-                        in={omesVisible[index]}
-                        timeout={800 + index * 300}
-                        style={{ transformOrigin: "center" }}
-                        key={`${ome}-${index}`}
-                    >
-                        <Grid
-                            component={Link}
-                            href={`/omes/${ome}/dimensionalityReduction`}
-                            scroll
-                            ref={(el) => {
-                                omeRefs.current[index] = el;
-                            }}
-                            data-index={index}
-                            size={4}
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                textDecoration: "none",
-                                color: "inherit",
-                                "&:hover .ome-title": {
-                                    color: OME_COLORS[ome.toLowerCase()] ?? "white",
-                                },
-                                "&:hover .ome-circle": {
-                                    transform: "scale(1.1)",
-                                    boxShadow: 6,
-                                },
-                            }}
-                        >
-                            <Typography
-                                className="ome-title"
-                                variant="subtitle1"
-                                sx={{
-                                    fontSize: { xs: "0.75rem", md: "1rem" },
-                                    fontWeight: "bold",
-                                    textTransform: seq ? "none" : "capitalize",
-                                    color: "white",
-                                    mb: 1,
-                                    textAlign: "center",
-                                    transition: "color 0.3s ease",
-                                    textShadow: "0 0 6px rgba(0,0,0,0.8)",
-                                }}
-                            >
-                                {seq ? ome + "-seq" : ome}
-                            </Typography>
-                            <Box
-                                className="ome-circle"
-                                sx={{
-                                    width: { xs: 75, md: 100 },
-                                    height: { xs: 75, md: 100 },
-                                    borderRadius: "50%",
-                                    boxShadow: 3,
-                                    overflow: "hidden",
-                                    backgroundColor: "white",
-                                    backgroundImage: `url(/OmeIcons/NoBgrnd/${ome.toLowerCase().split("-")[0]}.png)`,
-                                    backgroundSize: "cover",
-                                    backgroundPosition: "center",
-                                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                                }}
-                            />
-                        </Grid>
-                    </Grow>
-                );
-            })}
-        </Grid>
-    );
+const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
+  const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: {
+          xs: "repeat(3, minmax(0, 1fr))",
+          sm: "repeat(3, minmax(0, 1fr))",
+          md: "repeat(2, minmax(0, 1fr))",
+          lg: "repeat(3, minmax(0, 1fr))",
+        },
+        gap: { xs: 1.5, md: 2 },
+        width: "100%",
+        maxWidth: 760,
+        mt: 1,
+      }}
+    >
+      {OmesList.map((ome, index) => {
+        const label = getOmeLabel(ome);
+        const iconName = getOmeIconName(ome);
+        const isSelected = selectedOme === ome;
+
+        return (
+          <Grow
+            in={omesVisible[index]}
+            timeout={500 + index * 120}
+            style={{ transformOrigin: "left center" }}
+            key={`${ome}-${index}`}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+                gap: { xs: 1, md: 0 },
+              }}
+            >
+              <Box
+                component="button"
+                type="button"
+                ref={(el: HTMLButtonElement | null) => {
+                  omeRefs.current[index] = el;
+                }}
+                data-index={index}
+                onClick={() => onSelect(ome)}
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", md: "row" },
+                  alignItems: "center",
+                  justifyContent: { xs: "center", md: "flex-start" },
+                  gap: 1.5,
+                  minHeight: { xs: 88, md: 70 },
+                  width: "100%",
+                  maxWidth: { xs: 88, md: "none" },
+                  p: { xs: 1, md: 1 },
+                  borderRadius: { xs: "50%", md: 1.5 },
+                  backgroundColor: isSelected ? "surface.main" : "white",
+                  border: isSelected ? "3px solid" : "1px solid",
+                  borderColor: isSelected ? "primary.light" : "rgba(12, 64, 60, 0.12)",
+                  boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
+                  color: "text.primary",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  appearance: "none",
+                  transition:
+                    "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
+                  "&:hover": {
+                    transform: "translateY(-3px)",
+                    boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
+                    backgroundColor: "surface.main",
+                  },
+                  "&:hover .ome-icon": {
+                    transform: "scale(1.08)",
+                  },
+                  "&:hover + .ome-label, &:hover .ome-label": {
+                    color: OME_COLORS[ome.toLowerCase()] ?? "primary.main",
+                  },
+                  "&:focus-visible": {
+                    outline: "2px solid rgba(255,255,255,0.8)",
+                    outlineOffset: 3,
+                  },
+                }}
+              >
+                <Box
+                  className="ome-icon"
+                  sx={{
+                    width: { xs: 60, md: 40 },
+                    height: { xs: 60, md: 40 },
+                    flexShrink: 0,
+                    borderRadius: 99,
+                    backgroundImage: `url(/OmeIcons/NoBgrnd/${iconName}.png)`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    transition: "transform 0.25s ease",
+                  }}
+                />
+                {!isMobile && (
+                  <Typography
+                    className="ome-label"
+                    variant="body1"
+                    sx={{
+                      transition: "color 0.25s ease",
+                    }}
+                  >
+                    {label === "WGS"
+                      ? "Whole Genome Sequencing"
+                      : label === "WGBS"
+                        ? "Whole Genome Bisulfite Sequencing"
+                        : label}
+                  </Typography>
+                )}
+              </Box>
+              {isMobile && (
+                <Typography
+                  className="ome-label"
+                  variant="body2"
+                  sx={{
+                    color: "primary.main",
+                    maxWidth: 110,
+                    minHeight: 34,
+                    px: 1,
+                    py: 0.6,
+                    borderRadius: 99,
+                    backgroundColor: "white",
+                    border: "1px solid rgba(255,255,255,0.4)",
+                    boxShadow: "0 10px 24px rgba(0, 0, 0, 0.16)",
+                  }}
+                >
+                  {label}
+                </Typography>
+              )}
+            </Box>
+          </Grow>
+        );
+      })}
+    </Box>
+  );
 };
 
 export default OmeCardsCircle;

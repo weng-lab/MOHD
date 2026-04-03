@@ -1,13 +1,25 @@
-import { Stack, Paper, Box, Typography, Button } from "@mui/material";
+import { Stack, Paper, Box, Typography, IconButton } from "@mui/material";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import AppsIcon from '@mui/icons-material/Apps';
+import { useState } from "react";
+import { OmesDataType } from "@/common/types/globalTypes";
+import OmeAppletsPopover from "./OmeAppletsPopover";
 
 export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
     const pathname = usePathname();
-    const ome = pathname.split("/")[2];
-    const seq = ome === "RNA" || ome === "ATAC"
+    const ome = pathname.split("/")[2] as OmesDataType;
+    const seq = ome === "RNA" || ome === "ATAC";
     const image = `/OmeIcons/NoBgrnd/${ome.toLowerCase().split("-")[0]}.png`;
+    const [appletsAnchor, setAppletsAnchor] = useState<HTMLElement | null>(null);
+
+    const handleOpenApplets = (event: React.MouseEvent<HTMLElement>) => {
+        setAppletsAnchor(event.currentTarget);
+    };
+
+    const handleCloseApplets = () => {
+        setAppletsAnchor(null);
+    };
 
     return (
         <Box
@@ -56,13 +68,21 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
                             />
                         </Stack>
                     </Stack>
-                    <Button 
-                        startIcon={<ArrowLeftIcon />}
-                        href="/omes"
-                        variant="text"
-                    >
-                        All Omes
-                    </Button>
+                    <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
+                        <IconButton
+                            onClick={handleOpenApplets}
+                            sx={{
+                                color: "text.primary",
+                            }}
+                        >
+                            <AppsIcon fontSize="large" />
+                        </IconButton>
+                        <OmeAppletsPopover
+                            anchorEl={appletsAnchor}
+                            currentOme={ome}
+                            onClose={handleCloseApplets}
+                        />
+                    </Box>
                 </Stack>
             </Paper>
             {children}

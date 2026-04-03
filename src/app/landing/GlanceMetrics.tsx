@@ -53,6 +53,7 @@ export default function AtAGlance() {
                                     "&:hover": {
                                         transform: "translateY(-2px)",
                                     },
+                                    px: 2
                                 }}
                                 component={Link}
                                 href={stat.link ?? ""}
