@@ -1,6 +1,16 @@
 "use client";
 import { createTheme } from "@mui/material/styles";
 
+declare module "@mui/material/styles" {
+  interface Palette {
+    surface: Palette["primary"];
+  }
+
+  interface PaletteOptions {
+    surface?: PaletteOptions["primary"];
+  }
+}
+
 export const theme = createTheme({
   palette: {
     primary: {
@@ -11,6 +21,12 @@ export const theme = createTheme({
     secondary: {
       main: "#ca5702",
     },
+    surface: {
+      main: "#e8fffd",
+    },
+  },
+  typography: {
+    fontFamily: "var(--font-montserrat), sans-serif",
   },
   components: {
     MuiButton: {

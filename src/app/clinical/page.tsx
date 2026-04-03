@@ -1,11 +1,24 @@
-import { Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 export default function ClinicalDataLanding() {
   return (
-    <div>
-     <Typography>
-        Clinical Data Landing Page
-     </Typography>
-    </div>
+    <Box
+      width="100%"
+      sx={{
+        position: "relative",
+        overflow: "hidden",
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", md: "minmax(0, 7fr) minmax(0, 5fr)" },
+        alignItems: "stretch",
+        minHeight: { xs: "100dvh", md: "70vh" },
+        backgroundImage: "url('/Backgrounds/molecular-landing.png')",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: { xs: "center top", md: "top right" },
+        backgroundSize: { xs: "cover", md: "contain" },
+        backgroundColor: "primary.main",
+      }}
+      color="white"
+    >
+    </Box>
   );
 }

@@ -71,7 +71,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                   maxWidth: { xs: 88, md: "none" },
                   p: { xs: 1, md: 1 },
                   borderRadius: { xs: "50%", md: 1.5 },
-                  backgroundColor: isSelected ? "#e8fffd" : "white",
+                  backgroundColor: isSelected ? "surface.main" : "white",
                   border: isSelected ? "3px solid" : "1px solid",
                   borderColor: isSelected ? "primary.light" : "rgba(12, 64, 60, 0.12)",
                   boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
@@ -84,7 +84,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                   "&:hover": {
                     transform: "translateY(-3px)",
                     boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
-                    backgroundColor: "#e8fffd",
+                    backgroundColor: "surface.main",
                   },
                   "&:hover .ome-icon": {
                     transform: "scale(1.08)",

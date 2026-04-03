@@ -116,6 +116,7 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
                       textTransform: "none",
                       justifyContent: "start",
                       width: "100%",
+                      fontFamily: "inherit",
                     }}
                     underline="none"
                   >
@@ -129,7 +130,7 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
                         <MuiLink
                           component={Link}
                           href={subPage.link}
-                          sx={{ color: "gray", textTransform: "none" }}
+                          sx={{ color: "gray", textTransform: "none", fontFamily: "inherit" }}
                           underline="none"
                         >
                           {subPage.pageName}

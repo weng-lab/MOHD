@@ -44,14 +44,14 @@ export default function Home() {
             />
           </Box>
           <Stack alignItems="center" flexWrap={"wrap"} textAlign={"center"}>
-            <Typography variant="h4">
+            <Typography variant="h4" fontWeight={500}>
               Multiomics for Health and Diseases
             </Typography>
-            <Typography variant="h5">
-              Data Portal
+            <Typography variant="h6" fontWeight={400}>
+              DATA PORTAL
             </Typography>
           </Stack>
-          <Typography variant="body1" textAlign={"center"}>
+          <Typography variant="body1" textAlign={"center"} color="rgba(255,255,255,0.60)">
             Explore our extensive omics data 10,000 samples across 1,800 participants.
           </Typography>
         </Box>
