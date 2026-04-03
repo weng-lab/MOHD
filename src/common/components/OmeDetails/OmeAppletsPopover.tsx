@@ -2,6 +2,7 @@ import { Box, Popover, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { OmesList, OmesDataType } from "@/common/types/globalTypes";
+import { getOmeLabel } from "@/app/omes/omeContent";
 
 type OmeAppletsPopoverProps = {
     anchorEl: HTMLElement | null;
@@ -49,9 +50,8 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
                     }}
                 >
                     {OmesList.map((omeOption) => {
-                        const isSeq = omeOption === "RNA" || omeOption === "ATAC";
                         const isCurrent = omeOption === currentOme;
-                        const omeLabel = isSeq ? `${omeOption}-seq` : omeOption;
+                        const omeLabel = getOmeLabel(omeOption);
                         const omeImage = `/OmeIcons/NoBgrnd/${omeOption.toLowerCase().split("-")[0]}.png`;
 
                         return (
