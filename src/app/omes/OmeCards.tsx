@@ -1,5 +1,5 @@
 "use client";
-import { Box, Grow, Typography } from "@mui/material";
+import { Box, Grow, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useGrowOnScroll } from "@/common/hooks/useGrowOnScroll";
 import { OmesDataType, OmesList } from "@/common/types/globalTypes";
 import { OME_COLORS } from "@/common/colors";
@@ -12,6 +12,8 @@ type OmeCardsCircleProps = {
 
 const OmeCardsCircle = ({ onSelect, selectedOme  }: OmeCardsCircleProps) => {
   const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <Box
@@ -51,7 +53,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme  }: OmeCardsCircleProps) => {
                 minHeight: 70,
                 p: 1,
                 borderRadius: 1.5,
-                backgroundColor: "#e8fffd",
+                backgroundColor: isSelected ? "#e8fffd" : "white",
                 border: isSelected ? "3px solid" : "1px solid",
                 borderColor: isSelected ? "primary.light" : "rgba(12, 64, 60, 0.12)",
                 boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
@@ -100,11 +102,10 @@ const OmeCardsCircle = ({ onSelect, selectedOme  }: OmeCardsCircleProps) => {
                   fontWeight: 500,
                   lineHeight: 1.2,
                   color: "rgba(33, 53, 51, 0.92)",
-                  textTransform: ome === "WGS" || ome === "WGBS" ? "uppercase" : "none",
                   transition: "color 0.25s ease",
                 }}
               >
-                {label}
+                {!isMobile? label === "WGS" ? "Whole Genome Sequencing" : label === "WGBS" ? "Whole Genome Bisulfite Sequencing" : label : label}
               </Typography>
             </Box>
           </Grow>

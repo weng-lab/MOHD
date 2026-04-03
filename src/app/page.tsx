@@ -20,10 +20,6 @@ export default function Home() {
             alignItems: "center",
             flexDirection: "column",
             gap: 2,
-            height: {
-              xs: "clamp(360px, 58vw, 440px)",
-              md: "clamp(420px, 46vw, 540px)",
-            },
             backgroundImage: "url('/Backgrounds/hero.png')",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
@@ -41,18 +37,18 @@ export default function Home() {
             <Image
               src="/logo.png"
               alt="logo"
-              height={125}
-              width={125}
+              height={150}
+              width={150}
               priority
               id="header-helix"
             />
           </Box>
           <Stack alignItems="center" flexWrap={"wrap"} textAlign={"center"}>
             <Typography variant="h4">
-              <b>Multiomics for Health and Diseases</b>
+              Multiomics for Health and Diseases
             </Typography>
             <Typography variant="h5">
-              <b>Data Portal</b>
+              Data Portal
             </Typography>
           </Stack>
           <Typography variant="body1" textAlign={"center"}>

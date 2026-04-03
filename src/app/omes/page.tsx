@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Stack, Typography, Box, Divider } from "@mui/material";
+import { Stack, Typography, Box, Divider, useMediaQuery, useTheme } from "@mui/material";
 import OmeCards from "./OmeCards";
 import { OmesDataType } from "@/common/types/globalTypes";
 import OmeInfoCard from "./OmeInfoCard";
@@ -8,6 +8,8 @@ import OmeInfoCard from "./OmeInfoCard";
 const CARD_FADE_DURATION_MS = 320;
 
 export default function MolecularDataLanding() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [selectedOme, setSelectedOme] = useState<OmesDataType | null>(null);
   const [displayedOme, setDisplayedOme] = useState<OmesDataType | null>(null);
   const [isCardVisible, setIsCardVisible] = useState(false);
@@ -68,12 +70,12 @@ export default function MolecularDataLanding() {
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           alignItems: "stretch",
-          height: { xs: "auto", md: "70vh" },
-          backgroundImage: "url('/backgrounds/molecular-landing.png')",
+          minHeight: { xs: "100dvh", md: "70vh" },
+          backgroundImage: "url('/Backgrounds/molecular-landing.png')",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "right",
-          backgroundSize: "contain",
-          backgroundColor: "primary.main"
+          backgroundPosition: { xs: "center top", md: "top right" },
+          backgroundSize: { xs: "cover", md: "contain" },
+          backgroundColor: "primary.main",
         }}
         color="white"
       >
@@ -85,14 +87,12 @@ export default function MolecularDataLanding() {
             flex: { xs: "1 1 auto", md: "0 0 56%" },
             justifyContent: "center",
             px: { xs: 3, sm: 4, md: 8, lg: 10 },
-            py: { xs: 4, md: 6 },
+            py: 5,
+            minHeight: { xs: "100dvh", md: "auto" },
           }}
         >
           <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 700,
-            }}
+            variant="h3"
           >
             Molecular Data
           </Typography>
@@ -105,10 +105,10 @@ export default function MolecularDataLanding() {
             }}
           >
             <Typography
-              variant="h5"
+              variant="h6"
               sx={{
                 color: "rgba(255,255,255,0.72)",
-                whiteSpace: "nowrap",
+                textTransform: "uppercase",
               }}
             >
               Select Data Type
@@ -120,28 +120,43 @@ export default function MolecularDataLanding() {
               }}
             />
           </Box>
-          <OmeCards onSelect={handleSelectOme} selectedOme={selectedOme} />
+          {!isMobile || !displayedOme ? (
+            <OmeCards onSelect={handleSelectOme} selectedOme={selectedOme} />
+          ) : (
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: 760,
+              }}
+            >
+              <OmeInfoCard
+                selectedOme={displayedOme}
+                isVisible={isCardVisible}
+                onClose={() => handleSelectOme(null)}
+              />
+            </Box>
+          )}
         </Stack>
-        <Box
-          sx={{
-            position: "relative",
-            flex: { xs: "0 0 320px", md: "1 1 44%" },
-            minHeight: { xs: 280, md: "auto" },
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            px: { xs: 2.5, sm: 4, md: 4 },
-            py: { xs: 2.5, md: 4 },
-          }}
-        >
-          {displayedOme ? (
+        {!isMobile && displayedOme ? (
+          <Box
+            sx={{
+              position: "relative",
+              flex: { xs: "0 0 320px", md: "1 1 44%" },
+              minHeight: { xs: 280, md: "auto" },
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              px: { xs: 2.5, sm: 4, md: 4 },
+              py: { xs: 2.5, md: 4 },
+            }}
+          >
             <OmeInfoCard
               selectedOme={displayedOme}
               isVisible={isCardVisible}
               onClose={() => handleSelectOme(null)}
             />
-          ) : null}
-        </Box>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   );

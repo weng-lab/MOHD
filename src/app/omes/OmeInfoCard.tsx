@@ -7,7 +7,7 @@ import { OmesDataType } from "@/common/types/globalTypes";
 import { OME_COLORS } from "@/common/colors";
 import {
   OME_DESCRIPTIONS,
-  getGenomeBrowserHref,
+  // getGenomeBrowserHref,
   getOmeIconName,
   getOmeInfoHref,
   getOmeLabel,
@@ -37,10 +37,11 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
         transform: isVisible ? "translateY(0)" : "translateY(8px)",
         transition: "opacity 320ms ease, transform 320ms ease",
         borderRadius: 3,
-        border: "1px solid rgba(255,255,255,0.22)",
-        background: "linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(242,249,248,0.9) 100%)",
-        boxShadow: "0 24px 60px rgba(0, 0, 0, 0.18)",
-        backdropFilter: "blur(10px)",
+        border: "1px solid rgba(255,255,255,0.28)",
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(242,249,248,0.68) 100%)",
+        boxShadow: "0 24px 60px rgba(0, 0, 0, 0.16)",
+        backdropFilter: "blur(16px)",
         color: "text.primary",
         p: 2,
       }}
@@ -73,11 +74,11 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
                   }}
                 />
               </Box>
+                <Stack>
               <Box>
                 <Typography
                   variant="h4"
                   sx={{
-                    fontWeight: 700,
                     color: "rgba(20, 39, 37, 0.96)",
                     textTransform:
                       selectedOme === "WGS" || selectedOme === "WGBS" ? "uppercase" : "none",
@@ -93,6 +94,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
                   {selectedOme === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
                 </Typography>
               )}
+            </Stack>
             </Stack>
             <IconButton
               aria-label="Close selected OME"
