@@ -101,8 +101,8 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                 <Box
                   className="ome-icon"
                   sx={{
-                    width: { xs: 42, md: 40 },
-                    height: { xs: 42, md: 40 },
+                    width: { xs: 60, md: 40 },
+                    height: { xs: 60, md: 40 },
                     flexShrink: 0,
                     borderRadius: 99,
                     backgroundImage: `url(/OmeIcons/NoBgrnd/${iconName}.png)`,
@@ -133,12 +133,15 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                   className="ome-label"
                   variant="body2"
                   sx={{
-                    color: "white",
-                    transition: "color 0.25s ease",
-                    textAlign: "center",
-                    textWrap: "balance",
+                    color: "primary.main",
                     maxWidth: 110,
                     minHeight: 34,
+                    px: 1,
+                    py: 0.6,
+                    borderRadius: 99,
+                    backgroundColor: "white",
+                    border: "1px solid rgba(255,255,255,0.4)",
+                    boxShadow: "0 10px 24px rgba(0, 0, 0, 0.16)",
                   }}
                 >
                   {label}
