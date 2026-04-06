@@ -20,6 +20,7 @@ export const LinkComponent = ({ showExternalIcon, openInNewTab = false, children
       component={NextLink}
       rel={openInNewTab ? "noopener noreferrer" : undefined}
       target={openInNewTab ? "_blank" : undefined}
+      sx={{ fontFamily: "inherit" }}
       {...rest}
     >
       {children}

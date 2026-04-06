@@ -16,6 +16,10 @@ import AutoComplete from "../autocomplete";
 
 const pageLinks: PageInfo[] = [
     {
+        pageName: "Genome Browser",
+        link: "/genomeBrowser",
+    },
+    {
         pageName: "Downloads",
         link: "/downloads",
     },

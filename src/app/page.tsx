@@ -10,48 +10,21 @@ export default function Home() {
       <Box sx={{ backgroundColor: "primary.light" }}>
         <Box
           width="100%"
-          paddingBottom={10}
-          paddingTop={5}
+          paddingBottom={{ xs: 6, md: 8 }}
+          paddingTop={{ xs: 4, md: 5 }}
           paddingX={{ xs: 2, md: 0 }}
-          sx={(theme) => ({
-            position: "relative",
-            overflow: "hidden",
+          maxHeight={500}
+          sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
             gap: 2,
-            background: `linear-gradient(
-            to bottom,
-            ${theme.palette.primary.main},
-            ${theme.palette.primary.light}
-          )`,
-            "&::before, &::after": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              width: { xs: "50%", md: 550 },
-              backgroundImage: "url('/molecularBackground.png')",
-              backgroundRepeat: "repeat-y",
-              backgroundSize: { xs: "260px auto", md: "550px auto" },
-              opacity: 0.15,
-              filter: "grayscale(1) brightness(1.95) contrast(0.99)",
-              pointerEvents: "none",
-            },
-            "&::before": {
-              left: 0,
-              backgroundPosition: "left center",
-            },
-            "&::after": {
-              right: 0,
-              backgroundPosition: "right center",
-            },
-            "& > *": {
-              position: "relative",
-              zIndex: 1,
-            },
-          })}
+            backgroundImage: "url('/Backgrounds/hero.png')",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+          }}
           color="white"
         >
           <Box
@@ -64,21 +37,21 @@ export default function Home() {
             <Image
               src="/logo.png"
               alt="logo"
-              height={125}
-              width={125}
+              height={150}
+              width={150}
               priority
               id="header-helix"
             />
           </Box>
           <Stack alignItems="center" flexWrap={"wrap"} textAlign={"center"}>
-            <Typography variant="h4">
-              <b>Multiomics for Health and Diseases</b>
+            <Typography variant="h4" fontWeight={500}>
+              Multiomics for Health and Diseases
             </Typography>
-            <Typography variant="h5">
-              <b>Data Portal</b>
+            <Typography variant="h6" fontWeight={400}>
+              DATA PORTAL
             </Typography>
           </Stack>
-          <Typography variant="body1" textAlign={"center"}>
+          <Typography variant="body1" textAlign={"center"} color="rgba(255,255,255,0.60)">
             Explore our extensive omics data 10,000 samples across 1,800 participants.
           </Typography>
         </Box>
