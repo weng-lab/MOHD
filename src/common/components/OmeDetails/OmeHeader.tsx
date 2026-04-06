@@ -72,7 +72,7 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
                         <IconButton
                             onClick={handleOpenApplets}
                             sx={{
-                                color: "text.primary",
+                                color: "primary.main",
                             }}
                         >
                             <AppsIcon fontSize="large" />
