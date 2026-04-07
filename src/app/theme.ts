@@ -20,6 +20,7 @@ export const theme = createTheme({
     },
     secondary: {
       main: "#ca5702",
+      light: "#e17b2e"
     },
     surface: {
       main: "#e8fffd",
