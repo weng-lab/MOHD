@@ -17,8 +17,8 @@ export default function AtAGlance() {
                 sx={{
                     backgroundColor: "primary.main",
                     borderRadius: "999px",
-                    px: { xs: 3, md: 6 },
-                    py: { xs: 1.5, md: 2 },
+                    px: { xs: 2, sm:  5 },
+                    py: { xs: 1, sm: 2 },
                     maxHeight: 100
                 }}
             >
@@ -28,10 +28,10 @@ export default function AtAGlance() {
                         <Divider
                             orientation="vertical"
                             flexItem
-                            sx={{ borderColor: "white" }}
+                            sx={{ borderColor: "rgba(0,0,0,0.30)" }}
                         />
                     }
-                    spacing={{ xs: 2, md: 5 }}
+                    spacing={{ xs: 2, sm: 5 }}
                     alignItems="center"
                 >
                     {stats.map((stat) => {

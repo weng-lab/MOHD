@@ -8,55 +8,6 @@ export type AutoCompleteProps = Partial<GenomeSearchProps> & {
 
 export const defaultHumanResults: Result[] = [
   {
-    title: "WGS",
-    description: "Whole Genome Sequencing",
-    id: "WGS",
-    type: "Ome",
-  },
-  {
-    title: "WGBS",
-    description: "Whole Genome Bisulfite Sequencing",
-    id: "WGBS",
-    type: "Ome",
-  },
-  {
-    title: "ATAC",
-    description: "ATAC-seq",
-    id: "ATAC",
-    type: "Ome",
-  },
-  {
-    title: "RNA",
-    description: "RNA-seq",
-    id: "RNA",
-    type: "Ome",
-  },
-  {
-    title: "Proteomics",
-    id: "proteomics",
-    type: "Ome",
-  },
-  {
-    title: "Metabolomics",
-    id: "metabolomics",
-    type: "Ome",
-  },
-  {
-    title: "Lipidomics",
-    id: "lipidomics",
-    type: "Ome",
-  },
-  {
-    title: "Exposomics",
-    id: "exposomics",
-    type: "Ome",
-  },
-  {
-    title: "Metallomics",
-    id: "metallomics",
-    type: "Ome",
-  },
-  {
     title: "chr19:44,905,754-44,909,393",
     domain: {
       chromosome: "chr19",

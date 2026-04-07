@@ -7,14 +7,6 @@ import React from "react";
 import Image from "next/image";
 import { OmeDetailsTab, OmesDataType } from "../../types/globalTypes";
 
-type ClonePropsProps<T extends object> = T & {
-  children: (props: T) => React.ReactNode;
-};
-
-function CloneProps<T extends object>({ children, ...other }: ClonePropsProps<T>) {
-  return <>{children(other as T)}</>;
-}
-
 export type ElementDetailsTabsProps = {
   ome: OmesDataType;
   tabs: OmeDetailsTab[];
@@ -116,27 +108,22 @@ const OmeDetailsTabs = ({ ome, tabs, orientation }: ElementDetailsTabsProps) => 
       >
         {tabs.map((tab) => {
           return (
-            <CloneProps key={tab.route} value={tab.route}>
-              {(tabProps) => (
-                    <Tab
-                      {...(tabProps as { value: string })}
-                      label={tab.label}
-                      value={tab.route}
-                      LinkComponent={Link}
-                      href={`/omes/${ome}/${tab.route}`}
-                      key={tab.route}
-                      icon={
-                        <Image
-                          width={verticalTabs ? 50 : 40}
-                          height={verticalTabs ? 50 : 40}
-                          src={tab.iconPath}
-                          alt={tab.label + " icon"}
-                        />
-                      }
-                      sx={{ fontSize: "12px" }}
-                    />
-              )}
-            </CloneProps>
+            <Tab
+              key={tab.route}
+              label={tab.label}
+              value={tab.route}
+              LinkComponent={Link}
+              href={`/omes/${ome}/${tab.route}`}
+              icon={
+                <Image
+                  width={verticalTabs ? 50 : 40}
+                  height={verticalTabs ? 50 : 40}
+                  src={tab.iconPath}
+                  alt={tab.label + " icon"}
+                />
+              }
+              sx={{ fontSize: "12px" }}
+            />
           );
         })}
       </Tabs>

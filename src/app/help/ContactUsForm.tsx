@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
@@ -15,29 +15,6 @@ export default function ContactForm() {
   function isValidEmail(email: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
-
-  // Move validation logic into useEffect to avoid state updates during render
-  useEffect(() => {
-    const newError = { ...error };
-    let hasChanges = false;
-
-    if (error.email && isValidEmail(contactEmail)) {
-      newError.email = false;
-      hasChanges = true;
-    }
-    if (error.name && contactName) {
-      newError.name = false;
-      hasChanges = true;
-    }
-    if (error.message && contactMessage) {
-      newError.message = false;
-      hasChanges = true;
-    }
-
-    if (hasChanges) {
-      setError(newError);
-    }
-  }, [contactEmail, contactName, contactMessage, error.email, error.name, error.message, error]);
 
   const handleSubmit = async () => {
     //Check fields to see if valid
@@ -92,7 +69,11 @@ export default function ContactForm() {
           required
           value={contactName}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setContactName(event.target.value);
+            const { value } = event.target;
+            setContactName(value);
+            if (error.name && value) {
+              setError((current) => ({ ...current, name: false }));
+            }
           }}
           error={error.name}
           name="user_name"
@@ -106,7 +87,11 @@ export default function ContactForm() {
           required
           value={contactEmail}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setContactEmail(event.target.value);
+            const { value } = event.target;
+            setContactEmail(value);
+            if (error.email && isValidEmail(value)) {
+              setError((current) => ({ ...current, email: false }));
+            }
           }}
           error={error.email || contactEmail !== '' && !isValidEmail(contactEmail)}
           helperText={error.email && "Please enter a valid email"}
@@ -121,7 +106,11 @@ export default function ContactForm() {
           required
           value={contactMessage}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setContactMessage(event.target.value);
+            const { value } = event.target;
+            setContactMessage(value);
+            if (error.message && value) {
+              setError((current) => ({ ...current, message: false }));
+            }
           }}
           error={error.message}
           name="message"
