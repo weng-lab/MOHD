@@ -1,6 +1,8 @@
 "use client";
 import { GenomeSearch, GenomeSearchProps, Result } from "@weng-lab/ui-components";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import OpenInScreen from "./OpenInScreen";
 
 export type AutoCompleteProps = Partial<GenomeSearchProps> & {
   closeDrawer?: () => void;
@@ -88,6 +90,7 @@ export function makeResultLink(result: Result) {
  */
 export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProps) {
   const router = useRouter();
+  const [pendingScreenResult, setPendingScreenResult] = useState<Result | null>(null);
 
   const handleSearchSubmit = (r: Result) => {
     const link = makeResultLink(r)
@@ -96,36 +99,57 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
       closeDrawer();
     }
     if (r.type !== "Ome") {
-      window.open(link)
+      setPendingScreenResult(r);
     } else {
       router.push(link, { scroll: false });
     }
   };
 
+  const handleCloseDialog = () => {
+    setPendingScreenResult(null);
+  };
+
+  const handleConfirmScreenNavigation = () => {
+    if (!pendingScreenResult) {
+      return;
+    }
+
+    window.open(makeResultLink(pendingScreenResult), "_blank", "noopener,noreferrer");
+    handleCloseDialog();
+  };
+
   const geneVersion = [29, 40];
 
   return (
-    <GenomeSearch
-      assembly={"GRCh38"}
-      geneVersion={geneVersion}
-      ccreLimit={3}
-      showiCREFlag={false}
-      queries={["Ome", "Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
-      onSearchSubmit={handleSearchSubmit}
-      //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-        }
-      }}
-      slotProps={{
-        paper: {
-          elevation: 1,
-        },
-      }}
-      defaultResults={defaultHumanResults}
-      openOnFocus
-      {...props}
-    />
+    <>
+      <GenomeSearch
+        assembly={"GRCh38"}
+        geneVersion={geneVersion}
+        ccreLimit={3}
+        showiCREFlag={false}
+        queries={["Ome", "Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
+        onSearchSubmit={handleSearchSubmit}
+        //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+        }}
+        slotProps={{
+          paper: {
+            elevation: 1,
+          },
+        }}
+        defaultResults={defaultHumanResults}
+        openOnFocus
+        {...props}
+      />
+      <OpenInScreen
+        open={pendingScreenResult !== null}
+        resultTitle={pendingScreenResult?.title ?? null}
+        onClose={handleCloseDialog}
+        onConfirm={handleConfirmScreenNavigation}
+      />
+    </>
   );
 }
