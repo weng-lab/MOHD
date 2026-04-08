@@ -24,6 +24,7 @@ export const theme = createTheme({
     },
     surface: {
       main: "#e8fffd",
+      light: "#f6faf9"
     },
   },
   typography: {

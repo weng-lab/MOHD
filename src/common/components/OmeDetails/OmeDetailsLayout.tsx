@@ -91,7 +91,7 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                     id="vertical-view-tabs-container"
                     gridColumn={1}
                     gridRow={1}
-                    bgcolor={"#F2F2F2"}
+                    bgcolor={"surface.light"}
                     position={"sticky"}
                     top={"calc(var(--header-height, 64px) + var(--Ome-tabs-height, 48px))"}
                     maxHeight={"calc(100vh - var(--header-height, 64px) - var(--Ome-tabs-height, 48px))"}

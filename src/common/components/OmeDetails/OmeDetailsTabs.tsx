@@ -46,7 +46,7 @@ const OmeDetailsTabs = ({ ome, tabs, orientation }: ElementDetailsTabsProps) => 
         variant="scrollable"
         sx={{
           "& .MuiTab-root.Mui-selected": {
-            backgroundColor: verticalTabs ? "rgba(73, 77, 107, .15)" : "initial",
+            backgroundColor: verticalTabs ? "#e1edec" : "initial",
           },
           "& .MuiTabs-scrollButtons.Mui-disabled": {
             opacity: 0.3,
