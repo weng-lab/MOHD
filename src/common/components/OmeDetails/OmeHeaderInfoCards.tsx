@@ -14,7 +14,7 @@ const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
         { label: "Samples", value: "128" },
         { label: "Peaks", value: "45.2K" },
         { label: "Reads", value: "2.1M" },
-        { label: "FRiP", value: "0.42" },
+        // { label: "FRiP", value: "0.42" },
     ],
 };
 
@@ -27,7 +27,7 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
     }
 
     return (
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ minWidth: 0 }}>
+        <Stack direction="row" alignItems="center" spacing={{xs: 0, md: 2}} sx={{ minWidth: 0 }}>
             <Divider
                 orientation="vertical"
                 flexItem
@@ -35,12 +35,12 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
                     borderColor: "rgba(255, 255, 255, 0.2)",
                     height: 28,
                     alignSelf: "center",
+                    display: { xs: "none", md: "block" },
                 }}
             />
             <Stack
                 direction="row"
                 spacing={1}
-                useFlexGap
                 flexWrap="wrap"
                 alignItems="center"
                 sx={{ minWidth: 0 }}

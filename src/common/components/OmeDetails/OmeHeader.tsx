@@ -43,55 +43,62 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
                 }}
                 id="ome-header"
             >
-                <Stack direction={"row"} justifyContent={"space-between"}>
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        spacing={2}
-                        sx={{ flex: 1 }}
-                    >
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                fontWeight: 700,
-                                textTransform: seq ? "none" : "capitalize",
-                            }}
-                            color="white"
+                <Stack>
+                    <Stack direction={"row"} justifyContent={"space-between"} alignItems="center">
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={2}
+                            sx={{ flex: 1, minWidth: 0 }}
                         >
-                            {seq ? ome + "-seq" : ome}
-                        </Typography>
-                        {(ome === "WGS" || ome === "WGBS") && (
                             <Typography
-                                variant="body1"
+                                variant="h5"
+                                sx={{
+                                    fontWeight: 700,
+                                    textTransform: seq ? "none" : "capitalize",
+                                }}
+                                color="white"
                             >
-                                {ome === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
+                                {seq ? ome + "-seq" : ome}
                             </Typography>
-                        )}
-                        <Image
-                            src={image}
-                            alt={`${ome} icon`}
-                            width={50}
-                            height={50}
-                        />
-                        <OmeHeaderInfoCards ome={ome} />
+                            {(ome === "WGS" || ome === "WGBS") && (
+                                <Typography
+                                    variant="body1"
+                                >
+                                    {ome === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
+                                </Typography>
+                            )}
+                            <Image
+                                src={image}
+                                alt={`${ome} icon`}
+                                width={50}
+                                height={50}
+                            />
+                            <Box sx={{ display: { xs: "none", md: "block" } }}>
+                                <OmeHeaderInfoCards ome={ome} />
+                            </Box>
+                        </Stack>
+                        <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+                            <Button
+                                onClick={handleOpenApplets}
+                                variant="text"
+                                startIcon={<AppsIcon />}
+                                sx={{
+                                    color: "white",
+                                }}
+                                size="large"
+                            >
+                                Omes
+                            </Button>
+                            <OmeAppletsPopover
+                                anchorEl={appletsAnchor}
+                                currentOme={ome}
+                                onClose={handleCloseApplets}
+                            />
+                        </Box>
                     </Stack>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Button
-                            onClick={handleOpenApplets}
-                            variant="text"
-                            startIcon={<AppsIcon />}
-                            sx={{
-                                color: "white",
-                            }}
-                            size="large"
-                        >
-                            Omes
-                        </Button>
-                        <OmeAppletsPopover
-                            anchorEl={appletsAnchor}
-                            currentOme={ome}
-                            onClose={handleCloseApplets}
-                        />
+                    <Box sx={{ display: { xs: "block", md: "none" } }}>
+                        <OmeHeaderInfoCards ome={ome} />
                     </Box>
                 </Stack>
             </Paper>
