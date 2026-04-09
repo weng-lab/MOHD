@@ -16,6 +16,10 @@ import AutoComplete from "../autocomplete";
 
 const pageLinks: PageInfo[] = [
     {
+        pageName: "Genome Browser",
+        link: "/genomeBrowser",
+    },
+    {
         pageName: "Downloads",
         link: "/downloads",
     },
@@ -129,7 +133,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                 </Typography>
                 <WarningAmberIcon />
             </Stack>
-            <Toolbar sx={{ justifyContent: "space-between", backgroundColor: "white" }}>
+            <Toolbar sx={{ justifyContent: "space-between", backgroundColor: "white", minHeight: "64px" }}>
                 {/* Main navigation items for desktop */}
                 <Stack direction={"row"} spacing={3} >
                     <Box component={Link} href={"/"} height={45} width={45} position={"relative"}>
@@ -196,7 +200,6 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         </Box>
                     ))}
                 </Stack>
-                {/* <IconButton sx={{ color: "white", display: { xs: "none", md: "flex" } }} onClick={handleFocusSearch}> */}
                 <Box
                     sx={{
                         display: { xs: "none", md: "flex" },
@@ -230,7 +233,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                                 placeholder: "Search MOHD or SCREEN",
                                 sx: {
                                     "& .MuiOutlinedInput-root": {
-                                        backgroundColor: "primary.light",
+                                        backgroundColor: "#336460",
                                         borderRadius: "999px",
                                         color: "white",
                                         "& fieldset": { border: "none" },

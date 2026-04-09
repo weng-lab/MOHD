@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "yarn@4.12.0",
+  "resolutions": {
+    "typescript-eslint": "8.58.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -30,7 +33,7 @@
     "@weng-lab/genomebrowser-ui": "^0.2.7",
     "@weng-lab/ui-components": "^2.2.4",
     "@weng-lab/visualization": "^1.2.11",
-    "next": "16.1.6",
+    "next": "16.2.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
@@ -41,10 +44,13 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.2.0",
     "graphql": "^16",
-    "typescript": "^5"
+    "typescript": "^6.0.0",
+    "typescript-eslint": "^8.58.0"
   }
 }
