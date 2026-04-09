@@ -146,7 +146,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
       />
       <OpenInScreen
         open={pendingScreenResult !== null}
-        resultTitle={pendingScreenResult?.title ?? null}
+        result={pendingScreenResult ?? null}
         onClose={handleCloseDialog}
         onConfirm={handleConfirmScreenNavigation}
       />

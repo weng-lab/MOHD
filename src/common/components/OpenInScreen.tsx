@@ -1,15 +1,16 @@
 "use client";
 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
+import { Result } from "@weng-lab/ui-components";
 
 type OpenInScreenProps = {
   open: boolean;
-  resultTitle: string | null;
+  result: Result | null;
   onClose: () => void;
   onConfirm: () => void;
 };
 
-export default function OpenInScreen({ open, resultTitle, onClose, onConfirm }: OpenInScreenProps) {
+export default function OpenInScreen({ open, result, onClose, onConfirm }: OpenInScreenProps) {
   return (
     <Dialog
       open={open}
@@ -20,12 +21,12 @@ export default function OpenInScreen({ open, resultTitle, onClose, onConfirm }: 
           background: "#e1edec",
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+        <Typography sx={{ fontWeight: 700 }}>
           Continue to SCREEN
         </Typography>
       </DialogTitle>
       <DialogContent>
-        {resultTitle && (
+        {result?.title && (
           <Box
             sx={{
               p: 1,
@@ -36,15 +37,15 @@ export default function OpenInScreen({ open, resultTitle, onClose, onConfirm }: 
             }}
           >
             <Typography variant="body2" sx={{ color: "text.secondary", mb: 0.5 }}>
-              Selected result
+              Selected {result.type}
             </Typography>
             <Typography variant="body1" sx={{ fontWeight: 700 }}>
-              {resultTitle}
+              {result?.title}
             </Typography>
           </Box>
         )}
         <DialogContentText>
-          This result is available in SCREEN. Would you like to open it in a new tab and continue exploring there?
+          This {result?.type} is available in SCREEN. Would you like to open it in a new tab and continue exploring there?
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2.5, pt: 0 }}>
