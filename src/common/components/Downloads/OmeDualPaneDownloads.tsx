@@ -158,7 +158,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
             onClick={toggleAll}
           />
           <Tooltip title={"Bulk Download"}>
-            <FolderZip />
+            <FolderZip color="primary" />
           </Tooltip>
         </>
       ),
@@ -195,7 +195,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
           <>
             <DefaultCheckbox {...params} />
             <Tooltip title={"Bulk Download"}>
-              <FolderZip />
+              <FolderZip color="primary"/>
             </Tooltip>
           </>
         );
