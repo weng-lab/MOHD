@@ -1,7 +1,9 @@
 "use client";
-
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography } from "@mui/material";
+import { Stack } from "@mui/system";
 import { Result } from "@weng-lab/ui-components";
+import CloseIcon from '@mui/icons-material/Close';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 type OpenInScreenProps = {
   open: boolean;
@@ -21,9 +23,17 @@ export default function OpenInScreen({ open, result, onClose, onConfirm }: OpenI
           background: "#e1edec",
         }}
       >
-        <Typography sx={{ fontWeight: 700 }}>
-          Continue to SCREEN
-        </Typography>
+        <Stack direction="row" alignItems="center" justifyContent={"space-between"}>
+          <Typography sx={{ fontWeight: 700 }}>
+            Continue to SCREEN
+          </Typography>
+          <IconButton
+            onClick={onClose}
+            size="small"
+          >
+            <CloseIcon />
+          </IconButton>
+        </Stack>
       </DialogTitle>
       <DialogContent>
         {result?.title && (
@@ -52,7 +62,7 @@ export default function OpenInScreen({ open, result, onClose, onConfirm }: OpenI
         <Button onClick={onClose} color="inherit">
           Stay Here
         </Button>
-        <Button onClick={onConfirm} variant="contained">
+        <Button onClick={onConfirm} variant="contained" endIcon={<OpenInNewIcon />}>
           Open In SCREEN
         </Button>
       </DialogActions>

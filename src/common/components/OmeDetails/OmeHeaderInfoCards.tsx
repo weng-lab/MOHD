@@ -1,5 +1,4 @@
 "use client";
-
 import { Divider, Grow, Stack, Typography } from "@mui/material";
 import { OmesDataType } from "@/common/types/globalTypes";
 import { useGrowOnScroll } from "@/common/hooks/useGrowOnScroll";
@@ -11,10 +10,12 @@ type OmeHeaderStat = {
 
 const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
     ATAC: [
-        { label: "Samples", value: "128" },
-        { label: "Peaks", value: "45.2K" },
-        { label: "Reads", value: "2.1M" },
-        // { label: "FRiP", value: "0.42" },
+        // { label: "Samples", value: "128" },
+        // { label: "Peaks", value: "45.2K" },
+        // { label: "Reads", value: "2.1M" },
+        { label: "Experiments", value: "128" },
+        { label: "Participants", value: "45.2K" },
+        { label: "Timepoints", value: "2.1M" },
     ],
 };
 
@@ -61,7 +62,6 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
                                 borderRadius: 1.5,
                                 bgcolor: "rgba(255, 255, 255, 0.08)",
                                 border: "1px solid rgba(255, 255, 255, 0.06)",
-                                backdropFilter: "blur(8px)",
                             }}
                         >
                             <Typography

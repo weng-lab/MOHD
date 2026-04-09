@@ -11,7 +11,7 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
     const pathname = usePathname();
     const ome = pathname.split("/")[2] as OmesDataType;
     const seq = ome === "RNA" || ome === "ATAC";
-    const image = `/OmeIcons/NoBgrnd/${ome.toLowerCase().split("-")[0]}.png`;
+    const image = `/OmeIcons/Light/${ome.toLowerCase().split("-")[0]}.png`;
     const [appletsAnchor, setAppletsAnchor] = useState<HTMLElement | null>(null);
 
     const handleOpenApplets = (event: React.MouseEvent<HTMLElement>) => {

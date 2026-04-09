@@ -200,7 +200,6 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         </Box>
                     ))}
                 </Stack>
-                {/* <IconButton sx={{ color: "white", display: { xs: "none", md: "flex" } }} onClick={handleFocusSearch}> */}
                 <Box
                     sx={{
                         display: { xs: "none", md: "flex" },
@@ -234,7 +233,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                                 placeholder: "Search MOHD or SCREEN",
                                 sx: {
                                     "& .MuiOutlinedInput-root": {
-                                        backgroundColor: "primary.light",
+                                        backgroundColor: "#336460",
                                         borderRadius: "999px",
                                         color: "white",
                                         "& fieldset": { border: "none" },
