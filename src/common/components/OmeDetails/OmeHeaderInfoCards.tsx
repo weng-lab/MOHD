@@ -1,5 +1,5 @@
 "use client";
-import { Divider, Grow, Stack, Typography } from "@mui/material";
+import { Divider, Grow, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { OmesDataType } from "@/common/types/globalTypes";
 import { useGrowOnScroll } from "@/common/hooks/useGrowOnScroll";
 
@@ -14,14 +14,16 @@ const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
         // { label: "Peaks", value: "45.2K" },
         // { label: "Reads", value: "2.1M" },
         { label: "Experiments", value: "128" },
-        { label: "Participants", value: "45.2K" },
-        { label: "Timepoints", value: "2.1M" },
+        { label: "Participants", value: "180" },
+        { label: "Timepoints", value: "200" },
     ],
 };
 
 export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
     const stats = HEADER_STATS[ome] ?? [];
     const { visible, refs } = useGrowOnScroll(stats.length);
+    const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
     if (stats.length === 0) {
         return null;
@@ -41,10 +43,14 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
             />
             <Stack
                 direction="row"
-                spacing={1}
                 flexWrap="wrap"
                 alignItems="center"
-                sx={{ minWidth: 0 }}
+                useFlexGap
+                sx={{
+                    minWidth: 0,
+                    columnGap: 1,
+                    rowGap: 1,
+                }}
             >
                 {stats.map((stat, index) => (
                     <Grow in={visible[index]} timeout={500 + index * 140} key={stat.label}>
@@ -57,7 +63,7 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
                             alignItems="center"
                             spacing={1}
                             sx={{
-                                px: 1.25,
+                                px: { xs: 0.5, md: 1.25 },
                                 py: 0.5,
                                 borderRadius: 1.5,
                                 bgcolor: "rgba(255, 255, 255, 0.08)",
@@ -65,7 +71,7 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
                             }}
                         >
                             <Typography
-                                variant="body2"
+                                variant={isXs ? "caption" : "body2"}
                                 sx={{
                                     color: "rgba(255, 255, 255, 0.72)",
                                 }}
@@ -73,7 +79,7 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
                                 {stat.label}
                             </Typography>
                             <Typography
-                                variant="body1"
+                                variant={isXs ? "caption" : "body1"}
                                 sx={{
                                     color: "white",
                                     fontWeight: 700,

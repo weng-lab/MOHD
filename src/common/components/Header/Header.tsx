@@ -133,7 +133,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                 </Typography>
                 <WarningAmberIcon />
             </Stack>
-            <Toolbar sx={{ justifyContent: "space-between", backgroundColor: "white" }}>
+            <Toolbar sx={{ justifyContent: "space-between", backgroundColor: "white", minHeight: "64px" }}>
                 {/* Main navigation items for desktop */}
                 <Stack direction={"row"} spacing={3} >
                     <Box component={Link} href={"/"} height={45} width={45} position={"relative"}>
