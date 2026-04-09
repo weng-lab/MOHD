@@ -66,7 +66,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                   alignItems: "center",
                   justifyContent: { xs: "center", md: "flex-start" },
                   gap: 1.5,
-                  minHeight: { xs: 88, md: 70 },
+                  height: { xs: 88, md: 70 },
                   width: "100%",
                   maxWidth: { xs: 88, md: "none" },
                   p: { xs: 1, md: 1 },
@@ -116,7 +116,14 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                   <Typography
                     className="ome-label"
                     variant="body1"
+                    title={label}
                     sx={{
+                      minWidth: 0,
+                      flex: 1,
+                      overflow: "hidden",
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 2,
                       transition: "color 0.25s ease",
                     }}
                   >
@@ -132,6 +139,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                 <Typography
                   className="ome-label"
                   variant="body2"
+                  title={label}
                   sx={{
                     color: "primary.main",
                     maxWidth: 110,
@@ -142,6 +150,13 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                     backgroundColor: "white",
                     border: "1px solid rgba(255,255,255,0.4)",
                     boxShadow: "0 10px 24px rgba(0, 0, 0, 0.16)",
+                    overflow: "hidden",
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: 2,
+                    lineHeight: 1.2,
+                    maxHeight: "2.4em",
+                    textAlign: "center",
                   }}
                 >
                   {label}

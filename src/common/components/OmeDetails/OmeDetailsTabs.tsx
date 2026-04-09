@@ -101,7 +101,7 @@ const OmeDetailsTabs = ({ ome, tabs, orientation }: ElementDetailsTabsProps) => 
           },
           contain: "layout",
           position: "sticky",
-          top: "calc(var(--header-height, 64px) + var(--ome-header-height, 66px))",
+          top: "calc(64px + var(--ome-header-height, 66px))",
           width: verticalTabs ? 100 : "100%",
           maxHeight: "100%",
         }}

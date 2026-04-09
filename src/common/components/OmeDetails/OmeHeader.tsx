@@ -35,7 +35,7 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
                 square
                 sx={{
                     position: "sticky",
-                    top: "var(--header-height, 64px)",
+                    top: "64px",
                     zIndex: 61,
                     background: (theme) => `linear-gradient(to right, ${theme.palette.primary.main}, #336460)`,
                     py: 1,

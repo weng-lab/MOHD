@@ -78,6 +78,7 @@ export function makeResultLink(result: Result) {
       break;
     case "Legacy cCRE":
       url = `https://screen.wenglab.org/search?q=${result.title}&assembly=GRCh38`;
+      break;
     case "Ome":
       url = `/omes/${result.id}/dimensionalityReduction`
   }
