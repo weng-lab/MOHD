@@ -93,8 +93,8 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                     gridRow={1}
                     bgcolor={"surface.light"}
                     position={"sticky"}
-                    top={"calc(var(--header-height, 64px) + var(--Ome-tabs-height, 48px))"}
-                    maxHeight={"calc(100vh - var(--header-height, 64px) - var(--Ome-tabs-height, 48px))"}
+                    top={"calc(var(--header-height, 64px) + var(--Ome-header-height, 66px))"}
+                    maxHeight={"calc(100vh - var(--header-height, 64px) - var(--Ome-header-height, 66px))"}
                     display={{ xs: "none", md: "block" }}
                 >
                     <OmeDetailsTabs ome={ome} tabs={tabs} orientation="vertical" />
