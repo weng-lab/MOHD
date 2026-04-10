@@ -8,7 +8,8 @@ export async function POST(request: NextRequest) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "MOHD-API-Key": process.env.MOHD_API_KEY!,
+      "mohd-api-key": process.env.MOHD_API_KEY!, //should remove this once api only checks api-key
+      "api-key": process.env.MOHD_API_KEY!,
     },
     body,
   });

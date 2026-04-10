@@ -6,7 +6,8 @@ const config: CodegenConfig = {
     {
       [Config.API.MOHDAPI]: {
         headers: {
-          "MOHD-API-Key": process.env.MOHD_API_KEY!,
+          "mohd-api-key": process.env.MOHD_API_KEY!, //should remove this once api only checks api-key
+          "api-key": process.env.MOHD_API_KEY!,
         },
       },
     },
