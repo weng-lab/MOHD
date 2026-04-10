@@ -1,7 +1,7 @@
 "use client";
 import React, { type ReactNode, useRef, useState } from "react";
 import { Table, TableColDef } from "@weng-lab/ui-components";
-import { buildBulkFilePath, formatBytes } from "@/common/downloads";
+import { buildBulkFilePath } from "@/common/downloads";
 import {
   IconButton,
   Box,
@@ -23,10 +23,10 @@ import {
 import { Download, DragHandle, ExpandMore, FilterList, FilterListOff, FolderZip } from "@mui/icons-material";
 import Image from "next/image";
 import MultiSelect from "@/common/components/Downloads/MultiSelect";
-import BulkDownloadModal from "@/common/components/Downloads/BulkDownloadModal";
 import { useOmeDownloadsState } from "@/common/hooks/useOmeDownloadsState";
 import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
 import { GRID_CHECKBOX_SELECTION_COL_DEF } from "@mui/x-data-grid-premium";
+import BulkDownloadChip from "./BulkDownloadChip";
 
 // --- Small helper components ---
 
@@ -72,7 +72,6 @@ type OmeDualPaneDownloadsProps<T extends BaseSampleMetadata> = {
 const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
   config,
 }: OmeDualPaneDownloadsProps<T>) => {
-  const [open, setOpen] = useState(false);
   const [leftPct, setLeftPct] = useState(60);
   const containerRef = useRef<HTMLDivElement>(null);
   const resolvedDirection = useResolvedDirection({ xs: "column", lg: "row" });
@@ -250,7 +249,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
           gridTemplateRows: isColumn ? "auto auto" : "1fr",
           rowGap: 1,
           columnGap: 0,
-          height: isColumn ? "auto" : 700,
+          height: isColumn ? "auto" : 800,
         }}
       >
         {/* Left pane: Datasets */}
@@ -484,21 +483,12 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
           </Box>
         </Box>
       </Box>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<Download />}
-        onClick={() => setOpen(true)}
-        disabled={selectedFiles.ids.size === 0}
-        sx={{ mt: 1 }}
-      >
-        Bulk Download ({selectedFiles.ids.size})
-      </Button>
-      <BulkDownloadModal
-        open={open}
-        onClose={() => setOpen(false)}
+      <BulkDownloadChip
+        visible={selectedFiles.ids.size > 0}
         filePaths={filePaths}
         totalSize={totalSize}
+        numFiles={selectedFiles.ids.size}
+        onClear={() => setSelectedFiles({ type: "include", ids: new Set() })}
         ome={ome}
         fileTreeItems={fileTreeItems}
       />
