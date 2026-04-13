@@ -2,10 +2,10 @@
 
 import dynamic from "next/dynamic";
 
-const MohdGenomeBrowserPage = dynamic(() => import("./_components/MohdGenomeBrowserPage"), {
+const GenomeBrowser = dynamic(() => import("./genomeBrowser"), {
   ssr: false,
 });
 
-export default function BrowserPage() {
-  return <MohdGenomeBrowserPage />;
+export default function GenomeBrowserPage() {
+  return <GenomeBrowser />;
 }

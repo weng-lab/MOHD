@@ -1,13 +1,20 @@
+"use no memo";
+
 import { Box, Stack, Typography } from "@mui/material";
 import { BrowserStoreInstance, Cytobands } from "@weng-lab/genomebrowser";
 
-export default function DomainDisplay({ browserStore }: { browserStore: BrowserStoreInstance }) {
-  const currentDomain = browserStore((state) => state.domain);
+export default function DomainDisplay({
+  browserStore,
+}: {
+  browserStore: BrowserStoreInstance;
+}) {
+  const domain = browserStore((state) => state.domain);
 
   return (
     <Stack alignItems="center" width="100%" maxWidth={700}>
       <Typography>
-        {currentDomain.chromosome}:{currentDomain.start.toLocaleString()}-{currentDomain.end.toLocaleString()}
+        {domain.chromosome}:{domain.start.toLocaleString()}-
+        {domain.end.toLocaleString()}
       </Typography>
       <Box minHeight={20} width="100%" display="flex">
         <svg
@@ -17,7 +24,7 @@ export default function DomainDisplay({ browserStore }: { browserStore: BrowserS
           viewBox="0 0 700 20"
           style={{ alignSelf: "flex-end" }}
         >
-          <Cytobands assembly="hg38" currentDomain={currentDomain} />
+          <Cytobands assembly="hg38" currentDomain={domain} />
         </svg>
       </Box>
     </Stack>

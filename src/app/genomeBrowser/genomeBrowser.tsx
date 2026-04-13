@@ -1,53 +1,69 @@
 "use client";
+"use no memo";
 
 import { Search } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
-import { Box, Button, IconButton, Stack, useMediaQuery } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Button, IconButton, useTheme } from "@mui/material";
+import { Box, Stack, useMediaQuery } from "@mui/system";
 import {
   Browser,
-  type Chromosome,
-  createBrowserStoreMemo,
-  createTrackStoreMemo,
+  createBrowserStore,
+  createTrackStore,
   GQLWrapper,
 } from "@weng-lab/genomebrowser";
-import { foldersByAssembly, TrackSelect, type InitialSelectedIdsByAssembly } from "@weng-lab/genomebrowser-ui";
-import { GenomeSearch, type Result } from "@weng-lab/ui-components";
-import { useMemo, useState } from "react";
-import ControlButtons from "./ControlButtons";
-import DomainDisplay from "./DomainDisplay";
-import { DEFAULT_BROWSER_STATE } from "../_config/defaultDomain";
-import { DEFAULT_SELECTED_TRACK_IDS, TRACK_SELECT_SESSION_KEY } from "../_config/defaultSelections";
+import {
+  foldersByAssembly,
+  InitialSelectedIdsByAssembly,
+  TrackSelect,
+} from "@weng-lab/genomebrowser-ui";
+import { GenomeSearch, Result } from "@weng-lab/ui-components";
+import { useState } from "react";
+import ControlButtons from "./_components/ControlButtons";
+import DomainDisplay from "./_components/DomainDisplay";
+import HighlightDialog from "./_components/HighlightDialog";
+import { DEFAULT_BROWSER_STATE } from "./_config/defaultDomain";
+import {
+  DEFAULT_SELECTED_TRACK_IDS,
+  TRACK_SELECT_SESSION_KEY,
+} from "./_config/defaultSelections";
 
 const ASSEMBLY = "GRCh38";
 const FOLDER_IDS = new Set(["human-genes", "human-mohd"]);
+const FOLDERS = foldersByAssembly[ASSEMBLY].filter((folder) =>
+  FOLDER_IDS.has(folder.id),
+);
+const INITIAL_SELECTED_IDS: InitialSelectedIdsByAssembly =
+  DEFAULT_SELECTED_TRACK_IDS;
+
+const browserStore = createBrowserStore(DEFAULT_BROWSER_STATE);
+const trackStore = createTrackStore([]);
 
 export default function MohdGenomeBrowserPage() {
+  //   browserStore,
+  //   trackStore,
+  // }: {
+  //   browserStore: BrowserStoreInstance;
+  //   trackStore: TrackStoreInstance;
+  // }) {
   const theme = useTheme();
   const isMedium = useMediaQuery(theme.breakpoints.down("md"));
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const [trackSelectOpen, setTrackSelectOpen] = useState(false);
-  const assembly = ASSEMBLY;
-
-  const browserStore = createBrowserStoreMemo(DEFAULT_BROWSER_STATE);
-  const trackStore = createTrackStoreMemo([]);
-
-  const folders = useMemo(() => foldersByAssembly[assembly].filter((folder) => FOLDER_IDS.has(folder.id)), [assembly]);
-
-  const initialSelectedIds = useMemo<InitialSelectedIdsByAssembly>(() => DEFAULT_SELECTED_TRACK_IDS, []);
-
-  const setDomain = browserStore((state) => state.setDomain);
 
   const handleSearchSubmit = (result: Result) => {
-    if (!result.domain) {
-      return;
-    }
-
-    setDomain({
-      chromosome: result.domain.chromosome as Chromosome,
-      start: result.domain.start,
-      end: result.domain.end,
-    });
+    // if (!result.domain) {
+    //   return;
+    // }
+    // const nextDomain = {
+    //   chromosome: result.domain.chromosome as Chromosome,
+    //   start: result.domain.start,
+    //   end: result.domain.end,
+    // };
+    // console.log("[GenomeBrowser] search submit", {
+    //   currentDomain,
+    //   nextDomain,
+    // });
+    // setDomain(nextDomain);
   };
 
   const geneVersion = [29, 40];
@@ -64,11 +80,16 @@ export default function MohdGenomeBrowserPage() {
           sx={{ width: "100%", maxWidth: "100%" }}
         >
           <Box
-            sx={{ width: { xs: "100%", md: "auto" }, minWidth: { md: 300 }, maxWidth: maxSearchWidth, flex: 1 }}
+            sx={{
+              width: { xs: "100%", md: "auto" },
+              minWidth: { md: 300 },
+              maxWidth: maxSearchWidth,
+              flex: 1,
+            }}
           >
             <GenomeSearch
               size="small"
-              assembly={assembly}
+              assembly={ASSEMBLY}
               geneVersion={geneVersion}
               onSearchSubmit={handleSearchSubmit}
               queries={["Gene", "SNP", "cCRE", "Coordinate"]}
@@ -110,6 +131,7 @@ export default function MohdGenomeBrowserPage() {
               },
             }}
           >
+            <HighlightDialog browserStore={browserStore} />
             <Button
               variant="contained"
               startIcon={<EditIcon />}
@@ -136,9 +158,9 @@ export default function MohdGenomeBrowserPage() {
         </Stack>
         <Browser browserStore={browserStore} trackStore={trackStore} />
         <TrackSelect
-          assembly={assembly}
-          folders={folders}
-          initialSelectedIds={initialSelectedIds}
+          assembly={ASSEMBLY}
+          folders={FOLDERS}
+          initialSelectedIds={INITIAL_SELECTED_IDS}
           sessionStorageKey={TRACK_SELECT_SESSION_KEY}
           trackStore={trackStore}
           maxTracks={30}
