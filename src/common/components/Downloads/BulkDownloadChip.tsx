@@ -1,9 +1,9 @@
 import { Box, Button, Paper, Stack, Typography, Zoom, useMediaQuery, useTheme } from "@mui/material";
-import { TreeViewDefaultItemModelProperties } from "@mui/x-tree-view";
 import BulkDownloadModal from "./BulkDownloadModal";
 import { Download } from "@mui/icons-material";
 import { useState } from "react";
 import { formatBytes } from "@/common/downloads";
+import type { BulkDownloadDatasetItem } from "@/common/hooks/useOmeDownloadsState";
 
 
 type BulkDownloadChipProps = {
@@ -14,7 +14,7 @@ type BulkDownloadChipProps = {
     onClear: () => void;
     filterSummary?: string | null;
     ome?: string;
-    fileTreeItems?: TreeViewDefaultItemModelProperties[];
+    bulkDownloadItems?: BulkDownloadDatasetItem[];
 };
 
 const BulkDownloadChip = ({
@@ -23,12 +23,13 @@ const BulkDownloadChip = ({
     totalSize,
     filterSummary,
     ome,
-    fileTreeItems,
+    bulkDownloadItems,
     numFiles,
     onClear,
 
 }: BulkDownloadChipProps) => {
     const [open, setOpen] = useState(false);
+    const [modalInstanceKey, setModalInstanceKey] = useState(0);
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -130,7 +131,10 @@ const BulkDownloadChip = ({
                                     variant="contained"
                                     color="primary"
                                     startIcon={<Download />}
-                                    onClick={() => setOpen(true)}
+                                    onClick={() => {
+                                        setModalInstanceKey((current) => current + 1);
+                                        setOpen(true);
+                                    }}
                                     size={isXs ? "small" : "medium"}
                                 >
                                     Bulk Download {isXs ? "" : `(${numFiles})`}
@@ -141,12 +145,14 @@ const BulkDownloadChip = ({
                 </Box>
             </Zoom>
             <BulkDownloadModal
+                key={modalInstanceKey}
                 open={open}
                 onClose={() => setOpen(false)}
                 filePaths={filePaths}
                 totalSize={totalSize}
+                filterSummary={filterSummary}
                 ome={ome}
-                fileTreeItems={fileTreeItems}
+                bulkDownloadItems={bulkDownloadItems}
             />
         </>
     );

@@ -16,6 +16,7 @@ import {
   Chip,
   Button,
   Divider,
+  Stack,
   useMediaQuery,
   useTheme,
   Tooltip,
@@ -108,7 +109,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     visibleDatasets,
     filePaths,
     totalSize,
-    fileTreeItems,
+    bulkDownloadItems,
     datasetColumns,
     fileColumns,
     ome,
@@ -194,7 +195,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
           <>
             <DefaultCheckbox {...params} />
             <Tooltip title={"Bulk Download"}>
-              <FolderZip color="primary"/>
+              <FolderZip color="primary" />
             </Tooltip>
           </>
         );
@@ -236,9 +237,139 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
   // Separate checkbox vs multiselect filters from config
   const checkboxFilters = config.datasetFilters.filter((f) => f.type === "checkbox");
   const multiselectFilters = config.datasetFilters.filter((f) => f.type === "multiselect");
+  const totalActiveFilterCount =
+    datasetFilterModel.items.length + fileFilterModel.items.length;
 
   return (
     <Box>
+      <Accordion defaultExpanded disableGutters elevation={0} sx={{ ...accordionSx, mb: 1 }}>
+        <AccordionSummary expandIcon={<ExpandMore />}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
+            <FilterList fontSize="small" />
+            <Typography>Filters</Typography>
+            {totalActiveFilterCount > 0 && (
+              <Chip size="small" label={totalActiveFilterCount} color="primary" />
+            )}
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+        >
+          <Stack direction={"row"}>
+            <Box>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ mb: 1.5 }}
+              >
+                <Typography>Dataset Filters</Typography>
+                {hasActiveDatasetFilter && (
+                  <Chip size="small" label={datasetFilterModel.items.length} color="primary" />
+                )}
+              </Stack>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 2,
+                  alignItems: "flex-start",
+                }}
+              >
+                {checkboxFilters.map((filter) => (
+                  <ControlLabelWrapper key={filter.field} label={filter.label}>
+                    <FormGroup row>
+                      {(datasetOptionsMap[filter.field] ?? []).map((option) => (
+                        <FormControlLabel
+                          key={option}
+                          label={option}
+                          control={
+                            <Checkbox
+                              size="small"
+                              checked={(datasetSelectedValues[filter.field] ?? []).includes(option)}
+                              onChange={handleDatasetCheckboxChange(filter.field, option)}
+                            />
+                          }
+                        />
+                      ))}
+                    </FormGroup>
+                  </ControlLabelWrapper>
+                ))}
+                {multiselectFilters.map((filter) => (
+                  <ControlLabelWrapper key={filter.field} label={filter.label}>
+                    <MultiSelect
+                      options={datasetOptionsMap[filter.field] ?? []}
+                      value={datasetSelectedValues[filter.field] ?? []}
+                      onChange={handleDatasetSelectChange(filter.field)}
+                      placeholder={filter.label}
+                    />
+                  </ControlLabelWrapper>
+                ))}
+                {hasActiveDatasetFilter && (
+                  <Box sx={{ width: "100%" }}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<FilterListOff />}
+                      onClick={() => setDatasetFilterModel({ items: [] })}
+                    >
+                      Reset Dataset Filters
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            </Box>
+            <Box>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ mb: 1.5 }}
+              >
+                <Typography>File Filters</Typography>
+                {hasActiveFileFilter && (
+                  <Chip size="small" label={fileFilterModel.items.length} color="primary" />
+                )}
+              </Stack>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 2,
+                  alignItems: "flex-start",
+                }}
+              >
+                <ControlLabelWrapper label="File Type">
+                  <MultiSelect
+                    limitTags={5}
+                    chipMaxWidth={100}
+                    options={fileTypeOptions}
+                    value={fileSelectedValues}
+                    onChange={handleFileTypeSelectChange}
+                    placeholder="File Type"
+                  />
+                </ControlLabelWrapper>
+                {hasActiveFileFilter && (
+                  <Box sx={{ width: "100%" }}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<FilterListOff />}
+                      onClick={() => setFileFilterModel({ items: [] })}
+                    >
+                      Reset File Filters
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            </Box>
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
       <Box
         ref={containerRef}
         sx={{
@@ -265,67 +396,6 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
             height: isColumn ? 500 : "100%",
           }}
         >
-          <Accordion disableGutters elevation={0} sx={accordionSx}>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
-                <FilterList fontSize="small" />
-                <Typography>Dataset Filters</Typography>
-                {hasActiveDatasetFilter && (
-                  <Chip size="small" label={datasetFilterModel.items.length} color="primary" />
-                )}
-              </Box>
-            </AccordionSummary>
-            <AccordionDetails
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 2,
-                alignItems: "flex-start",
-              }}
-            >
-              {checkboxFilters.map((filter) => (
-                <ControlLabelWrapper key={filter.field} label={filter.label}>
-                  <FormGroup row>
-                    {(datasetOptionsMap[filter.field] ?? []).map((option) => (
-                      <FormControlLabel
-                        key={option}
-                        label={option}
-                        control={
-                          <Checkbox
-                            size="small"
-                            checked={(datasetSelectedValues[filter.field] ?? []).includes(option)}
-                            onChange={handleDatasetCheckboxChange(filter.field, option)}
-                          />
-                        }
-                      />
-                    ))}
-                  </FormGroup>
-                </ControlLabelWrapper>
-              ))}
-              {multiselectFilters.map((filter) => (
-                <ControlLabelWrapper key={filter.field} label={filter.label}>
-                  <MultiSelect
-                    options={datasetOptionsMap[filter.field] ?? []}
-                    value={datasetSelectedValues[filter.field] ?? []}
-                    onChange={handleDatasetSelectChange(filter.field)}
-                    placeholder={filter.label}
-                  />
-                </ControlLabelWrapper>
-              ))}
-              {hasActiveDatasetFilter && (
-                <Box sx={{ width: "100%" }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<FilterListOff />}
-                    onClick={() => setDatasetFilterModel({ items: [] })}
-                  >
-                    Reset Filters
-                  </Button>
-                </Box>
-              )}
-            </AccordionDetails>
-          </Accordion>
           <Box sx={{ flex: 1, minHeight: 0 }}>
             <Table
               label="Datasets"
@@ -347,7 +417,6 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
             />
           </Box>
         </Box>
-
         {/* Divider */}
         {!isColumn && (
           <Box
@@ -392,48 +461,6 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
             height: isColumn ? 500 : "100%",
           }}
         >
-          <Accordion disableGutters elevation={0} sx={accordionSx}>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
-                <FilterList fontSize="small" />
-                <Typography>File Filters</Typography>
-                {hasActiveFileFilter && (
-                  <Chip size="small" label={fileFilterModel.items.length} color="primary" />
-                )}
-              </Box>
-            </AccordionSummary>
-            <AccordionDetails
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 2,
-                alignItems: "flex-start",
-              }}
-            >
-              <ControlLabelWrapper label="File Type">
-                <MultiSelect
-                  limitTags={5}
-                  chipMaxWidth={100}
-                  options={fileTypeOptions}
-                  value={fileSelectedValues}
-                  onChange={handleFileTypeSelectChange}
-                  placeholder="File Type"
-                />
-              </ControlLabelWrapper>
-              {hasActiveFileFilter && (
-                <Box sx={{ width: "100%" }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<FilterListOff />}
-                    onClick={() => setFileFilterModel({ items: [] })}
-                  >
-                    Reset Filters
-                  </Button>
-                </Box>
-              )}
-            </AccordionDetails>
-          </Accordion>
           <Box sx={{ flex: 1, minHeight: 0 }}>
             {activeDataset ? (
               <Table
@@ -490,7 +517,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
         numFiles={selectedFiles.ids.size}
         onClear={() => setSelectedFiles({ type: "include", ids: new Set() })}
         ome={ome}
-        fileTreeItems={fileTreeItems}
+        bulkDownloadItems={bulkDownloadItems}
       />
     </Box>
   );

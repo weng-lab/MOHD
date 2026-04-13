@@ -18,10 +18,11 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import DownloadIcon from "@mui/icons-material/Download";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RemoveIcon from "@mui/icons-material/Remove";
-import type { TreeViewDefaultItemModelProperties } from "@mui/x-tree-view/models";
+import type { BulkDownloadDatasetItem } from "@/common/hooks/useOmeDownloadsState";
 import {
   BulkDownloadFormat,
   useBulkDownloadJob,
@@ -35,7 +36,7 @@ export type BulkDownloadModalProps = {
   totalSize: number;
   filterSummary?: string | null;
   ome?: string;
-  fileTreeItems?: TreeViewDefaultItemModelProperties[];
+  bulkDownloadItems?: BulkDownloadDatasetItem[];
 };
 
 const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
@@ -44,23 +45,18 @@ const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
   script: "Shell Script (.sh)",
 };
 
-type DisplayTreeItem = {
-  id: string;
-  label: string;
-  children: { id: string; label: string }[];
-};
-
 const BulkDownloadModal = ({
   open,
   onClose,
-  filePaths,
-  totalSize,
   filterSummary,
   ome,
-  fileTreeItems,
+  bulkDownloadItems,
 }: BulkDownloadModalProps) => {
   const [format, setFormat] = useState<BulkDownloadFormat>("zip");
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const [modalItems, setModalItems] = useState<BulkDownloadDatasetItem[]>(
+    () => bulkDownloadItems ?? [],
+  );
   const { submit, status, reset } = useBulkDownloadJob();
 
   useEffect(() => {
@@ -78,23 +74,30 @@ const BulkDownloadModal = ({
 
   const isSubmitting = status === "submitting";
 
-  const datasetItems = useMemo<DisplayTreeItem[]>(
+  const modalFilePaths = useMemo(
     () =>
-      (fileTreeItems ?? []).map((item) => ({
-        id: item.id,
-        label: item.label ?? "",
-        children: (item.children ?? []).map((child) => ({
-          id: child.id,
-          label: child.label ?? "",
-        })),
-      })),
-    [fileTreeItems],
+      modalItems.flatMap((dataset) =>
+        dataset.children.map((child) => child.path),
+      ),
+    [modalItems],
   );
 
-  const datasetCount = datasetItems.length;
+  const modalTotalSize = useMemo(
+    () =>
+      modalItems.reduce(
+        (datasetSum, dataset) =>
+          datasetSum +
+          dataset.children.reduce((fileSum, child) => fileSum + child.size, 0),
+        0,
+      ),
+    [modalItems],
+  );
+
+  const modalFileCount = modalFilePaths.length;
+  const datasetCount = modalItems.length;
 
   const handleSubmit = () => {
-    submit(filePaths, format, ome);
+    submit(modalFilePaths, format, ome);
   };
 
   const handleClose = () => {
@@ -107,6 +110,28 @@ const BulkDownloadModal = ({
       current.includes(id)
         ? current.filter((currentId) => currentId !== id)
         : [...current, id],
+    );
+  };
+
+  const handleRemoveDataset = (datasetId: string) => {
+    setExpandedIds((current) => current.filter((currentId) => currentId !== datasetId));
+    setModalItems((current) =>
+      current.filter((dataset) => dataset.id !== datasetId),
+    );
+  };
+
+  const handleRemoveFile = (datasetId: string, fileId: string) => {
+    setModalItems((current) =>
+      current
+        .map((dataset) =>
+          dataset.id !== datasetId
+            ? dataset
+            : {
+                ...dataset,
+                children: dataset.children.filter((child) => child.id !== fileId),
+              },
+        )
+        .filter((dataset) => dataset.children.length > 0),
     );
   };
 
@@ -171,11 +196,11 @@ const BulkDownloadModal = ({
           >
             <Stack direction="row" justifyContent="space-between" spacing={2}>
               <Typography variant="subtitle1">
-                <b>{filePaths.length} file{filePaths.length !== 1 ? "s" : ""} •{" "}
-                  {formatBytes(totalSize)}</b>
+                <b>{modalFileCount} file{modalFileCount !== 1 ? "s" : ""} •{" "}
+                  {formatBytes(modalTotalSize)}</b>
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                {datasetCount} sample{datasetCount !== 1 ? "s" : ""}
+              {datasetCount} sample{datasetCount !== 1 ? "s" : ""}
               </Typography>
             </Stack>
             {filterSummary && (
@@ -193,16 +218,12 @@ const BulkDownloadModal = ({
             }}
           >
             <Stack>
-              {datasetItems.map((dataset) => {
-                const datasetTitle = dataset.label.replace(
-                  /\s*\(\d+\sfiles?\)\s*$/,
-                  "",
-                );
+              {modalItems.map((dataset) => {
+                const datasetTitle = dataset.sampleId;
 
                 return (
-                  <>
+                  <Box key={dataset.id}>
                     <Accordion
-                      key={dataset.id}
                       expanded={expandedIds.includes(dataset.id)}
                       onChange={() => toggleExpanded(dataset.id)}
                       disableGutters
@@ -218,52 +239,73 @@ const BulkDownloadModal = ({
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         sx={{
-                          px: 1,
-                          py: 2,
+                          p: 2,
+                          flexDirection: "row-reverse",
                           bgcolor: expandedIds.includes(dataset.id)
                             ? "#EEF3F1"
                             : "transparent",
                           "& .MuiAccordionSummary-content": {
                             my: 0,
+                            ml: 1,
                           },
                         }}
                       >
-                        <Box>
-                          <Typography variant="subtitle1">
-                            <b>{datasetTitle}</b>
-                          </Typography>
-                          <Typography variant="body1" color="text.secondary">
-                            {dataset.children.length} file
-                            {dataset.children.length !== 1 ? "s" : ""}
-                          </Typography>
-                        </Box>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          sx={{ width: "100%" }}
+                        >
+                          <Box>
+                            <Typography variant="subtitle1">
+                              <b>{datasetTitle}</b>
+                            </Typography>
+                            <Typography variant="body1" color="text.secondary">
+                              {dataset.children.length} file
+                              {dataset.children.length !== 1 ? "s" : ""}
+                            </Typography>
+                          </Box>
+                          <IconButton
+                            size="small"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleRemoveDataset(dataset.id);
+                            }}
+                          >
+                            <DeleteOutlineIcon sx={{ color: "text.secondary" }} />
+                          </IconButton>
+                        </Stack>
                       </AccordionSummary>
-                      <AccordionDetails sx={{ px: 0, py: 0.5 }}>
+                      <AccordionDetails>
                         <Stack>
                           {dataset.children.map((child) => (
                             <Stack
-                              key={child.id}
+                              key={dataset.id + '-' + child.id}
                               direction="row"
                               alignItems="center"
                               justifyContent="space-between"
                               spacing={2}
                               sx={{
-                                pl: 6,
-                                pr: 2,
-                                py: 1.75,
+                                pl: 2,
+                                py: 1,
                               }}
                             >
                               <Typography variant="body1">
                                 {child.label}
                               </Typography>
-                              <RemoveIcon sx={{ color: "text.secondary" }} />
+                              <IconButton
+                                size="small"
+                                onClick={() => handleRemoveFile(dataset.id, child.id)}
+                              >
+                                <RemoveIcon sx={{ color: "text.secondary" }} />
+                              </IconButton>
                             </Stack>
                           ))}
                         </Stack>
                       </AccordionDetails>
                     </Accordion>
                     <Divider />
-                  </>
+                  </Box>
                 );
               })}
             </Stack>
@@ -323,7 +365,7 @@ const BulkDownloadModal = ({
                   )
                 }
                 onClick={handleSubmit}
-                disabled={filePaths.length === 0 || isSubmitting}
+                disabled={modalFileCount === 0 || isSubmitting}
               >
                 {isSubmitting ? "Submitting..." : "Start Download"}
               </Button>

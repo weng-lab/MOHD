@@ -5,7 +5,6 @@ import { useOmeDownloadFiles, type DownloadFile } from "@/common/hooks/useOmeDow
 import { buildBulkFilePath, formatBytes } from "@/common/downloads";
 import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
 import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
-import type { TreeViewDefaultItemModelProperties } from "@mui/x-tree-view/models";
 
 // --- Shared utilities ---
 
@@ -75,6 +74,20 @@ type MergedFile = Omit<DownloadFile, "__typename"> & Record<string, unknown>;
 
 type CheckState = "checked" | "indeterminate" | "unchecked";
 
+export type BulkDownloadFileItem = {
+  id: string;
+  label: string;
+  path: string;
+  size: number;
+};
+
+export type BulkDownloadDatasetItem = {
+  id: string;
+  label: string;
+  sampleId: string;
+  children: BulkDownloadFileItem[];
+};
+
 export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   loading: boolean;
   error: boolean;
@@ -111,7 +124,7 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
 
   filePaths: string[];
   totalSize: number;
-  fileTreeItems: TreeViewDefaultItemModelProperties[];
+  bulkDownloadItems: BulkDownloadDatasetItem[];
 
   datasetColumns: TableColDef<T>[];
   fileColumns: TableColDef<MergedFile>[];
@@ -455,7 +468,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
       .reduce((sum, file) => sum + Number(file?.size), 0);
   }, [selectedFiles, files]);
 
-  const fileTreeItems: TreeViewDefaultItemModelProperties[] = useMemo(() => {
+  const bulkDownloadItems: BulkDownloadDatasetItem[] = useMemo(() => {
     const selectedFileObjects = [...selectedFiles.ids.values()]
       .map((filename) => files.find((file) => file.filename === filename))
       .filter((file): file is MergedFile => !!file);
@@ -480,15 +493,18 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
           label: typeCount.get(f.file_type)! > 1
             ? `${f.file_type} (${f.filename})`
             : f.file_type,
+          path: buildBulkFilePath(f.sample_id, f.filename, ome),
+          size: Number(f.size),
         }));
 
         return {
           id: `dataset-${datasetId}`,
           label: `${datasetId} (${datasetFiles.length} file${datasetFiles.length !== 1 ? "s" : ""})`,
+          sampleId: datasetId,
           children,
         };
       });
-  }, [selectedFiles, files]);
+  }, [selectedFiles, files, ome]);
 
   return {
     loading,
@@ -521,7 +537,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     visibleDatasets,
     filePaths,
     totalSize,
-    fileTreeItems,
+    bulkDownloadItems,
     datasetColumns,
     fileColumns,
     ome,
