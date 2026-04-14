@@ -1,5 +1,4 @@
 import { OmeEnum } from "@/common/types/generated/graphql";
-import { TableColDef } from "@weng-lab/ui-components";
 
 /**
  * Base constraint: every ome's metadata must have at least these fields.
@@ -21,8 +20,6 @@ export type FilterFieldConfig<T extends BaseSampleMetadata> = {
   field: keyof T & string;
   /** Display label */
   label: string;
-  /** "checkbox" renders inline checkboxes; "multiselect" renders the MultiSelect autocomplete */
-  type: "checkbox" | "multiselect";
 };
 
 /**

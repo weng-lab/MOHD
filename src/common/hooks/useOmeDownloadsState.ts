@@ -11,14 +11,14 @@ import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSel
 const customSingleSelectOperators = getGridSingleSelectOperators().map((op) =>
   op.value === "isAnyOf"
     ? {
-        ...op,
-        getApplyFilterFn: (filterItem: GridFilterItem) => {
-          if (!Array.isArray(filterItem.value)) return null;
-          if (filterItem.value.length === 0) return () => false;
-          const filterValues = filterItem.value as string[];
-          return (value: string) => filterValues.includes(value);
-        },
-      }
+      ...op,
+      getApplyFilterFn: (filterItem: GridFilterItem) => {
+        if (!Array.isArray(filterItem.value)) return null;
+        if (filterItem.value.length === 0) return () => false;
+        const filterValues = filterItem.value as string[];
+        return (value: string) => filterValues.includes(value);
+      },
+    }
     : op
 );
 
@@ -103,7 +103,7 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   datasetOptionsMap: Record<string, string[]>;
   datasetSelectedValues: Record<string, string[]>;
   handleDatasetSelectChange: (field: string) => MultiSelectOnChange<string>;
-  handleDatasetCheckboxChange: (field: string, option: string) => () => void;
+  handleDatasetToggleChange: (field: string, value: string[] | null) => void;
   hasActiveDatasetFilter: boolean;
 
   fileFilterModel: GridFilterModel;
@@ -273,24 +273,33 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     [datasetOptionsMap]
   );
 
-  const handleDatasetCheckboxChange = useCallback(
-    (field: string, option: string) => () => {
+  const handleDatasetToggleChange = useCallback(
+    (field: string, value: string[] | null) => {
+      const next = value ?? [];
+
       setDatasetFilterModel((prev) => {
         const otherItems = prev.items.filter((item) => item.field !== field);
-        const current = datasetSelectedValues[field];
-        const next = current.includes(option)
-          ? current.filter((v) => v !== option)
-          : [...current, option];
+
+        // if all selected → remove filter (same behavior as before)
         if (next.length === datasetOptionsMap[field].length) {
           return { ...prev, items: otherItems };
         }
+
         return {
           ...prev,
-          items: [...otherItems, { id: `filter-${field}`, field, operator: "isAnyOf", value: next }],
+          items: [
+            ...otherItems,
+            {
+              id: `filter-${field}`,
+              field,
+              operator: "isAnyOf",
+              value: next,
+            },
+          ],
         };
       });
     },
-    [datasetOptionsMap, datasetSelectedValues]
+    [datasetOptionsMap]
   );
 
   const handleFileTypeSelectChange: MultiSelectOnChange<string> = useCallback(
@@ -519,7 +528,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     datasetOptionsMap,
     datasetSelectedValues,
     handleDatasetSelectChange,
-    handleDatasetCheckboxChange,
+    handleDatasetToggleChange,
     hasActiveDatasetFilter: hasActiveFilter(datasetFilterModel),
     fileFilterModel,
     setFileFilterModel,

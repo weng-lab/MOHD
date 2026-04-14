@@ -7,8 +7,6 @@ import {
   Box,
   Checkbox,
   Typography,
-  FormControlLabel,
-  FormGroup,
   FormLabel,
   Accordion,
   AccordionSummary,
@@ -20,6 +18,8 @@ import {
   useMediaQuery,
   useTheme,
   Tooltip,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import { Download, DragHandle, ExpandMore, FilterList, FilterListOff, FolderZip } from "@mui/icons-material";
 import Image from "next/image";
@@ -28,19 +28,21 @@ import { useOmeDownloadsState } from "@/common/hooks/useOmeDownloadsState";
 import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
 import { GRID_CHECKBOX_SELECTION_COL_DEF } from "@mui/x-data-grid-premium";
 import BulkDownloadChip from "./BulkDownloadChip";
+import { theme } from "@/app/theme";
 
 // --- Small helper components ---
 
 const ControlLabelWrapper = ({ label, children }: { label: string; children: ReactNode }) => (
-  <Box width={"100%"}>
+  <Box width={"auto"}>
     <FormLabel>{label}</FormLabel>
     {children}
   </Box>
 );
 
 const accordionSx = {
-  border: (theme: { palette: { divider: string } }) => `1px solid ${theme.palette.divider}`,
+  border: (theme: { palette: { primary: { main: string } } }) => `1px solid ${theme.palette.primary.main}`,
   borderRadius: 1,
+  backgroundColor: "surface.light",
 };
 
 // --- Responsive direction hook ---
@@ -90,8 +92,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     setDatasetFilterModel,
     datasetOptionsMap,
     datasetSelectedValues,
-    handleDatasetSelectChange,
-    handleDatasetCheckboxChange,
+    handleDatasetToggleChange,
     hasActiveDatasetFilter,
     fileFilterModel,
     setFileFilterModel,
@@ -234,9 +235,6 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     ...fileColumns,
   ];
 
-  // Separate checkbox vs multiselect filters from config
-  const checkboxFilters = config.datasetFilters.filter((f) => f.type === "checkbox");
-  const multiselectFilters = config.datasetFilters.filter((f) => f.type === "multiselect");
   const totalActiveFilterCount =
     datasetFilterModel.items.length + fileFilterModel.items.length;
 
@@ -256,14 +254,13 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 3,
           }}
         >
-          <Stack direction={"row"}>
+          <Stack direction={"row"} justifyContent={"space-between"}>
             <Box>
               <Stack
                 direction="row"
-                justifyContent="space-between"
+                spacing={1}
                 alignItems="center"
                 sx={{ mb: 1.5 }}
               >
@@ -272,61 +269,79 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
                   <Chip size="small" label={datasetFilterModel.items.length} color="primary" />
                 )}
               </Stack>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 2,
-                  alignItems: "flex-start",
-                }}
+              <Stack
+                direction="row"
+                flexWrap="wrap"
+                useFlexGap
+                spacing={2}
+                alignItems="flex-start"
               >
-                {checkboxFilters.map((filter) => (
+                {config.datasetFilters.map((filter) => (
                   <ControlLabelWrapper key={filter.field} label={filter.label}>
-                    <FormGroup row>
-                      {(datasetOptionsMap[filter.field] ?? []).map((option) => (
-                        <FormControlLabel
-                          key={option}
-                          label={option}
-                          control={
-                            <Checkbox
-                              size="small"
-                              checked={(datasetSelectedValues[filter.field] ?? []).includes(option)}
-                              onChange={handleDatasetCheckboxChange(filter.field, option)}
-                            />
-                          }
-                        />
-                      ))}
-                    </FormGroup>
-                  </ControlLabelWrapper>
-                ))}
-                {multiselectFilters.map((filter) => (
-                  <ControlLabelWrapper key={filter.field} label={filter.label}>
-                    <MultiSelect
-                      options={datasetOptionsMap[filter.field] ?? []}
+                    <ToggleButtonGroup
                       value={datasetSelectedValues[filter.field] ?? []}
-                      onChange={handleDatasetSelectChange(filter.field)}
-                      placeholder={filter.label}
-                    />
+                      onChange={(_, value) => handleDatasetToggleChange(filter.field, value)}
+                      size="small"
+                      sx={{
+                        gap: 1,
+                        display: "flex",
+                        "&.MuiToggleButtonGroup-root": {
+                          display: "flex",
+                        },
+                        "& .MuiToggleButtonGroup-grouped": {
+                          margin: 0,
+                          border: "none",
+                        },
+                        "& .MuiToggleButton-root": {
+                          border: `1px solid ${theme.palette.primary.main} !important`,
+                          textTransform: "none",
+                          borderRadius: 1,
+                          py: 0.25,
+
+                          // base (unselected)
+                          color: "primary.main",
+                          borderColor: "primary.main",
+                          opacity: 0.5,
+                          backgroundColor: "transparent",
+
+                          // remove default MUI selected bg
+                          "&.Mui-selected": {
+                            color: "primary.main",
+                            borderColor: "primary.main",
+                            backgroundColor: "transparent",
+                            opacity: 1,
+                          },
+                        },
+                      }}
+                    >
+                      {(datasetOptionsMap[filter.field] ?? []).map((option) => (
+                        <ToggleButton key={option} value={option}>
+                          {option}
+                        </ToggleButton>
+                      ))}
+                    </ToggleButtonGroup>
                   </ControlLabelWrapper>
                 ))}
-                {hasActiveDatasetFilter && (
-                  <Box sx={{ width: "100%" }}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<FilterListOff />}
-                      onClick={() => setDatasetFilterModel({ items: [] })}
-                    >
-                      Reset Dataset Filters
-                    </Button>
-                  </Box>
-                )}
-              </Box>
+              </Stack>
+              {hasActiveDatasetFilter && (
+                <Box sx={{ width: "100%" }}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<FilterListOff />}
+                    onClick={() => setDatasetFilterModel({ items: [] })}
+                    sx={{ mt: 2 }}
+                  >
+                    Reset Dataset Filters
+                  </Button>
+                </Box>
+              )}
             </Box>
+            <Divider orientation="vertical" flexItem />
             <Box>
               <Stack
                 direction="row"
-                justifyContent="space-between"
+                spacing={1}
                 alignItems="center"
                 sx={{ mb: 1.5 }}
               >
@@ -353,19 +368,20 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
                     placeholder="File Type"
                   />
                 </ControlLabelWrapper>
-                {hasActiveFileFilter && (
-                  <Box sx={{ width: "100%" }}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<FilterListOff />}
-                      onClick={() => setFileFilterModel({ items: [] })}
-                    >
-                      Reset File Filters
-                    </Button>
-                  </Box>
-                )}
               </Box>
+              {hasActiveFileFilter && (
+                <Box sx={{ width: "100%" }}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<FilterListOff />}
+                    onClick={() => setFileFilterModel({ items: [] })}
+                    sx={{ mt: 2 }}
+                  >
+                    Reset File Filters
+                  </Button>
+                </Box>
+              )}
             </Box>
           </Stack>
         </AccordionDetails>

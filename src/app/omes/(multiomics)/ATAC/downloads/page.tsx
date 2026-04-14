@@ -17,10 +17,10 @@ const config: OmeDownloadsConfig<ATACRow> = {
   ome: OmeEnum.AtacSeq,
   useData: () => useATACData({ skip: false }),
   datasetFilters: [
-    { field: "sex", label: "Sex", type: "checkbox" },
-    { field: "status", label: "Status", type: "checkbox" },
-    { field: "protocol", label: "Protocol", type: "checkbox" },
-    { field: "site", label: "Site", type: "multiselect" },
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "protocol", label: "Protocol" },
+    { field: "site", label: "Site" },
   ],
 };
 
