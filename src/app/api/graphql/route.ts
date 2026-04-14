@@ -7,8 +7,8 @@ export async function POST(request: NextRequest) {
   const response = await fetch(Config.API.MOHDAPI, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "MOHD-API-Key": process.env.MOHD_API_KEY!,
+      "Content-Type": "application/json",      
+      "api-key": process.env.MOHD_API_KEY!,
     },
     body,
   });
