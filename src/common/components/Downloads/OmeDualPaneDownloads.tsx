@@ -256,7 +256,14 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
             flexDirection: "column",
           }}
         >
-          <Stack direction={"row"} justifyContent={"space-between"}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "auto auto auto" },
+              columnGap: 2,
+              alignItems: "start",
+            }}
+          >
             <Box>
               <Stack
                 direction="row"
@@ -275,6 +282,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
                 useFlexGap
                 spacing={2}
                 alignItems="flex-start"
+                sx={{width: "fit-content"}}
               >
                 {config.datasetFilters.map((filter) => (
                   <ControlLabelWrapper key={filter.field} label={filter.label}>
@@ -337,7 +345,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
                 </Box>
               )}
             </Box>
-            <Divider orientation="vertical" flexItem />
+            <Divider orientation={"vertical"} flexItem sx={{display: {xs: "none", md: "flex"}}} />
             <Box>
               <Stack
                 direction="row"
@@ -383,7 +391,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
                 </Box>
               )}
             </Box>
-          </Stack>
+          </Box>
         </AccordionDetails>
       </Accordion>
       <Box

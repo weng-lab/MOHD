@@ -18,8 +18,8 @@ const config: OmeDownloadsConfig<ATACRow> = {
   useData: () => useATACData({ skip: false }),
   datasetFilters: [
     { field: "sex", label: "Sex" },
-    { field: "status", label: "Status" },
     { field: "protocol", label: "Protocol" },
+    { field: "status", label: "Status" },
     { field: "site", label: "Site" },
   ],
 };

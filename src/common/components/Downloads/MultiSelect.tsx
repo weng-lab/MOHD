@@ -84,6 +84,9 @@ const MultiSelect = <
 
   return (
     <Autocomplete
+      sx={{
+        maxWidth: "650px"
+      }}
       multiple
       limitTags={limitTags}
       size={size}
