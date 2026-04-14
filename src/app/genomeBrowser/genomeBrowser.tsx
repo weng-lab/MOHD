@@ -1,14 +1,19 @@
 "use client";
 "use no memo";
 
-import { Search } from "@mui/icons-material";
+// React
+import { useEffect, useState } from "react";
+
+// MUI
 import EditIcon from "@mui/icons-material/Edit";
-import { Button, IconButton, useTheme } from "@mui/material";
-import { Box, Stack, useMediaQuery } from "@mui/system";
+import { Button } from "@mui/material";
+import { Stack, useMediaQuery } from "@mui/system";
+
+// weng lab
 import {
   Browser,
-  createBrowserStore,
-  createTrackStore,
+  createBrowserStoreMemo,
+  createTrackStoreMemo,
   GQLWrapper,
 } from "@weng-lab/genomebrowser";
 import {
@@ -16,16 +21,17 @@ import {
   InitialSelectedIdsByAssembly,
   TrackSelect,
 } from "@weng-lab/genomebrowser-ui";
-import { GenomeSearch, Result } from "@weng-lab/ui-components";
-import { useState } from "react";
+
+// Internal
+import BrowserSearch from "./_components/BrowserSearch";
 import ControlButtons from "./_components/ControlButtons";
 import DomainDisplay from "./_components/DomainDisplay";
 import HighlightDialog from "./_components/HighlightDialog";
-import { DEFAULT_BROWSER_STATE } from "./_config/defaultDomain";
+import { DEFAULT_BROWSER_STATE } from "./defaultDomain";
 import {
   DEFAULT_SELECTED_TRACK_IDS,
   TRACK_SELECT_SESSION_KEY,
-} from "./_config/defaultSelections";
+} from "./defaultSelections";
 
 const ASSEMBLY = "GRCh38";
 const FOLDER_IDS = new Set(["human-genes", "human-mohd"]);
@@ -35,100 +41,43 @@ const FOLDERS = foldersByAssembly[ASSEMBLY].filter((folder) =>
 const INITIAL_SELECTED_IDS: InitialSelectedIdsByAssembly =
   DEFAULT_SELECTED_TRACK_IDS;
 
-const browserStore = createBrowserStore(DEFAULT_BROWSER_STATE);
-const trackStore = createTrackStore([]);
-
 export default function MohdGenomeBrowserPage() {
-  //   browserStore,
-  //   trackStore,
-  // }: {
-  //   browserStore: BrowserStoreInstance;
-  //   trackStore: TrackStoreInstance;
-  // }) {
-  const theme = useTheme();
-  const isMedium = useMediaQuery(theme.breakpoints.down("md"));
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery("(max-width:900px)");
+  const isSmall = useMediaQuery("(max-width:600px)");
   const [trackSelectOpen, setTrackSelectOpen] = useState(false);
 
-  const handleSearchSubmit = (result: Result) => {
-    // if (!result.domain) {
-    //   return;
-    // }
-    // const nextDomain = {
-    //   chromosome: result.domain.chromosome as Chromosome,
-    //   start: result.domain.start,
-    //   end: result.domain.end,
-    // };
-    // console.log("[GenomeBrowser] search submit", {
-    //   currentDomain,
-    //   nextDomain,
-    // });
-    // setDomain(nextDomain);
-  };
+  const trackWidth = isSmall ? 550 : isMedium ? 950 : 1400;
+  const titleSize = isSmall ? 18 : isMedium ? 14 : 12;
 
-  const geneVersion = [29, 40];
-  const maxSearchWidth = isSmall ? undefined : isMedium ? 520 : 600;
+  const browserStore = createBrowserStoreMemo(DEFAULT_BROWSER_STATE, []);
+  const trackStore = createTrackStoreMemo([], []);
+
+  const setDomain = browserStore((s) => s.setDomain);
+  const setTrackWidth = browserStore((s) => s.setTrackWidth);
+  const setTitleSize = browserStore((s) => s.setTitleSize);
+  const setFontSize = browserStore((s) => s.setFontSize);
+
+  useEffect(() => {
+    setTrackWidth(trackWidth);
+    setTitleSize(titleSize);
+    setFontSize(titleSize - 2);
+  }, [trackWidth, titleSize, setTrackWidth, setTitleSize, setFontSize]);
 
   return (
     <GQLWrapper>
-      <Stack sx={{ overflow: "hidden", px: { xs: 1, md: 0 }, py: 2 }}>
+      <Stack sx={{ overflow: "hidden", px: { xs: 2, md: 4, lg: 6 }, py: 2 }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={2}
           justifyContent="space-between"
           alignItems={{ xs: "stretch", md: "center" }}
-          sx={{ width: "100%", maxWidth: "100%" }}
         >
-          <Box
-            sx={{
-              width: { xs: "100%", md: "auto" },
-              minWidth: { md: 300 },
-              maxWidth: maxSearchWidth,
-              flex: 1,
-            }}
-          >
-            <GenomeSearch
-              size="small"
-              assembly={ASSEMBLY}
-              geneVersion={geneVersion}
-              onSearchSubmit={handleSearchSubmit}
-              queries={["Gene", "SNP", "cCRE", "Coordinate"]}
-              geneLimit={3}
-              sx={{ width: "100%" }}
-              slots={{
-                button: (
-                  <IconButton sx={{ color: theme.palette.primary.main }}>
-                    <Search />
-                  </IconButton>
-                ),
-              }}
-              slotProps={{
-                input: {
-                  label: "Change Browser Region",
-                  sx: {
-                    backgroundColor: "white",
-                    "& label.Mui-focused": {
-                      color: theme.palette.primary.main,
-                    },
-                    "& .MuiOutlinedInput-root": {
-                      "&.Mui-focused fieldset": {
-                        borderColor: theme.palette.primary.main,
-                      },
-                    },
-                  },
-                },
-              }}
-            />
-          </Box>
+          <BrowserSearch setDomain={setDomain} />
           <Stack
             direction="row"
             spacing={1}
             sx={{
               width: { xs: "100%", md: "auto" },
-              justifyContent: { xs: "stretch", md: "flex-end" },
-              "& > button": {
-                flex: { xs: 1, md: "none" },
-              },
             }}
           >
             <HighlightDialog browserStore={browserStore} />
