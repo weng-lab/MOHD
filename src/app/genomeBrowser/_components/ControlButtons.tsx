@@ -1,5 +1,3 @@
-"use no memo";
-
 import {
   Box,
   Button,
@@ -8,8 +6,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect } from "react";
-import { BrowserStoreInstance, type Domain } from "@weng-lab/genomebrowser";
+import { useEffect } from "react";
+import { useBrowserStore } from "../stores";
 
 type ButtonConfig = {
   label: string;
@@ -70,13 +68,9 @@ function TwoSidedControl({
   );
 }
 
-export default function ControlButtons({
-  browserStore,
-}: {
-  browserStore: BrowserStoreInstance;
-}) {
-  const domain = browserStore((state) => state.domain);
-  const setDomain = browserStore((state) => state.setDomain);
+export default function ControlButtons() {
+  const domain = useBrowserStore((state) => state.domain);
+  const setDomain = useBrowserStore((state) => state.setDomain);
 
   const domainKey = `${domain.chromosome}:${domain.start}-${domain.end}`;
 

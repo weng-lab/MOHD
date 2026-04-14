@@ -1,20 +1,21 @@
 "use client";
-"use no memo";
+// "use no memo";
+// required to avoid RC from skipping over zustand hooks
+// otherwise it will cause hook count related errors
 
 // React
 import { useEffect, useState } from "react";
 
 // MUI
 import EditIcon from "@mui/icons-material/Edit";
+import HighlightIcon from "@mui/icons-material/Highlight";
 import { Button } from "@mui/material";
 import { Stack, useMediaQuery } from "@mui/system";
 
 // weng lab
 import {
   Browser,
-  createBrowserStoreMemo,
-  createTrackStoreMemo,
-  GQLWrapper,
+  GQLWrapper
 } from "@weng-lab/genomebrowser";
 import {
   foldersByAssembly,
@@ -27,11 +28,11 @@ import BrowserSearch from "./_components/BrowserSearch";
 import ControlButtons from "./_components/ControlButtons";
 import DomainDisplay from "./_components/DomainDisplay";
 import HighlightDialog from "./_components/HighlightDialog";
-import { DEFAULT_BROWSER_STATE } from "./defaultDomain";
 import {
   DEFAULT_SELECTED_TRACK_IDS,
   TRACK_SELECT_SESSION_KEY,
 } from "./defaultSelections";
+import { useBrowserStore, useTrackStore } from "./stores";
 
 const ASSEMBLY = "GRCh38";
 const FOLDER_IDS = new Set(["human-genes", "human-mohd"]);
@@ -42,20 +43,17 @@ const INITIAL_SELECTED_IDS: InitialSelectedIdsByAssembly =
   DEFAULT_SELECTED_TRACK_IDS;
 
 export default function MohdGenomeBrowserPage() {
+  const [trackSelectOpen, setTrackSelectOpen] = useState(false);
+  const [highlightOpen, setHighlightOpen] = useState(false);
+
   const isMedium = useMediaQuery("(max-width:900px)");
   const isSmall = useMediaQuery("(max-width:600px)");
-  const [trackSelectOpen, setTrackSelectOpen] = useState(false);
-
   const trackWidth = isSmall ? 550 : isMedium ? 950 : 1400;
   const titleSize = isSmall ? 18 : isMedium ? 14 : 12;
 
-  const browserStore = createBrowserStoreMemo(DEFAULT_BROWSER_STATE, []);
-  const trackStore = createTrackStoreMemo([], []);
-
-  const setDomain = browserStore((s) => s.setDomain);
-  const setTrackWidth = browserStore((s) => s.setTrackWidth);
-  const setTitleSize = browserStore((s) => s.setTitleSize);
-  const setFontSize = browserStore((s) => s.setFontSize);
+  const setTrackWidth = useBrowserStore((s) => s.setTrackWidth);
+  const setTitleSize = useBrowserStore((s) => s.setTitleSize);
+  const setFontSize = useBrowserStore((s) => s.setFontSize);
 
   useEffect(() => {
     setTrackWidth(trackWidth);
@@ -72,7 +70,7 @@ export default function MohdGenomeBrowserPage() {
           justifyContent="space-between"
           alignItems={{ xs: "stretch", md: "center" }}
         >
-          <BrowserSearch setDomain={setDomain} />
+          <BrowserSearch />
           <Stack
             direction="row"
             spacing={1}
@@ -80,7 +78,15 @@ export default function MohdGenomeBrowserPage() {
               width: { xs: "100%", md: "auto" },
             }}
           >
-            <HighlightDialog browserStore={browserStore} />
+            <Button
+              variant="contained"
+              startIcon={<HighlightIcon />}
+              size="small"
+              onClick={() => setHighlightOpen(true)}
+              sx={{ minHeight: 44 }}
+            >
+              Highlights
+            </Button>
             <Button
               variant="contained"
               startIcon={<EditIcon />}
@@ -102,22 +108,23 @@ export default function MohdGenomeBrowserPage() {
           p={1}
           mt={2}
         >
-          <DomainDisplay browserStore={browserStore} />
-          <ControlButtons browserStore={browserStore} />
+          <DomainDisplay />
+          <ControlButtons />
         </Stack>
-        <Browser browserStore={browserStore} trackStore={trackStore} />
+        <Browser browserStore={useBrowserStore} trackStore={useTrackStore} />
+      </Stack>
+      <HighlightDialog open={highlightOpen} onClose={() => setHighlightOpen(false) } />
         <TrackSelect
           assembly={ASSEMBLY}
           folders={FOLDERS}
           initialSelectedIds={INITIAL_SELECTED_IDS}
           sessionStorageKey={TRACK_SELECT_SESSION_KEY}
-          trackStore={trackStore}
+          trackStore={useTrackStore}
           maxTracks={30}
           open={trackSelectOpen}
           onClose={() => setTrackSelectOpen(false)}
           title="Select Tracks"
         />
-      </Stack>
     </GQLWrapper>
   );
 }

@@ -1,20 +1,16 @@
-"use no memo";
-
 import { Search } from "@mui/icons-material";
 import { IconButton, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
-import { Chromosome, Domain } from "@weng-lab/genomebrowser";
+import { Chromosome } from "@weng-lab/genomebrowser";
 import { GenomeSearch, Result } from "@weng-lab/ui-components";
+import { useBrowserStore } from "../stores";
 
 const ASSEMBLY = "GRCh38";
 const GENE_VERSION = [29, 40];
 
-interface BrowserSearchProps {
-  setDomain: (domain: Domain) => void;
-}
-
-export default function BrowserSearch({ setDomain }: BrowserSearchProps) {
+export default function BrowserSearch() {
   const theme = useTheme();
+  const setDomain = useBrowserStore(state => state.setDomain)
 
   const handleSearchSubmit = (result: Result) => {
     if (!result.domain) return;

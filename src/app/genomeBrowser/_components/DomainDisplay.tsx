@@ -1,14 +1,9 @@
-"use no memo";
-
 import { Box, Stack, Typography } from "@mui/material";
-import { BrowserStoreInstance, Cytobands } from "@weng-lab/genomebrowser";
+import {  Cytobands } from "@weng-lab/genomebrowser";
+import { useBrowserStore } from "../stores";
 
-export default function DomainDisplay({
-  browserStore,
-}: {
-  browserStore: BrowserStoreInstance;
-}) {
-  const domain = browserStore((state) => state.domain);
+export default function DomainDisplay() {
+  const domain = useBrowserStore((state) => state.domain);
 
   return (
     <Stack alignItems="center" width="100%" maxWidth={700}>

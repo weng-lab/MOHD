@@ -1,5 +1,3 @@
-"use no memo";
-
 import {
   Accordion,
   AccordionDetails,
@@ -15,14 +13,13 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Add, Delete, ExpandMore } from "@mui/icons-material";
-import HighlightIcon from "@mui/icons-material/Highlight";
 import {
-  BrowserStoreInstance,
   type Chromosome,
   type Highlight as GBHighlight,
 } from "@weng-lab/genomebrowser";
 import { type Domain } from "@weng-lab/genomebrowser";
 import { useState } from "react";
+import { useBrowserStore } from "../stores";
 
 const VALID_CHROMOSOMES: Chromosome[] = [
   "chr1",
@@ -393,31 +390,16 @@ function HighlightsList({ highlights, removeHighlight }: HighlightsListProps) {
   );
 }
 
-export default function HighlightDialog({
-  browserStore,
-}: {
-  browserStore: BrowserStoreInstance;
-}) {
-  const [open, setOpen] = useState(false);
-  const domain = browserStore((state) => state.domain);
-  const highlights = browserStore((state) => state.highlights);
-  const addHighlight = browserStore((state) => state.addHighlight);
-  const removeHighlight = browserStore((state) => state.removeHighlight);
-
+export default function HighlightDialog({open, onClose}: {open: boolean, onClose: () => void}) {
+  const domain = useBrowserStore((state) => state.domain);
+  const highlights = useBrowserStore((state) => state.highlights);
+  const addHighlight = useBrowserStore((state) => state.addHighlight);
+  const removeHighlight = useBrowserStore((state) => state.removeHighlight);
   return (
     <>
-      <Button
-        variant="contained"
-        startIcon={<HighlightIcon />}
-        size="small"
-        onClick={() => setOpen(true)}
-        sx={{ minHeight: 44 }}
-      >
-        Highlights
-      </Button>
       <Dialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={onClose}
         maxWidth="sm"
         fullWidth
       >
