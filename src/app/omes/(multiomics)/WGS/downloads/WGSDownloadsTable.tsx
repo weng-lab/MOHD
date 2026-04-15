@@ -5,7 +5,7 @@ import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 type WGSMetadata =
     NonNullable<UseWGSDataReturn["data"]>;
 
-type DownloadRow = WGSMetadata[number] & DownloadFile;
+type DownloadRow = WGSMetadata[number] & Omit<DownloadFile, "__typename">;
 
 type WGSDownloadsProps = {
     rows: WGSMetadata;
@@ -29,7 +29,8 @@ const WGSDownloadsTable = ({
         return rows.flatMap((sample) =>
             files
                 .filter((file) => file.sample_id === sample.sample_id)
-                .map((file) => ({
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .map(({ __typename, ...file }) => ({
                     ...sample,
                     ...file,
                 }))
@@ -41,7 +42,7 @@ const WGSDownloadsTable = ({
             label="Download WGS Data"
             rows={rows}
             loading={loading || loadingFiles}
-            error={error}
+            error={!!error}
             buildRows={buildWGSRows}
             ome="WGS"
         />

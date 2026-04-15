@@ -4,11 +4,12 @@ import { Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
 import { useMetabolomicsData } from "@/common/hooks/omeHooks/useMetabolomicsData";
+import { OmeEnum } from "@/common/types/generated/graphql";
 
 const MetabolomicsDownloads = () => {
 
     const MetabolomicsData = useMetabolomicsData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles("METABOLOMICS");
+    const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.Metabolomics);
 
     const rows = MetabolomicsData.data ?? [];
 
