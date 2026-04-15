@@ -16,9 +16,9 @@ const config: OmeDownloadsConfig<WGBSRow> = {
   ome: OmeEnum.Wgbs,
   useData: () => useWGBSData({ skip: false }),
   datasetFilters: [
-    { field: "sex", label: "Sex", type: "checkbox" },
-    { field: "status", label: "Status", type: "checkbox" },
-    { field: "site", label: "Site", type: "multiselect" },
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
   ],
 };
 
