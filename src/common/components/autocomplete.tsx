@@ -128,20 +128,21 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
         geneVersion={geneVersion}
         ccreLimit={3}
         showiCREFlag={false}
-        queries={["Ome", "Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
+        queries={[]}
+        // "Ome", "Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"
         onSearchSubmit={handleSearchSubmit}
         //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-          }
-        }}
+        // onKeyDown={(e) => {
+        //   if (e.key === "Enter") {
+        //     e.preventDefault();
+        //   }
+        // }}
         slotProps={{
           paper: {
             elevation: 1,
           },
         }}
-        defaultResults={defaultHumanResults}
+        // defaultResults={defaultHumanResults}
         openOnFocus
         {...props}
       />

@@ -73,7 +73,7 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
             id="desktop-search-component"
             slots={{
               button: (
-                <IconButton sx={{ color: "white" }}>
+                <IconButton sx={{ color: "white" }} disabled>
                   <Search />
                 </IconButton>
               ),
@@ -82,8 +82,10 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
               box: { gap: 1 },
               input: {
                 size: "small",
-                label: `Search MOHD or SCREEN`,
-                placeholder: "Search MOHD or SCREEN",
+                // label: `Search MOHD or SCREEN`,
+                // placeholder: "Search MOHD or SCREEN",
+                label: `Search Coming Soon`,
+                placeholder: "Search Coming Soon",
                 sx: {
                   "& .MuiOutlinedInput-root": {
                     backgroundColor: "#ffffff",

@@ -119,7 +119,23 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             {OME_DESCRIPTIONS[selectedOme] ?? "Description coming soon."}
           </Typography>
         </Stack>
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent={"space-between"}>
+        <Box
+          width="100%"
+          height="auto"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          sx={(theme) => ({
+            border: `1px solid ${theme.palette.secondary.main}`,
+            padding: 2,
+            borderRadius: 2,
+          })}
+        >
+          <Typography variant="h6" sx={{color: "rgba(20, 39, 37, 0.96)",}}>
+            Ome Detail Pages Coming Soon
+          </Typography>
+        </Box>
+        {/* <Stack direction={{ xs: "column", sm: "row" }} justifyContent={"space-between"}>
           <Button
             // component={genomeBrowserHref ? Link : "button"}
             // href={genomeBrowserHref ?? undefined}
@@ -142,7 +158,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
           >
             Go to {getOmeLabel(selectedOme)} page
           </Button>
-        </Stack>
+        </Stack> */}
       </Stack>
     </Box>
   );

@@ -13,16 +13,17 @@ import { useMenuControl } from "./MenuContext";
 import MobileMenu from "./MobileMenu";
 import { PageInfo } from "./types";
 import AutoComplete from "../autocomplete";
+import ComingSoonBanner from "./ComingSoonBanner";
 
 const pageLinks: PageInfo[] = [
-    {
-        pageName: "Genome Browser",
-        link: "/genomeBrowser",
-    },
-    {
-        pageName: "Downloads",
-        link: "/downloads",
-    },
+    // {
+    //     pageName: "Genome Browser",
+    //     link: "/genomeBrowser",
+    // },
+    // {
+    //     pageName: "Downloads",
+    //     link: "/downloads",
+    // },
     {
         pageName: "About",
         link: "https://www.mohdconsortium.org/home",
@@ -220,7 +221,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         id="desktop-search-component"
                         slots={{
                             button: (
-                                <IconButton sx={{ color: "white" }}>
+                                <IconButton sx={{ color: "white" }} disabled>
                                     <Search />
                                 </IconButton>
                             ),
@@ -229,8 +230,10 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                             box: { gap: 1 },
                             input: {
                                 size: "small",
-                                label: `Search MOHD or SCREEN`,
-                                placeholder: "Search MOHD or SCREEN",
+                                // label: `Search MOHD or SCREEN`,
+                                // placeholder: "Search MOHD or SCREEN",
+                                label: `Search Coming Soon`,
+                                placeholder: "Search Coming Soon",
                                 sx: {
                                     "& .MuiOutlinedInput-root": {
                                         backgroundColor: "#336460",
@@ -267,6 +270,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                 </Box>
                 <MobileMenu pageLinks={pageLinks} />
             </Toolbar>
+            <ComingSoonBanner />
         </AppBar>
     );
 }
