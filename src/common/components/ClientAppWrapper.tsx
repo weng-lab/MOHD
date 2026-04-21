@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Footer from "./Footer";
@@ -7,11 +6,13 @@ import Header from "./Header/Header";
 
 export default function ClientAppWrapper({ children }: { children: React.ReactNode }) {
   const [maintenance, setMaintenance] = useState(false);
+
   useEffect(() => {
     const checkAPIHealth = async () => {
       try {
-        const res = await fetch("https://screen.api.wenglab.org/graphql", {
+        const res = await fetch("/api/graphql", {
           method: "POST",
+          cache: "no-store",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ query: "{ __typename }" }),
         });

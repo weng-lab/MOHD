@@ -45,30 +45,6 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
     const [anchorDropdown0, setAnchorDropdown0] = useState<null | HTMLElement>(null);
     const [anchorDropdown1, setAnchorDropdown1] = useState<null | HTMLElement>(null);
 
-    //Auto scroll and focus the main search bar
-    // const handleFocusSearch = () => {
-    //     const searchEl = document.getElementById("main-search-component");
-    //     const headerEl = document.getElementById("header-helix");
-    //     if (!searchEl) return;
-
-    //     const observer = new IntersectionObserver(
-    //         ([entry], obs) => {
-    //             if (entry.isIntersecting) {
-    //                 searchEl.focus();
-    //                 obs.disconnect();
-    //             }
-    //         },
-    //         {
-    //             threshold: 1.0,
-    //         }
-    //     );
-
-    //     observer.observe(headerEl);
-
-    //     // Scroll smoothly to the search bar
-    //     searchEl.scrollIntoView({ behavior: "smooth", block: "center" });
-    // };
-
     // Open Dropdown
     const handleOpenDropdown = (event: React.MouseEvent<HTMLElement>, dropdownID: number) => {
         if (dropdownID === 0) {
