@@ -72,13 +72,10 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
             style={{ width: "100%" }}
             id="desktop-search-component"
             slots={{
-              button: (
-                <IconButton sx={{ color: "white" }} disabled>
-                  <Search />
-                </IconButton>
-              ),
+              button: IconButton,
             }}
             slotProps={{
+              button: { sx: { color: "white" }, children: <Search /> },
               box: { gap: 1 },
               input: {
                 size: "small",
