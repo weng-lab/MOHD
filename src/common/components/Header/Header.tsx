@@ -98,7 +98,7 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                     backgroundColor: "#ff9800",
                     color: "#fff",
                     textAlign: "center",
-                    display: maintenance ? "default" : "none",
+                    visibility: maintenance ? "visible" : "hidden",
                 }}
                 justifyContent={"center"}
                 alignItems={"center"}

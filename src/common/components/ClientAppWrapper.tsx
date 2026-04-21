@@ -6,6 +6,7 @@ import Header from "./Header/Header";
 
 export default function ClientAppWrapper({ children }: { children: React.ReactNode }) {
   const [maintenance, setMaintenance] = useState(false);
+  
   useEffect(() => {
     const checkAPIHealth = async () => {
       try {
