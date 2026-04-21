@@ -1,5 +1,6 @@
 {
   "API": {
-    "MOHDAPI": "https://mohd-api-251345758618.us-east4.run.app/graphql"
+    "MOHDAPI": "https://mohd-api-251345758618.us-east4.run.app/graphql",
+    "SCREEN_API": "https://screen.api.wenglab.org/graphql"
   }
 }
