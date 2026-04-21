@@ -68,40 +68,48 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
               p: 2,
             }}
           >
-          <AutoComplete
-            style={{ width: "100%" }}
-            id="desktop-search-component"
-            slots={{
-              button: IconButton,
-            }}
-            slotProps={{
-              button: { sx: { color: "white" }, children: <Search /> },
-              box: { gap: 1 },
-              input: {
-                size: "small",
-                // label: `Search MOHD or SCREEN`,
-                // placeholder: "Search MOHD or SCREEN",
-                label: `Search Coming Soon`,
-                placeholder: "Search Coming Soon",
-                sx: {
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "#ffffff",
-                    borderRadius: "999px",
-                    "& fieldset": { border: "none" },
-                    "&:hover fieldset": { border: "none" },
-                    "&.Mui-focused fieldset": { border: "none" },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#666666",
-                    "&.Mui-focused": { color: "#444444" },
-                  },
-                  "& .MuiInputLabel-shrink": {
-                    display: "none",
+            <AutoComplete
+              style={{ width: "100%" }}
+              id="desktop-search-component"
+              slots={{
+                button: IconButton,
+              }}
+              slotProps={{
+                button: { sx: { color: "white" }, children: <Search /> },
+                box: { gap: 1 },
+                input: {
+                  size: "small",
+                  // label: `Search MOHD or SCREEN`,
+                  // placeholder: "Search MOHD or SCREEN",
+                  label: `Search Coming Soon`,
+                  placeholder: "Search Coming Soon",
+                  sx: {
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: "#336460",
+                      borderRadius: "999px",
+                      color: "white",
+                      "& fieldset": { border: "none" },
+                      "&:hover fieldset": { border: "none" },
+                      "&.Mui-focused fieldset": { border: "none" },
+                      "& input": {
+                        color: "white",
+                      },
+                      "& input::placeholder": {
+                        color: "rgba(255, 255, 255, 0.85)",
+                        opacity: 1,
+                      },
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: "rgba(255, 255, 255, 0.85)",
+                      "&.Mui-focused": { color: "white" },
+                    },
+                    "& .MuiInputLabel-shrink": {
+                      display: "none",
+                    },
                   },
                 },
-              },
-            }}
-          />
+              }}
+            />
           </Box>
           <List>
             {pageLinks.map((page) => (
