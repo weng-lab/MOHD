@@ -3467,9 +3467,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/genomebrowser-ui@npm:0.4.0-beta.0":
-  version: 0.4.0-beta.0
-  resolution: "@weng-lab/genomebrowser-ui@npm:0.4.0-beta.0"
+"@weng-lab/genomebrowser-ui@npm:0.4.0-beta.1":
+  version: 0.4.0-beta.1
+  resolution: "@weng-lab/genomebrowser-ui@npm:0.4.0-beta.1"
   dependencies:
     "@mui/x-license": "npm:^8.25.0"
     fuse.js: "npm:^7.1.0"
@@ -3484,13 +3484,13 @@ __metadata:
     "@weng-lab/genomebrowser": 1.8.5-beta.0
     react: ^19.0.0
     react-dom: ^19.0.0
-  checksum: 10c0/d6944eaf78432c143361845a12241345c5d5c0cc27a577a59e76bb058382bffae04a58d6fb185379030343ed5ac5af2841d82e1183f68155186fd7986c94b44d
+  checksum: 10c0/d633e6710174d3fe48208f4360dd4645d5e8c3431c94ca9431268f1bda44b8ea34bf68b5c6dc5c710ee7f882df95bc4f9cd5ef576428e11d7531e9c25ec2a3f4
   languageName: node
   linkType: hard
 
-"@weng-lab/genomebrowser@npm:1.8.5-beta.0":
-  version: 1.8.5-beta.0
-  resolution: "@weng-lab/genomebrowser@npm:1.8.5-beta.0"
+"@weng-lab/genomebrowser@npm:1.8.5-beta.2":
+  version: 1.8.5-beta.2
+  resolution: "@weng-lab/genomebrowser@npm:1.8.5-beta.2"
   dependencies:
     "@apollo/client": "npm:^3.14.0"
     axios: "npm:0.18.1"
@@ -3503,7 +3503,7 @@ __metadata:
   peerDependencies:
     react: ^19.0.0
     react-dom: ^19.0.0
-  checksum: 10c0/7d7e479fe28e80b97f45a288ad6681df60138fb09c2ae014819363550ac094139f4f66d2e102369dac04b0ba8970c0245114809bab4a6a5073b58e0ad9bc1d1e
+  checksum: 10c0/9bee97ff0d7723377c7c706841b88c0a004d4ac0937dfc13676479a8517b4dfeb5d2aeffd0f4f2699fa42bd57284c3aa57d8e7bf327e9b015a1f4a82ecc2493a
   languageName: node
   linkType: hard
 
@@ -7479,8 +7479,8 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.58.0"
     "@typescript-eslint/parser": "npm:^8.58.0"
     "@visx/visx": "npm:^3"
-    "@weng-lab/genomebrowser": "npm:1.8.5-beta.0"
-    "@weng-lab/genomebrowser-ui": "npm:0.4.0-beta.0"
+    "@weng-lab/genomebrowser": "npm:1.8.5-beta.2"
+    "@weng-lab/genomebrowser-ui": "npm:0.4.0-beta.1"
     "@weng-lab/ui-components": "npm:^2.2.4"
     "@weng-lab/visualization": "npm:^1.2.11"
     babel-plugin-react-compiler: "npm:1.0.0"

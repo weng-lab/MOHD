@@ -1,36 +1,20 @@
 "use client";
 
 import { ReactNode } from "react";
-import { ApolloLink, HttpLink } from "@apollo/client";
 import {
-  ApolloNextAppProvider,
-  InMemoryCache,
-  SSRMultipartLink,
   ApolloClient,
-} from "@apollo/experimental-nextjs-app-support";
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 
-
-// See https://www.apollographql.com/blog/using-apollo-client-with-next-js-13-releasing-an-official-library-to-support-the-app-router
-
-export function makeClient() {
-  const httpLink = new HttpLink({
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
     uri: "/api/graphql",
-  });
-
-  return new ApolloClient({
-    cache: new InMemoryCache(),
-    link:
-      typeof window === "undefined"
-        ? ApolloLink.from([
-            new SSRMultipartLink({
-              stripDefer: true,
-            }),
-            httpLink,
-          ])
-        : httpLink,
-  });
-}
+  }),
+});
 
 export function ApolloWrapper({ children }: { children: ReactNode }) {
-  return <ApolloNextAppProvider makeClient={makeClient}>{children}</ApolloNextAppProvider>;
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }

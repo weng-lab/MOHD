@@ -3,6 +3,8 @@
 // required to avoid RC from skipping over zustand hooks
 // otherwise it will cause hook count related errors
 
+import dynamic from "next/dynamic";
+
 // React
 import { useEffect, useState } from "react";
 
@@ -25,6 +27,7 @@ import BrowserSearch from "./_components/BrowserSearch";
 import ControlButtons from "./_components/ControlButtons";
 import DomainDisplay from "./_components/DomainDisplay";
 import HighlightDialog from "./_components/HighlightDialog";
+import MohdSortControls from "./_components/MohdSortControls";
 import {
   DEFAULT_SELECTED_TRACK_IDS,
   TRACK_SELECT_SESSION_KEY,
@@ -39,7 +42,7 @@ const FOLDERS = foldersByAssembly[ASSEMBLY].filter((folder) =>
 const INITIAL_SELECTED_IDS: InitialSelectedIdsByAssembly =
   DEFAULT_SELECTED_TRACK_IDS;
 
-export default function GenomeBrowserPage() {
+function GenomeBrowserPage() {
   const [trackSelectOpen, setTrackSelectOpen] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
 
@@ -69,12 +72,14 @@ export default function GenomeBrowserPage() {
         >
           <BrowserSearch />
           <Stack
-            direction="row"
+            direction={{ xs: "column", sm: "row" }}
             spacing={1}
+            alignItems={{ xs: "stretch", sm: "center" }}
             sx={{
               width: { xs: "100%", md: "auto" },
             }}
           >
+            <MohdSortControls folders={FOLDERS} />
             <Button
               variant="contained"
               startIcon={<HighlightIcon />}
@@ -128,3 +133,7 @@ export default function GenomeBrowserPage() {
     </GQLWrapper>
   );
 }
+
+export default dynamic(() => Promise.resolve(GenomeBrowserPage), {
+  ssr: false,
+});
