@@ -6,11 +6,10 @@ import Header from "./Header/Header";
 
 export default function ClientAppWrapper({ children }: { children: React.ReactNode }) {
   const [maintenance, setMaintenance] = useState(false);
-
   useEffect(() => {
     const checkAPIHealth = async () => {
       try {
-        const res = await fetch("/api/graphql", {
+        const res = await fetch("/api/mohd-graphql", {
           method: "POST",
           cache: "no-store",
           headers: { "Content-Type": "application/json" },
