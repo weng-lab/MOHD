@@ -219,13 +219,10 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         style={{ width: 415 }}
                         id="desktop-search-component"
                         slots={{
-                            button: (
-                                <IconButton sx={{ color: "white" }}>
-                                    <Search />
-                                </IconButton>
-                            ),
+                            button: IconButton,
                         }}
                         slotProps={{
+                            button: { sx: { color: "white" }, children: <Search /> },
                             box: { gap: 1 },
                             input: {
                                 size: "small",
