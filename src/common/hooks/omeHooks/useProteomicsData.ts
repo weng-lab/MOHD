@@ -1,6 +1,6 @@
 import { gql } from "@/common/types/generated/gql";
 import { FetchProteomicsMetadataQuery } from "@/common/types/generated/graphql";
-import { ApolloError, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 const GET_PROTEMICS_DATA = gql(`
 query fetchProteomicsMetadata {
@@ -21,7 +21,7 @@ export type UseProteomicsDataParams = {
 export type UseProteomicsDataReturn = {
   data: FetchProteomicsMetadataQuery["proteomics_metadata"] | undefined;
   loading: boolean;
-  error: ApolloError | undefined;
+  error: Error | undefined;
 };
 
 export const useProteomicsData = ({ skip }: UseProteomicsDataParams): UseProteomicsDataReturn => {

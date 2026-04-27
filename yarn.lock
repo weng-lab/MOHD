@@ -5,22 +5,37 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@apollo/client-react-streaming@npm:0.11.11":
-  version: 0.11.11
-  resolution: "@apollo/client-react-streaming@npm:0.11.11"
+"@apollo/client-integration-nextjs@npm:^0.14.5":
+  version: 0.14.5
+  resolution: "@apollo/client-integration-nextjs@npm:0.14.5"
   dependencies:
-    "@wry/equality": "npm:^0.5.6"
-    ts-invariant: "npm:^0.10.3"
+    "@apollo/client-react-streaming": "npm:0.14.5"
   peerDependencies:
-    "@apollo/client": ^3.10.4
-    graphql: ^16 || >=17.0.0-alpha.2
-    react: ^18 || >=19.0.0-rc
-    react-dom: ^18 || >=19.0.0-rc
-  checksum: 10c0/09600a30b2ebf33a8bd47e70a80de6100af3625617c6198a362a9e5d6f16d62ed5d8dd3608ce7b314d8e971f761185d5fe9c6e9b55f5f681aaced5cfb4975078
+    "@apollo/client": ^4.0.0
+    next: ^15.2.3 || ^16.0.0
+    react: ^19
+    rxjs: ^7.3.0
+  checksum: 10c0/dfdd7dc8e4ab8e3a641ddb2cb17fbc52b2b923176e5a1a15713d414cbc37bfafbe6c34b7eee220832280cd7936c5a0f965da406228cf19be462d97e772ab5fa1
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:^3.11.8, @apollo/client@npm:^3.14.0":
+"@apollo/client-react-streaming@npm:0.14.5":
+  version: 0.14.5
+  resolution: "@apollo/client-react-streaming@npm:0.14.5"
+  dependencies:
+    "@types/react-dom": "npm:^19.0.0"
+    "@wry/equality": "npm:^0.5.6"
+  peerDependencies:
+    "@apollo/client": ^4.0.0
+    graphql: ^16 || >=17.0.0-alpha.2
+    react: ^19
+    react-dom: ^19
+    rxjs: ^7.3.0
+  checksum: 10c0/878df3a3b970cc4200f43eb9d6bab383a3156e78ab065bea436109564cf5352c39b8287cf25c187ef66a2fe6cf218c2ba5a4fd29833518d8c30c10296e014cd7
+  languageName: node
+  linkType: hard
+
+"@apollo/client@npm:^3.14.0":
   version: 3.14.1
   resolution: "@apollo/client@npm:3.14.1"
   dependencies:
@@ -56,16 +71,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/experimental-nextjs-app-support@npm:^0.11.3":
-  version: 0.11.11
-  resolution: "@apollo/experimental-nextjs-app-support@npm:0.11.11"
+"@apollo/client@npm:^4.1.9":
+  version: 4.1.9
+  resolution: "@apollo/client@npm:4.1.9"
   dependencies:
-    "@apollo/client-react-streaming": "npm:0.11.11"
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@wry/caches": "npm:^1.0.0"
+    "@wry/equality": "npm:^0.5.6"
+    "@wry/trie": "npm:^0.5.0"
+    graphql-tag: "npm:^2.12.6"
+    optimism: "npm:^0.18.0"
+    tslib: "npm:^2.3.0"
   peerDependencies:
-    "@apollo/client": ^3.10.4
-    next: ^13.4.1 || ^14.0.0 || ^15.0.0-rc.0
-    react: ^18 || >=19.0.0-rc
-  checksum: 10c0/c16708cd9daa0e53b3ac2439d563479cea837e32e13bb73e9c0d3e2cd02fe12d62be74fbab404b08253e57269b9bd62f628293457d2897b8d4f5ff60081c9e74
+    graphql: ^16.0.0
+    graphql-ws: ^5.5.5 || ^6.0.3
+    react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    react-dom: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    rxjs: ^7.3.0
+    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+  peerDependenciesMeta:
+    graphql-ws:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    subscriptions-transport-ws:
+      optional: true
+  checksum: 10c0/b7c71295462b00c5f88a7cb5a0d70ae2671be0ff8997424f2aca9d0b2af9b509c6ae291f6c5f875a997e9da44437258907b0ebbc980fe8e2e4ce5f4f037cd750
   languageName: node
   linkType: hard
 
@@ -2113,74 +2146,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/env@npm:16.2.0"
-  checksum: 10c0/5d7e9276f7ad828d495e8d4de9b0f661fa3ed7ffb21c872c1144dbc9e5ff2aa40ee42868a2c09d694607546bea3ddbc66ea6334db487693ba90402eaae2a932f
+"@next/env@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/env@npm:16.2.4"
+  checksum: 10c0/4bf41f0da7cc97ca2a2f2b7f3fc81e14aba2afc280d32163b134b8f642b315fbabb5d9c224a783d8e759bbc73eedfc9acd048e772950395aa1e6290dd386d209
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/eslint-plugin-next@npm:16.2.0"
+"@next/eslint-plugin-next@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/eslint-plugin-next@npm:16.2.4"
   dependencies:
     fast-glob: "npm:3.3.1"
-  checksum: 10c0/3fffb10df80052ad88b4429b5a67c86270b881a1df2d90e2f9f368d036e1963abbbfbe3b4c139749759d959f881af85ba57b9983a8f4abef63b103f518f9801c
+  checksum: 10c0/d42df02ff5928339414bb75371c67e0025ac6144096edfad468bb0ee992f87157d235be58a771aa983be65d7c1eb77064401a9e6f96ad0744907ba8dbedb86d0
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/swc-darwin-arm64@npm:16.2.0"
+"@next/swc-darwin-arm64@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/swc-darwin-arm64@npm:16.2.4"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/swc-darwin-x64@npm:16.2.0"
+"@next/swc-darwin-x64@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/swc-darwin-x64@npm:16.2.4"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/swc-linux-arm64-gnu@npm:16.2.0"
+"@next/swc-linux-arm64-gnu@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/swc-linux-arm64-gnu@npm:16.2.4"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/swc-linux-arm64-musl@npm:16.2.0"
+"@next/swc-linux-arm64-musl@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/swc-linux-arm64-musl@npm:16.2.4"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/swc-linux-x64-gnu@npm:16.2.0"
+"@next/swc-linux-x64-gnu@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/swc-linux-x64-gnu@npm:16.2.4"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/swc-linux-x64-musl@npm:16.2.0"
+"@next/swc-linux-x64-musl@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/swc-linux-x64-musl@npm:16.2.4"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/swc-win32-arm64-msvc@npm:16.2.0"
+"@next/swc-win32-arm64-msvc@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/swc-win32-arm64-msvc@npm:16.2.4"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:16.2.0":
-  version: 16.2.0
-  resolution: "@next/swc-win32-x64-msvc@npm:16.2.0"
+"@next/swc-win32-x64-msvc@npm:16.2.4":
+  version: 16.2.4
+  resolution: "@next/swc-win32-x64-msvc@npm:16.2.4"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -2514,7 +2547,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:*, @types/react-dom@npm:^19":
+"@types/react-dom@npm:*, @types/react-dom@npm:^19, @types/react-dom@npm:^19.0.0":
   version: 19.2.3
   resolution: "@types/react-dom@npm:19.2.3"
   peerDependencies:
@@ -5359,11 +5392,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-next@npm:16.2.0":
-  version: 16.2.0
-  resolution: "eslint-config-next@npm:16.2.0"
+"eslint-config-next@npm:^16.2.4":
+  version: 16.2.4
+  resolution: "eslint-config-next@npm:16.2.4"
   dependencies:
-    "@next/eslint-plugin-next": "npm:16.2.0"
+    "@next/eslint-plugin-next": "npm:16.2.4"
     eslint-import-resolver-node: "npm:^0.3.6"
     eslint-import-resolver-typescript: "npm:^3.5.2"
     eslint-plugin-import: "npm:^2.32.0"
@@ -5378,7 +5411,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/461e9f878425e0d3a1ddaa2282062dbf7f9e5fc128de27ca2504cdaf1c96fabe85bf2f60d94d66709a08252ccf53da78952e3ff2cdfc1577c0a0edc4fbc6fe81
+  checksum: 10c0/84edd2c73c83dc0e513ddc536d3f2a6d1b64eee6f66fffa8031750f5c1c6491b9fe4de71682b2c5ee4acf4ba0b1528df70555ad0fe676d280ab71ca7d9502887
   languageName: node
   linkType: hard
 
@@ -7402,8 +7435,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mohd@workspace:."
   dependencies:
-    "@apollo/client": "npm:^3.11.8"
-    "@apollo/experimental-nextjs-app-support": "npm:^0.11.3"
+    "@apollo/client": "npm:^4.1.9"
+    "@apollo/client-integration-nextjs": "npm:^0.14.5"
     "@emailjs/browser": "npm:^4.4.1"
     "@emotion/cache": "npm:^11"
     "@emotion/react": "npm:^11"
@@ -7430,11 +7463,12 @@ __metadata:
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"
     eslint: "npm:^9"
-    eslint-config-next: "npm:16.2.0"
+    eslint-config-next: "npm:^16.2.4"
     graphql: "npm:^16"
-    next: "npm:16.2.0"
+    next: "npm:^16.2.4"
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
+    rxjs: "npm:^7.8.2"
     typescript: "npm:^6.0.0"
     typescript-eslint: "npm:^8.58.0"
   languageName: unknown
@@ -7502,19 +7536,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:16.2.0":
-  version: 16.2.0
-  resolution: "next@npm:16.2.0"
+"next@npm:^16.2.4":
+  version: 16.2.4
+  resolution: "next@npm:16.2.4"
   dependencies:
-    "@next/env": "npm:16.2.0"
-    "@next/swc-darwin-arm64": "npm:16.2.0"
-    "@next/swc-darwin-x64": "npm:16.2.0"
-    "@next/swc-linux-arm64-gnu": "npm:16.2.0"
-    "@next/swc-linux-arm64-musl": "npm:16.2.0"
-    "@next/swc-linux-x64-gnu": "npm:16.2.0"
-    "@next/swc-linux-x64-musl": "npm:16.2.0"
-    "@next/swc-win32-arm64-msvc": "npm:16.2.0"
-    "@next/swc-win32-x64-msvc": "npm:16.2.0"
+    "@next/env": "npm:16.2.4"
+    "@next/swc-darwin-arm64": "npm:16.2.4"
+    "@next/swc-darwin-x64": "npm:16.2.4"
+    "@next/swc-linux-arm64-gnu": "npm:16.2.4"
+    "@next/swc-linux-arm64-musl": "npm:16.2.4"
+    "@next/swc-linux-x64-gnu": "npm:16.2.4"
+    "@next/swc-linux-x64-musl": "npm:16.2.4"
+    "@next/swc-win32-arm64-msvc": "npm:16.2.4"
+    "@next/swc-win32-x64-msvc": "npm:16.2.4"
     "@swc/helpers": "npm:0.5.15"
     baseline-browser-mapping: "npm:^2.9.19"
     caniuse-lite: "npm:^1.0.30001579"
@@ -7558,7 +7592,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10c0/cd1adeee535e1e9cca1efeca704b0fda2e09992c1f8889ed75d54635b803a3875748bbfecefedb20d9dd70c2cb8f974ffeeda8bffa2a6ac902ffe968a012f795
+  checksum: 10c0/81dc1ef30141891dc5cc999a0a6210c68305b585b3a7508799767572a9fb7e4c7dcb5a50f5fa3fabadf6a46c2273405360b1d6f17f89edd891da1746ae31c186
   languageName: node
   linkType: hard
 
@@ -8404,7 +8438,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.5.5":
+"rxjs@npm:^7.5.5, rxjs@npm:^7.8.2":
   version: 7.8.2
   resolution: "rxjs@npm:7.8.2"
   dependencies:

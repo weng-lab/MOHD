@@ -1,6 +1,6 @@
 import { gql } from "@/common/types/generated/gql";
 import { FetchLipidomicsMetadataQuery } from "@/common/types/generated/graphql";
-import { ApolloError, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 const GET_LIPIDOMICS_DATA = gql(`
 query fetchLipidomicsMetadata {
@@ -21,7 +21,7 @@ export type UseLipidomicsDataParams = {
 export type UseLipidomicsDataReturn = {
   data: FetchLipidomicsMetadataQuery["lipidomics_metadata"] | undefined;
   loading: boolean;
-  error: ApolloError | undefined;
+  error: Error | undefined;
 };
 
 export const useLipidomicsData = ({ skip }: UseLipidomicsDataParams): UseLipidomicsDataReturn => {

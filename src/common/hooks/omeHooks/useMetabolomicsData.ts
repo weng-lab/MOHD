@@ -1,6 +1,6 @@
 import { gql } from "@/common/types/generated/gql";
 import { FetchMetabolomicsMetadataQuery } from "@/common/types/generated/graphql";
-import { ApolloError, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 const GET_METABOLOMICS_DATA = gql(`
 query fetchMetabolomicsMetadata {
@@ -21,7 +21,7 @@ export type UseMetabolomicsDataParams = {
 export type UseMetabolomicsDataReturn = {
   data: FetchMetabolomicsMetadataQuery["metabolomics_metadata"] | undefined;
   loading: boolean;
-  error: ApolloError | undefined;
+  error: Error | undefined;
 };
 
 export const useMetabolomicsData = ({ skip }: UseMetabolomicsDataParams): UseMetabolomicsDataReturn => {

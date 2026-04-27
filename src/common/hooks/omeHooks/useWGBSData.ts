@@ -1,6 +1,6 @@
 import { gql } from "@/common/types/generated/gql";
 import { FetchWgbsMetadataQuery } from "@/common/types/generated/graphql";
-import { ApolloError, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 const GET_WGBS_DATA = gql(`
 query fetchWGBSMetadata {
@@ -21,7 +21,7 @@ export type UseWGBSDataParams = {
 export type UseWGBSDataReturn = {
   data: FetchWgbsMetadataQuery["wgbs_metadata"] | undefined;
   loading: boolean;
-  error: ApolloError | undefined;
+  error: Error | undefined;
 };
 
 export const useWGBSData = ({ skip }: UseWGBSDataParams): UseWGBSDataReturn => {
