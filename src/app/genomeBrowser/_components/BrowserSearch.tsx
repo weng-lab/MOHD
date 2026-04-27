@@ -1,5 +1,6 @@
 import { Search } from "@mui/icons-material";
 import { IconButton, useTheme } from "@mui/material";
+import type { ButtonProps } from "@mui/material";
 import { Box } from "@mui/system";
 import { Chromosome } from "@weng-lab/genomebrowser";
 import { GenomeSearch, Result } from "@weng-lab/ui-components";
@@ -7,6 +8,14 @@ import { useBrowserStore } from "../stores";
 
 const ASSEMBLY = "GRCh38";
 const GENE_VERSION = [29, 40];
+
+function SearchButton(props: ButtonProps) {
+  return (
+    <IconButton {...props} sx={{ color: "primary.main" }}>
+      <Search />
+    </IconButton>
+  );
+}
 
 export default function BrowserSearch() {
   const theme = useTheme();
@@ -34,16 +43,13 @@ export default function BrowserSearch() {
         size="small"
         assembly={ASSEMBLY}
         geneVersion={GENE_VERSION}
+        graphqlUrl="/api/screen-graphql"
         onSearchSubmit={handleSearchSubmit}
         queries={["Gene", "SNP", "cCRE", "Coordinate"]}
-        geneLimit={3}
+        limit={3}
         sx={{ width: "100%" }}
         slots={{
-          button: (
-            <IconButton sx={{ color: theme.palette.primary.main }}>
-              <Search />
-            </IconButton>
-          ),
+          button: SearchButton,
         }}
         slotProps={{
           input: {

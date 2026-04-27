@@ -7481,7 +7481,6 @@ __metadata:
     "@visx/visx": "npm:^3"
     "@weng-lab/genomebrowser": "npm:1.8.5"
     "@weng-lab/genomebrowser-ui": "npm:0.4.0"
-
     "@weng-lab/ui-components": "npm:3.0.0"
     "@weng-lab/visualization": "npm:^1.2.11"
     babel-plugin-react-compiler: "npm:1.0.0"
