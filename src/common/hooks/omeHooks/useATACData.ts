@@ -1,5 +1,6 @@
 import { gql } from "@/common/types/generated/gql";
 import { FetchAtacMetadataQuery } from "@/common/types/generated/graphql";
+import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 
 const GET_ATAC_DATA = gql(`
@@ -24,7 +25,7 @@ export type UseATACDataParams = {
 export type UseATACDataReturn = {
   data: FetchAtacMetadataQuery["atac_metadata"] | undefined;
   loading: boolean;
-  error: Error | undefined;
+  error: ErrorLike | undefined;
 };
 
 export const useATACData = ({ skip }: UseATACDataParams): UseATACDataReturn => {

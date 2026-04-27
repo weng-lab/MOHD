@@ -1,5 +1,6 @@
 import { gql } from "@/common/types/generated/gql";
 import { FetchExposomicsMetadataQuery } from "@/common/types/generated/graphql";
+import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 
 const GET_EXPOSOMICS_DATA = gql(`
@@ -21,7 +22,7 @@ export type UseExposomicsDataParams = {
 export type UseExposomicsDataReturn = {
   data: FetchExposomicsMetadataQuery["exposomics_metadata"] | undefined;
   loading: boolean;
-  error: Error | undefined;
+  error: ErrorLike | undefined;
 };
 
 export const useExposomicsData = ({ skip }: UseExposomicsDataParams): UseExposomicsDataReturn => {

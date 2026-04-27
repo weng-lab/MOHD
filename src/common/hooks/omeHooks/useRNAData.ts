@@ -1,5 +1,6 @@
 import { gql } from "@/common/types/generated/gql";
 import { FetchRnaMetadataQuery } from "@/common/types/generated/graphql";
+import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 
 const GET_RNA_DATA = gql(`
@@ -23,7 +24,7 @@ export type UseRNADataParams = {
 export type UseRNADataReturn = {
   data: FetchRnaMetadataQuery["rna_metadata"] | undefined;
   loading: boolean;
-  error: Error | undefined;
+  error: ErrorLike | undefined;
 };
 
 export const useRNAData = ({ skip }: UseRNADataParams): UseRNADataReturn => {
