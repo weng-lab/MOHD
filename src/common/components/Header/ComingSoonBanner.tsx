@@ -42,7 +42,7 @@ const ComingSoonBanner = () => {
           <Typography variant="caption">Coming Soon</Typography>
         </Box>
         <Typography variant="body2" sx={{ color: "#FFFFFF", overflow: "hidden", textOverflow: "ellipsis" }}>
-          <b>MOHD Data Portal:</b> Message about the MOHD data portal{" "}
+          <b>MOHD Data Portal:</b> Exploring omics data from 10,000 samples across 1,800 participants.
         </Typography>
       </Box>
     </Box>
