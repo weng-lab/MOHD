@@ -24,7 +24,7 @@ const RNA_TRACK_ORDER = new Map([
   ["Unique Signal Minus", 3],
 ]);
 
-type MohdSortMode = "sampleId" | "fileType";
+type MohdSortMode = "kitId" | "fileType";
 
 function getOmeRank(ome: string) {
   return OME_ORDER.get(ome) ?? Number.MAX_SAFE_INTEGER;
@@ -42,47 +42,65 @@ function getTrackRank(row: MohdRowInfo) {
   return Number.MAX_SAFE_INTEGER;
 }
 
+function compareByKitId(a: MohdRowInfo, b: MohdRowInfo) {
+  const aKitId = a.kitId?.trim();
+  const bKitId = b.kitId?.trim();
+
+  if (aKitId && bKitId) {
+    return aKitId.localeCompare(bKitId);
+  } else if (aKitId || bKitId) {
+    return aKitId ? -1 : 1;
+  }
+
+  return 0;
+}
+
+function compareBySampleId(a: MohdRowInfo, b: MohdRowInfo) {
+  return a.sampleId.localeCompare(b.sampleId);
+}
+
 function compareKnownRows(
   a: MohdRowInfo,
   b: MohdRowInfo,
   mode: MohdSortMode,
   fallbackIndexDiff: number,
 ) {
-  if (mode === "sampleId") {
-    const bySampleId = a.sampleId.localeCompare(b.sampleId);
+  const byKitId = compareByKitId(a, b);
+  const byOme = getOmeRank(a.ome) - getOmeRank(b.ome);
+  const byTrackType = getTrackRank(a) - getTrackRank(b);
+  const bySampleId = compareBySampleId(a, b);
 
-    if (bySampleId !== 0) {
-      return bySampleId;
+  if (mode === "kitId") {
+    if (byKitId !== 0) {
+      return byKitId;
     }
-
-    const byOme = getOmeRank(a.ome) - getOmeRank(b.ome);
 
     if (byOme !== 0) {
       return byOme;
     }
 
-    const byTrackType = getTrackRank(a) - getTrackRank(b);
-
     if (byTrackType !== 0) {
       return byTrackType;
+    }
+
+    if (bySampleId !== 0) {
+      return bySampleId;
     }
 
     return fallbackIndexDiff;
   }
 
-  const byOme = getOmeRank(a.ome) - getOmeRank(b.ome);
-
   if (byOme !== 0) {
     return byOme;
   }
-
-  const byTrackType = getTrackRank(a) - getTrackRank(b);
 
   if (byTrackType !== 0) {
     return byTrackType;
   }
 
-  const bySampleId = a.sampleId.localeCompare(b.sampleId);
+  if (byKitId !== 0) {
+    return byKitId;
+  }
 
   if (bySampleId !== 0) {
     return bySampleId;
@@ -164,8 +182,8 @@ export default function MohdSortControls({
       aria-label="Sort MOHD tracks"
       sx={{ minHeight: 44 }}
     >
-      <Button onClick={() => sortMohdTracks("sampleId")}>
-        Sort by Sample ID
+      <Button onClick={() => sortMohdTracks("kitId")}>
+        Sort by Kit ID
       </Button>
       <Button onClick={() => sortMohdTracks("fileType")}>
         Sort by File Type
