@@ -1,6 +1,7 @@
 {
   "API": {
     "MOHDAPI": "https://mohd-api-251345758618.us-east4.run.app/graphql",
-    "BULK_DOWNLOAD": "https://tar.mohdconsortium.org/"
+    "BULK_DOWNLOAD": "https://tar.mohdconsortium.org/",
+    "SCREEN_API": "https://screen.api.wenglab.org/graphql"
   }
 }

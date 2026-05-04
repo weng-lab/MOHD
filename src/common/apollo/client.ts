@@ -1,5 +1,9 @@
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
-import { registerApolloClient } from "@apollo/experimental-nextjs-app-support";
+import { HttpLink } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  registerApolloClient,
+} from "@apollo/client-integration-nextjs";
 import Config from "../config.json";
 /**
  * @returns an ApolloClient instance scoped for the current request
@@ -7,7 +11,6 @@ import Config from "../config.json";
 
 export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
   return new ApolloClient({
-    ssrMode: true,
     cache: new InMemoryCache(),
     link: new HttpLink({
       uri: Config.API.MOHDAPI,

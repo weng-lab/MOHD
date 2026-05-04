@@ -4,6 +4,7 @@ import { GridColDef, GridGroupingColDefOverride } from "@mui/x-data-grid-premium
 import { useMemo } from "react";
 import Image from "next/image";
 import DownloadIcon from '@mui/icons-material/Download';
+import type { ErrorLike } from "@apollo/client";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 import { formatBytes } from "@/common/downloads";
 import { DownloadToolbar, DownloadToolbarProvider } from "./OmeDownloadToolbar";
@@ -21,7 +22,7 @@ type DownloadRow<T> = T & Omit<DownloadFile, "__typename">;
 type DownloadTableProps<T extends BaseSample> = {
     rows: T[];
     loading?: boolean;
-    error?: boolean;
+    error?: ErrorLike;
     buildRows: (rows: T[]) => DownloadRow<T>[];
     label: string;
     ome: string;
@@ -35,7 +36,7 @@ type DownloadTableProps<T extends BaseSample> = {
 export function OmeDownloadTable<T extends BaseSample>({
     rows,
     loading = false,
-    error = false,
+    error,
     buildRows,
     label,
     ome,

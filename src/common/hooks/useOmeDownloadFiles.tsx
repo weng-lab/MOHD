@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { gql } from "@/common/types/generated/gql";
 import { OmeEnum } from "../types/generated/graphql";
 
