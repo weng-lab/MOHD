@@ -3,35 +3,79 @@ import { alpha, Box, Stack } from "@mui/system";
 import { Site, Status, Sex, Protocol } from "../../types/globalTypes";
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 import BulkDownloadModal from "./BulkDownloadModal";
+import { buildBulkFilePath } from "@/common/downloads";
+import { OmeEnum } from "@/common/types/generated/graphql";
+import { usePathname } from "next/navigation";
 
 type OmeDownloadsControlsProps = {
     site: Site[];
     status: Status[];
     sex: Sex[];
+    //lets give either description or descriptions a better name this is confusing
     description: string[];
     descriptions: string[];
     protocol?: Protocol[];
-    setSite: React.Dispatch<React.SetStateAction<Site[]>>;
-    setStatus: React.Dispatch<React.SetStateAction<Status[]>>;
-    setSex: React.Dispatch<React.SetStateAction<Sex[]>>;
-    setDescription: React.Dispatch<React.SetStateAction<string[]>>;
-    setProtocol?: React.Dispatch<React.SetStateAction<Protocol[]>>;
+    setSite: Dispatch<SetStateAction<Site[]>>;
+    setStatus: Dispatch<SetStateAction<Status[]>>;
+    setSex: Dispatch<SetStateAction<Sex[]>>;
+    setDescription: Dispatch<SetStateAction<string[]>>;
+    setProtocol?: Dispatch<SetStateAction<Protocol[]>>;
     files?: DownloadFile[];
+    filteredSampleIds?: Set<string>;
 };
 
 const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
     const [open, setOpen] = useState(false);
+    const pathname = usePathname();
+    const ome = pathname.includes("ATAC") ? OmeEnum.AtacSeq : pathname.includes("RNA") ? OmeEnum.RnaSeq : pathname.split("/")[2] as OmeEnum;
 
-    const compressedFiles = useMemo(() => {
-        return props.files?.filter((file) => file.file_type === "Compressed Tar File") ?? [];
-    }, [props.files]);
+    const openAccessFiles = useMemo(() => {
+        return props.files?.filter(
+            (file) =>
+                file.open_access &&
+                file.file_type !== "Compressed Tar File" &&
+                (!props.filteredSampleIds || props.filteredSampleIds.has(file.sample_id))
+        ) ?? [];
+    }, [props.files, props.filteredSampleIds]);
 
-    const allDatasetsCompressedFile = useMemo(() => {
-        return compressedFiles?.find((file) => file.filename.split("_")[1] === "all");
-    }, [compressedFiles]);
+    const filePaths = useMemo(() => {
+        return openAccessFiles.map((file) => buildBulkFilePath(file.sample_id, file.filename, ome));
+    }, [openAccessFiles, ome]);
+
+    const totalSize = useMemo(() => {
+        return openAccessFiles.reduce((sum, file) => sum + (Number(file.size) || 0), 0);
+    }, [openAccessFiles]);
+
+    // Build a human-readable summary of active (non-default) filters for the modal
+    const filterSummary = useMemo(() => {
+        const parts: string[] = [];
+
+        const allSites: Site[] = ["CCH", "CKD", "EXP", "MOM", "UIC"];
+        const allStatuses: Status[] = ["case", "control", "unknown"];
+        const allSexes: Sex[] = ["male", "female"];
+        const allProtocols: Protocol[] = ["Buffy Coat", "OPC", "CPT"];
+
+        if (props.site.length > 0 && props.site.length < allSites.length) {
+            parts.push(props.site.join(", "));
+        }
+        if (props.status.length > 0 && props.status.length < allStatuses.length) {
+            parts.push(props.status.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(", "));
+        }
+        if (props.sex.length > 0 && props.sex.length < allSexes.length) {
+            parts.push(props.sex.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(", "));
+        }
+        if (props.protocol && props.protocol.length > 0 && props.protocol.length < allProtocols.length) {
+            parts.push(props.protocol.join(", "));
+        }
+        if (props.description.length > 0 && props.description.length < props.descriptions.length) {
+            parts.push(props.description.join(", "));
+        }
+
+        return parts.length > 0 ? parts.join(" · ") : null;
+    }, [props.site, props.status, props.sex, props.protocol, props.description, props.descriptions]);
 
     const resetFilters = () => {
         props.setSite(["CCH", "CKD", "EXP", "MOM", "UIC"]);
@@ -69,30 +113,30 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                 <Stack direction={"row"} spacing={2} flexWrap={"wrap"}>
                     <Tooltip
                         title={
-                            compressedFiles?.length === 0
-                                ? "No open-access datasets available to download"
-                                : "Download all open-access files for all datasets"
+                            openAccessFiles.length === 0
+                                ? "No open-access files match your current filters"
+                                : "Download all open-access files matching your filters"
                         }
                         placement="left"
                         arrow
                     >
                         <span>
                             <Button
-                                variant="outlined"
+                                variant="contained"
                                 color="primary"
                                 startIcon={<DownloadIcon />}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setOpen(true);
                                 }}
-                                disabled={compressedFiles?.length === 0}
+                                disabled={openAccessFiles.length === 0}
                             >
                                 Bulk Download
                             </Button>
                         </span>
                     </Tooltip>
                     <Button
-                        variant="outlined"
+                        variant="text"
                         color="primary"
                         startIcon={<ClearIcon />}
                         onClick={() => { resetFilters() }}
@@ -118,7 +162,7 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                                 props.setSite(value as Site[]);
                             }
                         }}
-                        aria-label="View By"
+                        aria-label="Filter by site"
                         size="small"
                     >
                         <ToggleButton sx={{ textTransform: "none" }} value="CCH">
@@ -148,7 +192,7 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                                 props.setStatus(value as Status[]);
                             }
                         }}
-                        aria-label="View By"
+                        aria-label="Filter by status"
                         size="small"
                     >
                         <ToggleButton sx={{ textTransform: "none" }} value="case">
@@ -172,7 +216,7 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                                 props.setSex(value as Sex[]);
                             }
                         }}
-                        aria-label="View By"
+                        aria-label="Filter by sex"
                         size="small"
                     >
                         <ToggleButton sx={{ textTransform: "none" }} value="male">
@@ -194,7 +238,7 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                                     props.setProtocol(value as Protocol[]);
                                 }
                             }}
-                            aria-label="View By"
+                            aria-label="Filter by protocol"
                             size="small"
                         >
                             <ToggleButton sx={{ textTransform: "none" }} value="Buffy Coat">
@@ -223,19 +267,14 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
                             sx={{
                                 maxWidth: 600,
                                 minWidth: 250,
-                                height: "38.75px",
-                                "& .MuiAutocomplete-inputRoot": {
-                                    flexWrap: "nowrap",
-                                    overflow: "hidden",
-                                },
                                 "& .MuiChip-root": (theme) => ({
                                     backgroundColor: alpha(theme.palette.primary.main, 0.08),
                                     color: theme.palette.primary.main,
                                 }),
-                                "& .MuiChip-deleteIcon": () => ({
-                                    color: "white",
+                                "& .MuiChip-deleteIcon": (theme) => ({
+                                    color: alpha(theme.palette.primary.main, 0.5),
                                     "&:hover": {
-                                        color: "white",
+                                        color: theme.palette.primary.main,
                                     },
                                 }),
                             }}
@@ -246,7 +285,10 @@ const OmeDownloadsControls = (props: OmeDownloadsControlsProps) => {
             <BulkDownloadModal
                 open={open}
                 onClose={() => setOpen(false)}
-                allDatasetsCompressedFile={allDatasetsCompressedFile}
+                filePaths={filePaths}
+                totalSize={totalSize}
+                filterSummary={filterSummary}
+                ome={ome}
             />
         </Box>
     );

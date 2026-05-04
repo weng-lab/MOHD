@@ -15,8 +15,14 @@ type FilterFields = {
 export type OmeDownloadLayoutProps<T extends { sample_id: string }> = {
   rows: T[];
   descriptions?: string[];
-  downloadFiles?: DownloadFile[];
+  downloadFiles: DownloadFile[];
+  /**
+   * This also feels unnecessary, can't we just check the existance of `.protocol`?
+   */
   includeProtocolFilter?: boolean;
+  /**
+   * This feels unnecessary to have right now, since all of the rows take the same shape, just sometimes protocol doesn't exist. We can just check for existance of `.protocol`. Also name confuses me, it's getting values not fields
+   */
   getFilterFields: (row: T) => FilterFields;
   renderTable: (rows: T[], files: DownloadFile[]) => ReactNode;
 };
@@ -57,12 +63,18 @@ const OmeDownloadLayout = <T extends { sample_id: string }>({
   }, [filteredRows]);
 
   const filteredDownloadFiles = useMemo(() => {
-    return (downloadFiles ?? []).filter((file) => {
+    return downloadFiles.filter((file) => {
       //dont filter out anvil files or compressed files
       if (!file.open_access || file.file_type === "Compressed Tar File") return true;
       return description.includes(file.file_type);
     });
   }, [downloadFiles, description]);
+
+  /**
+   * Why do we have separate rows and downloadFiles?
+   * description filter applied against downloadFiles while rest are on rows due to them being separate at this point. Combined would be simpler filter
+   * Wait so we're filtering the rows and then creating a set of filtered IDs to check against downloadfiles?
+   */
 
   return (
     <Stack direction="column" spacing={2}>

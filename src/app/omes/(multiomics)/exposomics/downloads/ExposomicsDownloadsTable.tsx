@@ -5,7 +5,7 @@ import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 type ExposomicsMetadata =
     NonNullable<UseExposomicsDataReturn["data"]>;
 
-type DownloadRow = ExposomicsMetadata[number] & DownloadFile;
+type DownloadRow = ExposomicsMetadata[number] & Omit<DownloadFile, "__typename">;
 
 type ExposomicsDownloadsProps = {
     rows: ExposomicsMetadata;
@@ -29,7 +29,8 @@ const ExposomicsDownloadsTable = ({
         return rows.flatMap((sample) =>
             files
                 .filter((file) => file.sample_id === sample.sample_id)
-                .map((file) => ({
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .map(({ __typename, ...file }) => ({
                     ...sample,
                     ...file,
                 }))

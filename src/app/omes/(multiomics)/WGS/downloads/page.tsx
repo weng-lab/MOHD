@@ -4,11 +4,12 @@ import { Sex, Site, Status } from "@/common/types/globalTypes";
 import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
 import { useWGSData } from "@/common/hooks/omeHooks/useWGSData";
 import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
+import { OmeEnum } from "@/common/types/generated/graphql";
 
 const WGSDownloads = () => {
 
     const WGSData = useWGSData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles("WGS");
+    const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.Wgs);
 
     const rows = WGSData.data ?? [];
 

@@ -4,7 +4,7 @@ import { GridColDef, GridGroupingColDefOverride } from "@mui/x-data-grid-premium
 import { useMemo } from "react";
 import Image from "next/image";
 import DownloadIcon from '@mui/icons-material/Download';
-import { ApolloError } from "@apollo/client";
+import type { ErrorLike } from "@apollo/client";
 import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 import { formatBytes } from "@/common/downloads";
 import { DownloadToolbar, DownloadToolbarProvider } from "./OmeDownloadToolbar";
@@ -17,21 +17,25 @@ type BaseSample = {
     protocol?: string;
 };
 
-type DownloadRow<T> = T & DownloadFile;
+type DownloadRow<T> = T & Omit<DownloadFile, "__typename">;
 
 type DownloadTableProps<T extends BaseSample> = {
     rows: T[];
     loading?: boolean;
-    error?: ApolloError;
+    error?: ErrorLike;
     buildRows: (rows: T[]) => DownloadRow<T>[];
     label: string;
     ome: string;
     compressedFiles?: DownloadFile[];
 };
 
+/**
+ * Having both a `rows` and `buildRows` is unintuitive
+ */
+
 export function OmeDownloadTable<T extends BaseSample>({
     rows,
-    loading,
+    loading = false,
     error,
     buildRows,
     label,
@@ -56,6 +60,9 @@ export function OmeDownloadTable<T extends BaseSample>({
         display: "flex",
     } as const;
 
+    /**
+     * This is here because we are removing the compressed tar files from the rows, and then reconstructing them in the grouping row
+     */
     const compressedMap = useMemo(() => {
         return new Map(
             compressedFiles.map((f) => [f.sample_id, f])
@@ -190,7 +197,7 @@ export function OmeDownloadTable<T extends BaseSample>({
                     ) as DownloadRow<T>;
 
                     const compressed = compressedMap.get(firstChild.sample_id);
-                    return compressed ? formatBytes(compressed.size) : null;
+                    return compressed ? formatBytes(Number(compressed.size)) : null;
                 }
 
                 const compressed = compressedMap.get(params.row.sample_id);

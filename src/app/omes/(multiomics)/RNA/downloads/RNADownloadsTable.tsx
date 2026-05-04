@@ -6,7 +6,7 @@ import { useMemo } from "react";
 type RNAMetadata =
     NonNullable<UseRNADataReturn["data"]>;
 
-type DownloadRow = RNAMetadata[number] & DownloadFile;
+type DownloadRow = RNAMetadata[number] & Omit<DownloadFile, "__typename">;
 
 type RNADownloadsProps = {
     rows: RNAMetadata;
@@ -29,7 +29,8 @@ const RNADownloadsTable = ({
         return rows.flatMap((sample) =>
             files
                 .filter((file) => file.sample_id === sample.sample_id)
-                .map((file) => ({
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .map(({ __typename, ...file }) => ({
                     ...sample,
                     ...file,
                 }))

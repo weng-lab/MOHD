@@ -5,7 +5,7 @@ import { DownloadFile } from "@/common/hooks/useOmeDownloadFiles";
 type MetabolomicsMetadata =
     NonNullable<UseMetabolomicsDataReturn["data"]>;
 
-type DownloadRow = MetabolomicsMetadata[number] & DownloadFile;
+type DownloadRow = MetabolomicsMetadata[number] & Omit<DownloadFile, "__typename">;
 
 type MetabolomicsDownloadsProps = {
     rows: MetabolomicsMetadata;
@@ -29,7 +29,8 @@ const MetabolomicsDownloadsTable = ({
         return rows.flatMap((sample) =>
             files
                 .filter((file) => file.sample_id === sample.sample_id)
-                .map((file) => ({
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .map(({ __typename, ...file }) => ({
                     ...sample,
                     ...file,
                 }))

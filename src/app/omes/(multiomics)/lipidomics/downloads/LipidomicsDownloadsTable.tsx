@@ -12,7 +12,7 @@ type LipidomicsDownloadsProps = {
     loadingFiles: boolean;
 }
 
-type DownloadRow = LipidomicsMetadata[number] & DownloadFile;
+type DownloadRow = LipidomicsMetadata[number] & Omit<DownloadFile, "__typename">;
 
 const LipidomicsDownloadsTable = ({
     rows,
@@ -29,7 +29,8 @@ const LipidomicsDownloadsTable = ({
         return rows.flatMap((sample) =>
             files
                 .filter((file) => file.sample_id === sample.sample_id)
-                .map((file) => ({
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .map(({ __typename, ...file }) => ({
                     ...sample,
                     ...file,
                 }))
