@@ -42,7 +42,7 @@ const ProteomicsDownloadsTable = ({
             label="Download Proteomics Data"
             rows={rows}
             loading={loading || loadingFiles}
-            error={!!error}
+            error={error}
             buildRows={buildProteomicsRows}
             ome="Proteomics"
         />

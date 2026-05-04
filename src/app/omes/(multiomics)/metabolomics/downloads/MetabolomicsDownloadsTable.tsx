@@ -42,7 +42,7 @@ const MetabolomicsDownloadsTable = ({
             label="Download Metabolomics Data"
             rows={rows}
             loading={loading || loadingFiles}
-            error={!!error}
+            error={error}
             buildRows={buildMetabolomicsRows}
             ome="Metabolomics"
         />

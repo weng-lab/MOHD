@@ -42,7 +42,7 @@ const WGSDownloadsTable = ({
             label="Download WGS Data"
             rows={rows}
             loading={loading || loadingFiles}
-            error={!!error}
+            error={error}
             buildRows={buildWGSRows}
             ome="WGS"
         />

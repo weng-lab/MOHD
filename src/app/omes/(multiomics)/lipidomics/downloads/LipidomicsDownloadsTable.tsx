@@ -42,7 +42,7 @@ const LipidomicsDownloadsTable = ({
             label="Download Lipidomics Data"
             rows={rows}
             loading={loading || loadingFiles}
-            error={!!error}
+            error={error}
             buildRows={buildLipidomicsRows}
             ome="Lipidomics"
         />

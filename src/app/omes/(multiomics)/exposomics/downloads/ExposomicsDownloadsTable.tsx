@@ -42,7 +42,7 @@ const ExposomicsDownloadsTable = ({
             label="Download Exposomics Data"
             rows={rows}
             loading={loading || loadingFiles}
-            error={!!error}
+            error={error}
             buildRows={buildExposomicsRows}
             ome="Exposomics"
         />
