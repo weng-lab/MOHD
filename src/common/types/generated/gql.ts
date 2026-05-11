@@ -23,6 +23,7 @@ type Documents = {
     "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": typeof types.FetchWgbsMetadataDocument,
     "\nquery fetchWGSMetadata {\n  wgs_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n  }\n}\n ": typeof types.FetchWgsMetadataDocument,
     "\n    query FetchDownloadFiles($ome: OmeEnum!) {\n        fetch_download_files(ome: $ome) {\n            filename\n            file_type\n            size\n            file_ome\n            sample_id\n            open_access\n        }\n    }\n": typeof types.FetchDownloadFilesDocument,
+    "\n  query fetch_phenotypical_data($variable_name: [String!]!) {\n    phenotypical_data(variable_name: $variable_name) {\n      participant_id\n      participant_profile_dss\n      participant_profile_dss_internal_id\n      value_numeric\n      value_text\n      variable_name\n      variable_status\n      assigned_category\n    }\n  }\n": typeof types.Fetch_Phenotypical_DataDocument,
     "\n  query fetch_phenotypical_variable {\n    phenotypical_variables {\n      variable_category\n      variable_name\n    }\n  }\n": typeof types.Fetch_Phenotypical_VariableDocument,
 };
 const documents: Documents = {
@@ -35,6 +36,7 @@ const documents: Documents = {
     "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": types.FetchWgbsMetadataDocument,
     "\nquery fetchWGSMetadata {\n  wgs_metadata {\n    sample_id\n    sex\n    site\n    kit\n    status\n  }\n}\n ": types.FetchWgsMetadataDocument,
     "\n    query FetchDownloadFiles($ome: OmeEnum!) {\n        fetch_download_files(ome: $ome) {\n            filename\n            file_type\n            size\n            file_ome\n            sample_id\n            open_access\n        }\n    }\n": types.FetchDownloadFilesDocument,
+    "\n  query fetch_phenotypical_data($variable_name: [String!]!) {\n    phenotypical_data(variable_name: $variable_name) {\n      participant_id\n      participant_profile_dss\n      participant_profile_dss_internal_id\n      value_numeric\n      value_text\n      variable_name\n      variable_status\n      assigned_category\n    }\n  }\n": types.Fetch_Phenotypical_DataDocument,
     "\n  query fetch_phenotypical_variable {\n    phenotypical_variables {\n      variable_category\n      variable_name\n    }\n  }\n": types.Fetch_Phenotypical_VariableDocument,
 };
 
@@ -88,6 +90,10 @@ export function gql(source: "\nquery fetchWGSMetadata {\n  wgs_metadata {\n    s
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n    query FetchDownloadFiles($ome: OmeEnum!) {\n        fetch_download_files(ome: $ome) {\n            filename\n            file_type\n            size\n            file_ome\n            sample_id\n            open_access\n        }\n    }\n"): (typeof documents)["\n    query FetchDownloadFiles($ome: OmeEnum!) {\n        fetch_download_files(ome: $ome) {\n            filename\n            file_type\n            size\n            file_ome\n            sample_id\n            open_access\n        }\n    }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query fetch_phenotypical_data($variable_name: [String!]!) {\n    phenotypical_data(variable_name: $variable_name) {\n      participant_id\n      participant_profile_dss\n      participant_profile_dss_internal_id\n      value_numeric\n      value_text\n      variable_name\n      variable_status\n      assigned_category\n    }\n  }\n"): (typeof documents)["\n  query fetch_phenotypical_data($variable_name: [String!]!) {\n    phenotypical_data(variable_name: $variable_name) {\n      participant_id\n      participant_profile_dss\n      participant_profile_dss_internal_id\n      value_numeric\n      value_text\n      variable_name\n      variable_status\n      assigned_category\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
