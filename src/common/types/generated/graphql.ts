@@ -94,6 +94,25 @@ export enum OmeEnum {
   Wgs = 'WGS'
 }
 
+export type PhenotypicalData = {
+  __typename?: 'PhenotypicalData';
+  assigned_category?: Maybe<Scalars['String']['output']>;
+  participant_id: Scalars['String']['output'];
+  participant_profile_dss: Scalars['String']['output'];
+  participant_profile_dss_internal_id?: Maybe<Scalars['Int']['output']>;
+  value_numeric?: Maybe<Scalars['Float']['output']>;
+  value_text?: Maybe<Scalars['String']['output']>;
+  variable_category?: Maybe<Scalars['String']['output']>;
+  variable_name: Scalars['String']['output'];
+  variable_status?: Maybe<Scalars['String']['output']>;
+};
+
+export type PhenotypicalDataVariables = {
+  __typename?: 'PhenotypicalDataVariables';
+  variable_category?: Maybe<Scalars['String']['output']>;
+  variable_name: Scalars['String']['output'];
+};
+
 export type ProteomicsSampleMetadata = SampleMetadata & {
   __typename?: 'ProteomicsSampleMetadata';
   kit: Scalars['String']['output'];
@@ -111,6 +130,8 @@ export type Query = {
   fetch_download_files?: Maybe<Array<Maybe<OmeDownloadFiles>>>;
   lipidomics_metadata: Array<LipidomicsSampleMetadata>;
   metabolomics_metadata: Array<MetabolomicsSampleMetadata>;
+  phenotypical_data: Array<PhenotypicalData>;
+  phenotypical_variables: Array<PhenotypicalDataVariables>;
   proteomics_metadata: Array<ProteomicsSampleMetadata>;
   rna_metadata: Array<RnaSampleMetadata>;
   rna_tpm: Array<RnaGene>;
@@ -127,6 +148,11 @@ export type QueryAtac_ZscoreArgs = {
 export type QueryFetch_Download_FilesArgs = {
   ome: OmeEnum;
   sample_id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type QueryPhenotypical_DataArgs = {
+  variable_name: Array<Scalars['String']['input']>;
 };
 
 
@@ -233,6 +259,11 @@ export type FetchDownloadFilesQueryVariables = Exact<{
 
 export type FetchDownloadFilesQuery = { __typename?: 'Query', fetch_download_files?: Array<{ __typename?: 'OmeDownloadFiles', filename: string, file_type: string, size: string, file_ome: OmeEnum, sample_id: string, open_access?: boolean | null } | null> | null };
 
+export type Fetch_Phenotypical_VariableQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type Fetch_Phenotypical_VariableQuery = { __typename?: 'Query', phenotypical_variables: Array<{ __typename?: 'PhenotypicalDataVariables', variable_category?: string | null, variable_name: string }> };
+
 
 export const FetchAtacMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchATACMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"atac_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}},{"kind":"Field","name":{"kind":"Name","value":"opc_id"}}]}}]}}]} as unknown as DocumentNode<FetchAtacMetadataQuery, FetchAtacMetadataQueryVariables>;
 export const FetchExposomicsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchExposomicsMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exposomics_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchExposomicsMetadataQuery, FetchExposomicsMetadataQueryVariables>;
@@ -243,3 +274,4 @@ export const FetchRnaMetadataDocument = {"kind":"Document","definitions":[{"kind
 export const FetchWgbsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGBSMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgbs_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchWgbsMetadataQuery, FetchWgbsMetadataQueryVariables>;
 export const FetchWgsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGSMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgs_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchWgsMetadataQuery, FetchWgsMetadataQueryVariables>;
 export const FetchDownloadFilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FetchDownloadFiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ome"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"OmeEnum"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fetch_download_files"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ome"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ome"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"file_type"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"file_ome"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"open_access"}}]}}]}}]} as unknown as DocumentNode<FetchDownloadFilesQuery, FetchDownloadFilesQueryVariables>;
+export const Fetch_Phenotypical_VariableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetch_phenotypical_variable"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"phenotypical_variables"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"variable_category"}},{"kind":"Field","name":{"kind":"Name","value":"variable_name"}}]}}]}}]} as unknown as DocumentNode<Fetch_Phenotypical_VariableQuery, Fetch_Phenotypical_VariableQueryVariables>;
