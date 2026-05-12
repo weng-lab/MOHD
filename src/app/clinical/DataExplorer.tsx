@@ -8,7 +8,7 @@ import { BarPlot, type BarData } from "@weng-lab/visualization";
 import { usePhenotypicalVariables } from "@/common/hooks/usePhenotypicalVariables";
 import { usePhenotypicalData } from "@/common/hooks/usePhenotypicalData";
 
-const COLORS = ["#b46ef5", "#4477dd", "#52a87e", "#44226a", "#e67e22", "#e74c3c"];
+const COLORS = ["#d502f9", "#2196f4", "#25a69a", "#7b1fa3", "#e67e22", "#e74c3c"];
 
 function formatVariableName(name: string): string {
   return name
@@ -52,6 +52,7 @@ export default function DataExplorer() {
   const effectiveVar1 = var1Name || variables?.[0]?.variable_name || "";
 
   const selectedVar = variables?.find((v) => v.variable_name === effectiveVar1);
+  const selectedVar2 = var2Id !== "none" ? variables?.find((v) => v.variable_name === var2Id) : null;
   const isCategorical = selectedVar?.variable_category === "Categorical";
 
   const { data: rawData, loading: dataLoading } = usePhenotypicalData(
@@ -79,7 +80,7 @@ export default function DataExplorer() {
   }, [rawData]);
 
   return (
-    <Box sx={{ px: { xs: 3, sm: 4, md: 8, lg: 10 }, py: 4 }}>
+    <Box sx={{ px: { xs: 3, sm: 4, md: 8, lg: 10 }, py: 4, width: "100%", overflow: "hidden" }}>
       <Typography variant="h5" fontWeight={600} mb={3}>
         [Data explorer]
       </Typography>
@@ -97,42 +98,51 @@ export default function DataExplorer() {
         <Typography sx={{ color: "text.secondary" }}>SELECT</Typography>
 
         <Stack direction={{ xs: "column", md: "row" }} spacing={2} mt={2}>
-          <FormControl sx={{ flex: 1 }} size="small" disabled={varsLoading}>
-            <InputLabel>Variable 1</InputLabel>
-            <Select
-              label="Variable 1"
-              value={effectiveVar1}
-              onChange={(e: SelectChangeEvent) => setVar1Name(e.target.value)}
-              MenuProps={{ disableScrollLock: true }}
-              endAdornment={varsLoading ? <CircularProgress size={16} sx={{ mr: 2 }} /> : null}
-              renderValue={(v) => (v ? formatVariableName(v) : "")}
-            >
-              {groupedItems(variables ?? [])}
-            </Select>
-          </FormControl>
+          <Stack sx={{ flex: 1 }} spacing={1}>
+            <FormControl size="small" disabled={varsLoading}>
+              <InputLabel>Variable 1</InputLabel>
+              <Select
+                label="Variable 1"
+                value={effectiveVar1}
+                onChange={(e: SelectChangeEvent) => setVar1Name(e.target.value)}
+                MenuProps={{ disableScrollLock: true }}
+                endAdornment={varsLoading ? <CircularProgress size={16} sx={{ mr: 2 }} /> : null}
+                renderValue={(v) => (v ? formatVariableName(v) : "")}
+              >
+                {groupedItems(variables ?? [])}
+              </Select>
+            </FormControl>
+            <Chip
+              label={selectedVar?.variable_category ?? "Categorical"}
+              variant="outlined"
+              size="small"
+              sx={{ alignSelf: "flex-start", borderColor: "primary.main", color: "primary.main" }}
+            />
+          </Stack>
 
-          <FormControl sx={{ flex: 1 }} size="small" disabled={varsLoading}>
-            <InputLabel>Variable 2 (optional)</InputLabel>
-            <Select
-              label="Variable 2 (optional)"
-              value={var2Id}
-              onChange={(e: SelectChangeEvent) => setVar2Id(e.target.value)}
-              MenuProps={{ disableScrollLock: true }}
-              renderValue={(v) => (v === "none" ? "-none-" : v ? formatVariableName(v) : "")}
-            >
-              <MenuItem value="none">-none-</MenuItem>
-              {groupedItems(variables ?? [], effectiveVar1)}
-            </Select>
-          </FormControl>
-        </Stack>
-
-        <Stack direction="row" spacing={1} mt={2}>
-          <Chip
-            label={selectedVar?.variable_category ?? "Categorical"}
-            variant="outlined"
-            size="small"
-            sx={{ borderColor: "primary.main", color: "primary.main" }}
-          />
+          <Stack sx={{ flex: 1 }} spacing={1}>
+            <FormControl size="small" disabled={varsLoading}>
+              <InputLabel>Variable 2 (optional)</InputLabel>
+              <Select
+                label="Variable 2 (optional)"
+                value={var2Id}
+                onChange={(e: SelectChangeEvent) => setVar2Id(e.target.value)}
+                MenuProps={{ disableScrollLock: true }}
+                renderValue={(v) => (v === "none" ? "-none-" : v ? formatVariableName(v) : "")}
+              >
+                <MenuItem value="none">-none-</MenuItem>
+                {groupedItems(variables ?? [], effectiveVar1)}
+              </Select>
+            </FormControl>
+            {selectedVar2 && (
+              <Chip
+                label={selectedVar2.variable_category ?? "Categorical"}
+                variant="outlined"
+                size="small"
+                sx={{ alignSelf: "flex-start", borderColor: "primary.main", color: "primary.main" }}
+              />
+            )}
+          </Stack>
         </Stack>
       </Box>
 
@@ -149,7 +159,7 @@ export default function DataExplorer() {
           [{effectiveVar1 ? formatVariableName(effectiveVar1) : "Select a variable"}]
         </Typography>
 
-        <Box sx={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box sx={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
           {dataLoading ? (
             <CircularProgress />
           ) : isCategorical && barData.length > 0 ? (
