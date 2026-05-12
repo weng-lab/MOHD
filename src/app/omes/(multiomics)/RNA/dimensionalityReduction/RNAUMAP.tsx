@@ -2,7 +2,7 @@ import { RNAMetadata, SharedRNADimenionalityProps } from "./page";
 import { Point, ScatterPlot, ChartProps } from "@weng-lab/visualization";
 import { useMemo, useState } from "react";
 import { sex_color_map, status_color_map, site_color_map } from "@/common/colors";
-import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
+import { Typography, Stack, SelectChangeEvent, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
 import UMAPLegend from "@/common/components/UMAPLegend";
@@ -30,7 +30,6 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
 }: RNADimensionalityUmapProps<S, Z>) => {
     const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site">("site");
     const theme = useTheme();
-    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
     const { loading, data } = RNAData;
 
@@ -136,7 +135,6 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
                                 onSelectionChange={handlePointsSelected}
                                 onPointClicked={handlePointSelected}
                                 controlsHighlight={theme.palette.primary.main}
-                                //controlsPosition={isXs ? "bottom" : "left"}
                                 pointData={scatterData}
                                 selectable
                                 loading={loading}
