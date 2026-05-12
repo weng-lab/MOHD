@@ -1,14 +1,12 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Box, Chip, CircularProgress, FormControl, InputLabel, ListSubheader,
   MenuItem, Select, SelectChangeEvent, Stack, Typography,
 } from "@mui/material";
-import { BarPlot, type BarData } from "@weng-lab/visualization";
 import { usePhenotypicalVariables } from "@/common/hooks/usePhenotypicalVariables";
 import { usePhenotypicalData } from "@/common/hooks/usePhenotypicalData";
-
-const COLORS = ["#d502f9", "#2196f4", "#25a69a", "#7b1fa3", "#e67e22", "#e74c3c"];
+import PlotSelector from "./charts/PlotSelector";
 
 function formatVariableName(name: string): string {
   return name
@@ -53,31 +51,9 @@ export default function DataExplorer() {
 
   const selectedVar = variables?.find((v) => v.variable_name === effectiveVar1);
   const selectedVar2 = var2Id !== "none" ? variables?.find((v) => v.variable_name === var2Id) : null;
-  const isCategorical = selectedVar?.variable_category === "Categorical";
 
-  const { data: rawData, loading: dataLoading } = usePhenotypicalData(
-    [effectiveVar1],
-    !effectiveVar1
-  );
-
-  const barData: BarData<{ count: number }>[] = useMemo(() => {
-    if (!rawData) return [];
-    const counts = new Map<string, number>();
-    for (const p of rawData) {
-      const key = p.assigned_category ?? p.value_text ?? "Unknown";
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-    return Array.from(counts.entries())
-      .sort(([, a], [, b]) => b - a)
-      .map(([label, count], i) => ({
-        id: i.toString(),
-        value: count,
-        label: count.toString(),
-        category: label.replace("_", " "),
-        color: COLORS[i % COLORS.length],
-        metadata: { count },
-      }));
-  }, [rawData]);
+  const varNames = [effectiveVar1, var2Id !== "none" ? var2Id : null].filter(Boolean) as string[];
+  const { data: rawData, loading: dataLoading } = usePhenotypicalData(varNames, !effectiveVar1);
 
   return (
     <Box sx={{ px: { xs: 3, sm: 4, md: 8, lg: 10 }, py: 4, width: "100%", overflow: "hidden" }}>
@@ -91,12 +67,10 @@ export default function DataExplorer() {
           backgroundColor: "surface.light",
           borderRadius: 1,
           p: 2.5,
-          position: "relative",
           mb: 3,
         }}
       >
         <Typography sx={{ color: "text.secondary" }}>SELECT</Typography>
-
         <Stack direction={{ xs: "column", md: "row" }} spacing={2} mt={2}>
           <Stack sx={{ flex: 1 }} spacing={1}>
             <FormControl size="small" disabled={varsLoading}>
@@ -119,7 +93,6 @@ export default function DataExplorer() {
               sx={{ alignSelf: "flex-start", borderColor: "primary.main", color: "primary.main" }}
             />
           </Stack>
-
           <Stack sx={{ flex: 1 }} spacing={1}>
             <FormControl size="small" disabled={varsLoading}>
               <InputLabel>Variable 2 (optional)</InputLabel>
@@ -145,7 +118,6 @@ export default function DataExplorer() {
           </Stack>
         </Stack>
       </Box>
-
       <Box
         sx={{
           border: "1px solid",
@@ -153,32 +125,21 @@ export default function DataExplorer() {
           backgroundColor: "surface.light",
           borderRadius: 1,
           p: 3,
+          overflow: "hidden",
         }}
       >
         <Typography variant="subtitle1" fontWeight={500} textAlign="center" mb={2}>
           [{effectiveVar1 ? formatVariableName(effectiveVar1) : "Select a variable"}]
         </Typography>
-
-        <Box sx={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-          {dataLoading ? (
-            <CircularProgress />
-          ) : isCategorical && barData.length > 0 ? (
-            <Box sx={{ width: "100%", height: "100%" }}>
-              <BarPlot
-                data={barData}
-                topAxisLabel="Count"
-                downloadFileName={`${var1Name}_distribution`}
-                animation="slideRight"
-                animationBuffer={0.01}
-                barSpacing={5}
-                barSize={40}
-              />
-            </Box>
-          ) : !isCategorical && var1Name ? (
-            <Typography color="text.secondary">
-              Quantitative visualization coming soon
-            </Typography>
-          ) : null}
+        <Box sx={{ height: 400, overflow: "hidden" }}>
+          <PlotSelector
+            var1Name={effectiveVar1}
+            var2Name={var2Id}
+            var1Category={selectedVar?.variable_category ?? null}
+            var2Category={selectedVar2?.variable_category ?? null}
+            rawData={rawData ?? []}
+            loading={dataLoading}
+          />
         </Box>
       </Box>
     </Box>
