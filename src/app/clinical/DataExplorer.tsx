@@ -19,45 +19,38 @@ function formatVariableName(name: string): string {
     .join(" › ");
 }
 
-function GroupedMenuItems({
-  variables,
-  disabledName,
-}: {
-  variables: { variable_name: string; variable_category?: string | null }[];
-  disabledName?: string;
-}) {
-  return (
-    <>
-      {["Categorical", "Quantitative"].flatMap((category) => {
-        const group = variables.filter((v) => v.variable_category === category);
-        if (group.length === 0) return [];
-        return [
-          <ListSubheader key={category} sx={{ fontSize: 18, color: "black", fontWeight: 600 }}>
-            {category}
-          </ListSubheader>,
-          ...group.map((v) => (
-            <MenuItem
-              key={v.variable_name}
-              value={v.variable_name}
-              disabled={v.variable_name === disabledName}
-            >
-              {formatVariableName(v.variable_name)}
-            </MenuItem>
-          )),
-        ];
-      })}
-    </>
-  );
+function groupedItems(
+  variables: { variable_name: string; variable_category?: string | null }[],
+  disabledName?: string
+) {
+  return ["Categorical", "Quantitative"].flatMap((category) => {
+    const group = variables.filter((v) => v.variable_category === category);
+    if (group.length === 0) return [];
+    return [
+      <ListSubheader key={category} sx={{ fontSize: 18, color: "black", fontWeight: 600 }}>
+        {category}
+      </ListSubheader>,
+      ...group.map((v) => (
+        <MenuItem
+          key={v.variable_name}
+          value={v.variable_name}
+          disabled={v.variable_name === disabledName}
+        >
+          {formatVariableName(v.variable_name)}
+        </MenuItem>
+      )),
+    ];
+  });
 }
 
 export default function DataExplorer() {
   const { data: variables, loading: varsLoading } = usePhenotypicalVariables();
 
-  const firstVar = variables?.[0]?.variable_name ?? "";
   const [var1Name, setVar1Name] = useState("");
   const [var2Id, setVar2Id] = useState("none");
 
-  const effectiveVar1 = var1Name || firstVar;
+  const effectiveVar1 = var1Name || variables?.[0]?.variable_name || "";
+
   const selectedVar = variables?.find((v) => v.variable_name === effectiveVar1);
   const isCategorical = selectedVar?.variable_category === "Categorical";
 
@@ -73,13 +66,16 @@ export default function DataExplorer() {
       const key = p.assigned_category ?? p.value_text ?? "Unknown";
       counts.set(key, (counts.get(key) ?? 0) + 1);
     }
-    return Array.from(counts.entries()).map(([label, count], i) => ({
-      id: i.toString(),
-      value: count,
-      category: label,
-      color: COLORS[i % COLORS.length],
-      metadata: { count },
-    }));
+    return Array.from(counts.entries())
+      .sort(([, a], [, b]) => b - a)
+      .map(([label, count], i) => ({
+        id: i.toString(),
+        value: count,
+        label: count.toString(),
+        category: label.replace("_", " "),
+        color: COLORS[i % COLORS.length],
+        metadata: { count },
+      }));
   }, [rawData]);
 
   return (
@@ -87,7 +83,6 @@ export default function DataExplorer() {
       <Typography variant="h5" fontWeight={600} mb={3}>
         [Data explorer]
       </Typography>
-
       <Box
         sx={{
           border: "1px solid",
@@ -112,7 +107,7 @@ export default function DataExplorer() {
               endAdornment={varsLoading ? <CircularProgress size={16} sx={{ mr: 2 }} /> : null}
               renderValue={(v) => (v ? formatVariableName(v) : "")}
             >
-              <GroupedMenuItems variables={variables ?? []} />
+              {groupedItems(variables ?? [])}
             </Select>
           </FormControl>
 
@@ -126,7 +121,7 @@ export default function DataExplorer() {
               renderValue={(v) => (v === "none" ? "-none-" : v ? formatVariableName(v) : "")}
             >
               <MenuItem value="none">-none-</MenuItem>
-              <GroupedMenuItems variables={variables ?? []} disabledName={effectiveVar1} />
+              {groupedItems(variables ?? [], effectiveVar1)}
             </Select>
           </FormControl>
         </Stack>
@@ -162,14 +157,14 @@ export default function DataExplorer() {
               <BarPlot
                 data={barData}
                 topAxisLabel="Count"
-                downloadFileName={`${effectiveVar1}_distribution`}
+                downloadFileName={`${var1Name}_distribution`}
                 animation="slideRight"
                 animationBuffer={0.01}
-                fill
-                barSize={25}
+                barSpacing={5}
+                barSize={40}
               />
             </Box>
-          ) : !isCategorical && effectiveVar1 ? (
+          ) : !isCategorical && var1Name ? (
             <Typography color="text.secondary">
               Quantitative visualization coming soon
             </Typography>
