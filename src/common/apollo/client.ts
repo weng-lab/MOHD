@@ -15,7 +15,7 @@ export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
     link: new HttpLink({
       uri: Config.API.MOHDAPI,
       headers: {        
-        "api-key": process.env.MOHD_API_KEY!,
+         Authorization: "Bearer " + process.env.MOHD_API_KEY!,
       },
     }),
   });
