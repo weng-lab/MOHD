@@ -43,7 +43,7 @@ export default function PlotSelector({ var1Name, var2Name, var1Category, var2Cat
       return <CategoricalBarPlot rawData={rawData} var1Name={var1Name} />;
 
     case "quant-none":
-      return <QuantitativeHistogram />;
+      return <QuantitativeHistogram rawData={rawData} var1Name={var1Name} />;
 
     case "cat-cat":
       return <CategoricalCategoricalChart />;
