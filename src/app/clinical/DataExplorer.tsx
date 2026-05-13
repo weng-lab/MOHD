@@ -129,7 +129,11 @@ export default function DataExplorer() {
         }}
       >
         <Typography variant="subtitle1" fontWeight={500} textAlign="center" mb={2}>
-          [{effectiveVar1 ? formatVariableName(effectiveVar1) : "Select a variable"}]
+          {effectiveVar1 && var2Id !== "none"
+            ? `[${formatVariableName(effectiveVar1)} vs ${formatVariableName(var2Id)}]`
+            : effectiveVar1
+            ? `[${formatVariableName(effectiveVar1)}]`
+            : "Select a variable"}
         </Typography>
         <Box sx={{ height: 400, overflow: "hidden" }}>
           <PlotSelector

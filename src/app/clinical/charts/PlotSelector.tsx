@@ -49,7 +49,7 @@ export default function PlotSelector({ var1Name, var2Name, var1Category, var2Cat
       return <CategoricalCategoricalChart />;
 
     case "quant-quant":
-      return <QuantitativeQuantitativeChart />;
+      return <QuantitativeQuantitativeChart rawData={rawData} var1Name={var1Name} var2Name={var2Name} />;
 
     case "cat-quant":
       return <CategoricalQuantitativePlot />;
