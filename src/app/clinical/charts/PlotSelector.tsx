@@ -4,7 +4,7 @@ import CategoricalBarPlot from "./CategoricalBarPlot";
 import CategoricalCategoricalChart from "./CategoricalCategoricalChart";
 import CategoricalQuantitativePlot from "./CategoricalQuantitativePlot";
 import QuantitativeHistogram from "./QuantitativeHistogram";
-import QuantitativeQuantitativeChart from "./QuantitativeQuantitativeChart";
+import QuantitativeQuantitativeScatterPlot from "./QuantitativeQuantitativeScatterPlot";
 
 type Props = {
   var1Name: string;
@@ -49,9 +49,12 @@ export default function PlotSelector({ var1Name, var2Name, var1Category, var2Cat
       return <CategoricalCategoricalChart />;
 
     case "quant-quant":
-      return <QuantitativeQuantitativeChart rawData={rawData} var1Name={var1Name} var2Name={var2Name} />;
+      return <QuantitativeQuantitativeScatterPlot rawData={rawData} var1Name={var1Name} var2Name={var2Name} />;
 
-    case "cat-quant":
-      return <CategoricalQuantitativePlot />;
+    case "cat-quant": {
+      const catVar = var1Category === "Categorical" ? var1Name : var2Name;
+      const quantVar = var1Category === "Quantitative" ? var1Name : var2Name;
+      return <CategoricalQuantitativePlot rawData={rawData} catVarName={catVar} quantVarName={quantVar} />;
+    }
   }
 }

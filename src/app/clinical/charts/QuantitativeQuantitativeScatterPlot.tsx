@@ -17,7 +17,7 @@ function formatLabel(name: string) {
   return name.split(".").pop()?.replace(/_/g, " ") ?? name;
 }
 
-export default function QuantitativeQuantitativeChart({ rawData, var1Name, var2Name }: Props) {
+export default function QuantitativeQuantitativeScatterPlot({ rawData, var1Name, var2Name }: Props) {
   const theme = useTheme();
   const pointColor = theme.palette.primary.light;
   const controlsColor = theme.palette.primary.main;
@@ -53,7 +53,6 @@ export default function QuantitativeQuantitativeChart({ rawData, var1Name, var2N
         controlsHighlight={controlsColor}
         downloadFileName={`${var1Name}_${var2Name}_scatter`}
         animation="scale"
-        animationBuffer={0.025}
         animationGroupSize={5}
         disableZoom
       />
