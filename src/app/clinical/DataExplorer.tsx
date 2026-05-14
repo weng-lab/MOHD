@@ -83,7 +83,7 @@ export default function DataExplorer() {
                 endAdornment={varsLoading ? <CircularProgress size={16} sx={{ mr: 2 }} /> : null}
                 renderValue={(v) => (v ? formatVariableName(v) : "")}
               >
-                {groupedItems(variables ?? [])}
+                {groupedItems(variables ?? [], var2Id !== "none" ? var2Id : undefined)}
               </Select>
             </FormControl>
             <Chip
