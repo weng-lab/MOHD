@@ -32,7 +32,7 @@
     "@weng-lab/genomebrowser": "1.8.5",
     "@weng-lab/genomebrowser-ui": "0.4.0",
     "@weng-lab/ui-components": "3.0.0",
-    "@weng-lab/visualization": "^1.4.1",
+    "@weng-lab/visualization": "^1.4.2",
     "next": "^16.2.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",

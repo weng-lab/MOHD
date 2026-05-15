@@ -135,7 +135,7 @@ export default function DataExplorer() {
             ? `[${formatVariableName(effectiveVar1)}]`
             : "Select a variable"}
         </Typography>
-        <Box sx={{ height: 400, overflow: "hidden" }}>
+        <Box sx={{ height: 600, overflow: "hidden" }}>
           <PlotSelector
             var1Name={effectiveVar1}
             var2Name={var2Id}

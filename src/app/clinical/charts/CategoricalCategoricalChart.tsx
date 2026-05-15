@@ -46,11 +46,12 @@ export default function CategoricalCategoricalChart({ rawData, var1Name, var2Nam
   return (
     <Heatmap
       data={heatmapData}
-      colors={["#eaf4fb", "#003d38"]}
+      colors={["#003d38", "#eaf4fb"]}
       xLabel={var1Name.split(".").pop()?.replace(/_/g, " ")}
       yLabel={var2Name.split(".").pop()?.replace(/_/g, " ")}
       downloadFileName={`${var1Name}_${var2Name}_heatmap`}
       isRect
+      animationType="fade"
     />
   );
 }
