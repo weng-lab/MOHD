@@ -1,9 +1,4 @@
 "use client";
-// "use no memo";
-// required to avoid RC from skipping over zustand hooks
-// otherwise it will cause hook count related errors
-
-import dynamic from "next/dynamic";
 
 // React
 import { useEffect, useState } from "react";
@@ -13,9 +8,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import { Button } from "@mui/material";
 import { Stack, useMediaQuery } from "@mui/system";
+import { ScreenApolloWrapper } from "@/common/apollo/apollo-wrapper";
 
 // weng lab
-import { Browser, GQLWrapper } from "@weng-lab/genomebrowser";
+import { Browser } from "@weng-lab/genomebrowser";
 import {
   foldersByAssembly,
   InitialSelectedIdsByAssembly,
@@ -42,7 +38,7 @@ const FOLDERS = foldersByAssembly[ASSEMBLY].filter((folder) =>
 const INITIAL_SELECTED_IDS: InitialSelectedIdsByAssembly =
   DEFAULT_SELECTED_TRACK_IDS;
 
-function GenomeBrowserPage() {
+export default function GenomeBrowserPage() {
   const [trackSelectOpen, setTrackSelectOpen] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
 
@@ -50,19 +46,29 @@ function GenomeBrowserPage() {
   const isSmall = useMediaQuery("(max-width:600px)");
   const trackWidth = isSmall ? 550 : isMedium ? 950 : 1400;
   const titleSize = isSmall ? 18 : isMedium ? 14 : 12;
-
-  const setTrackWidth = useBrowserStore((s) => s.setTrackWidth);
-  const setTitleSize = useBrowserStore((s) => s.setTitleSize);
-  const setFontSize = useBrowserStore((s) => s.setFontSize);
+  const fontSize = titleSize - 2;
 
   useEffect(() => {
-    setTrackWidth(trackWidth);
-    setTitleSize(titleSize);
-    setFontSize(titleSize - 2);
-  }, [trackWidth, titleSize, setTrackWidth, setTitleSize, setFontSize]);
+    const current = useBrowserStore.getState();
+
+    if (
+      current.trackWidth === trackWidth &&
+      current.titleSize === titleSize &&
+      current.fontSize === fontSize
+    ) {
+      return;
+    }
+
+    useBrowserStore.setState({
+      trackWidth,
+      titleSize,
+      fontSize,
+      browserWidth: trackWidth + current.marginWidth,
+    });
+  }, [trackWidth, titleSize, fontSize]);
 
   return (
-    <GQLWrapper>
+    <ScreenApolloWrapper>
       <Stack sx={{ overflow: "hidden", px: { xs: 2, md: 4, lg: 6 }, py: 2 }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
@@ -130,10 +136,6 @@ function GenomeBrowserPage() {
         onClose={() => setTrackSelectOpen(false)}
         title="Select Tracks"
       />
-    </GQLWrapper>
+    </ScreenApolloWrapper>
   );
 }
-
-export default dynamic(() => Promise.resolve(GenomeBrowserPage), {
-  ssr: false,
-});
