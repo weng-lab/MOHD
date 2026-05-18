@@ -15,7 +15,7 @@ import { Button } from "@mui/material";
 import { Stack, useMediaQuery } from "@mui/system";
 
 // weng lab
-import { Browser, GQLWrapper } from "@weng-lab/genomebrowser";
+import { Browser } from "@weng-lab/genomebrowser";
 import {
   foldersByAssembly,
   InitialSelectedIdsByAssembly,
@@ -28,6 +28,7 @@ import ControlButtons from "./_components/ControlButtons";
 import DomainDisplay from "./_components/DomainDisplay";
 import HighlightDialog from "./_components/HighlightDialog";
 import MohdSortControls from "./_components/MohdSortControls";
+import ScreenApolloProvider from "./ScreenApolloProvider";
 import {
   DEFAULT_SELECTED_TRACK_IDS,
   TRACK_SELECT_SESSION_KEY,
@@ -62,7 +63,7 @@ function GenomeBrowserPage() {
   }, [trackWidth, titleSize, setTrackWidth, setTitleSize, setFontSize]);
 
   return (
-    <GQLWrapper>
+    <ScreenApolloProvider>
       <Stack sx={{ overflow: "hidden", px: { xs: 2, md: 4, lg: 6 }, py: 2 }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
@@ -130,7 +131,7 @@ function GenomeBrowserPage() {
         onClose={() => setTrackSelectOpen(false)}
         title="Select Tracks"
       />
-    </GQLWrapper>
+    </ScreenApolloProvider>
   );
 }
 
