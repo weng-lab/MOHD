@@ -6,7 +6,7 @@ const config: CodegenConfig = {
     {
       [Config.API.MOHDAPI]: {
         headers: {          
-          "api-key": process.env.MOHD_API_KEY!,
+           Authorization: "Bearer " + process.env.MOHD_API_KEY!,
         },
       },
     },
