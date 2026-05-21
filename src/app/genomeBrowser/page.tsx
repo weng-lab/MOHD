@@ -23,7 +23,7 @@ import BrowserSearch from "./_components/BrowserSearch";
 import ControlButtons from "./_components/ControlButtons";
 import DomainDisplay from "./_components/DomainDisplay";
 import HighlightDialog from "./_components/HighlightDialog";
-import MohdSortControls from "./_components/MohdSortControls";
+import MohdTrackSort from "./_components/MohdTrackSort";
 import {
   DEFAULT_SELECTED_TRACK_IDS,
   TRACK_SELECT_SESSION_KEY,
@@ -85,7 +85,7 @@ export default function GenomeBrowserPage() {
               width: { xs: "100%", md: "auto" },
             }}
           >
-            <MohdSortControls folders={FOLDERS} />
+            <MohdTrackSort folders={FOLDERS} />
             <Button
               variant="contained"
               startIcon={<HighlightIcon />}

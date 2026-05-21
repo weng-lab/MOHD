@@ -11,7 +11,6 @@ import {
 } from "@apollo/client-integration-nextjs";
 import Config from "../config.json";
 
-
 // See https://www.apollographql.com/blog/using-apollo-client-with-next-js-13-releasing-an-official-library-to-support-the-app-router
 
 export function makeClient() {
@@ -27,20 +26,23 @@ export function makeClient() {
 
   return new ApolloClient({
     cache: new InMemoryCache(),
-    link:
-      isServer
-        ? ApolloLink.from([
-            new SSRMultipartLink({
-              stripDefer: true,
-            }),
-            httpLink,
-          ])
-        : httpLink,
+    link: isServer
+      ? ApolloLink.from([
+          new SSRMultipartLink({
+            stripDefer: true,
+          }),
+          httpLink,
+        ])
+      : httpLink,
   });
 }
 
 export function ApolloWrapper({ children }: { children: ReactNode }) {
-  return <ApolloNextAppProvider makeClient={makeClient}>{children}</ApolloNextAppProvider>;
+  return (
+    <ApolloNextAppProvider makeClient={makeClient}>
+      {children}
+    </ApolloNextAppProvider>
+  );
 }
 
 const screenApolloClient = new ApolloClient({
@@ -51,5 +53,7 @@ const screenApolloClient = new ApolloClient({
 });
 
 export function ScreenApolloWrapper({ children }: { children: ReactNode }) {
-  return <ApolloProvider client={screenApolloClient}>{children}</ApolloProvider>;
+  return (
+    <ApolloProvider client={screenApolloClient}>{children}</ApolloProvider>
+  );
 }
