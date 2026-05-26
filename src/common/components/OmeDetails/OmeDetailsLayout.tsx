@@ -1,6 +1,5 @@
 "use client";
 import { Box, Divider, Stack } from "@mui/material";
-import OmeDetailsTabs from "./OmeDetailsTabs";
 import { OmeDetailsTab, OmesDataType } from "@/common/types/globalTypes";
 import { OmeHeader } from "./OmeHeader";
 import { usePathname } from "next/navigation";
@@ -78,8 +77,8 @@ export const OME_TABS: Record<OmesDataType, OmeDetailsTab[]> = {
 export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
     const pathname = usePathname();
     const ome = pathname.split("/")[2] as OmesDataType;
-        
-    const tabs = OME_TABS[ome];
+
+    const tabs = OME_TABS[ome].map(t => ({ value: t.route, label: t.label, icon: t.iconPath, href: `/omes/${ome}/${t.route}` }));
 
     return (
         <OmeHeader>
@@ -100,7 +99,7 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                     display={{ xs: "none", md: "block" }}
                 >
                     <DetailsTabs
-                        tabs={tabs.map(t => ({ value: t.route, label: t.label, icon: t.iconPath, href: `/omes/${ome}/${t.route}` }))}
+                        tabs={tabs}
                         value={pathname.substring(pathname.lastIndexOf("/") + 1)}
                         orientation="vertical"
                         LinkComponent={Link}
@@ -117,18 +116,18 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                 <Stack id="main-content" spacing={2} mx={2} mb={2} gridColumn={{ xs: 1, md: 2 }} gridRow={1}>
                     <Box id="horizonatal-view-tabs-container" display={{ xs: "block", md: "none" }}>
                         <DetailsTabs
-                        tabs={tabs.map(t => ({ value: t.route, label: t.label, icon: t.iconPath, href: `/omes/${ome}/${t.route}` }))}
-                        value={pathname.substring(pathname.lastIndexOf("/") + 1)}
-                        orientation="horizontal"
-                        LinkComponent={Link}
-                        selectedBackgroundColor="#e1edec"
-                        sx={{
-                            position: "sticky",
-                            top: "calc(64px + var(--ome-header-height, 66px))",
-                        }}
-                        iconHeight={40}
-                        iconWidth={40}
-                    />
+                            tabs={tabs}
+                            value={pathname.substring(pathname.lastIndexOf("/") + 1)}
+                            orientation="horizontal"
+                            LinkComponent={Link}
+                            selectedBackgroundColor="#e1edec"
+                            sx={{
+                                position: "sticky",
+                                top: "calc(64px + var(--ome-header-height, 66px))",
+                            }}
+                            iconHeight={40}
+                            iconWidth={40}
+                        />
                         <Divider />
                     </Box>
                     {children}
