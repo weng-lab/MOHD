@@ -4,6 +4,8 @@ import OmeDetailsTabs from "./OmeDetailsTabs";
 import { OmeDetailsTab, OmesDataType } from "@/common/types/globalTypes";
 import { OmeHeader } from "./OmeHeader";
 import { usePathname } from "next/navigation";
+import { DetailsTabs } from "@weng-lab/ui-components";
+import Link from "next/link";
 
 export type OmeDetailsLayoutProps = {
 } & { children: React.ReactNode };
@@ -97,7 +99,19 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                     maxHeight={"calc(100vh - 64px - var(--Ome-header-height, 66px))"}
                     display={{ xs: "none", md: "block" }}
                 >
-                    <OmeDetailsTabs ome={ome} tabs={tabs} orientation="vertical" />
+                    {/* <OmeDetailsTabs ome={ome} tabs={tabs} orientation="vertical" /> */}
+                    <DetailsTabs
+                        tabs={tabs.map(t => ({ value: t.route, label: t.label, icon: t.iconPath, href: `/omes/${ome}/${t.route}` }))}
+                        value={pathname.substring(pathname.lastIndexOf("/") + 1)}
+                        orientation="vertical"
+                        LinkComponent={Link}
+                        selectedBackgroundColor="#e1edec"
+                        sx={{
+                            position: "sticky",
+                            top: "calc(64px + var(--ome-header-height, 66px))",
+                            width: 100,
+                        }}
+                    />
                 </Box>
                 <Stack id="main-content" spacing={2} mx={2} mb={2} gridColumn={{ xs: 1, md: 2 }} gridRow={1}>
                     <Box id="horizonatal-view-tabs-container" display={{ xs: "block", md: "none" }}>
