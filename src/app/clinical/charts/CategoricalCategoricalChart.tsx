@@ -16,16 +16,16 @@ export default function CategoricalCategoricalChart({ rawData, var1Name, var2Nam
 
     const var2Map = new Map<string, string>();
     for (const p of var2Rows) {
-      var2Map.set(p.participant_id, p.assigned_category ?? p.value_text ?? "Unknown");
+      var2Map.set(p.participant_profile_dss, p.value_text ?? "Unknown");
     }
 
-    const var1Cats = [...new Set(var1Rows.map((p) => p.assigned_category ?? p.value_text ?? "Unknown"))].sort();
+    const var1Cats = [...new Set(var1Rows.map((p) => p.value_text ?? "Unknown"))].sort();
     const var2Cats = [...new Set(var2Map.values())].sort();
 
     const counts = new Map<string, Map<string, number>>();
     for (const p of var1Rows) {
-      const cat1 = p.assigned_category ?? p.value_text ?? "Unknown";
-      const cat2 = var2Map.get(p.participant_id);
+      const cat1 = p.value_text ?? "Unknown";
+      const cat2 = var2Map.get(p.participant_profile_dss);
       if (!cat2) continue;
       if (!counts.has(cat1)) counts.set(cat1, new Map());
       const inner = counts.get(cat1)!;

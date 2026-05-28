@@ -20,13 +20,13 @@ export default function CategoricalQuantitativePlot({ rawData, catVarName, quant
 
     const quantMap = new Map<string, number>();
     for (const p of quantRows) {
-      if (p.value_numeric != null) quantMap.set(p.participant_id, p.value_numeric);
+      if (p.value_numeric != null) quantMap.set(p.participant_profile_dss, p.value_numeric);
     }
 
     const groups = new Map<string, number[]>();
     for (const p of catRows) {
-      const cat = p.assigned_category ?? p.value_text ?? "Unknown";
-      const num = quantMap.get(p.participant_id);
+      const cat = p.value_text ?? "Unknown";
+      const num = quantMap.get(p.participant_profile_dss);
       if (num == null) continue;
       if (!groups.has(cat)) groups.set(cat, []);
       groups.get(cat)!.push(num);

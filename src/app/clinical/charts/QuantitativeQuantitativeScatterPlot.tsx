@@ -28,8 +28,8 @@ export default function QuantitativeQuantitativeScatterPlot({ rawData, var1Name,
 
     for (const p of rawData) {
       if (p.value_numeric == null) continue;
-      if (p.variable_name === var1Name) var1Map.set(p.participant_id, p.value_numeric);
-      if (p.variable_name === var2Name) var2Map.set(p.participant_id, p.value_numeric);
+      if (p.variable_name === var1Name) var1Map.set(p.participant_profile_dss, p.value_numeric);
+      if (p.variable_name === var2Name) var2Map.set(p.participant_profile_dss, p.value_numeric);
     }
 
     const points: Point<Metadata>[] = [];

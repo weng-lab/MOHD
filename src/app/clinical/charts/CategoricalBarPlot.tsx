@@ -15,7 +15,7 @@ export default function CategoricalBarPlot({ rawData, var1Name }: Props) {
     const rows = rawData.filter((p) => p.variable_name === var1Name);
     const counts = new Map<string, number>();
     for (const p of rows) {
-      const key = p.assigned_category ?? p.value_text ?? "Unknown";
+      const key = p.value_text ?? "Unknown";
       counts.set(key, (counts.get(key) ?? 0) + 1);
     }
     return Array.from(counts.entries())
