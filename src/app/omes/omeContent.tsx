@@ -1,6 +1,6 @@
 "use client";
 import type { ReactNode } from "react";
-import { OME_TABS } from "@/common/components/OmeDetails/OmeDetailsLayout";
+import { OME_TABS } from "@/common/components/OmeDetails/omeTabs";
 import { OmesDataType } from "@/common/types/globalTypes";
 
 export const OME_DESCRIPTIONS: Record<OmesDataType, ReactNode> = {
@@ -110,7 +110,7 @@ export function getOmeInfoHref(ome: OmesDataType) {
 }
 
 export function getGenomeBrowserHref(ome: OmesDataType) {
-  const genomeBrowserTab = OME_TABS[ome]?.find((tab) => tab.route === "genomeBrowser");
+  const genomeBrowserTab = OME_TABS[ome]?.find((tab) => tab.value === "genomeBrowser");
 
-  return genomeBrowserTab ? `/omes/${ome}/${genomeBrowserTab.route}` : null;
+  return genomeBrowserTab?.href ?? null;
 }

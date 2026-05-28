@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { ApolloLink, HttpLink } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import {
   ApolloNextAppProvider,
   InMemoryCache,
@@ -40,4 +41,15 @@ export function makeClient() {
 
 export function ApolloWrapper({ children }: { children: ReactNode }) {
   return <ApolloNextAppProvider makeClient={makeClient}>{children}</ApolloNextAppProvider>;
+}
+
+const screenApolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: "/api/screen-graphql",
+  }),
+});
+
+export function ScreenApolloWrapper({ children }: { children: ReactNode }) {
+  return <ApolloProvider client={screenApolloClient}>{children}</ApolloProvider>;
 }
