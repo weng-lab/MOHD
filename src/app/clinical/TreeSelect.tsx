@@ -38,7 +38,7 @@ export default function TreeSelect({
 }: TreeSelectProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const [popoverWidth, setPopoverWidth] = useState<number | undefined>(undefined);
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [expandedItems, setExpandedItems] = useState<Record<string, string[]>>({});
   const anchorRef = useRef<HTMLDivElement>(null);
   const id = useId();
 
@@ -61,7 +61,8 @@ export default function TreeSelect({
   function handleOpen() {
     if (!disabled && anchorRef.current) {
       setPopoverWidth(anchorRef.current.offsetWidth);
-      setExpandedItems(value && value !== "none" ? ancestorsOf(value) : []);
+      const ancestors = value && value !== "none" ? ancestorsOf(value) : [];
+      setExpandedItems(Object.fromEntries(categoryTrees.map(({ category }) => [category, ancestors])));
       setAnchorEl(anchorRef.current);
     }
   }
@@ -149,8 +150,8 @@ export default function TreeSelect({
             </ListSubheader>
             <SimpleTreeView
               selectedItems={value && value !== "none" ? value : null}
-              expandedItems={expandedItems}
-              onExpandedItemsChange={(_, items) => setExpandedItems(items)}
+              expandedItems={expandedItems[category] ?? []}
+              onExpandedItemsChange={(_, items) => setExpandedItems((prev) => ({ ...prev, [category]: items }))}
               sx={{ pb: 1, px: 1 }}
             >
               {renderNodes(tree)}
