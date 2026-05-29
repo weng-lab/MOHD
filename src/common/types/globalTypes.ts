@@ -12,11 +12,6 @@ export const OmesList = [
 
 export type OmesDataType = (typeof OmesList)[number];
 
-export type OmeDetailsTab = {
-    label: string;
-    iconPath: string;
-    route: string;
-}
 
 export type Site = "CCH" | "CKD" | "EXP" | "MOM" | "UIC";
 

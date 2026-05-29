@@ -141,7 +141,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                                 onSelectionChange={handlePointsSelected}
                                 onPointClicked={handlePointSelected}
                                 controlsHighlight={theme.palette.primary.main}
-                                controlsPosition={isXs ? "bottom" : "left"}
+                                //controlsPosition={isXs ? "bottom" : "left"}
                                 pointData={scatterData}
                                 selectable
                                 loading={loading}
