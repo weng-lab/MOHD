@@ -76,6 +76,14 @@ export default function MolecularDataLanding() {
           backgroundPosition: { xs: "center top", md: "top right" },
           backgroundSize: { xs: "cover", md: "contain" },
           backgroundColor: "primary.main",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            backgroundColor: "rgba(0, 61, 56, 0.80)",
+            display: { xs: "block", md: "none" },
+            zIndex: 1,
+          },
         }}
         color="white"
       >
