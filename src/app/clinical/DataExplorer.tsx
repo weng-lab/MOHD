@@ -34,6 +34,8 @@ export default function DataExplorer() {
           borderRadius: 1,
           p: 2.5,
           mb: 3,
+          width: "100%",
+          overflow: "hidden",
         }}
       >
         <Typography sx={{ color: "text.secondary" }}>SELECT</Typography>
@@ -83,6 +85,7 @@ export default function DataExplorer() {
           borderRadius: 1,
           p: 3,
           overflow: "hidden",
+          width: "100%",
         }}
       >
         <Typography variant="subtitle1" fontWeight={500} textAlign="center" mb={2}>
@@ -92,7 +95,15 @@ export default function DataExplorer() {
             ? `[${formatVariableName(effectiveVar1)}]`
             : "Select a variable"}
         </Typography>
-        <Box sx={{ height: 600, overflow: "hidden" }}>
+        <Box
+          sx={{
+            height: { xs: 320, sm: 450, md: 600 },
+            overflow: "hidden",
+            width: "100%",
+            minWidth: 0,
+            "& > div": { minWidth: "0 !important" },
+          }}
+        >
           <PlotSelector
             var1Name={effectiveVar1}
             var2Name={var2Id}

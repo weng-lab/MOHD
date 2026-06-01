@@ -133,7 +133,7 @@ export default function TreeSelect({
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         disableScrollLock
-        slotProps={{ paper: { sx: { width: popoverWidth, maxHeight: 400, overflow: "auto", mt: 0.5 } } }}
+        slotProps={{ paper: { sx: { width: popoverWidth, maxHeight: { xs: "55vh", sm: 400 }, overflow: "auto", mt: 0.5 } } }}
       >
         {allowNone && (
           <>

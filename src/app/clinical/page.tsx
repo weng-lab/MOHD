@@ -3,7 +3,7 @@ import DataExplorer from "./DataExplorer";
 
 export default function ClinicalDataLanding() {
   return (
-    <Box width="100%">
+    <Box width="100%" sx={{ overflowX: "hidden" }}>
       <Box
         width="100%"
         sx={{
@@ -28,13 +28,14 @@ export default function ClinicalDataLanding() {
             zIndex: 2,
             justifyContent: { xs: "flex-start", md: "center" },
             px: { xs: 3, sm: 4, md: 8, lg: 10 },
-            py: 5,
+            py: { xs: 4, md: 5 },
             minHeight: { xs: "100dvh", md: "auto" },
           }}
         >
           <Typography
             variant="h4"
             fontWeight={600}
+            sx={{ fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2.125rem" } }}
           >
             Phenotypic and Contextual Data
           </Typography>
