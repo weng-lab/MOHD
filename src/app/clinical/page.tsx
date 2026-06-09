@@ -35,7 +35,6 @@ export default function ClinicalDataLanding() {
           <Typography
             variant="h4"
             fontWeight={600}
-            sx={{ fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2.125rem" } }}
           >
             Phenotypic and Contextual Data
           </Typography>
