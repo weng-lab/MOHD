@@ -2,6 +2,7 @@ import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { RNAMetadata, SharedRNADimenionalityProps } from "./page";
 import { useMemo } from "react";
+import { Typography } from "@mui/material";
 
 const RNADimensionalityTable = ({
     rows,
@@ -45,7 +46,7 @@ const RNADimensionalityTable = ({
     return (
         <Table
             {...syncedTableProps}
-            label={`RNA-seq Dimensionality Reduction`}
+            label={<Typography noWrap>RNA-seq Dimensionality Reduction</Typography>}
             rows={rows}
             loading={loading}
             error={!!error}

@@ -101,8 +101,8 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                 <Box
                   className="ome-icon"
                   sx={{
-                    width: { xs: 60, md: 40 },
-                    height: { xs: 60, md: 40 },
+                    width: { xs: 80, md: 40 },
+                    height: { xs: 80, md: 40 },
                     flexShrink: 0,
                     borderRadius: 99,
                     backgroundImage: `url(/OmeIcons/NoBgrnd/${iconName}.png)`,
@@ -138,26 +138,8 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
               {isMobile && (
                 <Typography
                   className="ome-label"
-                  variant="body2"
+                  variant="body1"
                   title={label}
-                  sx={{
-                    color: "primary.main",
-                    maxWidth: 110,
-                    minHeight: 34,
-                    px: 1,
-                    py: 0.6,
-                    borderRadius: 99,
-                    backgroundColor: "white",
-                    border: "1px solid rgba(255,255,255,0.4)",
-                    boxShadow: "0 10px 24px rgba(0, 0, 0, 0.16)",
-                    overflow: "hidden",
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    WebkitLineClamp: 2,
-                    lineHeight: 1.2,
-                    maxHeight: "2.4em",
-                    textAlign: "center",
-                  }}
                 >
                   {label}
                 </Typography>

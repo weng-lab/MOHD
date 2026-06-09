@@ -123,7 +123,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
             {scatterData &&
                 scatterData.length > 0 && (
                     <>
-                        <Stack direction={{xs: "column", md: "row"}} justifyContent="space-between" alignItems="center">
+                        <Stack direction={{xs: "column", md: "row"}} justifyContent={{xs: "center", md: "space-between"}} alignItems="center" gap={{xs: 1, md: 0}}>
                             <ColorBySelect 
                                 colorScheme={colorScheme} 
                                 handleColorSchemeChange={handleColorSchemeChange}
@@ -140,6 +140,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                                 onSelectionChange={handlePointsSelected}
                                 onPointClicked={handlePointSelected}
                                 controlsHighlight={theme.palette.primary.main}
+                                controlsPosition={isXs ? "right" : "left"}
                                 pointData={scatterData}
                                 selectable
                                 loading={loading}

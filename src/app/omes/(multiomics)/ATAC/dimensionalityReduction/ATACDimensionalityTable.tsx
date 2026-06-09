@@ -2,6 +2,7 @@ import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
 import { useMemo } from "react";
+import { Typography } from "@mui/material";
 
 const ATACDimensionalityTable = ({
     rows,
@@ -52,7 +53,7 @@ const ATACDimensionalityTable = ({
     return (
         <Table
             {...syncedTableProps}
-            label={`ATAC-seq Dimensionality Reduction`}
+            label={<Typography noWrap>ATAC-seq Dimensionality Reduction</Typography>}
             rows={rows}
             loading={loading}
             error={!!error}
