@@ -15,8 +15,8 @@ export default function ClinicalDataLanding() {
           minHeight: { xs: "100dvh", md: "70vh" },
           backgroundImage: "url('/Backgrounds/clinical-landing-bg@4x.png')",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: { xs: "center top", md: "top right" },
-          backgroundSize: { xs: "cover", md: "contain" },
+          backgroundPosition: { xs: "35% 20%", md: "top right" },
+          backgroundSize: { xs: "180%", md: "contain" },
           backgroundColor: "primary.main",
           "&::before": {
             content: '""',
