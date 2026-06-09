@@ -25,7 +25,12 @@ const LandingPageCards = () => {
         <Container maxWidth="lg">
             <Stack spacing={2} width="100%">
                 <Stack direction="row" alignItems="center" spacing={1} width="100%">
-                    <Typography variant="h5" color="primary.main" fontWeight={600}>
+                    <Typography
+                        variant="h5"
+                        sx={{ typography: { xs: "h6", sm: "h5" } }}
+                        color="primary.main"
+                        fontWeight={600}
+                    >
                         EXPLORE AVAILABLE DATA
                     </Typography>
                     <Divider

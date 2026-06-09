@@ -64,7 +64,7 @@ export default function AtAGlance() {
                                     sx={{
                                         color: "white",
                                         fontWeight: 500,
-                                        fontSize: { xs: 25, md: 30 },
+                                        typography: { xs: "h6", sm: "h5" },
                                         lineHeight: 1,
                                         fontVariantNumeric: "tabular-nums",
                                         display: "flex",
@@ -87,7 +87,7 @@ export default function AtAGlance() {
                                 <Typography
                                     sx={{
                                         color: "white",
-                                        fontSize: 14,
+                                        typography: { xs: "body2", sm: "body1" },
                                     }}
                                 >
                                     {stat.label}
