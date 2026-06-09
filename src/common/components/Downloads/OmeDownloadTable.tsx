@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, Typography } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { Table } from "@weng-lab/ui-components";
 import { GridColDef, GridGroupingColDefOverride } from "@mui/x-data-grid-premium";
 import { useMemo } from "react";
@@ -265,13 +265,11 @@ export function OmeDownloadTable<T extends BaseSample>({
         },
     ];
 
-    const labelEl = <Typography noWrap>{label}</Typography>;
-
     return (
         <>
-            <DownloadToolbarProvider label={labelEl}>
+            <DownloadToolbarProvider label={label}>
                 <Table
-                    label={labelEl}
+                    label={label}
                     rows={expandedRows}
                     columns={columns}
                     loading={loading}
