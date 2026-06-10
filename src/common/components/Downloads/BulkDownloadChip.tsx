@@ -70,9 +70,9 @@ const BulkDownloadChip = ({
                         }}
                     >
                         <Stack
-                            direction={"row"}
-                            spacing={{ xs: .75, sm: 2 }}
-                            alignItems={"center"}
+                            direction={{ xs: "column", sm: "row" }}
+                            spacing={{ xs: 1, sm: 2 }}
+                            alignItems="center"
                             justifyContent="space-between"
                         >
                             <Stack direction="row" spacing={{ xs: 0.75, sm: 1.5 }} alignItems="center" minWidth={0}>
@@ -92,12 +92,13 @@ const BulkDownloadChip = ({
                                 >
                                     {numDatasets}
                                 </Box>
-                                <Box minWidth={0}>
+                                <Box minWidth={0} sx={{ display: "flex", flexDirection: { xs: "row", sm: "column" }, alignItems: { xs: "baseline", sm: "flex-start" }, gap: { xs: 1, sm: 0 }, flexWrap: "wrap" }}>
                                     <Typography
                                         variant="subtitle1"
                                         sx={{
                                             fontSize: { xs: "0.82rem", sm: "1rem" },
                                             fontWeight: 600,
+                                            whiteSpace: "nowrap",
                                         }}
                                     >
                                         {numDatasets} dataset{numDatasets === 1 ? "" : "s"} selected
@@ -105,8 +106,9 @@ const BulkDownloadChip = ({
                                     <Typography
                                         variant="body2"
                                         sx={{
-                                            fontSize: { xs: "0.68rem", sm: "0.875rem" },
+                                            fontSize: { xs: "0.75rem", sm: "0.875rem" },
                                             color: "text.secondary",
+                                            whiteSpace: "nowrap",
                                         }}
                                     >
                                         {numFiles} file{numFiles === 1 ? "" : "s"} · {formatBytes(totalSize)}
@@ -114,16 +116,17 @@ const BulkDownloadChip = ({
                                 </Box>
                             </Stack>
                             <Stack
-                                direction={{ xs: "column", sm: "row" }}
-                                spacing={{ xs: 0.5, sm: 1 }}
+                                direction="row"
+                                spacing={1}
                                 alignItems="center"
-                                justifyContent="flex-end"
+                                justifyContent={{ xs: "center", sm: "flex-end" }}
                                 flexShrink={0}
                             >
                                 <Button
                                     variant="outlined"
                                     onClick={onClear}
                                     size={isXs ? "small" : "medium"}
+                                    sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
                                 >
                                     Clear
                                 </Button>
@@ -137,7 +140,7 @@ const BulkDownloadChip = ({
                                     }}
                                     size={isXs ? "small" : "medium"}
                                 >
-                                    Bulk Download {isXs ? "" : `(${numFiles})`}
+                                    Bulk Download ({numFiles})
                                 </Button>
                             </Stack>
                         </Stack>

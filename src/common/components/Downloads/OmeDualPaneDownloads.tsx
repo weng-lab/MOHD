@@ -116,6 +116,9 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     ome,
   } = state;
 
+  const muiTheme = useTheme();
+  const mdUp = useMediaQuery(muiTheme.breakpoints.up("md"));
+
   const handleDividerPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId);
   };
@@ -260,7 +263,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "auto auto auto" },
-              columnGap: 2,
+              gap: 2,
               alignItems: "start",
             }}
           >
@@ -345,7 +348,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
                 </Box>
               )}
             </Box>
-            <Divider orientation={"vertical"} flexItem sx={{display: {xs: "none", md: "flex"}}} />
+            <Divider orientation={mdUp ? "vertical" : "horizontal"} flexItem sx={{display: "flex"}} />
             <Box>
               <Stack
                 direction="row"
