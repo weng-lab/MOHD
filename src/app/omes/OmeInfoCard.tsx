@@ -119,7 +119,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             {OME_DESCRIPTIONS[selectedOme] ?? "Description coming soon."}
           </Typography>
         </Stack>
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent={"space-between"}>
+        <Stack direction={{ xs: "column", sm: "row" }} justifyContent={{ xs: "flex-start", sm: "space-between" }} gap={{ xs: 1, sm: 0 }}>
           <Button
             // component={genomeBrowserHref ? Link : "button"}
             // href={genomeBrowserHref ?? undefined}

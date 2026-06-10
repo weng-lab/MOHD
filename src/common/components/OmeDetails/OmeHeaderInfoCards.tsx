@@ -10,9 +10,6 @@ type OmeHeaderStat = {
 
 const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
     ATAC: [
-        // { label: "Samples", value: "128" },
-        // { label: "Peaks", value: "45.2K" },
-        // { label: "Reads", value: "2.1M" },
         { label: "Experiments", value: "128" },
         { label: "Participants", value: "180" },
         { label: "Timepoints", value: "200" },
@@ -50,7 +47,10 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
                     minWidth: 0,
                     columnGap: 1,
                     rowGap: 1,
+                    width: "100%",
                 }}
+                //mobile spacing
+                justifyContent={"space-between"}
             >
                 {stats.map((stat, index) => (
                     <Grow in={visible[index]} timeout={500 + index * 140} key={stat.label}>
