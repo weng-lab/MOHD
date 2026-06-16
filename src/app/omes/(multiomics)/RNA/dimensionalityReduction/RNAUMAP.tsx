@@ -30,7 +30,7 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
 }: RNADimensionalityUmapProps<S, Z>) => {
     const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site">("site");
     const theme = useTheme();
-    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+    const isXs = useMediaQuery(theme.breakpoints.down("md"));
 
     const { loading, data } = RNAData;
 

@@ -30,7 +30,8 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
 }: ATACDimensionalityUmapProps<S, Z>) => {
     const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol">("site");
     const theme = useTheme();
-    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+    const isXs = useMediaQuery(theme.breakpoints.down("md"));
+
 
     const { loading, data } = ATACData;
 
