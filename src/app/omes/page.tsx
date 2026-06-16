@@ -99,7 +99,8 @@ export default function MolecularDataLanding() {
           }}
         >
           <Typography
-            variant="h3"
+            variant="h4"
+            fontWeight={600}
           >
             Molecular Data
           </Typography>
