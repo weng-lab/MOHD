@@ -1,37 +1,27 @@
 "use client";
-import LipidomicsDownloadsTable from "./LipidomicsDownloadsTable";
-import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
-import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
-import { useLipidomicsData } from "@/common/hooks/omeHooks/useLipidomicsData";
 import { OmeEnum } from "@/common/types/generated/graphql";
+import OmeDualPaneDownloads from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { OmeDownloadsConfig } from "@/common/components/Downloads/types";
+import { useLipidomicsData } from "@/common/hooks/omeHooks/useLipidomicsData";
 
-const LipidomicsDownloads = () => {
+type LipidomicsRow = {
+  sample_id: string;
+  site: string;
+  status: string;
+  sex: string;
+  kit: string;
+};
 
-    const lipidomicsData = useLipidomicsData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.Lipidomics);
+const config: OmeDownloadsConfig<LipidomicsRow> = {
+  ome: OmeEnum.Lipidomics,
+  useData: () => useLipidomicsData({ skip: false }),
+  datasetFilters: [
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
+  ],
+};
 
-    const rows = lipidomicsData.data ?? [];
-
-    return (
-        <OmeDownloadLayout
-            rows={rows}
-            downloadFiles={downloadFiles}
-            getFilterFields={(row) => ({
-                site: row.site as Site,
-                status: row.status as Status,
-                sex: row.sex as Sex,
-            })}
-            renderTable={(filteredRows, filteredDownloadFiles) => (
-                <LipidomicsDownloadsTable 
-                    rows={filteredRows} 
-                    LipidomicsData={lipidomicsData} 
-                    files={filteredDownloadFiles} 
-                    loadingFiles={loading}
-                />
-            )}
-        />
-    )
-}
+const LipidomicsDownloads = () => <OmeDualPaneDownloads config={config} />;
 
 export default LipidomicsDownloads;

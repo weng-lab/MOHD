@@ -1,37 +1,27 @@
 "use client";
-import { useExposomicsData } from "@/common/hooks/omeHooks/useExposomicsData";
-import ExposomicsDownloadsTable from "./ExposomicsDownloadsTable";
-import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
-import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
 import { OmeEnum } from "@/common/types/generated/graphql";
+import OmeDualPaneDownloads from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { OmeDownloadsConfig } from "@/common/components/Downloads/types";
+import { useExposomicsData } from "@/common/hooks/omeHooks/useExposomicsData";
 
-const ExposomicsDownloads = () => {
+type ExposomicsRow = {
+  sample_id: string;
+  site: string;
+  status: string;
+  sex: string;
+  kit: string;
+};
 
-    const exposomicsData = useExposomicsData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.Exposomics);
+const config: OmeDownloadsConfig<ExposomicsRow> = {
+  ome: OmeEnum.Exposomics,
+  useData: () => useExposomicsData({ skip: false }),
+  datasetFilters: [
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
+  ],
+};
 
-    const rows = exposomicsData.data ?? [];
-
-    return (
-        <OmeDownloadLayout
-            rows={rows}
-            downloadFiles={downloadFiles}
-            getFilterFields={(row) => ({
-                site: row.site as Site,
-                status: row.status as Status,
-                sex: row.sex as Sex,
-            })}
-            renderTable={(filteredRows, filteredDownloadFiles) => (
-                <ExposomicsDownloadsTable 
-                    rows={filteredRows} 
-                    ExposomicsData={exposomicsData} 
-                    files={filteredDownloadFiles}
-                    loadingFiles={loading}
-                />
-            )}
-        />
-    )
-}
+const ExposomicsDownloads = () => <OmeDualPaneDownloads config={config} />;
 
 export default ExposomicsDownloads;

@@ -1,37 +1,27 @@
 "use client";
-import WGSDownloadsTable from "./WGSDownloadsTable";
-import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
-import { useWGSData } from "@/common/hooks/omeHooks/useWGSData";
-import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
 import { OmeEnum } from "@/common/types/generated/graphql";
+import OmeDualPaneDownloads from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { OmeDownloadsConfig } from "@/common/components/Downloads/types";
+import { useWGSData } from "@/common/hooks/omeHooks/useWGSData";
 
-const WGSDownloads = () => {
+type WgsRow = {
+  sample_id: string;
+  site: string;
+  status: string;
+  sex: string;
+  kit: string;
+};
 
-    const WGSData = useWGSData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.Wgs);
+const config: OmeDownloadsConfig<WgsRow> = {
+  ome: OmeEnum.Wgs,
+  useData: () => useWGSData({ skip: false }),
+  datasetFilters: [
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
+  ],
+};
 
-    const rows = WGSData.data ?? [];
+const WgsDownloads = () => <OmeDualPaneDownloads config={config} />;
 
-    return (
-        <OmeDownloadLayout
-            rows={rows}
-            downloadFiles={downloadFiles}
-            getFilterFields={(row) => ({
-                site: row.site as Site,
-                status: row.status as Status,
-                sex: row.sex as Sex,
-            })}
-            renderTable={(filteredRows, filteredDownloadFiles) => (
-                <WGSDownloadsTable
-                    rows={filteredRows}
-                    WGSData={WGSData}
-                    files={filteredDownloadFiles}
-                    loadingFiles={loading}
-                />
-            )}
-        />
-    )
-}
-
-export default WGSDownloads;
+export default WgsDownloads;

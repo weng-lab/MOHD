@@ -1,37 +1,27 @@
 "use client";
-import ProteomicsDownloadsTable from "./ProteomicsDownloadsTable";
-import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
-import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
-import { useProteomicsData } from "@/common/hooks/omeHooks/useProteomicsData";
 import { OmeEnum } from "@/common/types/generated/graphql";
+import OmeDualPaneDownloads from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { OmeDownloadsConfig } from "@/common/components/Downloads/types";
+import { useProteomicsData } from "@/common/hooks/omeHooks/useProteomicsData";
 
-const ProteomicsDownloads = () => {
+type ProteomicsRow = {
+  sample_id: string;
+  site: string;
+  status: string;
+  sex: string;
+  kit: string;
+};
 
-    const ProteomicsData = useProteomicsData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles(OmeEnum.Proteomics);
+const config: OmeDownloadsConfig<ProteomicsRow> = {
+  ome: OmeEnum.Proteomics,
+  useData: () => useProteomicsData({ skip: false }),
+  datasetFilters: [
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
+  ],
+};
 
-    const rows = ProteomicsData.data ?? [];
-
-    return (
-        <OmeDownloadLayout
-            rows={rows}
-            downloadFiles={downloadFiles}
-            getFilterFields={(row) => ({
-                site: row.site as Site,
-                status: row.status as Status,
-                sex: row.sex as Sex,
-            })}
-            renderTable={(filteredRows, filteredDownloadFiles) => (
-                <ProteomicsDownloadsTable 
-                    rows={filteredRows} 
-                    ProteomicsData={ProteomicsData} 
-                    files={filteredDownloadFiles}
-                    loadingFiles={loading}
-                />
-            )}
-        />
-    )
-}
+const ProteomicsDownloads = () => <OmeDualPaneDownloads config={config} />;
 
 export default ProteomicsDownloads;
