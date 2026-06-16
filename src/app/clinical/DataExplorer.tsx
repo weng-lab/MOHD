@@ -24,7 +24,7 @@ export default function DataExplorer() {
   return (
     <Box sx={{ px: { xs: 3, sm: 4, md: 8, lg: 10 }, py: 4, width: "100%", overflow: "hidden" }}>
       <Typography variant="h5" fontWeight={600} mb={3}>
-        [Data explorer]
+        Data Explorer
       </Typography>
       <Box
         sx={{
