@@ -30,7 +30,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
         zIndex: 1,
         width: "100%",
         maxWidth: 1000,
-        minHeight: 500,
+        minHeight: 300,
         display: "flex",
         flexDirection: "column",
         opacity: isVisible ? 1 : 0,
