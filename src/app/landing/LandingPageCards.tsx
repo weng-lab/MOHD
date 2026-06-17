@@ -14,7 +14,7 @@ const pages = [
         title: "Clinical & Phenotypic Data",
         description: "Access comprehensive omics datasets including genomic sequences, transcriptomics, proteomics, and metabolomics across 8 different molecular layers.",
         link: "/clinical",
-        image: "/clinicalTest.png"
+        image: "/phenotypic-illustration.png"
     }
 ]
 
