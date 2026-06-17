@@ -14,6 +14,11 @@ const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
         { label: "Participants", value: "15" },
         { label: "Timepoints", value: "1" },
     ],
+    RNA: [
+        { label: "Experiments", value: "15" },
+        { label: "Participants", value: "15" },
+        { label: "Timepoints", value: "1" },
+    ],
 };
 
 export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
