@@ -266,6 +266,9 @@ const BulkDownloadModal = ({
                             </Typography>
                           </Box>
                           <IconButton
+                            component="span"
+                            role="button"
+                            aria-label="Remove dataset"
                             size="small"
                             onClick={(event) => {
                               event.stopPropagation();

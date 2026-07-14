@@ -19,7 +19,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useDownloadJobs, DownloadJob } from "@/common/context/DownloadJobsContext";
 import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
-import Config from "@/common/config.json";
+import { formatBytes } from "@/common/downloads";
 
 const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
   zip: "zip",
@@ -64,13 +64,17 @@ function JobRow({ job }: { job: DownloadJob }) {
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={0.5}>
-          {isDone && (
-            <Tooltip title="Download archive" arrow placement="left">
+          {isDone && job.downloadUrl && (
+            <Tooltip
+              title={job.format === "script" ? "Download shell script" : "Download archive"}
+              arrow
+              placement="left"
+            >
               <IconButton
                 size="small"
                 color="primary"
                 component="a"
-                href={`${Config.API.BULK_DOWNLOAD}/download/${job.id}`}
+                href={job.downloadUrl}
                 download
               >
                 <DownloadIcon fontSize="small" />
@@ -94,6 +98,14 @@ function JobRow({ job }: { job: DownloadJob }) {
         <Typography variant="caption" color="text.secondary">
           {job.files.length} file{job.files.length !== 1 ? "s" : ""}
         </Typography>
+        {job.sizeBytes ? (
+          <>
+            <Typography variant="caption" color="text.disabled">·</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {formatBytes(job.sizeBytes)}
+            </Typography>
+          </>
+        ) : null}
         <Typography variant="caption" color="text.disabled">·</Typography>
         <Typography
           variant="caption"

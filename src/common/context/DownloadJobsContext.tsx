@@ -25,6 +25,9 @@ export type DownloadJob = {
   fileCount: number;
   filename?: string;
   error?: string;
+  // Static URL to the finished archive on the archive host. Present once done.
+  downloadUrl?: string;
+  sizeBytes?: number;
 };
 
 type StatusResponse = {
@@ -35,6 +38,8 @@ type StatusResponse = {
   expires_at: string;
   filename?: string;
   error?: string;
+  download_url?: string;
+  size_bytes?: number;
 };
 
 type DownloadJobsContextValue = {
@@ -72,6 +77,8 @@ function loadFromStorage(): DownloadJob[] {
         progress: Math.max(0, Math.min(100, j.progress ?? 0)),
         filename: j.filename,
         error: j.error,
+        downloadUrl: j.downloadUrl,
+        sizeBytes: j.sizeBytes,
       }));
   } catch {
     return [];
@@ -151,6 +158,8 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
                       expiresAt: data.expires_at,
                       filename: data.filename,
                       error: data.error,
+                      downloadUrl: data.download_url,
+                      sizeBytes: data.size_bytes,
                     }
                   : j,
               ),
@@ -166,6 +175,8 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
                       expiresAt: data.expires_at,
                       filename: data.filename,
                       error: data.error,
+                      downloadUrl: data.download_url,
+                      sizeBytes: data.size_bytes,
                     }
                   : j,
               ),

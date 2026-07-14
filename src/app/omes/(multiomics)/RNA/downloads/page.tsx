@@ -1,20 +1,12 @@
 "use client";
-import { OmeEnum } from "@/common/types/generated/graphql";
 import OmeDualPaneDownloads from "@/common/components/Downloads/OmeDualPaneDownloads";
-import type { OmeDownloadsConfig } from "@/common/components/Downloads/types";
-import { useRNAData } from "@/common/hooks/omeHooks/useRNAData";
+import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
 
-type RnaRow = {
-  sample_id: string;
-  site: string;
-  status: string;
-  sex: string;
-  kit: string;
-};
+type RnaRow = BaseSampleMetadata;
 
 const config: OmeDownloadsConfig<RnaRow> = {
-  ome: OmeEnum.RnaSeq,
-  useData: () => useRNAData({ skip: false }),
+  omeKey: "rna",
+  displayName: "RNA-seq",
   datasetFilters: [
     { field: "sex", label: "Sex" },
     { field: "status", label: "Status" },
