@@ -1,6 +1,19 @@
 "use client";
-import DownloadsComingSoon from "@/common/components/Downloads/DownloadsComingSoon";
+import OmeDualPaneDownloads from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
 
-const ExposomicsDownloads = () => <DownloadsComingSoon omeName="Exposomics" />;
+type ExposomicsRow = BaseSampleMetadata;
+
+const config: OmeDownloadsConfig<ExposomicsRow> = {
+  omeKey: "exposomics",
+  displayName: "Exposomics",
+  datasetFilters: [
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
+  ],
+};
+
+const ExposomicsDownloads = () => <OmeDualPaneDownloads config={config} />;
 
 export default ExposomicsDownloads;

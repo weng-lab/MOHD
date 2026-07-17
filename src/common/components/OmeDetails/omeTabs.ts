@@ -50,5 +50,6 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
     ],
     metallomics: [
         { value: "dimensionalityReduction", label: "Dimensionality Reduction", icon: dimensionalityReductionIcon, href: "/omes/metallomics/dimensionalityReduction" },
+        { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/metallomics/downloads" },
     ],
 };

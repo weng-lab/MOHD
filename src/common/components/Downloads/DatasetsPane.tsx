@@ -13,7 +13,6 @@ type DatasetsPaneProps = {
   onActivate: (id: string) => void;
   filterModel: GridFilterModel;
   onFilterModelChange: Dispatch<SetStateAction<GridFilterModel>>;
-  isColumn: boolean;
 };
 
 /** Left pane: the dataset (participant) grid with bulk-select + filter facets. */
@@ -26,19 +25,16 @@ export default function DatasetsPane({
   onActivate,
   filterModel,
   onFilterModelChange,
-  isColumn,
 }: DatasetsPaneProps) {
   return (
     <Box
       sx={{
-        gridColumn: 1,
-        gridRow: 1,
         display: "flex",
         flexDirection: "column",
         gap: 1,
         minWidth: 0,
         minHeight: 0,
-        height: isColumn ? 500 : "100%",
+        height: "100%",
       }}
     >
       <Box sx={{ flex: 1, minHeight: 0 }}>

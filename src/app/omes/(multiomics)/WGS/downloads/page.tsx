@@ -1,6 +1,19 @@
 "use client";
-import DownloadsComingSoon from "@/common/components/Downloads/DownloadsComingSoon";
+import OmeDualPaneDownloads from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
 
-const WgsDownloads = () => <DownloadsComingSoon omeName="WGS" />;
+type WGSRow = BaseSampleMetadata;
+
+const config: OmeDownloadsConfig<WGSRow> = {
+  omeKey: "wgs",
+  displayName: "WGS",
+  datasetFilters: [
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
+  ],
+};
+
+const WgsDownloads = () => <OmeDualPaneDownloads config={config} />;
 
 export default WgsDownloads;
