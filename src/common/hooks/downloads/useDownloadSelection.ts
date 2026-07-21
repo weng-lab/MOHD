@@ -20,6 +20,8 @@ export type DownloadSelectionState = {
   setActiveSelection: (model: GridRowSelectionModel) => void;
   numSelectedFiles: number;
   clearSelection: () => void;
+  deselectFile: (datasetId: string, filename: string) => void;
+  deselectDataset: (datasetId: string) => void;
   datasetCheckState: Map<string, CheckState>;
   allCheckState: CheckState;
   toggleAll: () => void;
@@ -73,6 +75,30 @@ export function useDownloadSelection({
   }, [selection]);
 
   const clearSelection = useCallback(() => setSelection(new Map()), []);
+
+  // Removals driven from outside the grid (the download modal). Dropping the
+  // last file of a dataset drops the dataset entry, matching setActiveSelection.
+  const deselectFile = useCallback((datasetId: string, filename: string) => {
+    setSelection((prev) => {
+      const selected = prev.get(datasetId);
+      if (!selected?.has(filename)) return prev;
+      const nextMap = new Map(prev);
+      const nextSet = new Set(selected);
+      nextSet.delete(filename);
+      if (nextSet.size === 0) nextMap.delete(datasetId);
+      else nextMap.set(datasetId, nextSet);
+      return nextMap;
+    });
+  }, []);
+
+  const deselectDataset = useCallback((datasetId: string) => {
+    setSelection((prev) => {
+      if (!prev.has(datasetId)) return prev;
+      const nextMap = new Map(prev);
+      nextMap.delete(datasetId);
+      return nextMap;
+    });
+  }, []);
 
   const datasetCheckState = useMemo(() => {
     const map = new Map<string, CheckState>();
@@ -146,6 +172,8 @@ export function useDownloadSelection({
     setActiveSelection,
     numSelectedFiles,
     clearSelection,
+    deselectFile,
+    deselectDataset,
     datasetCheckState,
     allCheckState,
     toggleAll,

@@ -1,17 +1,13 @@
 import { useCallback, useState } from "react";
-import Config from "../config.json";
 import { useDownloadJobs } from "@/common/context/DownloadJobsContext";
-import { getMockBulkDownloadFiles } from "@/common/bulkDownloadMocks";
 
 export type BulkDownloadFormat = "zip" | "tarball" | "script";
-export type ModalJobStatus = "idle" | "submitting" | "submitted" | "failed";
+export type ModalJobStatus = "idle" | "submitting" | "failed";
 
 type JobResponse = {
   id: string;
   expires_at: string;
 };
-
-const BASE_URL = Config.API.BULK_DOWNLOAD;
 
 export function useBulkDownloadJob() {
   const [status, setStatus] = useState<ModalJobStatus>("idle");
@@ -19,16 +15,17 @@ export function useBulkDownloadJob() {
 
   const reset = useCallback(() => setStatus("idle"), []);
 
+  /** Resolves true once the job is accepted and queued, false if submission failed. */
   const submit = async (
     files: string[],
     format: BulkDownloadFormat,
     ome?: string,
-  ) => {
+  ): Promise<boolean> => {
     setStatus("submitting");
     // const mockFiles = getMockBulkDownloadFiles(format);
 
     try {
-      const res = await fetch(`${BASE_URL}/jobs`, {
+      const res = await fetch(`/api/bulk-download/jobs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -53,9 +50,11 @@ export function useBulkDownloadJob() {
         fileCount: files.length,
       });
 
-      setStatus("submitted");
+      setStatus("idle");
+      return true;
     } catch {
       setStatus("failed");
+      return false;
     }
   };
 

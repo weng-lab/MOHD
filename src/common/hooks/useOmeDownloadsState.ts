@@ -53,6 +53,8 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   setActiveSelection: (model: GridRowSelectionModel) => void;
   numSelectedFiles: number;
   clearSelection: () => void;
+  deselectFile: (datasetId: string, filename: string) => void;
+  deselectDataset: (datasetId: string) => void;
   datasetCheckState: Map<string, CheckState>;
   allCheckState: CheckState;
   toggleAll: () => void;
@@ -197,6 +199,8 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     setActiveSelection: selectionState.setActiveSelection,
     numSelectedFiles: selectionState.numSelectedFiles,
     clearSelection: selectionState.clearSelection,
+    deselectFile: selectionState.deselectFile,
+    deselectDataset: selectionState.deselectDataset,
     datasetCheckState: selectionState.datasetCheckState,
     allCheckState: selectionState.allCheckState,
     toggleAll: selectionState.toggleAll,

@@ -10,7 +10,6 @@ import {
   useState,
 } from "react";
 import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
-import Config from "@/common/config.json";
 
 export type BulkJobStatus = "pending" | "processing" | "done" | "failed";
 
@@ -28,6 +27,11 @@ export type DownloadJob = {
   // Static URL to the finished archive on the archive host. Present once done.
   downloadUrl?: string;
   sizeBytes?: number;
+  // True while a cancellation request is in flight for this job.
+  cancelling?: boolean;
+  // Set when a cancellation attempt failed. Kept apart from `error`, which the
+  // status poller overwrites on every tick.
+  cancelError?: string;
 };
 
 type StatusResponse = {
@@ -49,13 +53,14 @@ type DownloadJobsContextValue = {
     id: string,
     patch: Partial<Pick<DownloadJob, "status" | "progress">>,
   ) => void;
-  removeJob: (id: string) => void;
+  // Cancels the job upstream when it is still running, otherwise just dismisses it locally.
+  removeJob: (id: string) => Promise<void>;
   retryJob: (id: string) => Promise<void>;
 };
 
 const STORAGE_KEY = "mohd_download_jobs";
 const POLL_INTERVAL_MS = 500;
-const BASE_URL = Config.API.BULK_DOWNLOAD;
+const BASE_URL = "/api/bulk-download";
 
 const DownloadJobsContext = createContext<DownloadJobsContextValue | null>(
   null,
@@ -79,6 +84,9 @@ function loadFromStorage(): DownloadJob[] {
         error: j.error,
         downloadUrl: j.downloadUrl,
         sizeBytes: j.sizeBytes,
+        // A cancel in flight when the tab closed never completed
+        cancelling: false,
+        cancelError: undefined,
       }));
   } catch {
     return [];
@@ -213,15 +221,51 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
   );
 
   const removeJob = useCallback(
-    (id: string) => {
-      clearPoller(id);
-      setJobs((prev) => prev.filter((j) => j.id !== id));
+    async (id: string) => {
       const job = jobs.find((j) => j.id === id);
-      if (job?.status === "pending" || job?.status === "processing") {
-        window.alert("need to implement actually cancelling the job")
+      const isRunning = job?.status === "pending" || job?.status === "processing";
+
+      // Finished/failed jobs are only tray entries — dismissing them must never
+      // reach the API, so a cleanup click can't kill someone else's job.
+      if (!isRunning) {
+        clearPoller(id);
+        setJobs((prev) => prev.filter((j) => j.id !== id));
+        return;
+      }
+
+      if (job?.cancelling) return;
+
+      // Stop polling first so an in-flight status tick can't revive the row
+      clearPoller(id);
+      setJobs((prev) =>
+        prev.map((j) =>
+          j.id === id ? { ...j, cancelling: true, cancelError: undefined } : j,
+        ),
+      );
+
+      try {
+        const res = await fetch(`${BASE_URL}/jobs/${id}`, { method: "DELETE" });
+        // 404 means the job is already gone upstream — same end state for us
+        if (!res.ok && res.status !== 404)
+          throw new Error(`Cancel failed: ${res.status}`);
+        setJobs((prev) => prev.filter((j) => j.id !== id));
+      } catch {
+        // Keep the row and resume polling so its status stays live
+        setJobs((prev) =>
+          prev.map((j) =>
+            j.id === id
+              ? {
+                  ...j,
+                  cancelling: false,
+                  cancelError: "Could not cancel — try again",
+                }
+              : j,
+          ),
+        );
+        startPolling(id);
       }
     },
-    [clearPoller, jobs],
+    [clearPoller, startPolling, jobs],
   );
 
   const retryJob = useCallback(
@@ -251,6 +295,8 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
           fileCount: job.fileCount,
           filename: undefined,
           error: undefined,
+          cancelling: false,
+          cancelError: undefined,
         };
 
         // Replace old job with new one

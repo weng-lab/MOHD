@@ -15,6 +15,13 @@ export const BUNDLE_FILE_TYPE = "Compressed Tar File";
 export const isFileBulkSelectable = (file: CatalogFile): boolean =>
   file.open_access && file.file_type !== BUNDLE_FILE_TYPE;
 
+/**
+ * The bulk download service rejects archive jobs (zip/tarball) whose
+ * pre-archive total exceeds this with a 413. Selections above it can still be
+ * downloaded via the shell script, which pulls the files directly.
+ */
+export const ARCHIVE_SIZE_LIMIT_BYTES = 20 * 1024 ** 3;
+
 export const formatBytes = (bytes?: number): string => {
   if (!bytes) return "";
 

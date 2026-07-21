@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -27,16 +27,19 @@ import {
   BulkDownloadFormat,
   useBulkDownloadJob,
 } from "@/common/hooks/useBulkDownloadJob";
-import { formatBytes } from "@/common/downloads";
+import { ARCHIVE_SIZE_LIMIT_BYTES, formatBytes } from "@/common/downloads";
 
 export type BulkDownloadModalProps = {
   open: boolean;
   onClose: () => void;
+  /** The paths a job would be submitted with; the tree below lists these same files. */
   filePaths: string[];
   totalSize: number;
-  filterSummary?: string | null;
   ome?: string;
-  bulkDownloadItems?: BulkDownloadDatasetItem[];
+  bulkDownloadItems: BulkDownloadDatasetItem[];
+  /** Removals write straight back to the table selection — the modal owns no copy. */
+  onRemoveFile: (sampleId: string, filename: string) => void;
+  onRemoveDataset: (sampleId: string) => void;
 };
 
 const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
@@ -48,61 +51,40 @@ const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
 const BulkDownloadModal = ({
   open,
   onClose,
-  filterSummary,
+  filePaths,
+  totalSize,
   ome,
   bulkDownloadItems,
+  onRemoveFile,
+  onRemoveDataset,
 }: BulkDownloadModalProps) => {
   const [format, setFormat] = useState<BulkDownloadFormat>("zip");
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
-  const [modalItems, setModalItems] = useState<BulkDownloadDatasetItem[]>(
-    () => bulkDownloadItems ?? [],
-  );
   const { submit, status, reset } = useBulkDownloadJob();
-
-  useEffect(() => {
-    if (status === "submitted") {
-      reset();
-      onClose();
-    }
-  }, [status, onClose, reset]);
-
-  useEffect(() => {
-    if (!open) {
-      reset();
-    }
-  }, [open, reset]);
 
   const isSubmitting = status === "submitting";
 
-  const modalFilePaths = useMemo(
-    () =>
-      modalItems.flatMap((dataset) =>
-        dataset.children.map((child) => child.path),
-      ),
-    [modalItems],
-  );
+  const fileCount = filePaths.length;
+  const datasetCount = bulkDownloadItems.length;
 
-  const modalTotalSize = useMemo(
-    () =>
-      modalItems.reduce(
-        (datasetSum, dataset) =>
-          datasetSum +
-          dataset.children.reduce((fileSum, child) => fileSum + child.size, 0),
-        0,
-      ),
-    [modalItems],
-  );
+  // The service rejects archive jobs over the limit with a 413, so steer the
+  // user to the shell script instead of letting them submit a doomed job.
+  const isOverArchiveLimit = totalSize > ARCHIVE_SIZE_LIMIT_BYTES;
 
-  const modalFileCount = modalFilePaths.length;
-  const datasetCount = modalItems.length;
+  // Forced rather than stored, so removing files back under the limit restores
+  // whatever the user had picked.
+  const effectiveFormat = isOverArchiveLimit ? "script" : format;
 
-  const handleSubmit = () => {
-    submit(modalFilePaths, format, ome);
-  };
-
+  // Every dismissal path lands here — Cancel, the X, Esc and the backdrop — so
+  // this is where a stale "failed" alert gets cleared before the next open.
   const handleClose = () => {
     setExpandedIds([]);
+    reset();
     onClose();
+  };
+
+  const handleSubmit = async () => {
+    if (await submit(filePaths, effectiveFormat, ome)) handleClose();
   };
 
   const toggleExpanded = (id: string) => {
@@ -113,30 +95,15 @@ const BulkDownloadModal = ({
     );
   };
 
-  const handleRemoveDataset = (datasetId: string) => {
-    setExpandedIds((current) => current.filter((currentId) => currentId !== datasetId));
-    setModalItems((current) =>
-      current.filter((dataset) => dataset.id !== datasetId),
-    );
-  };
-
-  const handleRemoveFile = (datasetId: string, fileId: string) => {
-    setModalItems((current) =>
-      current
-        .map((dataset) =>
-          dataset.id !== datasetId
-            ? dataset
-            : {
-                ...dataset,
-                children: dataset.children.filter((child) => child.id !== fileId),
-              },
-        )
-        .filter((dataset) => dataset.children.length > 0),
-    );
+  const handleRemoveDataset = (dataset: BulkDownloadDatasetItem) => {
+    setExpandedIds((current) => current.filter((currentId) => currentId !== dataset.id));
+    onRemoveDataset(dataset.sampleId);
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    // Undefined onClose while submitting blocks Esc and backdrop dismissal, so
+    // an in-flight job can't be walked away from and resolve onto a closed modal.
+    <Modal open={open} onClose={isSubmitting ? undefined : handleClose}>
       <Fade in={open}>
         <Box
           sx={{
@@ -167,7 +134,12 @@ const BulkDownloadModal = ({
                   downloading.
                 </Typography>
               </Box>
-              <IconButton onClick={handleClose} sx={{ mt: -0.5, mr: -0.5 }}>
+              <IconButton
+                aria-label="Close"
+                onClick={handleClose}
+                disabled={isSubmitting}
+                sx={{ mt: -0.5, mr: -0.5 }}
+              >
                 <CloseIcon />
               </IconButton>
             </Stack>
@@ -176,8 +148,6 @@ const BulkDownloadModal = ({
               sx={{
                 py: 0.25,
                 borderRadius: 2,
-                bgcolor: "#E5F3FB",
-                color: "#0B5F8A",
                 "& .MuiAlert-message": {
                   width: "100%",
                 },
@@ -191,23 +161,18 @@ const BulkDownloadModal = ({
           <Box
             sx={{
               p: 2,
-              bgcolor: "#FAFAF8",
+              bgcolor: "surface.light",
             }}
           >
             <Stack direction="row" justifyContent="space-between" spacing={2}>
               <Typography variant="subtitle1">
-                <b>{modalFileCount} file{modalFileCount !== 1 ? "s" : ""} •{" "}
-                  {formatBytes(modalTotalSize)}</b>
+                <b>{fileCount} file{fileCount !== 1 ? "s" : ""} •{" "}
+                  {formatBytes(totalSize)}</b>
               </Typography>
               <Typography variant="body1" color="text.secondary">
-              {datasetCount} sample{datasetCount !== 1 ? "s" : ""}
+              {datasetCount} dataset{datasetCount !== 1 ? "s" : ""}
               </Typography>
             </Stack>
-            {filterSummary && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Filtered by: {filterSummary}
-              </Typography>
-            )}
           </Box>
           <Divider />
           <Box
@@ -218,7 +183,13 @@ const BulkDownloadModal = ({
             }}
           >
             <Stack>
-              {modalItems.map((dataset) => {
+              {bulkDownloadItems.length === 0 && (
+                <Typography variant="body1" color="text.secondary">
+                  No files selected. Close this dialog and pick files from the
+                  table to start a download.
+                </Typography>
+              )}
+              {bulkDownloadItems.map((dataset) => {
                 const datasetTitle = dataset.sampleId;
 
                 return (
@@ -242,7 +213,7 @@ const BulkDownloadModal = ({
                           p: 2,
                           flexDirection: "row-reverse",
                           bgcolor: expandedIds.includes(dataset.id)
-                            ? "#EEF3F1"
+                            ? "surface.light"
                             : "transparent",
                           "& .MuiAccordionSummary-content": {
                             my: 0,
@@ -272,7 +243,7 @@ const BulkDownloadModal = ({
                             size="small"
                             onClick={(event) => {
                               event.stopPropagation();
-                              handleRemoveDataset(dataset.id);
+                              handleRemoveDataset(dataset);
                             }}
                           >
                             <DeleteOutlineIcon sx={{ color: "text.secondary" }} />
@@ -297,8 +268,9 @@ const BulkDownloadModal = ({
                                 {child.label}
                               </Typography>
                               <IconButton
+                                aria-label={`Remove ${child.label}`}
                                 size="small"
-                                onClick={() => handleRemoveFile(dataset.id, child.id)}
+                                onClick={() => onRemoveFile(dataset.sampleId, child.id)}
                               >
                                 <RemoveIcon sx={{ color: "text.secondary" }} />
                               </IconButton>
@@ -320,7 +292,7 @@ const BulkDownloadModal = ({
             </Typography>
             <RadioGroup
               row
-              value={format}
+              value={effectiveFormat}
               onChange={(event) =>
                 setFormat(event.target.value as BulkDownloadFormat)
               }
@@ -332,6 +304,7 @@ const BulkDownloadModal = ({
                   value={key}
                   control={<Radio />}
                   label={FORMAT_LABELS[key]}
+                  disabled={isOverArchiveLimit && key !== "script"}
                   sx={{ mr: 0 }}
                 />
               ))}
@@ -340,6 +313,14 @@ const BulkDownloadModal = ({
               .zip or .tar.gz for a direct archive download, or shell script to
               pull the files yourself
             </Typography>
+            {isOverArchiveLimit && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                This selection is {formatBytes(totalSize)}, over the{" "}
+                {formatBytes(ARCHIVE_SIZE_LIMIT_BYTES)} limit for .zip and
+                .tar.gz archives. Download with the shell script, or remove
+                files to get under the limit.
+              </Alert>
+            )}
             {status === "failed" && (
               <Alert severity="error" sx={{ mt: 2 }}>
                 Couldn&apos;t start download. Check your connection and try
@@ -368,7 +349,7 @@ const BulkDownloadModal = ({
                   )
                 }
                 onClick={handleSubmit}
-                disabled={modalFileCount === 0 || isSubmitting}
+                disabled={fileCount === 0 || isSubmitting}
               >
                 {isSubmitting ? "Submitting..." : "Start Download"}
               </Button>

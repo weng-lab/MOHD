@@ -43,6 +43,8 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     setActiveSelection,
     numSelectedFiles,
     clearSelection,
+    deselectFile,
+    deselectDataset,
     datasetCheckState,
     allCheckState,
     toggleAll,
@@ -123,6 +125,8 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
         onClear={clearSelection}
         ome={displayName}
         bulkDownloadItems={bulkDownloadItems}
+        onRemoveFile={deselectFile}
+        onRemoveDataset={deselectDataset}
       />
     </Box>
   );

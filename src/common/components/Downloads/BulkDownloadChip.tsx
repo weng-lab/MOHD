@@ -12,32 +12,28 @@ type BulkDownloadChipProps = {
     totalSize: number;
     numFiles: number;
     onClear: () => void;
-    filterSummary?: string | null;
     ome?: string;
-    bulkDownloadItems?: BulkDownloadDatasetItem[];
+    bulkDownloadItems: BulkDownloadDatasetItem[];
+    onRemoveFile: (sampleId: string, filename: string) => void;
+    onRemoveDataset: (sampleId: string) => void;
 };
 
 const BulkDownloadChip = ({
     visible,
     filePaths,
     totalSize,
-    filterSummary,
     ome,
     bulkDownloadItems,
     numFiles,
     onClear,
-
+    onRemoveFile,
+    onRemoveDataset,
 }: BulkDownloadChipProps) => {
     const [open, setOpen] = useState(false);
-    const [modalInstanceKey, setModalInstanceKey] = useState(0);
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const numDatasets = new Set(
-        filePaths
-            .map((path) => path.split("/")[1])
-            .filter(Boolean)
-    ).size;
+    const numDatasets = bulkDownloadItems.length;
 
     return (
         <>
@@ -134,10 +130,7 @@ const BulkDownloadChip = ({
                                     variant="contained"
                                     color="primary"
                                     startIcon={<Download />}
-                                    onClick={() => {
-                                        setModalInstanceKey((current) => current + 1);
-                                        setOpen(true);
-                                    }}
+                                    onClick={() => setOpen(true)}
                                     size={isXs ? "small" : "medium"}
                                 >
                                     Bulk Download ({numFiles})
@@ -148,14 +141,14 @@ const BulkDownloadChip = ({
                 </Box>
             </Zoom>
             <BulkDownloadModal
-                key={modalInstanceKey}
                 open={open}
                 onClose={() => setOpen(false)}
                 filePaths={filePaths}
                 totalSize={totalSize}
-                filterSummary={filterSummary}
                 ome={ome}
                 bulkDownloadItems={bulkDownloadItems}
+                onRemoveFile={onRemoveFile}
+                onRemoveDataset={onRemoveDataset}
             />
         </>
     );

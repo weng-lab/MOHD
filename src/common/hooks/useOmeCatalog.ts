@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import Config from "@/common/config.json";
 import type {
   BaseSampleMetadata,
   CatalogDataset,
 } from "@/common/components/Downloads/types";
 
-// The catalog lives on the same service as the bulk-download jobs API.
-const BASE_URL = Config.API.BULK_DOWNLOAD.replace(/\/+$/, "");
+// The catalog lives on the same service as the bulk-download jobs API,
+// proxied through our own API routes so the auth token stays server-side.
+const BASE_URL = "/api/bulk-download";
 
 type CatalogState<T extends BaseSampleMetadata> = {
   datasets: CatalogDataset<T>[];

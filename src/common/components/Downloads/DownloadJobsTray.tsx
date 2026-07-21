@@ -39,8 +39,13 @@ function JobRow({ job }: { job: DownloadJob }) {
   const isActive = job.status === "pending" || job.status === "processing";
   const isDone = job.status === "done";
   const isFailed = job.status === "failed";
+  const isCancelling = Boolean(job.cancelling);
   const progress = Math.max(0, Math.min(100, job.progress ?? 0));
-  const activeLabel = job.status === "processing" ? `Processing... ${progress}%` : STATUS_LABEL[job.status];
+  const activeLabel = isCancelling
+    ? "Cancelling…"
+    : job.status === "processing"
+      ? `Processing... ${progress}%`
+      : STATUS_LABEL[job.status];
 
   return (
     <Stack spacing={0.75} sx={{ py: 1.5, px: 2 }}>
@@ -86,10 +91,21 @@ function JobRow({ job }: { job: DownloadJob }) {
               Retry
             </Button>
           )}
-          <Tooltip title={isActive ? "Cancel" : "Dismiss"} arrow placement="left">
-            <IconButton size="small" onClick={() => removeJob(job.id)}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
+          <Tooltip
+            title={isActive ? "Cancel download" : "Dismiss"}
+            arrow
+            placement="left"
+          >
+            {/* span keeps the tooltip working while the button is disabled */}
+            <span>
+              <IconButton
+                size="small"
+                disabled={isCancelling}
+                onClick={() => void removeJob(job.id)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </span>
           </Tooltip>
         </Stack>
       </Stack>
@@ -115,9 +131,15 @@ function JobRow({ job }: { job: DownloadJob }) {
         </Typography>
       </Stack>
 
+      {job.cancelError && (
+        <Typography variant="caption" color="error">
+          {job.cancelError}
+        </Typography>
+      )}
+
       {isActive && (
         <LinearProgress
-          variant="determinate"
+          variant={isCancelling ? "indeterminate" : "determinate"}
           value={progress}
           sx={{ borderRadius: 1, height: 3 }}
         />

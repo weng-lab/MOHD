@@ -3649,9 +3649,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/ui-components@npm:3.2.0-beta.0":
-  version: 3.2.0-beta.0
-  resolution: "@weng-lab/ui-components@npm:3.2.0-beta.0"
+"@weng-lab/ui-components@npm:3.2.0":
+  version: 3.2.0
+  resolution: "@weng-lab/ui-components@npm:3.2.0"
   peerDependencies:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.0
@@ -3660,7 +3660,7 @@ __metadata:
     "@mui/x-data-grid-premium": ^8.18.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/7fc04c47f78e0596aacc921b782ae1e68aea841801f7e4af4ce754a50a912f7876937199df4d0d626741cf9d7711d151b27688ba4757ab5f14550683e69cc982
+  checksum: 10c0/2d67e023dedaf52582a687d37a84aedf201389aff01cc12cabb33dfa152886e887d0d435125ef77951b88011b0b8c11a86d3447df85db9bcb754050780ca0718
   languageName: node
   linkType: hard
 
@@ -7623,7 +7623,7 @@ __metadata:
     "@visx/visx": "npm:^3"
     "@weng-lab/genomebrowser": "npm:1.8.5"
     "@weng-lab/genomebrowser-ui": "npm:0.4.0"
-    "@weng-lab/ui-components": "npm:3.2.0-beta.0"
+    "@weng-lab/ui-components": "npm:3.2.0"
     "@weng-lab/visualization": "npm:^1.4.3"
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"

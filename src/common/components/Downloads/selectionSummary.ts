@@ -15,7 +15,6 @@ export type BulkDownloadFileItem = {
 
 export type BulkDownloadDatasetItem = {
   id: string;
-  label: string;
   sampleId: string;
   children: BulkDownloadFileItem[];
 };
@@ -54,15 +53,20 @@ export function totalSelectedSize(selection: Selection, filesByDataset: FilesByD
   return sum;
 }
 
-/** Group the selection into the per-dataset tree the download modal renders. */
+/**
+ * Group the selection into the per-dataset tree the download modal renders.
+ * Skips anything without a `bulk_path` on the same rule as `collectFilePaths`,
+ * so what the modal lists is exactly what a job would download.
+ */
 export function buildBulkDownloadItems(
   selection: Selection,
   filesByDataset: FilesByDataset
 ): BulkDownloadDatasetItem[] {
   return [...selection.entries()]
     .map(([datasetId, filenames]) => {
-      const datasetFiles = (filesByDataset.get(datasetId) ?? []).filter((f) =>
-        filenames.has(f.filename)
+      const datasetFiles = (filesByDataset.get(datasetId) ?? []).filter(
+        (f): f is CatalogFile & { bulk_path: string } =>
+          filenames.has(f.filename) && Boolean(f.bulk_path)
       );
       return [datasetId, datasetFiles] as const;
     })
@@ -79,13 +83,12 @@ export function buildBulkDownloadItems(
         label: typeCount.get(f.file_type)! > 1
           ? `${f.file_type} (${f.filename})`
           : f.file_type,
-        path: f.bulk_path ?? "",
+        path: f.bulk_path,
         size: Number(f.size ?? 0),
       }));
 
       return {
         id: `dataset-${datasetId}`,
-        label: `${datasetId} (${datasetFiles.length} file${datasetFiles.length !== 1 ? "s" : ""})`,
         sampleId: datasetId,
         children,
       };
