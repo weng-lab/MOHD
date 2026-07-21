@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Box,
   Stack,
@@ -14,7 +14,9 @@ import {
   Divider,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useDownloadJobs, DownloadJob } from "@/common/context/DownloadJobsContext";
@@ -34,8 +36,12 @@ const STATUS_LABEL: Record<DownloadJob["status"], string> = {
   failed: "Failed",
 };
 
+type CopyState = "idle" | "copied" | "error";
+
 function JobRow({ job }: { job: DownloadJob }) {
   const { removeJob, retryJob } = useDownloadJobs();
+  const [copyState, setCopyState] = useState<CopyState>("idle");
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isActive = job.status === "pending" || job.status === "processing";
   const isDone = job.status === "done";
   const isFailed = job.status === "failed";
@@ -46,6 +52,41 @@ function JobRow({ job }: { job: DownloadJob }) {
     : job.status === "processing"
       ? `Processing... ${progress}%`
       : STATUS_LABEL[job.status];
+
+  // The row unmounts as soon as the job is dismissed, so a pending revert must
+  // not outlive it.
+  useEffect(
+    () => () => {
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+    },
+    [],
+  );
+
+  const handleCopyLink = async () => {
+    if (!job.downloadUrl) return;
+    try {
+      // Absolutised so the link still resolves once pasted onto another
+      // machine, whatever shape the archive host hands back.
+      const url = new URL(job.downloadUrl, window.location.origin).href;
+      // Undefined outside a secure context, where writeText isn't reachable.
+      if (!navigator.clipboard) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(url);
+      setCopyState("copied");
+    } catch {
+      setCopyState("error");
+    }
+    if (copyTimer.current) clearTimeout(copyTimer.current);
+    copyTimer.current = setTimeout(() => setCopyState("idle"), 2000);
+  };
+
+  const copyTooltip =
+    copyState === "copied"
+      ? "Link copied"
+      : copyState === "error"
+        ? "Couldn't copy — copy it from the download button instead"
+        : job.format === "script"
+          ? "Copy script link"
+          : "Copy archive link";
 
   return (
     <Stack spacing={0.75} sx={{ py: 1.5, px: 2 }}>
@@ -70,21 +111,36 @@ function JobRow({ job }: { job: DownloadJob }) {
         </Stack>
         <Stack direction="row" alignItems="center" spacing={0.5}>
           {isDone && job.downloadUrl && (
-            <Tooltip
-              title={job.format === "script" ? "Download shell script" : "Download archive"}
-              arrow
-              placement="left"
-            >
-              <IconButton
-                size="small"
-                color="primary"
-                component="a"
-                href={job.downloadUrl}
-                download
+            <>
+              <Tooltip
+                title={job.format === "script" ? "Download script" : "Download archive"}
+                arrow
+                placement="left"
               >
-                <DownloadIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
+                <IconButton
+                  size="small"
+                  component="a"
+                  href={job.downloadUrl}
+                  download
+                >
+                  <DownloadIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={copyTooltip} arrow placement="left">
+                <IconButton
+                  aria-label={copyTooltip}
+                  size="small"
+                  color={copyState === "copied" ? "success" : "default"}
+                  onClick={() => void handleCopyLink()}
+                >
+                  {copyState === "copied" ? (
+                    <CheckIcon fontSize="small" />
+                  ) : (
+                    <ContentCopyIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            </>
           )}
           {isFailed && (
             <Button size="small" onClick={() => retryJob(job.id)} sx={{ minWidth: 0, px: 1 }}>
