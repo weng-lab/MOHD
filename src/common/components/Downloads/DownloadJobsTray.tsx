@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Box,
   Stack,
@@ -14,14 +14,14 @@ import {
   Divider,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import TerminalIcon from "@mui/icons-material/Terminal";
 import { useDownloadJobs, DownloadJob } from "@/common/context/DownloadJobsContext";
 import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
 import { formatBytes } from "@/common/downloads";
+import DownloadCommandModal from "./DownloadCommandModal";
 
 const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
   zip: "zip",
@@ -36,12 +36,47 @@ const STATUS_LABEL: Record<DownloadJob["status"], string> = {
   failed: "Failed",
 };
 
-type CopyState = "idle" | "copied" | "error";
+/**
+ * Returns a clock that advances whenever a job's expiry passes, so a row can
+ * flip to "Expired" without waiting for a reload — loadFromStorage only prunes
+ * expired jobs at startup, which leaves a long-lived tab offering links the
+ * service has already cleaned up.
+ *
+ * Arms a single timer at the nearest future expiry rather than polling, so a
+ * tray left open all day costs one wakeup per job. Firing late (a throttled
+ * background tab, a sleeping machine) is harmless: expiry is recomputed against
+ * this clock on every render, so a late tick just reports the truth later.
+ */
+function useExpiryClock(jobs: DownloadJob[]): number {
+  const [now, setNow] = useState(() => Date.now());
 
-function JobRow({ job }: { job: DownloadJob }) {
+  const nextExpiry = jobs.reduce<number | null>((soonest, job) => {
+    const expiry = Date.parse(job.expiresAt);
+    if (Number.isNaN(expiry) || expiry <= now) return soonest;
+    return soonest === null || expiry < soonest ? expiry : soonest;
+  }, null);
+
+  useEffect(() => {
+    if (nextExpiry === null) return;
+    // Past the deadline by a margin, so the tick cannot land a millisecond
+    // early and re-arm on the same expiry.
+    const timer = setTimeout(() => setNow(Date.now()), nextExpiry - Date.now() + 250);
+    return () => clearTimeout(timer);
+  }, [nextExpiry]);
+
+  return now;
+}
+
+function JobRow({
+  job,
+  isExpired,
+  onShowCommands,
+}: {
+  job: DownloadJob;
+  isExpired: boolean;
+  onShowCommands: (id: string) => void;
+}) {
   const { removeJob, retryJob } = useDownloadJobs();
-  const [copyState, setCopyState] = useState<CopyState>("idle");
-  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isActive = job.status === "pending" || job.status === "processing";
   const isDone = job.status === "done";
   const isFailed = job.status === "failed";
@@ -52,41 +87,6 @@ function JobRow({ job }: { job: DownloadJob }) {
     : job.status === "processing"
       ? `Processing... ${progress}%`
       : STATUS_LABEL[job.status];
-
-  // The row unmounts as soon as the job is dismissed, so a pending revert must
-  // not outlive it.
-  useEffect(
-    () => () => {
-      if (copyTimer.current) clearTimeout(copyTimer.current);
-    },
-    [],
-  );
-
-  const handleCopyLink = async () => {
-    if (!job.downloadUrl) return;
-    try {
-      // Absolutised so the link still resolves once pasted onto another
-      // machine, whatever shape the archive host hands back.
-      const url = new URL(job.downloadUrl, window.location.origin).href;
-      // Undefined outside a secure context, where writeText isn't reachable.
-      if (!navigator.clipboard) throw new Error("Clipboard unavailable");
-      await navigator.clipboard.writeText(url);
-      setCopyState("copied");
-    } catch {
-      setCopyState("error");
-    }
-    if (copyTimer.current) clearTimeout(copyTimer.current);
-    copyTimer.current = setTimeout(() => setCopyState("idle"), 2000);
-  };
-
-  const copyTooltip =
-    copyState === "copied"
-      ? "Link copied"
-      : copyState === "error"
-        ? "Couldn't copy — copy it from the download button instead"
-        : job.format === "script"
-          ? "Copy script link"
-          : "Copy archive link";
 
   return (
     <Stack spacing={0.75} sx={{ py: 1.5, px: 2 }}>
@@ -110,7 +110,9 @@ function JobRow({ job }: { job: DownloadJob }) {
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={0.5}>
-          {isDone && job.downloadUrl && (
+          {/* Both actions lead to the archive host, which 404s once the service
+              has swept the artifact — so expiry retires them together. */}
+          {isDone && job.downloadUrl && !isExpired && (
             <>
               <Tooltip
                 title={job.format === "script" ? "Download script" : "Download archive"}
@@ -126,18 +128,13 @@ function JobRow({ job }: { job: DownloadJob }) {
                   <DownloadIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-              <Tooltip title={copyTooltip} arrow placement="left">
+              <Tooltip title="Get command" arrow placement="left">
                 <IconButton
-                  aria-label={copyTooltip}
+                  aria-label="Get command"
                   size="small"
-                  color={copyState === "copied" ? "success" : "default"}
-                  onClick={() => void handleCopyLink()}
+                  onClick={() => onShowCommands(job.id)}
                 >
-                  {copyState === "copied" ? (
-                    <CheckIcon fontSize="small" />
-                  ) : (
-                    <ContentCopyIcon fontSize="small" />
-                  )}
+                  <TerminalIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </>
@@ -181,9 +178,15 @@ function JobRow({ job }: { job: DownloadJob }) {
         <Typography variant="caption" color="text.disabled">·</Typography>
         <Typography
           variant="caption"
-          color={isFailed ? "error" : isActive ? "text.secondary" : "success.main"}
+          color={
+            isFailed
+              ? "error"
+              : isExpired || isActive
+                ? "text.secondary"
+                : "success.main"
+          }
         >
-          {isActive ? activeLabel : STATUS_LABEL[job.status]}
+          {isExpired ? "Expired" : isActive ? activeLabel : STATUS_LABEL[job.status]}
         </Typography>
       </Stack>
 
@@ -207,12 +210,23 @@ function JobRow({ job }: { job: DownloadJob }) {
 export default function DownloadJobsTray() {
   const { jobs } = useDownloadJobs();
   const [expanded, setExpanded] = useState(true);
+  const [commandJobId, setCommandJobId] = useState<string | null>(null);
+  const now = useExpiryClock(jobs);
 
   if (jobs.length === 0) return null;
 
   const activeCount = jobs.filter(
     (j) => j.status === "pending" || j.status === "processing"
   ).length;
+
+  const hasExpired = (job: DownloadJob) => {
+    const expiry = Date.parse(job.expiresAt);
+    return !Number.isNaN(expiry) && expiry <= now;
+  };
+
+  const commandJob = commandJobId
+    ? jobs.find((j) => j.id === commandJobId) ?? null
+    : null;
 
   return (
     <Box
@@ -272,11 +286,24 @@ export default function DownloadJobsTray() {
           {jobs.map((job, i) => (
             <Fragment key={job.id}>
               {i > 0 && <Divider />}
-              <JobRow job={job} />
+              <JobRow
+                job={job}
+                isExpired={hasExpired(job)}
+                onShowCommands={setCommandJobId}
+              />
             </Fragment>
           ))}
         </Box>
       </Collapse>
+
+      {commandJob?.downloadUrl && (
+        <DownloadCommandModal
+          job={commandJob}
+          downloadUrl={commandJob.downloadUrl}
+          isExpired={hasExpired(commandJob)}
+          onClose={() => setCommandJobId(null)}
+        />
+      )}
     </Box>
   );
 }
