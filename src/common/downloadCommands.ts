@@ -24,7 +24,7 @@ export type CommandPlan = {
  * `mkdir -Force`, `Out-Null` and `if ($?)`, none of which cmd.exe understands.
  */
 export const PLATFORM_LABELS: Record<CommandPlatform, string> = {
-  unix: "macOS / Linux",
+  unix: "Linux & macOS",
   windows: "Windows PowerShell",
 };
 
