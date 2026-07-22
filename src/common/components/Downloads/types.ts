@@ -29,11 +29,28 @@ export type CatalogFile = {
 };
 
 /**
+ * The dataset's pre-generated archive of all its open-access files, served as a
+ * sibling of `files` rather than a member of it — its contents *are* those
+ * files, so listing it among them would double-count sizes and file counts.
+ *
+ * It has no `bulk_path` by design: that field is what `POST /jobs` consumes, and
+ * a bundle inside a job archive would nest a .tar.gz in a .tar.gz. Direct
+ * download via `url` is the only thing it is for.
+ */
+export type DatasetBundle = {
+  filename: string;
+  size: number;
+  url: string;
+};
+
+/**
  * One participant/dataset row with its metadata flattened on and its files
  * nested. This is the per-item shape of the catalog's `datasets` array.
+ * `bundle` is absent for a dataset with no open-access files.
  */
 export type CatalogDataset<T extends BaseSampleMetadata> = T & {
   files: CatalogFile[];
+  bundle?: DatasetBundle;
 };
 
 /**

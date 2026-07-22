@@ -22,6 +22,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { DownloadJob } from "@/common/context/DownloadJobsContext";
 import {
   CommandPlatform,
+  CommandStep,
   FORMAT_DESCRIPTIONS,
   PLATFORM_LABELS,
   artifactName,
@@ -128,6 +129,24 @@ function CommandBlock({ command }: { command: string }) {
         <CopyButton text={command} label="Copy command" onDark />
       </Box>
     </Box>
+  );
+}
+
+/** Captions always sit above their command, so every route reads the same way. */
+function CommandSteps({ steps }: { steps: CommandStep[] }) {
+  return (
+    <Stack spacing={1.5}>
+      {steps.map((step, i) => (
+        <Stack key={i} spacing={0.5}>
+          {step.caption && (
+            <Typography variant="caption" color="text.secondary">
+              {step.caption}
+            </Typography>
+          )}
+          <CommandBlock command={step.command} />
+        </Stack>
+      ))}
+    </Stack>
   );
 }
 
@@ -240,16 +259,18 @@ export default function DownloadCommandModal({
                   </Alert>
                 )}
 
-                {plan.steps.map((step, i) => (
-                  <Stack key={i} spacing={0.5}>
-                    {step.caption && (
+                <CommandSteps steps={plan.steps} />
+
+                {plan.alternative && (
+                  <Stack spacing={1.5}>
+                    <Divider>
                       <Typography variant="caption" color="text.secondary">
-                        {step.caption}
+                        {plan.alternative.label}
                       </Typography>
-                    )}
-                    <CommandBlock command={step.command} />
+                    </Divider>
+                    <CommandSteps steps={plan.alternative.steps} />
                   </Stack>
-                ))}
+                )}
 
                 {showInspectToggle && (
                   <FormControlLabel

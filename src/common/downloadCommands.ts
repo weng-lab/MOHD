@@ -15,6 +15,12 @@ export type CommandStep = {
 
 export type CommandPlan = {
   steps: CommandStep[];
+  /**
+   * A second, equivalent route on the same platform — Git Bash beside WSL.
+   * Kept apart from `steps` because these are a choice, not a sequence: running
+   * both would download everything twice.
+   */
+  alternative?: { label: string; steps: CommandStep[] };
   /** Set when the platform cannot run this job's format natively. */
   note?: string;
 };
@@ -89,46 +95,11 @@ export function buildCommandPlan(args: {
     // downloads would silently merge into one directory.
     const root = `DOWNLOAD_ROOT=${quote(dir)}`;
 
-    if (platform === "windows") {
-      // Only the run step needs WSL. The download step deliberately uses native
-      // curl.exe, so the script can still be fetched and read on a machine where
-      // WSL is not set up yet — which is exactly when someone wants to look at
-      // it before committing to installing anything.
-      //
-      // The env assignment has to sit inside `bash -c`: `wsl VAR=x cmd` would
-      // have WSL look for a binary literally named "VAR=x", since a leading
-      // assignment is shell syntax rather than something exec understands.
-      const note = "Running a shell script in PowerShell requires WSL or Git Bash";
-
-      if (inspectFirst) {
-        return {
-          steps: [
-            {
-              command: `curl.exe -fsSL ${quote(url)} -o ${quote(filename)}`,
-              caption: "Download the script",
-            },
-            {
-              command: `wsl bash -c '${root} bash ${quote(filename)}'`,
-              caption: `Run the script under WSL; files land in ./${dir}`,
-            },
-          ],
-          note,
-        };
-      }
-
-      return {
-        steps: [
-          {
-            command: `wsl bash -c 'curl -fsSL ${quote(url)} | ${root} bash'`,
-            caption: `Download and run the script under WSL; files land in ./${dir}`,
-          },
-        ],
-        note,
-      };
-    }
-    if (inspectFirst) {
-      return {
-        steps: [
+    // Git Bash is a real bash and ships its own curl, so it runs these unchanged
+    // — which is why the Windows tab offers them verbatim as its alternative
+    // rather than building a third variant.
+    const bashSteps: CommandStep[] = inspectFirst
+      ? [
           {
             command: `curl -fsSL ${quote(url)} -o ${quote(filename)}`,
             caption: "Download the script",
@@ -137,17 +108,58 @@ export function buildCommandPlan(args: {
             command: `${root} bash ${quote(filename)}`,
             caption: `Run the script with bash; files land in ./${dir}`,
           },
-        ],
+        ]
+      : [
+          {
+            command: `curl -fsSL ${quote(url)} | ${root} bash`,
+            caption: `Download and run the script; files land in ./${dir}`,
+          },
+        ];
+
+    if (platform === "windows") {
+      // The `wsl` prefix is not about locating a bash — a machine with WSL
+      // usually has one on PATH already. It is that the command is POSIX and
+      // PowerShell cannot parse it: an assignment ahead of a command reads as a
+      // command named `DOWNLOAD_ROOT=…`, and piping between two native programs
+      // under Windows PowerShell 5.1 rejoins the script's lines with CRLF, which
+      // bash answers with `$'\r': command not found`. Running the whole thing
+      // inside `wsl bash -c '…'` keeps PowerShell away from both. So this is not
+      // interchangeable with a bare `bash …`, which would need PowerShell's own
+      // `$env:DOWNLOAD_ROOT=…;` form instead.
+      //
+      // The assignment must sit inside the -c string for the same reason `wsl
+      // VAR=x cmd` fails: a leading assignment is shell syntax, not something
+      // exec understands, so WSL would hunt for a binary named "VAR=x".
+      //
+      // Only the run step needs WSL. The download step uses native curl.exe, so
+      // the script can still be fetched and read on a machine where WSL is not
+      // set up yet — exactly when someone wants to look before installing.
+      const wslSteps: CommandStep[] = inspectFirst
+        ? [
+            {
+              command: `curl.exe -fsSL ${quote(url)} -o ${quote(filename)}`,
+              caption: "Download the script",
+            },
+            {
+              command: `wsl bash -c '${root} bash ${quote(filename)}'`,
+              caption: `Run the script under WSL; files land in ./${dir}`,
+            },
+          ]
+        : [
+            {
+              command: `wsl bash -c 'curl -fsSL ${quote(url)} | ${root} bash'`,
+              caption: `Download and run the script under WSL; files land in ./${dir}`,
+            },
+          ];
+
+      return {
+        steps: wslSteps,
+        alternative: { label: "Or from a Git Bash prompt", steps: bashSteps },
+        note: "Running a shell script in PowerShell requires WSL or Git Bash",
       };
     }
-    return {
-      steps: [
-        {
-          command: `curl -fsSL ${quote(url)} | ${root} bash`,
-          caption: `Download and run the script; files land in ./${dir}`,
-        },
-      ],
-    };
+
+    return { steps: bashSteps };
   }
 
   // The archive is deleted once extracted, so a multi-gigabyte selection does

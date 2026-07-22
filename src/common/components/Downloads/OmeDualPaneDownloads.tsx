@@ -27,6 +27,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     activeDataset,
     setActiveDataset,
     activeFiles,
+    activeBundle,
     datasetFilterModel,
     setDatasetFilterModel,
     datasetOptionsMap,
@@ -108,6 +109,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
           <FilesPane
             activeDataset={activeDataset}
             files={activeFiles}
+            bundle={activeBundle}
             columns={fileColumnsWithDownload}
             loading={loading}
             selectionModel={activeSelectionModel}

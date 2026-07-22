@@ -92,10 +92,7 @@ export function useDownloadColumns({
             checked={checkState === "checked"}
             indeterminate={checkState === "indeterminate"}
             disabled={disabled}
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleDataset(params.row.sample_id);
-            }}
+            onClick={() => toggleDataset(params.row.sample_id)}
           />
         );
       },

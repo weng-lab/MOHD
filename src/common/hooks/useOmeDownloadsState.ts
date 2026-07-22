@@ -20,6 +20,7 @@ import type {
   BaseSampleMetadata,
   CatalogDataset,
   CatalogFile,
+  DatasetBundle,
   OmeDownloadsConfig,
 } from "@/common/components/Downloads/types";
 import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
@@ -34,6 +35,8 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   activeDataset: string | null;
   setActiveDataset: (id: string | null) => void;
   activeFiles: CatalogFile[];
+  /** The active dataset's pre-packaged archive, if it has one. */
+  activeBundle: DatasetBundle | undefined;
 
   datasetFilterModel: GridFilterModel;
   setDatasetFilterModel: Dispatch<SetStateAction<GridFilterModel>>;
@@ -93,6 +96,14 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     return map;
   }, [datasets]);
 
+  const bundlesByDataset = useMemo(() => {
+    const map = new Map<string, DatasetBundle>();
+    for (const dataset of datasets) {
+      if (dataset.bundle) map.set(dataset.sample_id, dataset.bundle);
+    }
+    return map;
+  }, [datasets]);
+
   const files: CatalogFile[] = useMemo(() => datasets.flatMap((d) => d.files), [datasets]);
 
   // Which dataset is shown on the right, and its files.
@@ -101,6 +112,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     () => (activeDataset ? filesByDataset.get(activeDataset) ?? [] : []),
     [filesByDataset, activeDataset]
   );
+  const activeBundle = activeDataset ? bundlesByDataset.get(activeDataset) : undefined;
 
   // Per-pane filtering.
   const datasetFiltersState = useDatasetFilters(datasets, datasetFilters);
@@ -108,7 +120,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   const { passesFileFilter } = fileFiltersState;
 
   // Bridge filters -> selection: which files each dataset can contribute to a
-  // bulk job (open access, not the bundle, and passing the active file filter).
+  // bulk job (open access, and passing the active file filter).
   const selectableByDataset = useMemo(() => {
     const map = new Map<string, Set<string>>();
     for (const [id, datasetFiles] of filesByDataset) {
@@ -142,7 +154,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
       filterOperators: customSingleSelectOperators,
     }));
     return [
-      { field: "sample_id", headerName: "Dataset", flex: 1, minWidth: 120 },
+      { field: "sample_id", headerName: "Dataset", flex: 1, minWidth: 120},
       ...filterCols,
     ];
   }, [datasetFilters, datasetFiltersState.datasetOptionsMap]);
@@ -179,6 +191,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     activeDataset,
     setActiveDataset,
     activeFiles,
+    activeBundle,
 
     datasetFilterModel: datasetFiltersState.datasetFilterModel,
     setDatasetFilterModel: datasetFiltersState.setDatasetFilterModel,

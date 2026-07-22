@@ -1,19 +1,12 @@
 import type { CatalogFile } from "@/common/components/Downloads/types";
 
 /**
- * The per-dataset archive bundle. It *is* the bulk download, so it is never
- * individually selectable for a bulk job (would be recursive). Value must match
- * the `file_type` the catalog emits for that row.
- */
-export const BUNDLE_FILE_TYPE = "Compressed Tar File";
-
-/**
  * Single source of truth for which files can be added to a bulk selection —
  * used by the grid checkboxes and the dataset-level "select all" actions.
- * Restricted files (AnVIL) and the per-dataset bundle are excluded.
+ * Restricted files (AnVIL) are excluded; the per-dataset bundle never appears
+ * in `files` at all, so it needs no special case here.
  */
-export const isFileBulkSelectable = (file: CatalogFile): boolean =>
-  file.open_access && file.file_type !== BUNDLE_FILE_TYPE;
+export const isFileBulkSelectable = (file: CatalogFile): boolean => file.open_access;
 
 /**
  * The bulk download service rejects archive jobs (zip/tarball) whose

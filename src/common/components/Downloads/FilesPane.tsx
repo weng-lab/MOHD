@@ -1,13 +1,15 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
+import { Download } from "@mui/icons-material";
 import { Table, TableColDef } from "@weng-lab/ui-components";
 import type { Dispatch, SetStateAction } from "react";
 import type { GridFilterModel, GridRowSelectionModel } from "@mui/x-data-grid-premium";
-import { isFileBulkSelectable } from "@/common/downloads";
-import type { CatalogFile } from "@/common/components/Downloads/types";
+import { formatBytes, isFileBulkSelectable } from "@/common/downloads";
+import type { CatalogFile, DatasetBundle } from "@/common/components/Downloads/types";
 
 type FilesPaneProps = {
   activeDataset: string | null;
   files: CatalogFile[];
+  bundle: DatasetBundle | undefined;
   columns: TableColDef[];
   loading: boolean;
   selectionModel: GridRowSelectionModel;
@@ -20,6 +22,7 @@ type FilesPaneProps = {
 export default function FilesPane({
   activeDataset,
   files,
+  bundle,
   columns,
   loading,
   selectionModel,
@@ -42,6 +45,29 @@ export default function FilesPane({
         {activeDataset ? (
           <Table
             label={`Files — ${activeDataset}`}
+            slotProps={{
+              toolbar: {
+                // The whole dataset in one click, skipping the job queue. Lives in
+                // the toolbar rather than the rows because its contents *are* the
+                // rows — as a row it would double-count and read as selectable.
+                extra: bundle ? (
+                  <Tooltip
+                    title={`Pre-packaged .tar.gz of every open-access file in ${activeDataset}. Restricted files are not included.`}
+                  >
+                    <Button
+                      component="a"
+                      href={bundle.url}
+                      download
+                      size="small"
+                      variant="outlined"
+                      startIcon={<Download />}
+                    >
+                      Download all ({formatBytes(bundle.size)})
+                    </Button>
+                  </Tooltip>
+                ) : undefined,
+              },
+            }}
             rows={files}
             getRowId={(row) => row.filename}
             loading={loading}
