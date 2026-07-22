@@ -64,11 +64,23 @@ export function passesFilter<T extends Record<string, unknown>>(
   return logicOperator === "and" ? results.every(Boolean) : results.some(Boolean);
 }
 
+/**
+ * True when an item actually narrows results. The grid seeds a valueless
+ * placeholder item as soon as its filter panel opens, so item count alone
+ * overstates how many filters are applied.
+ */
+function isActiveFilterItem(item: GridFilterItem): boolean {
+  return item.value !== undefined || item.operator === "isEmpty" || item.operator === "isNotEmpty";
+}
+
+/** How many constraints in the model narrow results. */
+export function activeFilterCount(filterModel: GridFilterModel): number {
+  return filterModel.items.filter(isActiveFilterItem).length;
+}
+
 /** True when the model holds at least one constraint that narrows results. */
 export function hasActiveFilter(filterModel: GridFilterModel): boolean {
-  return filterModel.items.some(
-    (item) => item.value !== undefined || item.operator === "isEmpty" || item.operator === "isNotEmpty"
-  );
+  return filterModel.items.some(isActiveFilterItem);
 }
 
 /**

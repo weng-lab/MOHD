@@ -4,13 +4,14 @@ import {
   AccordionSummary,
   AccordionDetails,
   Box,
-  Button,
   Chip,
   Divider,
   FormLabel,
+  IconButton,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -18,6 +19,7 @@ import {
 import { ExpandMore, FilterList, FilterListOff } from "@mui/icons-material";
 import type { GridFilterModel } from "@mui/x-data-grid-premium";
 import MultiSelect, { type MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
+import { activeFilterCount } from "@/common/components/Downloads/filterModel";
 import { theme } from "@/app/theme";
 
 const ControlLabelWrapper = ({ label, children }: { label: string; children: ReactNode }) => (
@@ -25,6 +27,55 @@ const ControlLabelWrapper = ({ label, children }: { label: string; children: Rea
     <FormLabel>{label}</FormLabel>
     {children}
   </Box>
+);
+
+/**
+ * Reset button for a filter group. Stops click propagation so the instance inside
+ * the accordion summary doesn't also toggle the accordion open/closed.
+ */
+const ResetFiltersButton = ({
+  label,
+  onReset,
+}: {
+  label: string;
+  onReset: () => void;
+}) => (
+  <Tooltip title={label}>
+    <IconButton
+      size="small"
+      aria-label={label}
+      onClick={(event) => {
+        event.stopPropagation();
+        onReset();
+      }}
+      sx={{ p: 0 }} // prevents layout shift
+    >
+      <FilterListOff fontSize="small" />
+    </IconButton>
+  </Tooltip>
+);
+
+/** Section heading with an active-filter count chip and an inline reset button. */
+const FilterSectionHeader = ({
+  title,
+  activeCount,
+  resetLabel,
+  onReset,
+}: {
+  title: string;
+  activeCount: number;
+  resetLabel: string;
+  onReset: () => void;
+}) => (
+  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+    <Typography>{title}</Typography>
+    {activeCount > 0 && (
+      <>
+        <Chip size="small" label={activeCount} color="primary" />
+        <ResetFiltersButton label={resetLabel} onReset={onReset} />
+      </>
+    )}
+  </Stack>
 );
 
 const accordionSx = {
@@ -72,14 +123,12 @@ type DownloadFiltersPanelProps = {
   datasetOptionsMap: Record<string, string[]>;
   datasetSelectedValues: Record<string, string[]>;
   onDatasetToggle: (field: string, value: string[] | null) => void;
-  hasActiveDatasetFilter: boolean;
   datasetFilterModel: GridFilterModel;
   onResetDatasetFilters: () => void;
 
   fileTypeOptions: string[];
   fileSelectedValues: string[];
   onFileTypeChange: MultiSelectOnChange<string>;
-  hasActiveFileFilter: boolean;
   fileFilterModel: GridFilterModel;
   onResetFileFilters: () => void;
 };
@@ -90,29 +139,41 @@ export default function DownloadFiltersPanel({
   datasetOptionsMap,
   datasetSelectedValues,
   onDatasetToggle,
-  hasActiveDatasetFilter,
   datasetFilterModel,
   onResetDatasetFilters,
   fileTypeOptions,
   fileSelectedValues,
   onFileTypeChange,
-  hasActiveFileFilter,
   fileFilterModel,
   onResetFileFilters,
 }: DownloadFiltersPanelProps) {
   const muiTheme = useTheme();
   const mdUp = useMediaQuery(muiTheme.breakpoints.up("md"));
 
-  const totalActiveFilterCount = datasetFilterModel.items.length + fileFilterModel.items.length;
+  const datasetActiveCount = activeFilterCount(datasetFilterModel);
+  const fileActiveCount = activeFilterCount(fileFilterModel);
+  const totalActiveFilterCount = datasetActiveCount + fileActiveCount;
+
+  const handleResetAllFilters = () => {
+    onResetDatasetFilters();
+    onResetFileFilters();
+  };
 
   return (
     <Accordion disableGutters elevation={0} sx={{ ...accordionSx, mb: 1 }}>
-      <AccordionSummary expandIcon={<ExpandMore />}>
+      {/*
+        `component="div"` keeps the summary from rendering a native <button>, which
+        cannot legally contain the reset <button> below.
+      */}
+      <AccordionSummary component="div" expandIcon={<ExpandMore />}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
           <FilterList fontSize="small" />
           <Typography>Filters</Typography>
           {totalActiveFilterCount > 0 && (
-            <Chip size="small" label={totalActiveFilterCount} color="primary" />
+            <>
+              <Chip size="small" label={totalActiveFilterCount} color="primary" />
+              <ResetFiltersButton label="Reset All Filters" onReset={handleResetAllFilters} />
+            </>
           )}
         </Box>
       </AccordionSummary>
@@ -126,12 +187,12 @@ export default function DownloadFiltersPanel({
           }}
         >
           <Box>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-              <Typography>Dataset Filters</Typography>
-              {hasActiveDatasetFilter && (
-                <Chip size="small" label={datasetFilterModel.items.length} color="primary" />
-              )}
-            </Stack>
+            <FilterSectionHeader
+              title="Dataset Filters"
+              activeCount={datasetActiveCount}
+              resetLabel="Reset Dataset Filters"
+              onReset={onResetDatasetFilters}
+            />
             <Stack
               direction="row"
               flexWrap="wrap"
@@ -157,28 +218,15 @@ export default function DownloadFiltersPanel({
                 </ControlLabelWrapper>
               ))}
             </Stack>
-            {hasActiveDatasetFilter && (
-              <Box sx={{ width: "100%" }}>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  startIcon={<FilterListOff />}
-                  onClick={onResetDatasetFilters}
-                  sx={{ mt: 2 }}
-                >
-                  Reset Dataset Filters
-                </Button>
-              </Box>
-            )}
           </Box>
           <Divider orientation={mdUp ? "vertical" : "horizontal"} flexItem sx={{ display: "flex" }} />
           <Box>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-              <Typography>File Filters</Typography>
-              {hasActiveFileFilter && (
-                <Chip size="small" label={fileFilterModel.items.length} color="primary" />
-              )}
-            </Stack>
+            <FilterSectionHeader
+              title="File Filters"
+              activeCount={fileActiveCount}
+              resetLabel="Reset File Filters"
+              onReset={onResetFileFilters}
+            />
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "flex-start" }}>
               <ControlLabelWrapper label="File Type">
                 <MultiSelect
@@ -191,19 +239,6 @@ export default function DownloadFiltersPanel({
                 />
               </ControlLabelWrapper>
             </Box>
-            {hasActiveFileFilter && (
-              <Box sx={{ width: "100%" }}>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  startIcon={<FilterListOff />}
-                  onClick={onResetFileFilters}
-                  sx={{ mt: 2 }}
-                >
-                  Reset File Filters
-                </Button>
-              </Box>
-            )}
           </Box>
         </Box>
       </AccordionDetails>

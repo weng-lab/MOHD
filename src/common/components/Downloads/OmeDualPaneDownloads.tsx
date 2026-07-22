@@ -33,13 +33,11 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     datasetOptionsMap,
     datasetSelectedValues,
     handleDatasetToggleChange,
-    hasActiveDatasetFilter,
     fileFilterModel,
     setFileFilterModel,
     fileTypeOptions,
     fileSelectedValues,
     handleFileTypeSelectChange,
-    hasActiveFileFilter,
     activeSelectionModel,
     setActiveSelection,
     numSelectedFiles,
@@ -78,13 +76,11 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
         datasetOptionsMap={datasetOptionsMap}
         datasetSelectedValues={datasetSelectedValues}
         onDatasetToggle={handleDatasetToggleChange}
-        hasActiveDatasetFilter={hasActiveDatasetFilter}
         datasetFilterModel={datasetFilterModel}
         onResetDatasetFilters={() => setDatasetFilterModel({ items: [] })}
         fileTypeOptions={fileTypeOptions}
         fileSelectedValues={fileSelectedValues}
         onFileTypeChange={handleFileTypeSelectChange}
-        hasActiveFileFilter={hasActiveFileFilter}
         fileFilterModel={fileFilterModel}
         onResetFileFilters={() => setFileFilterModel({ items: [] })}
       />
