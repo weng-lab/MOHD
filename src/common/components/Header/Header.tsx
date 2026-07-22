@@ -13,15 +13,12 @@ import { useMenuControl } from "./MenuContext";
 import MobileMenu from "./MobileMenu";
 import { PageInfo } from "./types";
 import AutoComplete from "../autocomplete";
+import DownloadJobsMenu from "@/common/components/Downloads/DownloadJobsMenu";
 
 const pageLinks: PageInfo[] = [
     {
         pageName: "Genome Browser",
         link: "/genomeBrowser",
-    },
-    {
-        pageName: "Downloads",
-        link: "/downloads",
     },
     {
         pageName: "About",
@@ -176,6 +173,22 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
                         </Box>
                     ))}
                 </Stack>
+                {/* Downloads jobs badge — sits just left of the search pill on
+                    desktop and left of the hamburger on mobile. Anchored to the
+                    toolbar row (bottom of the AppBar) so the maintenance banner
+                    above doesn't shift it. */}
+                <Box
+                    sx={{
+                        position: "absolute",
+                        right: { xs: 74, md: 466 },
+                        bottom: 0,
+                        height: "64px",
+                        display: "flex",
+                        alignItems: "center",
+                    }}
+                >
+                    <DownloadJobsMenu />
+                </Box>
                 <Box
                     sx={{
                         display: { xs: "none", md: "flex" },

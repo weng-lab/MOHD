@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Box,
   Stack,
@@ -9,14 +9,15 @@ import {
   LinearProgress,
   Button,
   Chip,
-  Collapse,
+  Badge,
+  Popover,
+  CircularProgress,
   Tooltip,
   Divider,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import CloseIcon from "@mui/icons-material/Close";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import { useDownloadJobs, DownloadJob } from "@/common/context/DownloadJobsContext";
 import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
@@ -117,7 +118,7 @@ function JobRow({
               <Tooltip
                 title={job.format === "script" ? "Download script" : "Download archive"}
                 arrow
-                placement="left"
+                placement="bottom"
               >
                 <IconButton
                   size="small"
@@ -128,7 +129,7 @@ function JobRow({
                   <DownloadIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Get command" arrow placement="left">
+              <Tooltip title="Get command" arrow placement="bottom">
                 <IconButton
                   aria-label="Get command"
                   size="small"
@@ -145,9 +146,9 @@ function JobRow({
             </Button>
           )}
           <Tooltip
-            title={isActive ? "Cancel download" : "Dismiss"}
+            title={isActive ? "Cancel download" : "Remove"}
             arrow
-            placement="left"
+            placement="bottom"
           >
             {/* span keeps the tooltip working while the button is disabled */}
             <span>
@@ -156,7 +157,7 @@ function JobRow({
                 disabled={isCancelling}
                 onClick={() => void removeJob(job.id)}
               >
-                <CloseIcon fontSize="small" />
+                <DeleteForeverIcon fontSize="small" />
               </IconButton>
             </span>
           </Tooltip>
@@ -207,13 +208,39 @@ function JobRow({
   );
 }
 
-export default function DownloadJobsTray() {
+/**
+ * Header-anchored downloads menu: a badge in the toolbar that opens the job
+ * list as a popover. Lives in the header rather than as a fixed bottom-right
+ * card so it no longer competes for the bottom of the viewport with the
+ * page-scoped BulkDownloadChip — the two used to overlap below ~1390px. The
+ * button only appears once there are jobs, matching the old tray's behavior.
+ */
+export default function DownloadJobsMenu() {
   const { jobs } = useDownloadJobs();
-  const [expanded, setExpanded] = useState(true);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [commandJobId, setCommandJobId] = useState<string | null>(null);
+  // Whether the popover has already auto-opened for the current run of jobs,
+  // so a second job in the same batch doesn't re-pop it. Resets once the tray
+  // empties so a fresh batch surfaces again.
+  const hasAutoOpened = useRef(false);
   const now = useExpiryClock(jobs);
 
-  if (jobs.length === 0) return null;
+  // Auto-open the popover when the first job appears so a freshly submitted
+  // download surfaces without the user hunting for the badge. Anchored off the
+  // button ref rather than a click target: this runs in an effect, i.e. after
+  // the icon has mounted, so the ref is populated — otherwise the popover has
+  // no anchor and MUI drops it in the top-left corner.
+  useEffect(() => {
+    if (jobs.length === 0) {
+      hasAutoOpened.current = false;
+      return;
+    }
+    if (!hasAutoOpened.current) {
+      hasAutoOpened.current = true;
+      setAnchorEl(buttonRef.current);
+    }
+  }, [jobs.length]);
 
   const activeCount = jobs.filter(
     (j) => j.status === "pending" || j.status === "processing"
@@ -228,35 +255,72 @@ export default function DownloadJobsTray() {
     ? jobs.find((j) => j.id === commandJobId) ?? null
     : null;
 
+  // Nothing to surface in the header until a download exists.
+  if (jobs.length === 0) return null;
+
+  const open = Boolean(anchorEl);
+
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        bottom: 24,
-        right: 24,
-        width: 320,
-        bgcolor: "background.paper",
-        borderRadius: 2,
-        boxShadow: 6,
-        zIndex: 1400,
-        overflow: "hidden",
-      }}
-    >
-      {/* Header */}
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{
-          px: 2,
-          py: 1.25,
-          cursor: "pointer",
-          bgcolor: "primary.main",
-          color: "primary.contrastText",
+    <>
+      <Tooltip title="Downloads" arrow>
+        <IconButton
+          ref={buttonRef}
+          aria-label={`Downloads (${jobs.length})`}
+          onClick={() => setAnchorEl((prev) => (prev ? null : buttonRef.current))}
+          sx={{ color: "primary.main", position: "relative" }}
+        >
+          <Badge badgeContent={jobs.length} overlap="circular">
+            <DownloadIcon />
+          </Badge>
+          {/* Ambient signal that a job is still running, since the panel is
+              now collapsed into an icon instead of an always-open card. */}
+          {activeCount > 0 && (
+            <CircularProgress
+              size={48}
+              thickness={2}
+              sx={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                color: "primary.main",
+                pointerEvents: "none",
+              }}
+            />
+          )}
+        </IconButton>
+      </Tooltip>
+
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        disableScrollLock
+        slotProps={{
+          paper: {
+            sx: {
+              width: 320,
+              maxWidth: "calc(100vw - 24px)",
+              mt: 1,
+              borderRadius: 2,
+              overflow: "hidden",
+              boxShadow: 6,
+            },
+          },
         }}
-        onClick={() => setExpanded((v) => !v)}
       >
-        <Stack direction="row" alignItems="center" spacing={1}>
+        {/* Header */}
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1}
+          sx={{
+            px: 2,
+            py: 1.25,
+            bgcolor: "primary.main",
+            color: "primary.contrastText",
+          }}
+        >
           <DownloadIcon fontSize="small" />
           <Typography variant="body2" fontWeight={600}>
             Downloads
@@ -274,14 +338,20 @@ export default function DownloadJobsTray() {
               }}
             />
           )}
+          <Box sx={{ flexGrow: 1 }} />
+          <Tooltip title="Close" arrow>
+            <IconButton
+              aria-label="Close downloads menu"
+              size="small"
+              onClick={() => setAnchorEl(null)}
+              sx={{ color: "primary.contrastText" }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </Stack>
-        <IconButton size="small" sx={{ color: "primary.contrastText", p: 0 }}>
-          {expanded ? <ExpandMoreIcon fontSize="small" /> : <ExpandLessIcon fontSize="small" />}
-        </IconButton>
-      </Stack>
 
-      {/* Job list */}
-      <Collapse in={expanded}>
+        {/* Job list */}
         <Box sx={{ maxHeight: 360, overflowY: "auto" }}>
           {jobs.map((job, i) => (
             <Fragment key={job.id}>
@@ -289,12 +359,17 @@ export default function DownloadJobsTray() {
               <JobRow
                 job={job}
                 isExpired={hasExpired(job)}
-                onShowCommands={setCommandJobId}
+                // Close the popover so the command dialog isn't layered
+                // underneath it.
+                onShowCommands={(id) => {
+                  setCommandJobId(id);
+                  setAnchorEl(null);
+                }}
               />
             </Fragment>
           ))}
         </Box>
-      </Collapse>
+      </Popover>
 
       {commandJob?.downloadUrl && (
         <DownloadCommandModal
@@ -304,6 +379,6 @@ export default function DownloadJobsTray() {
           onClose={() => setCommandJobId(null)}
         />
       )}
-    </Box>
+    </>
   );
 }
