@@ -15,6 +15,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Badge,
 } from "@mui/material";
 import { ExpandMore, FilterList, FilterListOff } from "@mui/icons-material";
 import type { GridFilterModel } from "@mui/x-data-grid-premium";
@@ -154,11 +155,6 @@ export default function DownloadFiltersPanel({
   const fileActiveCount = activeFilterCount(fileFilterModel);
   const totalActiveFilterCount = datasetActiveCount + fileActiveCount;
 
-  const handleResetAllFilters = () => {
-    onResetDatasetFilters();
-    onResetFileFilters();
-  };
-
   return (
     <Accordion disableGutters elevation={0} sx={{ ...accordionSx, mb: 1 }}>
       {/*
@@ -167,14 +163,10 @@ export default function DownloadFiltersPanel({
       */}
       <AccordionSummary component="div" expandIcon={<ExpandMore />}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
-          <FilterList fontSize="small" />
+          <Badge color="primary" variant="dot" invisible={totalActiveFilterCount === 0}>
+            <FilterList fontSize="small" />
+          </Badge>
           <Typography>Filters</Typography>
-          {totalActiveFilterCount > 0 && (
-            <>
-              <Chip size="small" label={totalActiveFilterCount} color="primary" />
-              <ResetFiltersButton label="Reset All Filters" onReset={handleResetAllFilters} />
-            </>
-          )}
         </Box>
       </AccordionSummary>
       <AccordionDetails sx={{ display: "flex", flexDirection: "column" }}>
