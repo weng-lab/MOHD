@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 import Footer from "./Footer";
 import Header from "./Header/Header";
 import { DownloadJobsProvider } from "@/common/context/DownloadJobsContext";
+import DownloadJobsMenu from "@/common/components/Downloads/DownloadJobsMenu";
 
 export default function ClientAppWrapper({ children }: { children: React.ReactNode }) {
   const [maintenance, setMaintenance] = useState(false);
@@ -36,6 +37,7 @@ export default function ClientAppWrapper({ children }: { children: React.ReactNo
         <div id="main-content-wrapper">{children}</div>
         <Footer />
       </Box>
+      <DownloadJobsMenu />
     </DownloadJobsProvider>
   );
 }

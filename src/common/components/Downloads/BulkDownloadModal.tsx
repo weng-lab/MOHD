@@ -28,6 +28,7 @@ import {
   useBulkDownloadJob,
 } from "@/common/hooks/useBulkDownloadJob";
 import { ARCHIVE_SIZE_LIMIT_BYTES, formatBytes } from "@/common/downloads";
+import { Publish } from "@mui/icons-material";
 
 export type BulkDownloadModalProps = {
   open: boolean;
@@ -43,7 +44,7 @@ export type BulkDownloadModalProps = {
 };
 
 const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
-  zip: "ZIP",
+  zip: "ZIP (.zip)",
   tarball: "Tarball (.tar.gz)",
   script: "Shell Script (.sh)",
 };
@@ -123,17 +124,15 @@ const BulkDownloadModal = ({
             flexDirection: "column",
           }}
         >
-          <Stack spacing={.5} p={2}>
-            <Stack direction="row" justifyContent="space-between" alignItems={"flex-start"}>
-              <Box>
-                <Typography variant="h5" sx={{ mb: 1 }}>
-                  Bulk Download
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Review and remove datasets or individual files before
-                  downloading.
-                </Typography>
-              </Box>
+          <Stack spacing={1} p={2}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems={"flex-end"}
+            >
+              <Typography variant="h5">
+                Bulk Download
+              </Typography>
               <IconButton
                 aria-label="Close"
                 onClick={handleClose}
@@ -143,18 +142,20 @@ const BulkDownloadModal = ({
                 <CloseIcon />
               </IconButton>
             </Stack>
+            <Typography variant="body1" color="text.secondary">
+              Please review your selected files before submitting them for
+              processing.
+            </Typography>
             <Alert
               severity="info"
               sx={{
-                py: 0.25,
                 borderRadius: 2,
                 "& .MuiAlert-message": {
                   width: "100%",
                 },
               }}
             >
-              Downloads open access files only. AnVIL restricted files not
-              included
+              Restricted AnVIL-only files are not downloadable here.
             </Alert>
           </Stack>
           <Divider />
@@ -165,19 +166,18 @@ const BulkDownloadModal = ({
             }}
           >
             <Stack direction="row" justifyContent="space-between" spacing={2}>
-              <Typography variant="subtitle1">
-                <b>{fileCount} file{fileCount !== 1 ? "s" : ""} •{" "}
-                  {formatBytes(totalSize)}</b>
+              <Typography>
+                  {datasetCount} dataset{datasetCount !== 1 ? "s" : ""} •{" "}
+                  {fileCount} file{fileCount !== 1 ? "s" : ""}
               </Typography>
-              <Typography variant="body1" color="text.secondary">
-              {datasetCount} dataset{datasetCount !== 1 ? "s" : ""}
+              <Typography>
+                {formatBytes(totalSize)}
               </Typography>
             </Stack>
           </Box>
           <Divider />
           <Box
             sx={{
-              p: 2,
               overflowY: "auto",
               flex: 1,
             }}
@@ -189,7 +189,7 @@ const BulkDownloadModal = ({
                   table to start a download.
                 </Typography>
               )}
-              {bulkDownloadItems.map((dataset) => {
+              {bulkDownloadItems.map((dataset, i) => {
                 const datasetTitle = dataset.sampleId;
 
                 return (
@@ -202,9 +202,6 @@ const BulkDownloadModal = ({
                       square
                       sx={{
                         overflow: "hidden",
-                        "&::before": {
-                          display: "none",
-                        },
                       }}
                     >
                       <AccordionSummary
@@ -246,7 +243,9 @@ const BulkDownloadModal = ({
                               handleRemoveDataset(dataset);
                             }}
                           >
-                            <DeleteOutlineIcon sx={{ color: "text.secondary" }} />
+                            <DeleteOutlineIcon
+                              sx={{ color: "text.secondary" }}
+                            />
                           </IconButton>
                         </Stack>
                       </AccordionSummary>
@@ -254,7 +253,7 @@ const BulkDownloadModal = ({
                         <Stack>
                           {dataset.children.map((child) => (
                             <Stack
-                              key={dataset.id + '-' + child.id}
+                              key={dataset.id + "-" + child.id}
                               direction="row"
                               alignItems="center"
                               justifyContent="space-between"
@@ -270,7 +269,9 @@ const BulkDownloadModal = ({
                               <IconButton
                                 aria-label={`Remove ${child.label}`}
                                 size="small"
-                                onClick={() => onRemoveFile(dataset.sampleId, child.id)}
+                                onClick={() =>
+                                  onRemoveFile(dataset.sampleId, child.id)
+                                }
                               >
                                 <RemoveIcon sx={{ color: "text.secondary" }} />
                               </IconButton>
@@ -279,17 +280,29 @@ const BulkDownloadModal = ({
                         </Stack>
                       </AccordionDetails>
                     </Accordion>
-                    <Divider />
+                    {i !== bulkDownloadItems.length - 1 && <Divider />}
                   </Box>
                 );
               })}
             </Stack>
           </Box>
           <Divider />
-          <Box sx={{ p: 2 }}>
-            <Typography variant="subtitle1" sx={{ mb: 1.5 }}>
+          <Stack spacing={1} sx={{ p: 2 }}>
+            <Typography >
               Select format
             </Typography>
+            <Typography variant="caption" color="text.secondary">
+              .zip or .tar.gz for a direct archive download, or shell script to
+              pull the files yourself
+            </Typography>
+            {isOverArchiveLimit && (
+              <Alert severity="warning">
+                This selection is {formatBytes(totalSize)}, over the{" "}
+                {formatBytes(ARCHIVE_SIZE_LIMIT_BYTES)} limit for .zip and
+                .tar.gz archives. Download with the shell script, or remove
+                files to get under the limit.
+              </Alert>
+            )}
             <RadioGroup
               row
               value={effectiveFormat}
@@ -298,40 +311,26 @@ const BulkDownloadModal = ({
               }
               sx={{ gap: { xs: 1, sm: 2.5 }, flexWrap: "wrap" }}
             >
-              {(Object.keys(FORMAT_LABELS) as BulkDownloadFormat[]).map((key) => (
-                <FormControlLabel
-                  key={key}
-                  value={key}
-                  control={<Radio />}
-                  label={FORMAT_LABELS[key]}
-                  disabled={isOverArchiveLimit && key !== "script"}
-                  sx={{ mr: 0 }}
-                />
-              ))}
+              {(Object.keys(FORMAT_LABELS) as BulkDownloadFormat[]).map(
+                (key) => (
+                  <FormControlLabel
+                    key={key}
+                    value={key}
+                    control={<Radio />}
+                    label={FORMAT_LABELS[key]}
+                    disabled={isOverArchiveLimit && key !== "script"}
+                    sx={{ mr: 0 }}
+                  />
+                ),
+              )}
             </RadioGroup>
-            <Typography variant="body1" color="text.secondary" sx={{ my: 1 }}>
-              .zip or .tar.gz for a direct archive download, or shell script to
-              pull the files yourself
-            </Typography>
-            {isOverArchiveLimit && (
-              <Alert severity="warning" sx={{ mb: 2 }}>
-                This selection is {formatBytes(totalSize)}, over the{" "}
-                {formatBytes(ARCHIVE_SIZE_LIMIT_BYTES)} limit for .zip and
-                .tar.gz archives. Download with the shell script, or remove
-                files to get under the limit.
-              </Alert>
-            )}
             {status === "failed" && (
               <Alert severity="error" sx={{ mt: 2 }}>
                 Couldn&apos;t start download. Check your connection and try
                 again.
               </Alert>
             )}
-            <Stack
-              direction="row"
-              justifyContent="flex-end"
-              spacing={1}
-            >
+            <Stack direction="row" justifyContent="flex-end" spacing={1}>
               <Button
                 onClick={handleClose}
                 disabled={isSubmitting}
@@ -341,20 +340,20 @@ const BulkDownloadModal = ({
               </Button>
               <Button
                 variant="contained"
-                startIcon={
+                endIcon={
                   isSubmitting ? (
                     <CircularProgress size={16} color="inherit" />
                   ) : (
-                    <DownloadIcon />
+                    <Publish />
                   )
                 }
                 onClick={handleSubmit}
                 disabled={fileCount === 0 || isSubmitting}
               >
-                {isSubmitting ? "Submitting..." : "Start Download"}
+                {isSubmitting ? "Submitting..." : "Submit Download Job"}
               </Button>
             </Stack>
-          </Box>
+          </Stack>
         </Box>
       </Fade>
     </Modal>

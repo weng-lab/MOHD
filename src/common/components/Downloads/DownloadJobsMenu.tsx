@@ -10,6 +10,7 @@ import {
   Button,
   Chip,
   Badge,
+  Fab,
   Popover,
   CircularProgress,
   Tooltip,
@@ -23,6 +24,7 @@ import { useDownloadJobs, DownloadJob } from "@/common/context/DownloadJobsConte
 import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
 import { formatBytes } from "@/common/downloads";
 import DownloadCommandModal from "./DownloadCommandModal";
+import { FolderZip } from "@mui/icons-material";
 
 const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
   zip: "zip",
@@ -209,11 +211,12 @@ function JobRow({
 }
 
 /**
- * Header-anchored downloads menu: a badge in the toolbar that opens the job
- * list as a popover. Lives in the header rather than as a fixed bottom-right
- * card so it no longer competes for the bottom of the viewport with the
- * page-scoped BulkDownloadChip — the two used to overlap below ~1390px. The
- * button only appears once there are jobs, matching the old tray's behavior.
+ * Downloads menu: a floating action button in the bottom-right corner that
+ * opens the job list as a popover above it. Replaced the old always-open
+ * fixed card — shrinking it to a single FAB means it only clips the
+ * page-scoped BulkDownloadChip on narrow widths (the card overlapped it below
+ * ~1390px), and the chip's empty sides are click-through so the FAB stays
+ * reachable. The button only appears once there are jobs.
  */
 export default function DownloadJobsMenu() {
   const { jobs } = useDownloadJobs();
@@ -225,6 +228,34 @@ export default function DownloadJobsMenu() {
   // empties so a fresh batch surfaces again.
   const hasAutoOpened = useRef(false);
   const now = useExpiryClock(jobs);
+  const open = Boolean(anchorEl);
+
+  // A dot on the tray button flags a job that reached a terminal state (ready
+  // or failed) while the tray was closed, so a finished download gets noticed
+  // without the count-in-a-circle badge that was awkward to fit around the
+  // icon. Opening the tray means the user has seen the change and clears it
+  // (handled at the open handlers below).
+  const finishedCount = jobs.filter(
+    (j) => j.status === "done" || j.status === "failed"
+  ).length;
+  const [prevFinishedCount, setPrevFinishedCount] = useState(finishedCount);
+  const [hasUnseenCompletion, setHasUnseenCompletion] = useState(false);
+
+  // Detect the transition during render rather than in an effect: an effect
+  // would commit, then setState, then re-render — the cascading render React
+  // warns about. Adjusting state from a prior render's value here is the
+  // sanctioned pattern.
+  if (finishedCount !== prevFinishedCount) {
+    setPrevFinishedCount(finishedCount);
+    if (finishedCount > prevFinishedCount && !open) {
+      // A job crossed into a terminal state while the tray was closed.
+      setHasUnseenCompletion(true);
+    } else if (finishedCount === 0) {
+      // Tray emptied: no finished job can be unseen, so drop the flag before a
+      // fresh batch reuses this still-mounted component.
+      setHasUnseenCompletion(false);
+    }
+  }
 
   // Auto-open the popover when the first job appears so a freshly submitted
   // download surfaces without the user hunting for the badge. Anchored off the
@@ -255,53 +286,74 @@ export default function DownloadJobsMenu() {
     ? jobs.find((j) => j.id === commandJobId) ?? null
     : null;
 
-  // Nothing to surface in the header until a download exists.
+  // Nothing to surface until a download exists.
   if (jobs.length === 0) return null;
-
-  const open = Boolean(anchorEl);
 
   return (
     <>
-      <Tooltip title="Downloads" arrow>
-        <IconButton
-          ref={buttonRef}
-          aria-label={`Downloads (${jobs.length})`}
-          onClick={() => setAnchorEl((prev) => (prev ? null : buttonRef.current))}
-          sx={{ color: "primary.main", position: "relative" }}
-        >
-          <Badge badgeContent={jobs.length} overlap="circular">
-            <DownloadIcon />
-          </Badge>
-          {/* Ambient signal that a job is still running, since the panel is
-              now collapsed into an icon instead of an always-open card. */}
-          {activeCount > 0 && (
-            <CircularProgress
-              size={48}
-              thickness={2}
-              sx={{
-                position: "absolute",
-                transform: "translate(-50%, -50%)",
-                color: "primary.main",
-                pointerEvents: "none",
-              }}
-            />
-          )}
-        </IconButton>
-      </Tooltip>
+      {/* Floating button in the bottom-right corner. Sits on the FAB layer,
+          below the BulkDownloadChip (appBar + 2), so on the narrow widths where
+          the centered chip reaches this corner the chip's action stays on top —
+          the chip's empty sides are click-through so the button is otherwise
+          reachable. */}
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 16,
+          right: 16,
+          zIndex: (theme) => theme.zIndex.fab,
+        }}
+      >
+        <Tooltip title="Downloads" arrow placement="left">
+          <Fab
+            ref={buttonRef}
+            color="primary"
+            size="medium"
+            aria-label={`Downloads (${jobs.length})`}
+            onClick={() => {
+              if (open) {
+                setAnchorEl(null);
+              } else {
+                setAnchorEl(buttonRef.current);
+                setHasUnseenCompletion(false);
+              }
+            }}
+          >
+            <Badge
+              variant="dot"
+              color="secondary"
+              overlap="circular"
+              invisible={!hasUnseenCompletion}
+            >
+              <FolderZip />
+            </Badge>
+            {activeCount > 0 && (
+              <CircularProgress
+                size={48}
+                thickness={2}
+                sx={{
+                  position: "absolute",
+                  color: "primary.contrastText",
+                  pointerEvents: "none",
+                }}
+              />
+            )}
+          </Fab>
+        </Tooltip>
+      </Box>
 
       <Popover
         open={open}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: -8, horizontal: "right" }}
+        transformOrigin={{ vertical: "bottom", horizontal: "right" }}
         disableScrollLock
         slotProps={{
           paper: {
             sx: {
               width: 320,
               maxWidth: "calc(100vw - 24px)",
-              mt: 1,
               borderRadius: 2,
               overflow: "hidden",
               boxShadow: 6,
@@ -323,7 +375,7 @@ export default function DownloadJobsMenu() {
         >
           <DownloadIcon fontSize="small" />
           <Typography variant="body2" fontWeight={600}>
-            Downloads
+            Bulk Downloads
           </Typography>
           {activeCount > 0 && (
             <Chip

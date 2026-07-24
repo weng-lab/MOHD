@@ -44,7 +44,7 @@ export default function FilesPane({
       <Box sx={{ flex: 1, minHeight: 0 }}>
         {activeDataset ? (
           <Table
-            label={`Files — ${activeDataset}`}
+            label={`${activeDataset}`}
             slotProps={{
               toolbar: {
                 // The whole dataset in one click, skipping the job queue. Lives in
