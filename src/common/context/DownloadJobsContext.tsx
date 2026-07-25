@@ -48,6 +48,10 @@ type StatusResponse = {
 
 type DownloadJobsContextValue = {
   jobs: DownloadJob[];
+  // Bumped once per fresh submission (addJob only). Lets the UI react to a new
+  // download without mistaking a storage rehydrate on reload for one — the
+  // restore repopulates `jobs` but never touches this.
+  submitCount: number;
   addJob: (job: DownloadJob) => void;
   updateJob: (
     id: string,
@@ -109,6 +113,7 @@ function saveToStorage(jobs: DownloadJob[]) {
 
 export function DownloadJobsProvider({ children }: { children: ReactNode }) {
   const [jobs, setJobs] = useState<DownloadJob[]>([]);
+  const [submitCount, setSubmitCount] = useState(0);
   const intervalsRef = useRef<Map<string, ReturnType<typeof setInterval>>>(
     new Map(),
   );
@@ -206,6 +211,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
   const addJob = useCallback(
     (job: DownloadJob) => {
       setJobs((prev) => [job, ...prev]);
+      setSubmitCount((n) => n + 1);
       startPolling(job.id);
     },
     [startPolling],
@@ -312,7 +318,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
 
   return (
     <DownloadJobsContext.Provider
-      value={{ jobs, addJob, updateJob, removeJob, retryJob }}
+      value={{ jobs, submitCount, addJob, updateJob, removeJob, retryJob }}
     >
       {children}
     </DownloadJobsContext.Provider>

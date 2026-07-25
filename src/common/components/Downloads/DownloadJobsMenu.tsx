@@ -39,6 +39,12 @@ const STATUS_LABEL: Record<DownloadJob["status"], string> = {
   failed: "Failed",
 };
 
+// Whether submitting a download pops the tray open so the new job surfaces.
+// Reloading the page and rehydrating stored jobs never opens it — only a fresh
+// submission does. Flip to false to leave the tray closed until the user opens
+// it themselves.
+const AUTO_OPEN_ON_SUBMIT = true;
+
 /**
  * Returns a clock that advances whenever a job's expiry passes, so a row can
  * flip to "Expired" without waiting for a reload — loadFromStorage only prunes
@@ -219,14 +225,10 @@ function JobRow({
  * reachable. The button only appears once there are jobs.
  */
 export default function DownloadJobsMenu() {
-  const { jobs } = useDownloadJobs();
+  const { jobs, submitCount } = useDownloadJobs();
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [commandJobId, setCommandJobId] = useState<string | null>(null);
-  // Whether the popover has already auto-opened for the current run of jobs,
-  // so a second job in the same batch doesn't re-pop it. Resets once the tray
-  // empties so a fresh batch surfaces again.
-  const hasAutoOpened = useRef(false);
   const now = useExpiryClock(jobs);
   const open = Boolean(anchorEl);
 
@@ -257,21 +259,21 @@ export default function DownloadJobsMenu() {
     }
   }
 
-  // Auto-open the popover when the first job appears so a freshly submitted
-  // download surfaces without the user hunting for the badge. Anchored off the
-  // button ref rather than a click target: this runs in an effect, i.e. after
-  // the icon has mounted, so the ref is populated — otherwise the popover has
-  // no anchor and MUI drops it in the top-left corner.
+  // Open the tray when a download is submitted (opt-in via AUTO_OPEN_ON_SUBMIT)
+  // so the new job surfaces without the user hunting for the button. Driven by
+  // submitCount, which the context bumps only on a fresh submission — a reload
+  // that rehydrates jobs from storage leaves it untouched, so restored jobs no
+  // longer pop the tray, and every submission now behaves the same rather than
+  // only the first of a batch. Anchored off the button ref rather than a click
+  // target: this runs in an effect, i.e. after the button has mounted, so the
+  // ref is populated — otherwise the popover has no anchor and MUI drops it in
+  // the top-left corner.
+  const prevSubmitCount = useRef(submitCount);
   useEffect(() => {
-    if (jobs.length === 0) {
-      hasAutoOpened.current = false;
-      return;
-    }
-    if (!hasAutoOpened.current) {
-      hasAutoOpened.current = true;
-      setAnchorEl(buttonRef.current);
-    }
-  }, [jobs.length]);
+    if (submitCount === prevSubmitCount.current) return;
+    prevSubmitCount.current = submitCount;
+    if (AUTO_OPEN_ON_SUBMIT) setAnchorEl(buttonRef.current);
+  }, [submitCount]);
 
   const activeCount = jobs.filter(
     (j) => j.status === "pending" || j.status === "processing"
