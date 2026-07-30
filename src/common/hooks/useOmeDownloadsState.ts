@@ -21,8 +21,8 @@ import type {
   CatalogDataset,
   CatalogFile,
   DatasetBundle,
-  OmeDownloadsConfig,
 } from "@/common/components/Downloads/types";
+import type { OmeDownloadsConfig } from "@/common/components/Downloads/OmeDualPaneDownloads";
 import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
 
 export type { BulkDownloadDatasetItem, BulkDownloadFileItem } from "@/common/components/Downloads/selectionSummary";
@@ -30,6 +30,8 @@ export type { BulkDownloadDatasetItem, BulkDownloadFileItem } from "@/common/com
 export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   loading: boolean;
   error: boolean;
+  /** Whether the ome has any open-access files — gates the bulk-download UI. */
+  hasOpenAccessFiles: boolean;
 
   datasets: CatalogDataset<T>[];
   activeDataset: string | null;
@@ -105,6 +107,12 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   }, [datasets]);
 
   const files: CatalogFile[] = useMemo(() => datasets.flatMap((d) => d.files), [datasets]);
+
+  // No open-access files means nothing to bulk-download: every file routes to
+  // AnVIL individually, so the view drops the select columns and download tray.
+  // Derived from the response (both layouts share a shape, so there's no wrong
+  // skeleton to flash); false while loading, until the data proves otherwise.
+  const hasOpenAccessFiles = useMemo(() => files.some((f) => f.open_access), [files]);
 
   // Which dataset is shown on the right, and its files.
   const [activeDataset, setActiveDataset] = useState<string | null>(null);
@@ -187,6 +195,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   return {
     loading,
     error,
+    hasOpenAccessFiles,
     datasets,
     activeDataset,
     setActiveDataset,

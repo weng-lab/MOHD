@@ -62,19 +62,3 @@ export type FilterFieldConfig<T extends BaseSampleMetadata> = {
   /** Display label */
   label: string;
 };
-
-/**
- * Configuration object each ome page provides to the shared downloads component.
- * Dataset + file metadata both come from the catalog keyed by `omeKey`; the page
- * only declares which metadata fields become filters.
- */
-export type OmeDownloadsConfig<T extends BaseSampleMetadata> = {
-  /** Catalog key = the `{ome}` path param on the bulk-download service, e.g. "rna". */
-  omeKey: string;
-
-  /** Human-readable ome name, used as the job label in the downloads tray. */
-  displayName: string;
-
-  /** Which dataset metadata fields to expose as filters, and how to render them */
-  datasetFilters: FilterFieldConfig<T>[];
-};

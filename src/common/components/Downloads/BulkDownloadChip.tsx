@@ -128,14 +128,7 @@ const BulkDownloadChip = ({
                           "&:hover": { bgcolor: "primary.dark" },
                         }}
                       >
-                        <Badge
-                          badgeContent={numFiles}
-                          color="secondary"
-                          overlap="rectangular"
-                          sx={{ "& .MuiBadge-badge": { top: 0, right: -4 } }}
-                        >
-                          <Download fontSize="small" />
-                        </Badge>
+                        <Download fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </>

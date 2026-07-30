@@ -7,8 +7,7 @@ import { Construction } from "@mui/icons-material";
  * bulk-download catalog. Rendered in place of the dual-pane browser until the
  * ome's metadata.tsv / files.tsv are onboarded on the backend.
  */
-export default function DownloadsComingSoon({ omeName }: { omeName?: string }) {
-  const subject = omeName ? `${omeName} downloads` : "Downloads";
+export default function DownloadsComingSoon() {
   return (
     <Box
       sx={{
@@ -24,9 +23,9 @@ export default function DownloadsComingSoon({ omeName }: { omeName?: string }) {
     >
       <Stack spacing={1.5} alignItems="center" textAlign="center">
         <Construction sx={{ fontSize: 48, color: "primary.main" }} />
-        <Typography variant="h6">Downloads coming soon!</Typography>
+        <Typography variant="h6">Coming soon!</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 420 }}>
-          {`${subject} for this data type aren't available yet. Check back once open-access files have been published.`}
+          Downloads for this data type aren&apos;t available yet
         </Typography>
       </Stack>
     </Box>

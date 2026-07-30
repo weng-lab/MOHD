@@ -12,6 +12,8 @@ type FilesPaneProps = {
   bundle: DatasetBundle | undefined;
   columns: TableColDef[];
   loading: boolean;
+  /** When false (ome has no open-access files) the grid drops its bulk checkboxes. */
+  selectionEnabled: boolean;
   selectionModel: GridRowSelectionModel;
   onSelectionModelChange: (model: GridRowSelectionModel) => void;
   filterModel: GridFilterModel;
@@ -25,6 +27,7 @@ export default function FilesPane({
   bundle,
   columns,
   loading,
+  selectionEnabled,
   selectionModel,
   onSelectionModelChange,
   filterModel,
@@ -72,7 +75,7 @@ export default function FilesPane({
             getRowId={(row) => row.filename}
             loading={loading}
             columns={columns}
-            checkboxSelection
+            checkboxSelection={selectionEnabled}
             rowSelectionModel={selectionModel}
             onRowSelectionModelChange={onSelectionModelChange}
             disableRowSelectionExcludeModel

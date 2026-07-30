@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import DownloadIcon from "@mui/icons-material/Download";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RemoveIcon from "@mui/icons-material/Remove";
 import type { BulkDownloadDatasetItem } from "@/common/hooks/useOmeDownloadsState";
@@ -28,7 +27,7 @@ import {
   useBulkDownloadJob,
 } from "@/common/hooks/useBulkDownloadJob";
 import { ARCHIVE_SIZE_LIMIT_BYTES, formatBytes } from "@/common/downloads";
-import { Publish } from "@mui/icons-material";
+import { Publish, Start } from "@mui/icons-material";
 
 export type BulkDownloadModalProps = {
   open: boolean;
@@ -344,13 +343,13 @@ const BulkDownloadModal = ({
                   isSubmitting ? (
                     <CircularProgress size={16} color="inherit" />
                   ) : (
-                    <Publish />
+                    <Start />
                   )
                 }
                 onClick={handleSubmit}
                 disabled={fileCount === 0 || isSubmitting}
               >
-                {isSubmitting ? "Submitting..." : "Submit Download Job"}
+                {isSubmitting ? "Submitting..." : "Submit Download"}
               </Button>
             </Stack>
           </Stack>

@@ -1,6 +1,8 @@
 "use client";
-import OmeDualPaneDownloads from "@/common/components/Downloads/OmeDualPaneDownloads";
-import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
+import OmeDualPaneDownloads, {
+  type OmeDownloadsConfig,
+} from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { BaseSampleMetadata } from "@/common/components/Downloads/types";
 
 type WGSRow = BaseSampleMetadata;
 

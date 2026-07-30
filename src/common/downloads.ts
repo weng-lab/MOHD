@@ -9,6 +9,14 @@ import type { CatalogFile } from "@/common/components/Downloads/types";
 export const isFileBulkSelectable = (file: CatalogFile): boolean => file.open_access;
 
 /**
+ * Where restricted (non open-access) files live. We can't link to individual
+ * files there, so every restricted affordance points at this one generic entry
+ * point: the per-file "request" icon in the dual-pane grid and the file-type
+ * links in the stripped-down restricted-ome view.
+ */
+export const ANVIL_URL = "https://anvilproject.org/";
+
+/**
  * The bulk download service rejects archive jobs (zip/tarball) whose
  * pre-archive total exceeds this with a 413. Selections above it can still be
  * downloaded via the shell script, which pulls the files directly.

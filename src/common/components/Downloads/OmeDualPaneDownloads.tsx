@@ -7,7 +7,31 @@ import DownloadFiltersPanel from "./DownloadFiltersPanel";
 import DatasetsPane from "./DatasetsPane";
 import FilesPane from "./FilesPane";
 import BulkDownloadChip from "./BulkDownloadChip";
-import type { BaseSampleMetadata, OmeDownloadsConfig } from "@/common/components/Downloads/types";
+import type {
+  BaseSampleMetadata,
+  FilterFieldConfig,
+} from "@/common/components/Downloads/types";
+
+/**
+ * Configuration object each ome page provides to this component. Dataset + file
+ * metadata both come from the catalog keyed by `omeKey`; the page only declares
+ * which metadata fields become filters.
+ *
+ * The same shape drives both layouts: when the catalog has no open-access files
+ * the component drops the bulk-download UI (select columns + download tray),
+ * keeping the dataset/file tables and filters. Nothing here changes between the
+ * two — the distinction is derived from the response.
+ */
+export type OmeDownloadsConfig<T extends BaseSampleMetadata> = {
+  /** Catalog key = the `{ome}` path param on the bulk-download service, e.g. "rna". */
+  omeKey: string;
+
+  /** Human-readable ome name, used as the job label in the downloads tray. */
+  displayName: string;
+
+  /** Which dataset metadata fields to expose as filters, and how to render them */
+  datasetFilters: FilterFieldConfig<T>[];
+};
 
 // --- Main component ---
 
@@ -23,6 +47,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
   const {
     loading,
     error,
+    hasOpenAccessFiles,
     datasets,
     activeDataset,
     setActiveDataset,
@@ -67,6 +92,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
     datasetCheckState,
     toggleAll,
     toggleDataset,
+    bulkEnabled: hasOpenAccessFiles,
   });
 
   return (
@@ -95,6 +121,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
             columns={datasetColumnsWithSelect}
             loading={loading}
             error={error}
+            hasOpenAccessFiles={hasOpenAccessFiles}
             activeDataset={activeDataset}
             onActivate={setActiveDataset}
             filterModel={datasetFilterModel}
@@ -108,6 +135,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
             bundle={activeBundle}
             columns={fileColumnsWithDownload}
             loading={loading}
+            selectionEnabled={hasOpenAccessFiles}
             selectionModel={activeSelectionModel}
             onSelectionModelChange={setActiveSelection}
             filterModel={fileFilterModel}
@@ -115,17 +143,19 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
           />
         }
       />
-      <BulkDownloadChip
-        visible={numSelectedFiles > 0}
-        filePaths={filePaths}
-        totalSize={totalSize}
-        numFiles={numSelectedFiles}
-        onClear={clearSelection}
-        ome={displayName}
-        bulkDownloadItems={bulkDownloadItems}
-        onRemoveFile={deselectFile}
-        onRemoveDataset={deselectDataset}
-      />
+      {hasOpenAccessFiles && (
+        <BulkDownloadChip
+          visible={numSelectedFiles > 0}
+          filePaths={filePaths}
+          totalSize={totalSize}
+          numFiles={numSelectedFiles}
+          onClear={clearSelection}
+          ome={displayName}
+          bulkDownloadItems={bulkDownloadItems}
+          onRemoveFile={deselectFile}
+          onRemoveDataset={deselectDataset}
+        />
+      )}
     </Box>
   );
 };
