@@ -9,6 +9,7 @@ type ExposomicsRow = BaseSampleMetadata;
 const config: OmeDownloadsConfig<ExposomicsRow> = {
   omeKey: "exposomics",
   displayName: "Exposomics",
+  noOpenAccess: true,
   datasetFilters: [
     { field: "sex", label: "Sex" },
     { field: "status", label: "Status" },

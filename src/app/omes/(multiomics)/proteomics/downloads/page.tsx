@@ -9,6 +9,7 @@ type ProteomicsRow = BaseSampleMetadata;
 const config: OmeDownloadsConfig<ProteomicsRow> = {
   omeKey: "proteomics",
   displayName: "Proteomics",
+  noOpenAccess: true,
   datasetFilters: [
     { field: "sex", label: "Sex" },
     { field: "status", label: "Status" },

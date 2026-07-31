@@ -30,8 +30,8 @@ export type { BulkDownloadDatasetItem, BulkDownloadFileItem } from "@/common/com
 export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   loading: boolean;
   error: boolean;
-  /** Whether the ome has any open-access files — gates the bulk-download UI. */
-  hasOpenAccessFiles: boolean;
+  /** Passthrough of the ome's static `noOpenAccess` config flag — gates bulk UI. */
+  noOpenAccess: boolean;
 
   datasets: CatalogDataset<T>[];
   activeDataset: string | null;
@@ -86,7 +86,7 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
 export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   config: OmeDownloadsConfig<T>
 ): OmeDownloadsState<T> {
-  const { omeKey, displayName, datasetFilters } = config;
+  const { omeKey, displayName, datasetFilters, noOpenAccess = false } = config;
 
   // Single fetch: datasets with metadata flattened on and files nested.
   const { datasets, loading, error } = useOmeCatalog<T>(omeKey);
@@ -107,12 +107,6 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   }, [datasets]);
 
   const files: CatalogFile[] = useMemo(() => datasets.flatMap((d) => d.files), [datasets]);
-
-  // No open-access files means nothing to bulk-download: every file routes to
-  // AnVIL individually, so the view drops the select columns and download tray.
-  // Derived from the response (both layouts share a shape, so there's no wrong
-  // skeleton to flash); false while loading, until the data proves otherwise.
-  const hasOpenAccessFiles = useMemo(() => files.some((f) => f.open_access), [files]);
 
   // Which dataset is shown on the right, and its files.
   const [activeDataset, setActiveDataset] = useState<string | null>(null);
@@ -167,22 +161,28 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     ];
   }, [datasetFilters, datasetFiltersState.datasetOptionsMap]);
 
-  const fileColumns: TableColDef<CatalogFile>[] = useMemo(() => [
-    {
-      field: "file_type",
-      headerName: "File Type",
-      minWidth: 150,
-      type: "singleSelect" as const,
-      valueOptions: fileFiltersState.fileTypeOptions,
-      filterOperators: customSingleSelectOperators,
-    },
-    {
-      field: "size",
-      headerName: "File Size",
-      valueFormatter: formatBytes,
-      align: "right" as const,
-    },
-  ], [fileFiltersState.fileTypeOptions]);
+  const fileColumns: TableColDef<CatalogFile>[] = useMemo(() => {
+    const cols: TableColDef<CatalogFile>[] = [
+      {
+        field: "file_type",
+        headerName: "File Type",
+        minWidth: 150,
+        type: "singleSelect" as const,
+        valueOptions: fileFiltersState.fileTypeOptions,
+        filterOperators: customSingleSelectOperators,
+      },
+    ];
+    // Restricted-only omes carry no size in the response, so the column is noise.
+    if (!noOpenAccess) {
+      cols.push({
+        field: "size",
+        headerName: "File Size",
+        valueFormatter: formatBytes,
+        align: "right" as const,
+      });
+    }
+    return cols;
+  }, [fileFiltersState.fileTypeOptions, noOpenAccess]);
 
   // Selection summaries for the chip / modal / job submission.
   const filePaths = useMemo(() => collectFilePaths(selection, filesByDataset), [selection, filesByDataset]);
@@ -195,7 +195,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   return {
     loading,
     error,
-    hasOpenAccessFiles,
+    noOpenAccess,
     datasets,
     activeDataset,
     setActiveDataset,
