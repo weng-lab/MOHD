@@ -128,9 +128,6 @@ const LandingPageCards = () => {
                                             position: "absolute",
                                             left: 16,
                                             bottom: 16,
-                                            zIndex: 2,
-                                            fontWeight: 700,
-                                            fontSize: 12,
                                             backgroundColor: page.title === "Molecular Data" ? "primary.dark" : "secondary.main",
                                             "&:hover": {
                                                 backgroundColor: page.title === "Molecular Data" ? "primary.main" : "secondary.light",

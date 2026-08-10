@@ -28,7 +28,14 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "var(--font-montserrat), sans-serif",
+    fontFamily: "var(--font-work-sans), sans-serif",
+    h1: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h2: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h3: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h4: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h5: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h6: { fontFamily: "var(--font-montserrat), sans-serif" },
+    button: { fontFamily: "var(--font-montserrat), sans-serif" },
   },
   components: {
     MuiButton: {
