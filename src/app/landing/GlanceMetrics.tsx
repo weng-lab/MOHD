@@ -6,7 +6,7 @@ const stats =
     [
         { value: "13", label: "Sites", link: "https://www.mohdconsortium.org/projects-sites" },
         { value: "1.8K", label: "Participants", link: "https://www.mohdconsortium.org/data" },
-        { value: "9", label: "Omes", link: "/omes" },
+        { value: "8", label: "Omes", link: "/omes" },
     ]
 
 
