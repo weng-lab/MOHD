@@ -1,3 +1,28 @@
+import type { CatalogFile } from "@/common/components/Downloads/types";
+
+/**
+ * Single source of truth for which files can be added to a bulk selection —
+ * used by the grid checkboxes and the dataset-level "select all" actions.
+ * Restricted files (AnVIL) are excluded; the per-dataset bundle never appears
+ * in `files` at all, so it needs no special case here.
+ */
+export const isFileBulkSelectable = (file: CatalogFile): boolean => file.open_access;
+
+/**
+ * Where restricted (non open-access) files live. We can't link to individual
+ * files there, so every restricted affordance points at this one generic entry
+ * point: the per-file "request" icon in the dual-pane grid and the file-type
+ * links in the stripped-down restricted-ome view.
+ */
+export const ANVIL_URL = "https://anvilproject.org/";
+
+/**
+ * The bulk download service rejects archive jobs (zip/tarball) whose
+ * pre-archive total exceeds this with a 413. Selections above it can still be
+ * downloaded via the shell script, which pulls the files directly.
+ */
+export const ARCHIVE_SIZE_LIMIT_BYTES = 20 * 1024 ** 3;
+
 export const formatBytes = (bytes?: number): string => {
   if (!bytes) return "";
 
@@ -11,4 +36,49 @@ export const formatBytes = (bytes?: number): string => {
   }
 
   return `${value.toFixed(1)} ${units[i]}`;
+};
+
+const MS_PER_MINUTE = 60_000;
+const MS_PER_HOUR = 60 * MS_PER_MINUTE;
+
+/**
+ * Renders a job's expiry as "expires in 21 hours (22 Jul, 3:04 PM)", or
+ * "expired 21 Jul, 4:03 PM" once it is past. Phrased to follow a subject, e.g.
+ * `Link ${formatExpiry(job.expiresAt)}`.
+ *
+ * Jobs live 24 hours, so a date on its own cannot say whether a link dies
+ * tonight or tomorrow morning — the clock time is what decides whether a copied
+ * command is still worth pasting. The countdown leads because it answers that
+ * without arithmetic; the timestamp follows for anyone planning around it.
+ *
+ * `now` is injectable so the result is testable. Returns null when the
+ * timestamp cannot be parsed, leaving the caller to decide on a fallback.
+ */
+export const formatExpiry = (
+  expiresAt: string,
+  now: number = Date.now(),
+): string | null => {
+  const expiry = Date.parse(expiresAt);
+  if (Number.isNaN(expiry)) return null;
+
+  const timestamp = new Date(expiry).toLocaleString(undefined, {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  const remaining = expiry - now;
+  if (remaining <= 0) return `expired ${timestamp}`;
+
+  const hours = Math.floor(remaining / MS_PER_HOUR);
+  const minutes = Math.floor((remaining % MS_PER_HOUR) / MS_PER_MINUTE);
+  const countdown =
+    hours > 0
+      ? `${hours} hour${hours !== 1 ? "s" : ""}`
+      : minutes > 0
+        ? `${minutes} minute${minutes !== 1 ? "s" : ""}`
+        : "under a minute";
+
+  return `expires in ${countdown} (${timestamp})`;
 };

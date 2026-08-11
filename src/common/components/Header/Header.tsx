@@ -20,10 +20,6 @@ const pageLinks: PageInfo[] = [
         link: "/genomeBrowser",
     },
     {
-        pageName: "Downloads",
-        link: "/downloads",
-    },
-    {
         pageName: "About",
         link: "https://www.mohdconsortium.org/home",
     },

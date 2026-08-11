@@ -5,7 +5,6 @@ const logo = "/logo.png";
 const dimensionalityReductionIcon = "/TabIcons/DimensionReduction.png";
 const cellTypeDecompositionIcon = "/TabIcons/CellTypeDeconvolution.png";
 const downloadIcon = "/TabIcons/DataDownload.png";
-const genomeBrowserIcon = "/TabIcons/genomeBrowser.png";
 const heatmapIcon = "/TabIcons/Heatmap.png";
 
 export const OME_TABS: Record<OmesDataType, TabItem[]> = {
@@ -17,19 +16,16 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
     WGBS: [
         { value: "dimensionalityReduction", label: "Dimensionality Reduction", icon: dimensionalityReductionIcon, href: "/omes/WGBS/dimensionalityReduction" },
         { value: "cellTypeDecomposition", label: "Cell Type Decomposition", icon: cellTypeDecompositionIcon, href: "/omes/WGBS/cellTypeDecomposition" },
-        { value: "genomeBrowser", label: "Genome Browser", icon: genomeBrowserIcon, href: "/omes/WGBS/genomeBrowser" },
         { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/WGBS/downloads" },
     ],
     ATAC: [
         { value: "dimensionalityReduction", label: "Dimensionality Reduction", icon: dimensionalityReductionIcon, href: "/omes/ATAC/dimensionalityReduction" },
         { value: "cellTypeDecomposition", label: "Cell Type Decomposition", icon: cellTypeDecompositionIcon, href: "/omes/ATAC/cellTypeDecomposition" },
-        { value: "genomeBrowser", label: "Genome Browser", icon: genomeBrowserIcon, href: "/omes/ATAC/genomeBrowser" },
         { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/ATAC/downloads" },
     ],
     RNA: [
         { value: "dimensionalityReduction", label: "Dimensionality Reduction", icon: dimensionalityReductionIcon, href: "/omes/RNA/dimensionalityReduction" },
         { value: "cellTypeDecomposition", label: "Cell Type Decomposition", icon: cellTypeDecompositionIcon, href: "/omes/RNA/cellTypeDecomposition" },
-        { value: "genomeBrowser", label: "Genome Browser", icon: genomeBrowserIcon, href: "/omes/RNA/genomeBrowser" },
         { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/RNA/downloads" },
     ],
     proteomics: [
@@ -54,5 +50,6 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
     ],
     metallomics: [
         { value: "dimensionalityReduction", label: "Dimensionality Reduction", icon: dimensionalityReductionIcon, href: "/omes/metallomics/dimensionalityReduction" },
+        { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/metallomics/downloads" },
     ],
 };

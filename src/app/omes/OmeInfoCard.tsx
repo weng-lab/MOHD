@@ -30,7 +30,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
         zIndex: 1,
         width: "100%",
         maxWidth: 1000,
-        minHeight: 500,
+        minHeight: 300,
         display: "flex",
         flexDirection: "column",
         opacity: isVisible ? 1 : 0,
@@ -119,7 +119,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             {OME_DESCRIPTIONS[selectedOme] ?? "Description coming soon."}
           </Typography>
         </Stack>
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent={{ xs: "flex-start", sm: "space-between" }} gap={{ xs: 1, sm: 0 }}>
+        <Stack direction={{ xs: "column", sm: "row" }} justifyContent={{ xs: "flex-start", sm: "space-between" }} gap={{ xs: 1, sm: 0 }} mt={2}>
           <Button
             // component={genomeBrowserHref ? Link : "button"}
             // href={genomeBrowserHref ?? undefined}

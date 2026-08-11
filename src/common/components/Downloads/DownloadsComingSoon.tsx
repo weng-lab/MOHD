@@ -1,0 +1,33 @@
+"use client";
+import { Box, Stack, Typography } from "@mui/material";
+import { Construction } from "@mui/icons-material";
+
+/**
+ * Placeholder for ome downloads pages whose open-access data isn't yet in the
+ * bulk-download catalog. Rendered in place of the dual-pane browser until the
+ * ome's metadata.tsv / files.tsv are onboarded on the backend.
+ */
+export default function DownloadsComingSoon() {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: 400,
+        border: 1,
+        borderColor: "divider",
+        borderRadius: 1,
+        p: 4,
+      }}
+    >
+      <Stack spacing={1.5} alignItems="center" textAlign="center">
+        <Construction sx={{ fontSize: 48, color: "primary.main" }} />
+        <Typography variant="h6">Coming soon!</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 420 }}>
+          Downloads for this data type aren&apos;t available yet
+        </Typography>
+      </Stack>
+    </Box>
+  );
+}

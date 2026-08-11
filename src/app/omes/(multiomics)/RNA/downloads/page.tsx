@@ -1,46 +1,21 @@
 "use client";
-import { useRNAData } from "@/common/hooks/omeHooks/useRNAData";
-import RNADownloadsTable from "./RNADownloadsTable";
-import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
-import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
+import OmeDualPaneDownloads, {
+  type OmeDownloadsConfig,
+} from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { BaseSampleMetadata } from "@/common/components/Downloads/types";
 
-const RNADescriptions = [
-    "Gene quantifications",
-    "Isoform quantifications",
-    "All Signal Minus",
-    "Unique Signal Minus",
-    "All Signal Plus",
-    "Unique Signal Plus"
-];
+type RnaRow = BaseSampleMetadata;
 
-const RNADownloads = () => {
+const config: OmeDownloadsConfig<RnaRow> = {
+  omeKey: "rna",
+  displayName: "RNA-seq",
+  datasetFilters: [
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
+  ],
+};
 
-    const RNAData = useRNAData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles("RNA_SEQ");
+const RnaDownloads = () => <OmeDualPaneDownloads config={config} />;
 
-    const rows = RNAData.data ?? [];
-
-    return (
-        <OmeDownloadLayout
-            rows={rows}
-            downloadFiles={downloadFiles}
-            descriptions={RNADescriptions}
-            getFilterFields={(row) => ({
-                site: row.site as Site,
-                status: row.status as Status,
-                sex: row.sex as Sex,
-            })}
-            renderTable={(filteredRows, filteredDownloadFiles) => (
-                <RNADownloadsTable 
-                    rows={filteredRows} 
-                    RNAData={RNAData} 
-                    files={filteredDownloadFiles}
-                    loadingFiles={loading}
-                />
-            )}
-        />
-    )
-}
-
-export default RNADownloads;
+export default RnaDownloads;

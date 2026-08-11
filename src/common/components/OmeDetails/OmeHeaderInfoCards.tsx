@@ -10,9 +10,14 @@ type OmeHeaderStat = {
 
 const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
     ATAC: [
-        { label: "Experiments", value: "128" },
-        { label: "Participants", value: "180" },
-        { label: "Timepoints", value: "200" },
+        { label: "Experiments", value: "33" },
+        { label: "Participants", value: "15" },
+        { label: "Timepoints", value: "1" },
+    ],
+    RNA: [
+        { label: "Experiments", value: "15" },
+        { label: "Participants", value: "15" },
+        { label: "Timepoints", value: "1" },
     ],
 };
 
