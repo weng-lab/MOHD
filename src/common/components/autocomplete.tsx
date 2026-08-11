@@ -1,5 +1,5 @@
 "use client";
-import { GenomeSearch, GenomeSearchProps, Result } from "@weng-lab/ui-components";
+import { GenomeSearch, GenomeSearchProps, Result, StaticListOption } from "@weng-lab/ui-components";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import OpenInScreen from "./OpenInScreen";
@@ -121,6 +121,54 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
 
   const geneVersion = [29, 40];
 
+  const Omes: StaticListOption[] = [
+  {
+    label: "Proteomics",
+    value: "proteomics",
+    keywords: ["protein", "mass spec"],
+  },
+  {
+    label: "WGS",
+    value: "WGS",
+    keywords: ["whole genome sequencing", "genome sequencing", "genomics"],
+    description: "Whole Genome Sequencing"
+  },
+  {
+    label: "WGBS",
+    value: "WGBS",
+    keywords: ["whole genome bisulfite sequencing", "epigenomics", "methylation"],
+    description: "Whole Genome Bisulfite Sequencing"
+  },
+  {
+    label: "ATAC",
+    value: "ATAC",
+    keywords: ["chromatin accessibility", "atac-seq"],
+    description: "ATAC-seq"
+  },
+  {
+    label: "RNA",
+    value: "RNA",
+    keywords: ["rna-seq", "transcriptomics", "gene expression"],
+    description: "RNA-seq"
+  },
+  {
+    label: "Metabolomics",
+    value: "metabolomics",
+  },
+  {
+    label: "Lipidomics",
+    value: "lipidomics",
+  },
+  {
+    label: "Metallomics",
+    value: "metallomics",
+  },
+  {
+    label: "Exposomics",
+    value: "exposomics",
+  },
+];
+
   return (
     <>
       <GenomeSearch
@@ -128,7 +176,8 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
         geneVersion={geneVersion}
         graphqlUrl="/api/screen-graphql"
         showiCREFlag={false}
-        queries={["Ome", "Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
+        queries={["Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
+        staticLists={{Omes}}
         onSearchSubmit={handleSearchSubmit}
         //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton
         onKeyDown={(e) => {
