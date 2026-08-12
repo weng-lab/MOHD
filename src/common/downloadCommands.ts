@@ -95,6 +95,18 @@ export function buildCommandPlan(args: {
     // downloads would silently merge into one directory.
     const root = `DOWNLOAD_ROOT=${quote(dir)}`;
 
+    // The script is saved to a file before it runs rather than piped straight
+    // into bash, because re-running it is how an interrupted download resumes:
+    // it skips files that are already complete and picks partial ones up where
+    // they stopped. The artifact is deleted once its job expires, so a piped
+    // one-liner stops working well before a multi-terabyte transfer finishes —
+    // and it fails quietly, because bash reading an empty stdin exits 0.
+    //
+    // The separator is `;` rather than `&&` so that a later re-run still runs
+    // the copy it already has once the fetch starts 404ing. That is safe because
+    // a failed `curl -f` writes nothing, leaving the local script intact; and
+    // with no local script the run leg fails loudly on its own.
+    //
     // Git Bash is a real bash and ships its own curl, so it runs these unchanged
     // — which is why the Windows tab offers them verbatim as its alternative
     // rather than building a third variant.
@@ -111,8 +123,8 @@ export function buildCommandPlan(args: {
         ]
       : [
           {
-            command: `curl -fsSL ${quote(url)} | ${root} bash`,
-            caption: `Download and run the script; files land in ./${dir}`,
+            command: `curl -fsSL ${quote(url)} -o ${quote(filename)}; ${root} bash ${quote(filename)}`,
+            caption: `Download and run the script; files land in ./${dir}. Re-run the same command to resume.`,
           },
         ];
 
@@ -120,12 +132,16 @@ export function buildCommandPlan(args: {
       // The `wsl` prefix is not about locating a bash — a machine with WSL
       // usually has one on PATH already. It is that the command is POSIX and
       // PowerShell cannot parse it: an assignment ahead of a command reads as a
-      // command named `DOWNLOAD_ROOT=…`, and piping between two native programs
-      // under Windows PowerShell 5.1 rejoins the script's lines with CRLF, which
-      // bash answers with `$'\r': command not found`. Running the whole thing
-      // inside `wsl bash -c '…'` keeps PowerShell away from both. So this is not
+      // command named `DOWNLOAD_ROOT=…`, and a bare `;` would split the line
+      // into two PowerShell statements. Running the whole thing inside
+      // `wsl bash -c '…'` keeps PowerShell away from both. So this is not
       // interchangeable with a bare `bash …`, which would need PowerShell's own
       // `$env:DOWNLOAD_ROOT=…;` form instead.
+      //
+      // It is also a reason not to go back to piping the script into bash:
+      // piping between two native programs under Windows PowerShell 5.1 rejoins
+      // the script's lines with CRLF, which bash answers with `$'\r': command
+      // not found`.
       //
       // The assignment must sit inside the -c string for the same reason `wsl
       // VAR=x cmd` fails: a leading assignment is shell syntax, not something
@@ -147,8 +163,8 @@ export function buildCommandPlan(args: {
           ]
         : [
             {
-              command: `wsl bash -c 'curl -fsSL ${quote(url)} | ${root} bash'`,
-              caption: `Download and run the script under WSL; files land in ./${dir}`,
+              command: `wsl bash -c 'curl -fsSL ${quote(url)} -o ${quote(filename)}; ${root} bash ${quote(filename)}'`,
+              caption: `Download and run the script under WSL; files land in ./${dir}. Re-run the same command to resume.`,
             },
           ];
 
