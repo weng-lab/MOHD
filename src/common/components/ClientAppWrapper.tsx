@@ -9,6 +9,7 @@ import DownloadJobsMenu from "@/common/components/Downloads/DownloadJobsMenu";
 
 export default function ClientAppWrapper({ children }: { children: React.ReactNode }) {
   const [maintenance, setMaintenance] = useState(false);
+
   useEffect(() => {
     const checkAPIHealth = async () => {
       try {
@@ -31,10 +32,13 @@ export default function ClientAppWrapper({ children }: { children: React.ReactNo
 
   return (
     <DownloadJobsProvider>
-      <Box id="app-wrapper" display={"grid"} gridTemplateRows={"auto minmax(0, 1fr) auto"} minHeight={"100vh"}>
-        <Header maintenance={maintenance} />
-        {/* Wrap children to enure they will all be slotted together into the 1fr row if child is a fragment */}
-        <div id="main-content-wrapper">{children}</div>
+      <Box display={"flex"} flexDirection={"column"}>
+        {/* Header + content alone fill at least the viewport, so the footer starts below the fold and stays hidden until the user scrolls */}
+        <Box id="app-wrapper" display={"grid"} gridTemplateRows={"auto minmax(0, 1fr)"} minHeight={"100vh"}>
+          <Header maintenance={maintenance} />
+          {/* Wrap children to enure they will all be slotted together into the 1fr row if child is a fragment */}
+          <div id="main-content-wrapper">{children}</div>
+        </Box>
         <Footer />
       </Box>
       <DownloadJobsMenu />

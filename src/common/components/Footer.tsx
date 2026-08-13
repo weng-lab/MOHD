@@ -44,7 +44,6 @@ export default function Footer() {
       sx={{
         width: "100%",
         backgroundColor: (theme) => theme.palette.primary.main,
-        zIndex: (theme) => theme.zIndex.appBar,
         color: "#fff",
         paddingX: 6,
         paddingY: 2,
