@@ -14,12 +14,12 @@ import {
 import Grid from "@mui/material/Grid";
 import { Add, Delete, ExpandMore } from "@mui/icons-material";
 import {
+  type BrowserStoreInstance,
   type Chromosome,
   type Highlight as GBHighlight,
 } from "@weng-lab/genomebrowser";
 import { type Domain } from "@weng-lab/genomebrowser";
 import { useState } from "react";
-import { useBrowserStore } from "../stores";
 
 const VALID_CHROMOSOMES: Chromosome[] = [
   "chr1",
@@ -390,7 +390,15 @@ function HighlightsList({ highlights, removeHighlight }: HighlightsListProps) {
   );
 }
 
-export default function HighlightDialog({open, onClose}: {open: boolean, onClose: () => void}) {
+export default function HighlightDialog({
+  open,
+  onClose,
+  useBrowserStore,
+}: {
+  open: boolean;
+  onClose: () => void;
+  useBrowserStore: BrowserStoreInstance;
+}) {
   const domain = useBrowserStore((state) => state.domain);
   const highlights = useBrowserStore((state) => state.highlights);
   const addHighlight = useBrowserStore((state) => state.addHighlight);

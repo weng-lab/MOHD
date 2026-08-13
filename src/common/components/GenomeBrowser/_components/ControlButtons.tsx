@@ -6,8 +6,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useEffect } from "react";
-import { useBrowserStore } from "../stores";
+import type { BrowserStoreInstance } from "@weng-lab/genomebrowser";
 
 type ButtonConfig = {
   label: string;
@@ -68,19 +67,15 @@ function TwoSidedControl({
   );
 }
 
-export default function ControlButtons() {
+export default function ControlButtons({
+  useBrowserStore,
+}: {
+  useBrowserStore: BrowserStoreInstance;
+}) {
   const domain = useBrowserStore((state) => state.domain);
   const setDomain = useBrowserStore((state) => state.setDomain);
 
   const domainKey = `${domain.chromosome}:${domain.start}-${domain.end}`;
-
-  useEffect(() => {
-    console.log("[GenomeBrowser] ControlButtons render", {
-      domain,
-      domainKey,
-      width: domain.end - domain.start,
-    });
-  }, [domain, domainKey]);
 
   const zoom = (factor: number) => {
     const width = domain.end - domain.start;

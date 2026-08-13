@@ -2,9 +2,8 @@ import { Search } from "@mui/icons-material";
 import { IconButton, useTheme } from "@mui/material";
 import type { ButtonProps } from "@mui/material";
 import { Box } from "@mui/system";
-import { Chromosome } from "@weng-lab/genomebrowser";
+import { Chromosome, type BrowserStoreInstance } from "@weng-lab/genomebrowser";
 import { GenomeSearch, Result } from "@weng-lab/ui-components";
-import { useBrowserStore } from "../stores";
 
 const ASSEMBLY = "GRCh38";
 const GENE_VERSION = [29, 40];
@@ -17,7 +16,11 @@ function SearchButton(props: ButtonProps) {
   );
 }
 
-export default function BrowserSearch() {
+export default function BrowserSearch({
+  useBrowserStore,
+}: {
+  useBrowserStore: BrowserStoreInstance;
+}) {
   const theme = useTheme();
   const setDomain = useBrowserStore(state => state.setDomain)
 

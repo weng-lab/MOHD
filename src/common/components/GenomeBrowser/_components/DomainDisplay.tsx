@@ -1,8 +1,11 @@
 import { Box, Stack, Typography } from "@mui/material";
-import {  Cytobands } from "@weng-lab/genomebrowser";
-import { useBrowserStore } from "../stores";
+import { Cytobands, type BrowserStoreInstance } from "@weng-lab/genomebrowser";
 
-export default function DomainDisplay() {
+export default function DomainDisplay({
+  useBrowserStore,
+}: {
+  useBrowserStore: BrowserStoreInstance;
+}) {
   const domain = useBrowserStore((state) => state.domain);
 
   return (
