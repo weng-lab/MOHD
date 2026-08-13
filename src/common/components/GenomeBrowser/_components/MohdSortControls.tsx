@@ -2,8 +2,8 @@ import { Button, ButtonGroup } from "@mui/material";
 import {
   type MohdRowInfo,
 } from "@weng-lab/genomebrowser-ui";
+import type { TrackStoreInstance } from "@weng-lab/genomebrowser";
 import { useMemo } from "react";
-import { useTrackStore } from "../stores";
 
 const MOHD_FOLDER_ID = "human-mohd";
 const OME_ORDER = new Map([
@@ -111,8 +111,10 @@ function compareKnownRows(
 
 export default function MohdSortControls({
   folders,
+  useTrackStore,
 }: {
   folders: Array<{ id: string; rows?: MohdRowInfo[] }>;
+  useTrackStore: TrackStoreInstance;
 }) {
   const tracks = useTrackStore((s) => s.tracks);
   const reorderTracks = useTrackStore((s) => s.reorderTracks);
