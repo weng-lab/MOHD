@@ -154,7 +154,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                                 downloadFileName={`ATAC_dimesionality_reduction_UMAP`}
                                 animation="scale"
                                 animationBuffer={0.025}
-                                animationGroupSize={5}
+                                animationGroupSize={50}
                             />
                         </Box>
                     </>

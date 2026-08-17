@@ -6,13 +6,15 @@ import { useQuery } from "@apollo/client/react";
 const GET_RNA_DATA = gql(`
 query fetchRNAMetadata {
   rna_metadata {
+    kit
     sample_id
     sex
     site
-    kit
     status
     umap_x
     umap_y
+    pca_x
+    pca_y
   }
 }
  `);

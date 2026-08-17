@@ -10,14 +10,15 @@ export const OME_COLORS: Record<string, string> = {
   wgs: "#59acd8",
 };
 
-export const status_color_map = {'case' : '#e41a1c', 'control' : '#377eb8', 'unknown' : 'lightgray'}
+export const status_color_map = {'case' : '#e41a1c', 'control' : '#377eb8'}
 
 export const site_color_map = {'CCH' : '#BF3831',
-               'CKD' : '#79B4F0', 
+               'CKD' : '#79B4F0',
                'EXP' : '#159875',
-               'MOM' : '#CDA0E8', 
+               'LEO': '#F5AB54',
+               'MOM' : '#CDA0E8',
                'UIC' : '#31487D'}
 
-export const sex_color_map = {female: "#9d5ca3", male: "#62A35C"}
+export const sex_color_map = {"female": "#9d5ca3", "male": "#62A35C", "prefer no answer": "lightsteelblue"}
 
 export const protocol_color_map = {"Buffy Coat method": "#d1495b", "OPC method": "#00798c", "CPT method": "#edae49"}

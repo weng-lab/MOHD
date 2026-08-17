@@ -30,69 +30,60 @@ export type AtacSample = {
 };
 
 /** ATAC sample metadata */
-export type AtacSampleMetadata = SampleMetadata & {
+export type AtacSampleMetadata = {
   __typename?: 'AtacSampleMetadata';
-  biospecimen: Scalars['String']['output'];
+  age_at_enrollment: Scalars['Int']['output'];
+  condition: Scalars['String']['output'];
   entity_id: Scalars['String']['output'];
+  frip_score?: Maybe<Scalars['Float']['output']>;
   kit: Scalars['String']['output'];
-  opc_id: Scalars['String']['output'];
+  participant_id: Scalars['String']['output'];
+  pca_x?: Maybe<Scalars['Float']['output']>;
+  pca_y?: Maybe<Scalars['Float']['output']>;
   protocol: Scalars['String']['output'];
+  reads_mapped?: Maybe<Scalars['Float']['output']>;
   sample_id: Scalars['String']['output'];
   sex: Scalars['String']['output'];
   site: Scalars['String']['output'];
   status: Scalars['String']['output'];
+  tss_enrichment_score?: Maybe<Scalars['Float']['output']>;
+  tube: Scalars['String']['output'];
   umap_x?: Maybe<Scalars['Float']['output']>;
   umap_y?: Maybe<Scalars['Float']['output']>;
+  visit: Scalars['String']['output'];
 };
 
-export type ExposomicsSampleMetadata = SampleMetadata & {
+export type ExposomicsSampleMetadata = {
   __typename?: 'ExposomicsSampleMetadata';
-  kit: Scalars['String']['output'];
   sample_id: Scalars['String']['output'];
-  sex: Scalars['String']['output'];
+  sex?: Maybe<Scalars['String']['output']>;
   site: Scalars['String']['output'];
-  status: Scalars['String']['output'];
+  status?: Maybe<Scalars['String']['output']>;
 };
 
-export type LipidomicsSampleMetadata = SampleMetadata & {
+export type LipidomicsSampleMetadata = {
   __typename?: 'LipidomicsSampleMetadata';
-  kit: Scalars['String']['output'];
   sample_id: Scalars['String']['output'];
-  sex: Scalars['String']['output'];
+  sex?: Maybe<Scalars['String']['output']>;
   site: Scalars['String']['output'];
-  status: Scalars['String']['output'];
+  status?: Maybe<Scalars['String']['output']>;
 };
 
-export type MetabolomicsSampleMetadata = SampleMetadata & {
+export type MetabolomicsSampleMetadata = {
   __typename?: 'MetabolomicsSampleMetadata';
-  kit: Scalars['String']['output'];
+  sample_id: Scalars['String']['output'];
+  sex?: Maybe<Scalars['String']['output']>;
+  site: Scalars['String']['output'];
+  status?: Maybe<Scalars['String']['output']>;
+};
+
+export type MetallomicsSampleMetadata = {
+  __typename?: 'MetallomicsSampleMetadata';
   sample_id: Scalars['String']['output'];
   sex: Scalars['String']['output'];
   site: Scalars['String']['output'];
   status: Scalars['String']['output'];
 };
-
-export type OmeDownloadFiles = {
-  __typename?: 'OmeDownloadFiles';
-  file_ome: OmeEnum;
-  file_type: Scalars['String']['output'];
-  filename: Scalars['String']['output'];
-  open_access?: Maybe<Scalars['Boolean']['output']>;
-  sample_id: Scalars['String']['output'];
-  size: Scalars['String']['output'];
-};
-
-/** Available omes */
-export enum OmeEnum {
-  AtacSeq = 'ATAC_SEQ',
-  Exposomics = 'EXPOSOMICS',
-  Lipidomics = 'LIPIDOMICS',
-  Metabolomics = 'METABOLOMICS',
-  Proteomics = 'PROTEOMICS',
-  RnaSeq = 'RNA_SEQ',
-  Wgbs = 'WGBS',
-  Wgs = 'WGS'
-}
 
 export type PhenotypicalData = {
   __typename?: 'PhenotypicalData';
@@ -112,26 +103,16 @@ export type PhenotypicalDataVariables = {
   variable_name: Scalars['String']['output'];
 };
 
-export type ProteomicsSampleMetadata = SampleMetadata & {
-  __typename?: 'ProteomicsSampleMetadata';
-  kit: Scalars['String']['output'];
-  sample_id: Scalars['String']['output'];
-  sex: Scalars['String']['output'];
-  site: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-};
-
 export type Query = {
   __typename?: 'Query';
   atac_metadata: Array<AtacSampleMetadata>;
   atac_zscore: Array<AtacAccession>;
   exposomics_metadata: Array<ExposomicsSampleMetadata>;
-  fetch_download_files?: Maybe<Array<Maybe<OmeDownloadFiles>>>;
   lipidomics_metadata: Array<LipidomicsSampleMetadata>;
   metabolomics_metadata: Array<MetabolomicsSampleMetadata>;
+  metallomics_metadata: Array<MetallomicsSampleMetadata>;
   phenotypical_data: Array<PhenotypicalData>;
   phenotypical_variables: Array<PhenotypicalDataVariables>;
-  proteomics_metadata: Array<ProteomicsSampleMetadata>;
   rna_metadata: Array<RnaSampleMetadata>;
   rna_tpm: Array<RnaGene>;
   wgbs_metadata: Array<WgbsSampleMetadata>;
@@ -141,12 +122,6 @@ export type Query = {
 
 export type QueryAtac_ZscoreArgs = {
   accessions: Array<Scalars['String']['input']>;
-};
-
-
-export type QueryFetch_Download_FilesArgs = {
-  ome: OmeEnum;
-  sample_id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -173,38 +148,51 @@ export type RnaSample = {
 };
 
 /** RNA sample metadata */
-export type RnaSampleMetadata = SampleMetadata & {
+export type RnaSampleMetadata = {
   __typename?: 'RnaSampleMetadata';
+  age_at_enrollment: Scalars['Int']['output'];
+  condition: Scalars['String']['output'];
+  entity_id: Scalars['String']['output'];
   kit: Scalars['String']['output'];
+  participant_id: Scalars['String']['output'];
+  pca_x?: Maybe<Scalars['Float']['output']>;
+  pca_y?: Maybe<Scalars['Float']['output']>;
+  protocol: Scalars['String']['output'];
   sample_id: Scalars['String']['output'];
   sex: Scalars['String']['output'];
   site: Scalars['String']['output'];
   status: Scalars['String']['output'];
+  tube: Scalars['String']['output'];
   umap_x?: Maybe<Scalars['Float']['output']>;
   umap_y?: Maybe<Scalars['Float']['output']>;
+  visit: Scalars['String']['output'];
 };
 
-/** Shared fields for all samples */
-export type SampleMetadata = {
-  kit: Scalars['String']['output'];
-  sample_id: Scalars['String']['output'];
-  sex: Scalars['String']['output'];
-  site: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-};
-
-export type WgbsSampleMetadata = SampleMetadata & {
+export type WgbsSampleMetadata = {
   __typename?: 'WgbsSampleMetadata';
+  age_at_enrollment: Scalars['Int']['output'];
+  condition: Scalars['String']['output'];
+  entity_id: Scalars['String']['output'];
+  frip_score?: Maybe<Scalars['Float']['output']>;
   kit: Scalars['String']['output'];
+  participant_id: Scalars['String']['output'];
+  pca_x?: Maybe<Scalars['Float']['output']>;
+  pca_y?: Maybe<Scalars['Float']['output']>;
+  protocol: Scalars['String']['output'];
+  reads_mapped?: Maybe<Scalars['Float']['output']>;
   sample_id: Scalars['String']['output'];
   sex: Scalars['String']['output'];
   site: Scalars['String']['output'];
   status: Scalars['String']['output'];
+  tss_enrichment_score?: Maybe<Scalars['Float']['output']>;
+  tube: Scalars['String']['output'];
+  umap_x?: Maybe<Scalars['Float']['output']>;
+  umap_y?: Maybe<Scalars['Float']['output']>;
+  visit: Scalars['String']['output'];
 };
 
-export type WgsSampleMetadata = SampleMetadata & {
+export type WgsSampleMetadata = {
   __typename?: 'WgsSampleMetadata';
-  kit: Scalars['String']['output'];
   sample_id: Scalars['String']['output'];
   sex: Scalars['String']['output'];
   site: Scalars['String']['output'];
@@ -214,49 +202,17 @@ export type WgsSampleMetadata = SampleMetadata & {
 export type FetchAtacMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchAtacMetadataQuery = { __typename?: 'Query', atac_metadata: Array<{ __typename?: 'AtacSampleMetadata', sample_id: string, status: string, site: string, sex: string, protocol: string, umap_x?: number | null, umap_y?: number | null, opc_id: string }> };
-
-export type FetchExposomicsMetadataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FetchExposomicsMetadataQuery = { __typename?: 'Query', exposomics_metadata: Array<{ __typename?: 'ExposomicsSampleMetadata', kit: string, sample_id: string, sex: string, site: string, status: string }> };
-
-export type FetchLipidomicsMetadataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FetchLipidomicsMetadataQuery = { __typename?: 'Query', lipidomics_metadata: Array<{ __typename?: 'LipidomicsSampleMetadata', kit: string, sample_id: string, sex: string, site: string, status: string }> };
-
-export type FetchMetabolomicsMetadataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FetchMetabolomicsMetadataQuery = { __typename?: 'Query', metabolomics_metadata: Array<{ __typename?: 'MetabolomicsSampleMetadata', kit: string, sample_id: string, sex: string, site: string, status: string }> };
-
-export type FetchProteomicsMetadataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FetchProteomicsMetadataQuery = { __typename?: 'Query', proteomics_metadata: Array<{ __typename?: 'ProteomicsSampleMetadata', kit: string, sample_id: string, sex: string, site: string, status: string }> };
+export type FetchAtacMetadataQuery = { __typename?: 'Query', atac_metadata: Array<{ __typename?: 'AtacSampleMetadata', kit: string, protocol: string, sample_id: string, sex: string, site: string, status: string, pca_x?: number | null, pca_y?: number | null, umap_x?: number | null, umap_y?: number | null }> };
 
 export type FetchRnaMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchRnaMetadataQuery = { __typename?: 'Query', rna_metadata: Array<{ __typename?: 'RnaSampleMetadata', sample_id: string, sex: string, site: string, kit: string, status: string, umap_x?: number | null, umap_y?: number | null }> };
+export type FetchRnaMetadataQuery = { __typename?: 'Query', rna_metadata: Array<{ __typename?: 'RnaSampleMetadata', kit: string, sample_id: string, sex: string, site: string, status: string, umap_x?: number | null, umap_y?: number | null, pca_x?: number | null, pca_y?: number | null }> };
 
 export type FetchWgbsMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchWgbsMetadataQuery = { __typename?: 'Query', wgbs_metadata: Array<{ __typename?: 'WgbsSampleMetadata', kit: string, sample_id: string, sex: string, site: string, status: string }> };
-
-export type FetchWgsMetadataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FetchWgsMetadataQuery = { __typename?: 'Query', wgs_metadata: Array<{ __typename?: 'WgsSampleMetadata', sample_id: string, sex: string, site: string, kit: string, status: string }> };
-
-export type FetchDownloadFilesQueryVariables = Exact<{
-  ome: OmeEnum;
-}>;
-
-
-export type FetchDownloadFilesQuery = { __typename?: 'Query', fetch_download_files?: Array<{ __typename?: 'OmeDownloadFiles', filename: string, file_type: string, size: string, file_ome: OmeEnum, sample_id: string, open_access?: boolean | null } | null> | null };
+export type FetchWgbsMetadataQuery = { __typename?: 'Query', wgbs_metadata: Array<{ __typename?: 'WgbsSampleMetadata', kit: string, pca_x?: number | null, pca_y?: number | null, umap_x?: number | null, umap_y?: number | null, sample_id: string, sex: string, site: string, status: string }> };
 
 export type Fetch_Phenotypical_DataQueryVariables = Exact<{
   variable_name: Array<Scalars['String']['input']> | Scalars['String']['input'];
@@ -271,14 +227,8 @@ export type Fetch_Phenotypical_VariableQueryVariables = Exact<{ [key: string]: n
 export type Fetch_Phenotypical_VariableQuery = { __typename?: 'Query', phenotypical_variables: Array<{ __typename?: 'PhenotypicalDataVariables', variable_category?: string | null, variable_name: string }> };
 
 
-export const FetchAtacMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchATACMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"atac_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}},{"kind":"Field","name":{"kind":"Name","value":"opc_id"}}]}}]}}]} as unknown as DocumentNode<FetchAtacMetadataQuery, FetchAtacMetadataQueryVariables>;
-export const FetchExposomicsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchExposomicsMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exposomics_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchExposomicsMetadataQuery, FetchExposomicsMetadataQueryVariables>;
-export const FetchLipidomicsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchLipidomicsMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lipidomics_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchLipidomicsMetadataQuery, FetchLipidomicsMetadataQueryVariables>;
-export const FetchMetabolomicsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchMetabolomicsMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metabolomics_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchMetabolomicsMetadataQuery, FetchMetabolomicsMetadataQueryVariables>;
-export const FetchProteomicsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchProteomicsMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"proteomics_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchProteomicsMetadataQuery, FetchProteomicsMetadataQueryVariables>;
-export const FetchRnaMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchRNAMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rna_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}}]}}]} as unknown as DocumentNode<FetchRnaMetadataQuery, FetchRnaMetadataQueryVariables>;
-export const FetchWgbsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGBSMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgbs_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchWgbsMetadataQuery, FetchWgbsMetadataQueryVariables>;
-export const FetchWgsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGSMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgs_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchWgsMetadataQuery, FetchWgsMetadataQueryVariables>;
-export const FetchDownloadFilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FetchDownloadFiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ome"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"OmeEnum"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fetch_download_files"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ome"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ome"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"file_type"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"file_ome"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"open_access"}}]}}]}}]} as unknown as DocumentNode<FetchDownloadFilesQuery, FetchDownloadFilesQueryVariables>;
+export const FetchAtacMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchATACMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"atac_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"pca_x"}},{"kind":"Field","name":{"kind":"Name","value":"pca_y"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}}]}}]} as unknown as DocumentNode<FetchAtacMetadataQuery, FetchAtacMetadataQueryVariables>;
+export const FetchRnaMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchRNAMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rna_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}},{"kind":"Field","name":{"kind":"Name","value":"pca_x"}},{"kind":"Field","name":{"kind":"Name","value":"pca_y"}}]}}]}}]} as unknown as DocumentNode<FetchRnaMetadataQuery, FetchRnaMetadataQueryVariables>;
+export const FetchWgbsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGBSMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgbs_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"pca_x"}},{"kind":"Field","name":{"kind":"Name","value":"pca_y"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<FetchWgbsMetadataQuery, FetchWgbsMetadataQueryVariables>;
 export const Fetch_Phenotypical_DataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetch_phenotypical_data"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"variable_name"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"phenotypical_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"variable_name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"variable_name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"participant_profile_dss"}},{"kind":"Field","name":{"kind":"Name","value":"participant_profile_dss_internal_id"}},{"kind":"Field","name":{"kind":"Name","value":"value_numeric"}},{"kind":"Field","name":{"kind":"Name","value":"value_text"}},{"kind":"Field","name":{"kind":"Name","value":"variable_name"}},{"kind":"Field","name":{"kind":"Name","value":"variable_status"}}]}}]}}]} as unknown as DocumentNode<Fetch_Phenotypical_DataQuery, Fetch_Phenotypical_DataQueryVariables>;
 export const Fetch_Phenotypical_VariableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetch_phenotypical_variable"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"phenotypical_variables"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"variable_category"}},{"kind":"Field","name":{"kind":"Name","value":"variable_name"}}]}}]}}]} as unknown as DocumentNode<Fetch_Phenotypical_VariableQuery, Fetch_Phenotypical_VariableQueryVariables>;

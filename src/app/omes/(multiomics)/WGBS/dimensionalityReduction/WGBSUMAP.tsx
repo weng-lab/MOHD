@@ -1,4 +1,4 @@
-import { RNAMetadata, SharedRNADimenionalityProps } from "./page";
+import { WGBSMetadata, SharedWGBSDimenionalityProps } from "./page";
 import { Point, ScatterPlot, ChartProps } from "@weng-lab/visualization";
 import { useMemo, useState } from "react";
 import { sex_color_map, status_color_map, site_color_map } from "@/common/colors";
@@ -7,12 +7,12 @@ import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
 import UMAPLegend from "@/common/components/UMAPLegend";
 
-export type RNADimensionalityUmapProps<
+export type WGBSDimensionalityUmapProps<
     S extends boolean | undefined,
     Z extends boolean | undefined
 > =
-    SharedRNADimenionalityProps &
-    Partial<ChartProps<RNAMetadata[number], S, Z>>;
+    SharedWGBSDimenionalityProps &
+    Partial<ChartProps<WGBSMetadata[number], S, Z>>;
 
 const map = {
     position: {
@@ -21,27 +21,27 @@ const map = {
     },
 };
 
-const RNAUMAP = <S extends true, Z extends boolean | undefined>({
+const WGBSUMAP = <S extends true, Z extends boolean | undefined>({
     selected,
-    RNAData,
+    WGBSData,
     setSelected,
     ref,
     ...rest
-}: RNADimensionalityUmapProps<S, Z>) => {
+}: WGBSDimensionalityUmapProps<S, Z>) => {
     const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site">("site");
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("md"));
 
-    const { loading, data } = RNAData;
+    const { loading, data } = WGBSData;
 
     const handleColorSchemeChange = (event: SelectChangeEvent) => {
         setColorScheme(event.target.value as "sex" | "status" | "site");
     };
 
-    const scatterData: Point<RNAMetadata[number]>[] = useMemo(() => {
+    const scatterData: Point<WGBSMetadata[number]>[] = useMemo(() => {
         if (!data) return [];
 
-        const isHighlighted = (x: RNAMetadata[number]) => selected.some((y) => y.sample_id === x.sample_id);
+        const isHighlighted = (x: WGBSMetadata[number]) => selected.some((y) => y.sample_id === x.sample_id);
 
         return data.map((x) => {
 
@@ -68,18 +68,18 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
     }, [data, selected, colorScheme]);
 
     const handlePointsSelected = (
-        selectedPoints: Point<RNAMetadata[number]>[]
+        selectedPoints: Point<WGBSMetadata[number]>[]
     ) => {
         setSelected([
             ...selected,
             ...selectedPoints
                 .map((point) => point.metaData)
-                .filter(Boolean) as RNAMetadata[number][],
+                .filter(Boolean) as WGBSMetadata[number][],
         ]);
     };
 
     const handlePointSelected = (
-        selectedPoint: Point<RNAMetadata[number]>
+        selectedPoint: Point<WGBSMetadata[number]>
     ) => {
         if (!selectedPoint.metaData) return;
 
@@ -92,7 +92,7 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
         }
     };
 
-    const TooltipBody = (point: Point<RNAMetadata[number]>) => {
+    const TooltipBody = (point: Point<WGBSMetadata[number]>) => {
         return (
             <>
                 <Typography>
@@ -120,10 +120,10 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
                 scatterData.length > 0 && (
                     <>
                         <Stack direction={{xs: "column", md: "row"}} justifyContent="space-between" alignItems="center">
-                            <ColorBySelect 
-                                colorScheme={colorScheme} 
+                            <ColorBySelect
+                                colorScheme={colorScheme}
                                 handleColorSchemeChange={handleColorSchemeChange}
-                                protocol={false} 
+                                protocol={false}
                             />
                             <UMAPLegend
                                 colorScheme={colorScheme}
@@ -145,7 +145,7 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
                                 leftAxisLabel="UMAP-2"
                                 bottomAxisLabel="UMAP-1"
                                 ref={ref}
-                                downloadFileName={`RNA_dimesionality_reduction_UMAP`}
+                                downloadFileName={`WGBS_dimesionality_reduction_UMAP`}
                                 animation="scale"
                                 animationBuffer={0.025}
                                 animationGroupSize={50}
@@ -157,4 +157,4 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
     );
 }
 
-export default RNAUMAP;
+export default WGBSUMAP;

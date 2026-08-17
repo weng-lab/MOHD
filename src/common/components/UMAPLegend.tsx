@@ -5,12 +5,13 @@ import { Point } from "@weng-lab/visualization";
 import { ATACMetadata } from "@/app/omes/(multiomics)/ATAC/dimensionalityReduction/page";
 import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
 import { RNAMetadata } from "@/app/omes/(multiomics)/RNA/dimensionalityReduction/page";
-type UMAPLegendProps<T extends ATACMetadata[number] | RNAMetadata[number]> = {
+import { WGBSMetadata } from "@/app/omes/(multiomics)/WGBS/dimensionalityReduction/page";
+type UMAPLegendProps<T extends ATACMetadata[number] | RNAMetadata[number] | WGBSMetadata[number]> = {
   colorScheme: "sex" | "status" | "site" | "protocol";
   scatterData: Point<T>[];
 };
 
-export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[number]>({
+export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[number] | WGBSMetadata[number]>({
 
   colorScheme,
   scatterData,
@@ -38,7 +39,7 @@ export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[
           key = meta.site;
           break;
         case "protocol":
-          key = "protocol" in meta ? meta.protocol : meta.kit;
+          key = "protocol" in meta ? meta.protocol : "missing";
           break;
         default:
           key = "missing";

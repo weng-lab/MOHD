@@ -6,14 +6,16 @@ import { useQuery } from "@apollo/client/react";
 const GET_ATAC_DATA = gql(`
 query fetchATACMetadata {
   atac_metadata {
-    sample_id
-    status
-    site
-    sex
+    kit
     protocol
+    sample_id
+    sex
+    site
+    status
+    pca_x
+    pca_y
     umap_x
     umap_y
-    opc_id
   }
 }
  `);
