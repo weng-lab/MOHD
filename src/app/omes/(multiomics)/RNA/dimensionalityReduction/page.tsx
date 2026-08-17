@@ -5,6 +5,7 @@ import { useMemo } from "react"
 import { DownloadPlotHandle } from "@weng-lab/visualization"
 import { useRNAData, UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
 import RNADimensionalityScatterPlot from "./RNAUMAP"
+import RNADimensionalityPCAPlot from "./RNAPCA"
 import RNADimensionalityTable from "./RNADimensionalityTable"
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
@@ -23,6 +24,7 @@ export type SharedRNADimenionalityProps = {
 
 const RNADimensionalityReduction = () => {
     const { ref: umapRef, ...umapDownload } = usePlotDownload();
+    const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
     const RNAData = useRNAData({ skip: false });
 
     const rows: RNAMetadata = useMemo(() => {
@@ -58,6 +60,12 @@ const RNADimensionalityReduction = () => {
                     icon: <ScatterPlot />,
                     plotComponent: <RNADimensionalityScatterPlot ref={umapRef} {...SharedRNADimenionalityProps} />,
                     ...umapDownload,
+                },
+                {
+                    tabTitle: "PCA",
+                    icon: <ScatterPlot />,
+                    plotComponent: <RNADimensionalityPCAPlot ref={pcaRef} {...SharedRNADimenionalityProps} />,
+                    ...pcaDownload,
                 },
             ]}
         />

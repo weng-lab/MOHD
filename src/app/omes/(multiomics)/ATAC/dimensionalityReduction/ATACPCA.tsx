@@ -2,20 +2,20 @@ import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
 import { ChartProps } from "@weng-lab/visualization";
 import DimensionalityScatterPlot from "@/common/components/DimensionalityScatterPlot";
 
-export type ATACDimensionalityUmapProps<
+export type ATACDimensionalityPcaProps<
     S extends boolean | undefined,
     Z extends boolean | undefined
 > =
     SharedATACDimenionalityProps &
     Partial<ChartProps<ATACMetadata[number], S, Z>>;
 
-const ATACUMAP = <S extends true, Z extends boolean | undefined>({
+const ATACPCA = <S extends true, Z extends boolean | undefined>({
     selected,
     ATACData,
     setSelected,
     ref,
     ...rest
-}: ATACDimensionalityUmapProps<S, Z>) => {
+}: ATACDimensionalityPcaProps<S, Z>) => {
     const { loading, data } = ATACData;
 
     return (
@@ -26,14 +26,14 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
             loading={loading}
             selected={selected}
             setSelected={setSelected}
-            getX={(row) => row.umap_x}
-            getY={(row) => row.umap_y}
-            leftAxisLabel="UMAP-2"
-            bottomAxisLabel="UMAP-1"
-            downloadFileName="ATAC_dimesionality_reduction_UMAP"
+            getX={(row) => row.pca_x}
+            getY={(row) => row.pca_y}
+            leftAxisLabel="PCA-2"
+            bottomAxisLabel="PCA-1"
+            downloadFileName="ATAC_dimesionality_reduction_PCA"
             hasProtocol
         />
     );
 }
 
-export default ATACUMAP;
+export default ATACPCA;

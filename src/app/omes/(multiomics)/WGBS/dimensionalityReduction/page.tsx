@@ -3,6 +3,7 @@ import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import WGBSDimensionalityTable from "./WGBSDimensionalityTable"
 import { ScatterPlot } from "@mui/icons-material"
 import WGBSDimensionalityScatterPlot from "./WGBSUMAP"
+import WGBSDimensionalityPCAPlot from "./WGBSPCA"
 import { useMemo } from "react"
 import { DownloadPlotHandle } from "@weng-lab/visualization"
 import { useWGBSData, UseWGBSDataReturn } from "@/common/hooks/omeHooks/useWGBSData";
@@ -23,6 +24,7 @@ export type SharedWGBSDimenionalityProps = {
 
 const WGBSDimensionalityReduction = () => {
     const { ref: umapRef, ...umapDownload } = usePlotDownload();
+    const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
     const WGBSData = useWGBSData({ skip: false });
 
     const rows: WGBSMetadata = useMemo(() => {
@@ -58,6 +60,12 @@ const WGBSDimensionalityReduction = () => {
                     icon: <ScatterPlot />,
                     plotComponent: <WGBSDimensionalityScatterPlot ref={umapRef} {...SharedWGBSDimenionalityProps} />,
                     ...umapDownload,
+                },
+                {
+                    tabTitle: "PCA",
+                    icon: <ScatterPlot />,
+                    plotComponent: <WGBSDimensionalityPCAPlot ref={pcaRef} {...SharedWGBSDimenionalityProps} />,
+                    ...pcaDownload,
                 },
             ]}
         />

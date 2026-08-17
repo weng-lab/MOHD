@@ -2,20 +2,20 @@ import { WGBSMetadata, SharedWGBSDimenionalityProps } from "./page";
 import { ChartProps } from "@weng-lab/visualization";
 import DimensionalityScatterPlot from "@/common/components/DimensionalityScatterPlot";
 
-export type WGBSDimensionalityUmapProps<
+export type WGBSDimensionalityPcaProps<
     S extends boolean | undefined,
     Z extends boolean | undefined
 > =
     SharedWGBSDimenionalityProps &
     Partial<ChartProps<WGBSMetadata[number], S, Z>>;
 
-const WGBSUMAP = <S extends true, Z extends boolean | undefined>({
+const WGBSPCA = <S extends true, Z extends boolean | undefined>({
     selected,
     WGBSData,
     setSelected,
     ref,
     ...rest
-}: WGBSDimensionalityUmapProps<S, Z>) => {
+}: WGBSDimensionalityPcaProps<S, Z>) => {
     const { loading, data } = WGBSData;
 
     return (
@@ -26,13 +26,13 @@ const WGBSUMAP = <S extends true, Z extends boolean | undefined>({
             loading={loading}
             selected={selected}
             setSelected={setSelected}
-            getX={(row) => row.umap_x}
-            getY={(row) => row.umap_y}
-            leftAxisLabel="UMAP-2"
-            bottomAxisLabel="UMAP-1"
-            downloadFileName="WGBS_dimesionality_reduction_UMAP"
+            getX={(row) => row.pca_x}
+            getY={(row) => row.pca_y}
+            leftAxisLabel="PCA-2"
+            bottomAxisLabel="PCA-1"
+            downloadFileName="WGBS_dimesionality_reduction_PCA"
         />
     );
 }
 
-export default WGBSUMAP;
+export default WGBSPCA;
