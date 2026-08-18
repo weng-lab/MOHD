@@ -28,8 +28,8 @@ const WGBSPCA = <S extends true, Z extends boolean | undefined>({
             setSelected={setSelected}
             getX={(row) => row.pca_x}
             getY={(row) => row.pca_y}
-            leftAxisLabel="PCA-2"
-            bottomAxisLabel="PCA-1"
+            leftAxisLabel="PC-2"
+            bottomAxisLabel="PC-1"
             downloadFileName="WGBS_dimesionality_reduction_PCA"
         />
     );
