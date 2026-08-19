@@ -2,7 +2,7 @@ import { Box, Popover, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { OmesList, OmesDataType } from "@/common/types/globalTypes";
-import { getOmeLabel } from "@/app/omes/omeContent";
+import { getOmeLabel, getOmeInfoHref } from "@/app/omes/omeContent";
 
 type OmeAppletsPopoverProps = {
     anchorEl: HTMLElement | null;
@@ -58,7 +58,7 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
                             <Box
                                 key={omeOption}
                                 component={Link}
-                                href={`/omes/${omeOption}/dimensionalityReduction`}
+                                href={getOmeInfoHref(omeOption)}
                                 onClick={onClose}
                                 sx={{
                                     display: "flex",

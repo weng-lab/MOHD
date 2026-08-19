@@ -3,6 +3,8 @@ import { GenomeSearch, GenomeSearchProps, Result, StaticListOption } from "@weng
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import OpenInScreen from "./OpenInScreen";
+import { getOmeInfoHref } from "@/app/omes/omeContent";
+import { OmesDataType } from "@/common/types/globalTypes";
 
 export type AutoCompleteProps = Partial<GenomeSearchProps> & {
   closeDrawer?: () => void;
@@ -80,7 +82,7 @@ export function makeResultLink(result: Result) {
       url = `https://screen.wenglab.org/search?q=${result.title}&assembly=GRCh38`;
       break;
     case "Ome":
-      url = `/omes/${result.id}/dimensionalityReduction`
+      url = getOmeInfoHref(result.id as OmesDataType)
   }
   return url;
 }

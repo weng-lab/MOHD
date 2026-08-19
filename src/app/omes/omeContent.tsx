@@ -92,7 +92,7 @@ export function getOmeIconName(ome: OmesDataType) {
 }
 
 export function getOmeInfoHref(ome: OmesDataType) {
-  return `/omes/${ome}/dimensionalityReduction`;
+  return OME_TABS[ome]?.[0]?.href ?? `/omes/${ome}/dimensionalityReduction`;
 }
 
 export function getGenomeBrowserHref(ome: OmesDataType) {
