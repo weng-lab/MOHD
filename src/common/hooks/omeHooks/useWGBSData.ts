@@ -15,6 +15,7 @@ query fetchWGBSMetadata {
     sex
     site
     status
+    age_at_enrollment
   }
 }
  `);

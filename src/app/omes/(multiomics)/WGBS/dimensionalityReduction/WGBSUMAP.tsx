@@ -31,6 +31,7 @@ const WGBSUMAP = <S extends true, Z extends boolean | undefined>({
             leftAxisLabel="UMAP-2"
             bottomAxisLabel="UMAP-1"
             downloadFileName="WGBS_dimesionality_reduction_UMAP"
+            hasAge
         />
     );
 }

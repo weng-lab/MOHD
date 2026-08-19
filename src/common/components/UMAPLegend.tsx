@@ -3,9 +3,10 @@ import { Box, Stack, Typography } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Point } from "@weng-lab/visualization";
 import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
+import { getAgeBin, age_bin_color_map, AGE_BIN_ORDER } from "@/common/ageBins";
 import { DimensionalityReductionMeta } from "@/common/components/DimensionalityScatterPlot";
 type UMAPLegendProps<T extends DimensionalityReductionMeta> = {
-  colorScheme: "sex" | "status" | "site" | "protocol";
+  colorScheme: "sex" | "status" | "site" | "protocol" | "age";
   scatterData: Point<T>[];
 };
 
@@ -39,6 +40,9 @@ export default function UMAPLegend<T extends DimensionalityReductionMeta>({
         case "protocol":
           key = meta.protocol ?? "missing";
           break;
+        case "age":
+          key = getAgeBin(meta.age_at_enrollment);
+          break;
         default:
           key = "missing";
       }
@@ -56,16 +60,23 @@ export default function UMAPLegend<T extends DimensionalityReductionMeta>({
           return site_color_map[label as keyof typeof site_color_map];
         case "protocol":
           return protocol_color_map[label as keyof typeof protocol_color_map];
+        case "age":
+          return age_bin_color_map[label];
       }
     };
 
-    return Array.from(counts.entries())
-      .map(([label, value]) => ({
-        label: label.replaceAll(" method", ""),
-        value,
-        color: getColor(label),
-      }))
-      .sort((a, b) => b.value - a.value);
+    const entries = Array.from(counts.entries()).map(([label, value]) => ({
+      label: label.replaceAll(" method", ""),
+      value,
+      color: getColor(label),
+    }));
+
+    // Ordinal bins read best in bin order (young -> old), not by frequency.
+    if (colorScheme === "age") {
+      return entries.sort((a, b) => AGE_BIN_ORDER.indexOf(a.label) - AGE_BIN_ORDER.indexOf(b.label));
+    }
+
+    return entries.sort((a, b) => b.value - a.value);
 
   }, [scatterData, colorScheme]);
 

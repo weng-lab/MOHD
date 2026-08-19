@@ -31,6 +31,7 @@ const WGBSPCA = <S extends true, Z extends boolean | undefined>({
             leftAxisLabel="PC-2"
             bottomAxisLabel="PC-1"
             downloadFileName="WGBS_dimesionality_reduction_PCA"
+            hasAge
         />
     );
 }

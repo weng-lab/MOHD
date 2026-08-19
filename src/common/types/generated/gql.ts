@@ -16,14 +16,14 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "\nquery fetchATACMetadata {\n  atac_metadata {\n    kit\n    protocol\n    sample_id\n    sex\n    site\n    status\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n  }\n}\n ": typeof types.FetchAtacMetadataDocument,
     "\nquery fetchRNAMetadata {\n  rna_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n    umap_x\n    umap_y\n    pca_x\n    pca_y\n  }\n}\n ": typeof types.FetchRnaMetadataDocument,
-    "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": typeof types.FetchWgbsMetadataDocument,
+    "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n    sample_id\n    sex\n    site\n    status\n    age_at_enrollment\n  }\n}\n ": typeof types.FetchWgbsMetadataDocument,
     "\n  query fetch_phenotypical_data($variable_name: [String!]!) {\n    phenotypical_data(variable_name: $variable_name) {\n      participant_profile_dss\n      participant_profile_dss_internal_id\n      value_numeric\n      value_text\n      variable_name\n      variable_status\n    }\n  }\n": typeof types.Fetch_Phenotypical_DataDocument,
     "\n  query fetch_phenotypical_variable {\n    phenotypical_variables {\n      variable_category\n      variable_name\n    }\n  }\n": typeof types.Fetch_Phenotypical_VariableDocument,
 };
 const documents: Documents = {
     "\nquery fetchATACMetadata {\n  atac_metadata {\n    kit\n    protocol\n    sample_id\n    sex\n    site\n    status\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n  }\n}\n ": types.FetchAtacMetadataDocument,
     "\nquery fetchRNAMetadata {\n  rna_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n    umap_x\n    umap_y\n    pca_x\n    pca_y\n  }\n}\n ": types.FetchRnaMetadataDocument,
-    "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n    sample_id\n    sex\n    site\n    status\n  }\n}\n ": types.FetchWgbsMetadataDocument,
+    "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n    sample_id\n    sex\n    site\n    status\n    age_at_enrollment\n  }\n}\n ": types.FetchWgbsMetadataDocument,
     "\n  query fetch_phenotypical_data($variable_name: [String!]!) {\n    phenotypical_data(variable_name: $variable_name) {\n      participant_profile_dss\n      participant_profile_dss_internal_id\n      value_numeric\n      value_text\n      variable_name\n      variable_status\n    }\n  }\n": types.Fetch_Phenotypical_DataDocument,
     "\n  query fetch_phenotypical_variable {\n    phenotypical_variables {\n      variable_category\n      variable_name\n    }\n  }\n": types.Fetch_Phenotypical_VariableDocument,
 };
@@ -53,7 +53,7 @@ export function gql(source: "\nquery fetchRNAMetadata {\n  rna_metadata {\n    k
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "): (typeof documents)["\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n    sample_id\n    sex\n    site\n    status\n  }\n}\n "];
+export function gql(source: "\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n    sample_id\n    sex\n    site\n    status\n    age_at_enrollment\n  }\n}\n "): (typeof documents)["\nquery fetchWGBSMetadata {\n  wgbs_metadata {\n    kit\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n    sample_id\n    sex\n    site\n    status\n    age_at_enrollment\n  }\n}\n "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

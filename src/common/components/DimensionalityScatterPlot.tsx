@@ -1,6 +1,7 @@
 import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { useMemo, useState } from "react";
 import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
+import { getAgeBin, age_bin_color_map } from "@/common/ageBins";
 import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
@@ -12,6 +13,8 @@ export type DimensionalityReductionMeta = {
     status: string;
     site: string;
     protocol?: string;
+    /** Sensitive - only ever surface this as a bin via getAgeBin(), never the raw value. */
+    age_at_enrollment?: number | null;
 };
 
 export type DimensionalityScatterPlotProps<
@@ -29,6 +32,7 @@ export type DimensionalityScatterPlotProps<
     bottomAxisLabel: string;
     downloadFileName: string;
     hasProtocol?: boolean;
+    hasAge?: boolean;
     ref?: React.Ref<DownloadPlotHandle>;
 } & Partial<ChartProps<T, S, Z>>;
 
@@ -54,15 +58,16 @@ const DimensionalityScatterPlot = <
     bottomAxisLabel,
     downloadFileName,
     hasProtocol = false,
+    hasAge = false,
     ref,
     ...rest
 }: DimensionalityScatterPlotProps<T, S, Z>) => {
-    const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol">("site");
+    const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol" | "age">("site");
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("md"));
 
     const handleColorSchemeChange = (event: SelectChangeEvent) => {
-        setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol");
+        setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol" | "age");
     };
 
     const scatterData: Point<T>[] = useMemo(() => {
@@ -82,6 +87,8 @@ const DimensionalityScatterPlot = <
                         return site_color_map[x.site as keyof typeof site_color_map];
                     } else if (colorScheme === "protocol") {
                         return protocol_color_map[x.protocol as keyof typeof protocol_color_map];
+                    } else if (colorScheme === "age") {
+                        return age_bin_color_map[getAgeBin(x.age_at_enrollment)];
                     }
                 } else return "#CCCCCC";
             };
@@ -158,6 +165,7 @@ const DimensionalityScatterPlot = <
                                 colorScheme={colorScheme}
                                 handleColorSchemeChange={handleColorSchemeChange}
                                 protocol={hasProtocol}
+                                age={hasAge}
                             />
                             <UMAPLegend
                                 colorScheme={colorScheme}
