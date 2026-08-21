@@ -12,28 +12,26 @@ import {
     SelectChangeEvent,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { MetallomicsSample, SharedMetallomicsProps } from "./page";
+import { SharedLipidomicsProps } from "./page";
+import { LipidomicsSample } from "@/common/hooks/omeHooks/useLipidomicsData";
 
 const formatValue = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-const MetallomicsQuantificationHeatmap = ({
-    metallomicsData,
+const LipidomicsQuantificationHeatmap = ({
+    lipidomicsData,
     tableProps,
     selected,
     setSelected,
     ref,
-}: SharedMetallomicsProps) => {
+}: SharedLipidomicsProps) => {
     const theme = useTheme();
     const heatmapColors: [string, string, string, string] = [theme.palette.primary.main, theme.palette.primary.light, theme.palette.secondary.light, theme.palette.secondary.main];
-    const { data, loading } = metallomicsData;
+    const { data, loading } = lipidomicsData;
     const [siteFilter, setSiteFilter] = useState<string>("");
     const [statusFilter, setStatusFilter] = useState<string>("");
     const [sexFilter, setSexFilter] = useState<string>("");
 
-    const samples: MetallomicsSample[] = useMemo(
-        () => (data ?? []).filter((row): row is MetallomicsSample => row !== null),
-        [data]
-    );
+    const samples: LipidomicsSample[] = useMemo(() => data ?? [], [data]);
 
     const siteOptions = useMemo(() => Array.from(new Set(samples.map((s) => s.site))).sort(), [samples]);
     const statusOptions = useMemo(() => Array.from(new Set(samples.map((s) => s.status))).sort(), [samples]);
@@ -72,39 +70,33 @@ const MetallomicsQuantificationHeatmap = ({
         [samples, effectiveSite, effectiveStatus, effectiveSex]
     );
 
-    const metals = useMemo(
+    const molecules = useMemo(
         () =>
             Array.from(
                 new Set(
-                    samples.flatMap((sample) =>
-                        sample.quantification
-                            .filter((q): q is NonNullable<typeof q> => q !== null)
-                            .map((q) => q.metal)
-                    )
+                    samples.flatMap((sample) => sample.quantification.map((q) => q.molecule_name))
                 )
             ).sort(),
         [samples]
     );
 
-    const heatmapData: ColumnDatum<MetallomicsSample>[] = useMemo(
+    const heatmapData: ColumnDatum<LipidomicsSample>[] = useMemo(
         () =>
             filteredSamples.map((sample) => {
-                const valueByMetal = new Map(
-                    sample.quantification
-                        .filter((q): q is NonNullable<typeof q> => q !== null)
-                        .map((q) => [q.metal, q.value])
+                const valueByMolecule = new Map(
+                    sample.quantification.map((q) => [q.molecule_name, q.value])
                 );
 
                 return {
                     columnName: sample.sample_id,
                     metadata: sample,
-                    rows: metals.map((metal) => ({
-                        rowName: metal,
-                        count: valueByMetal.get(metal) ?? null,
+                    rows: molecules.map((molecule) => ({
+                        rowName: molecule,
+                        count: valueByMolecule.get(molecule) ?? null,
                     })),
                 };
             }),
-        [filteredSamples, metals]
+        [filteredSamples, molecules]
     );
 
     const selectedCells: HeatmapCellId[] = useMemo(() => {
@@ -192,16 +184,16 @@ const MetallomicsQuantificationHeatmap = ({
                         data={heatmapData}
                         colors={heatmapColors}
                         xLabel="Sample"
-                        yLabel="Metal"
+                        yLabel="Molecule"
                         showLegend
-                        downloadFileName="metallomics_quantification_heatmap"
+                        downloadFileName="lipidomics_quantification_heatmap"
                         selectedCells={selectedCells}
                         onClick={(bin) => handleCellClick(bin.datum.columnName)}
                         xLabelOrientation="leftDiagonal"
                         tooltipBody={(bin) => (
                             <>
                                 <Typography><b>Dataset:</b> {bin.datum.columnName}</Typography>
-                                <Typography><b>Metal:</b> {bin.bin.rowName}</Typography>
+                                <Typography><b>Molecule:</b> {bin.bin.rowName}</Typography>
                                 <Typography><b>Value:</b> {bin.bin.count ?? "No data"}</Typography>
                             </>
                         )}
@@ -212,4 +204,4 @@ const MetallomicsQuantificationHeatmap = ({
     );
 };
 
-export default MetallomicsQuantificationHeatmap;
+export default LipidomicsQuantificationHeatmap;

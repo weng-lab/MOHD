@@ -61,6 +61,15 @@ export type ExposomicsSampleMetadata = {
   status?: Maybe<Scalars['String']['output']>;
 };
 
+export type LipidomicsQuantifications = {
+  __typename?: 'LipidomicsQuantifications';
+  quant_values?: Maybe<Array<Maybe<Scalars['Float']['output']>>>;
+  sample_id: Scalars['String']['output'];
+  sex?: Maybe<Scalars['String']['output']>;
+  site?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+};
+
 export type LipidomicsSampleMetadata = {
   __typename?: 'LipidomicsSampleMetadata';
   sample_id: Scalars['String']['output'];
@@ -100,6 +109,12 @@ export type MetallomicsSampleMetadata = {
   status: Scalars['String']['output'];
 };
 
+export type MoleculeDescription = {
+  __typename?: 'MoleculeDescription';
+  molecule_name: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
+};
+
 export type PhenotypicalData = {
   __typename?: 'PhenotypicalData';
   participant_id: Scalars['String']['output'];
@@ -124,6 +139,8 @@ export type Query = {
   atac_zscore: Array<AtacAccession>;
   exposomics_metadata: Array<ExposomicsSampleMetadata>;
   lipidomics_metadata: Array<LipidomicsSampleMetadata>;
+  lipidomics_molecules: Array<MoleculeDescription>;
+  lipidomics_quantification: Array<Maybe<LipidomicsQuantifications>>;
   metabolomics_metadata: Array<MetabolomicsSampleMetadata>;
   metallomics_metadata: Array<MetallomicsSampleMetadata>;
   metallomics_quantification: Array<Maybe<MetallomicsQuantifications>>;
@@ -138,6 +155,11 @@ export type Query = {
 
 export type QueryAtac_ZscoreArgs = {
   accessions: Array<Scalars['String']['input']>;
+};
+
+
+export type QueryLipidomics_QuantificationArgs = {
+  sample_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
@@ -220,6 +242,11 @@ export type FetchAtacMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type FetchAtacMetadataQuery = { __typename?: 'Query', atac_metadata: Array<{ __typename?: 'AtacSampleMetadata', kit: string, protocol: string, sample_id: string, sex: string, site: string, status: string, pca_x?: number | null, pca_y?: number | null, umap_x?: number | null, umap_y?: number | null }> };
 
+export type FetchLipidomicsDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchLipidomicsDataQuery = { __typename?: 'Query', lipidomics_quantification: Array<{ __typename?: 'LipidomicsQuantifications', sample_id: string, site?: string | null, status?: string | null, sex?: string | null, quant_values?: Array<number | null> | null } | null>, lipidomics_molecules: Array<{ __typename?: 'MoleculeDescription', position: number, molecule_name: string }> };
+
 export type FetchMetallomicsDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -249,6 +276,7 @@ export type Fetch_Phenotypical_VariableQuery = { __typename?: 'Query', phenotypi
 
 
 export const FetchAtacMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchATACMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"atac_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"pca_x"}},{"kind":"Field","name":{"kind":"Name","value":"pca_y"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}}]}}]} as unknown as DocumentNode<FetchAtacMetadataQuery, FetchAtacMetadataQueryVariables>;
+export const FetchLipidomicsDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchLipidomicsData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lipidomics_quantification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"quant_values"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lipidomics_molecules"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"molecule_name"}}]}}]}}]} as unknown as DocumentNode<FetchLipidomicsDataQuery, FetchLipidomicsDataQueryVariables>;
 export const FetchMetallomicsDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchMetallomicsData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metallomics_quantification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"quantification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metal"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<FetchMetallomicsDataQuery, FetchMetallomicsDataQueryVariables>;
 export const FetchRnaMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchRNAMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rna_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}},{"kind":"Field","name":{"kind":"Name","value":"pca_x"}},{"kind":"Field","name":{"kind":"Name","value":"pca_y"}}]}}]}}]} as unknown as DocumentNode<FetchRnaMetadataQuery, FetchRnaMetadataQueryVariables>;
 export const FetchWgbsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGBSMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgbs_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"pca_x"}},{"kind":"Field","name":{"kind":"Name","value":"pca_y"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"age_at_enrollment"}}]}}]}}]} as unknown as DocumentNode<FetchWgbsMetadataQuery, FetchWgbsMetadataQueryVariables>;

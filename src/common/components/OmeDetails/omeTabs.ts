@@ -43,7 +43,6 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
         { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/metabolomics/downloads" },
     ],
     lipidomics: [
-        { value: "dimensionalityReduction", label: "Dimensionality Reduction", icon: dimensionalityReductionIcon, href: "/omes/lipidomics/dimensionalityReduction" },
         { value: "heatmap", label: "Heatmap", icon: heatmapIcon, href: "/omes/lipidomics/heatmap" },
         { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/lipidomics/downloads" },
     ],
