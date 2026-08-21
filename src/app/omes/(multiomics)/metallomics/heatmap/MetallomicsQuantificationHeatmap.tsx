@@ -11,10 +11,8 @@ import {
     MenuItem,
     SelectChangeEvent,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { MetallomicsSample, SharedMetallomicsProps } from "./page";
-
-// Sequential ramp built from the metallomics ome color (#da7bbe), light -> dark.
-const heatmapColors: [string, string, string] = ["#fbeef7", "#da7bbe", "#6b2158"];
 
 const formatValue = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
@@ -22,6 +20,8 @@ const MetallomicsQuantificationHeatmap = ({
     metallomicsData,
     ref,
 }: SharedMetallomicsProps) => {
+    const theme = useTheme();
+    const heatmapColors: [string, string, string, string] = [theme.palette.primary.main, theme.palette.primary.light, theme.palette.secondary.light, theme.palette.secondary.main];
     const { data, loading } = metallomicsData;
     const [siteFilter, setSiteFilter] = useState<string>("");
     const [statusFilter, setStatusFilter] = useState<string>("");
@@ -71,7 +71,7 @@ const MetallomicsQuantificationHeatmap = ({
                 const valueByMetal = new Map(
                     sample.quantification
                         .filter((q): q is NonNullable<typeof q> => q !== null)
-                        .map((q) => [q.metal, q.value ?? 0])
+                        .map((q) => [q.metal, q.value])
                 );
 
                 return {
@@ -79,7 +79,7 @@ const MetallomicsQuantificationHeatmap = ({
                     metadata: sample,
                     rows: metals.map((metal) => ({
                         rowName: metal,
-                        count: valueByMetal.get(metal) ?? 0,
+                        count: valueByMetal.get(metal) ?? null,
                     })),
                 };
             }),
@@ -158,7 +158,7 @@ const MetallomicsQuantificationHeatmap = ({
                             <>
                                 <Typography><b>Dataset:</b> {bin.datum.columnName}</Typography>
                                 <Typography><b>Metal:</b> {bin.bin.rowName}</Typography>
-                                <Typography><b>Value:</b> {bin.bin.count}</Typography>
+                                <Typography><b>Value:</b> {bin.bin.count ?? "No data"}</Typography>
                             </>
                         )}
                     />
