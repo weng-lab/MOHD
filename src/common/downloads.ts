@@ -24,7 +24,7 @@ export const ANVIL_URL = "https://anvilproject.org/";
 export const ARCHIVE_SIZE_LIMIT_BYTES = 20 * 1024 ** 3;
 
 export const formatBytes = (bytes?: number): string => {
-  if (!bytes) return "";
+  if (bytes === undefined) return "";
 
   const units = ["B", "KB", "MB", "GB", "TB"];
   let value = bytes;

@@ -1,6 +1,21 @@
 "use client";
-import DownloadsComingSoon from "@/common/components/Downloads/DownloadsComingSoon";
+import OmeDualPaneDownloads, {
+  type OmeDownloadsConfig,
+} from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { BaseSampleMetadata } from "@/common/components/Downloads/types";
 
-const MetallomicsDownloads = () => <DownloadsComingSoon />;
+type MetallomicsRow = BaseSampleMetadata;
+
+const config: OmeDownloadsConfig<MetallomicsRow> = {
+  omeKey: "metallomics",
+  displayName: "Metallomics",
+  datasetFilters: [
+    { field: "sex", label: "Sex" },
+    { field: "status", label: "Status" },
+    { field: "site", label: "Site" },
+  ],
+};
+
+const MetallomicsDownloads = () => <OmeDualPaneDownloads config={config} />;
 
 export default MetallomicsDownloads;
