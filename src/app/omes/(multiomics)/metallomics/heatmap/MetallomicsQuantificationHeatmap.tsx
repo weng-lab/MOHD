@@ -101,6 +101,7 @@ const MetallomicsQuantificationHeatmap = ({
                         cellWidth={25}
                         cellHeight={20}
                         xLabelOrientation="leftDiagonal"
+                        showMiniMap
                         tooltipBody={(bin) => (
                             <>
                                 <Typography><b>Dataset:</b> {bin.datum.columnName}</Typography>
