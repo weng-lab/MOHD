@@ -3664,9 +3664,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/visualization@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@weng-lab/visualization@npm:2.2.0"
+"@weng-lab/visualization@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "@weng-lab/visualization@npm:2.2.2"
   dependencies:
     "@types/d3-hierarchy": "npm:^3.1.7"
     "@types/d3-shape": "npm:^3.1.8"
@@ -3689,7 +3689,7 @@ __metadata:
     "@visx/visx": ^4.0.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/444c8e0f28300d5e44301504b42eb0db695325849bc8d4eb4215e9b62fe8b5e765ab93cd5f76ac92a4fdde1b988885ee58323ea4711bf8f9a0ed07a6917ad461
+  checksum: 10c0/3d7699ee4057b5e87d4a6fbe661005765f76d0bb9a8a6492422c47929ad4213542490f9b3e6c25d6dc2add8c037662f04f73e92a99011caf1803e6bdcc850e20
   languageName: node
   linkType: hard
 
@@ -7624,15 +7624,15 @@ __metadata:
     "@weng-lab/genomebrowser": "npm:1.8.5"
     "@weng-lab/genomebrowser-ui": "npm:0.4.0"
     "@weng-lab/ui-components": "npm:^3.2.1"
-    "@weng-lab/visualization": "npm:^2.2.0"
+    "@weng-lab/visualization": "npm:^2.2.2"
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"
     eslint: "npm:^9"
     eslint-config-next: "npm:^16.2.4"
     graphql: "npm:^16"
-    next: "npm:^16.2.4"
-    react: "npm:19.2.3"
-    react-dom: "npm:19.2.3"
+    next: "npm:16.2.4"
+    react: "npm:19.2.4"
+    react-dom: "npm:19.2.4"
     rxjs: "npm:^7.8.2"
     typescript: "npm:^6.0.0"
     typescript-eslint: "npm:^8.58.0"
@@ -7701,7 +7701,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:^16.2.4":
+"next@npm:16.2.4":
   version: 16.2.4
   resolution: "next@npm:16.2.4"
   dependencies:
@@ -8249,14 +8249,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.2.3":
-  version: 19.2.3
-  resolution: "react-dom@npm:19.2.3"
+"react-dom@npm:19.2.4":
+  version: 19.2.4
+  resolution: "react-dom@npm:19.2.4"
   dependencies:
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.3
-  checksum: 10c0/dc43f7ede06f46f3acc16ee83107c925530de9b91d1d0b3824583814746ff4c498ea64fd65cd83aba363205268adff52e2827c582634ae7b15069deaeabc4892
+    react: ^19.2.4
+  checksum: 10c0/f0c63f1794dedb154136d4d0f59af00b41907f4859571c155940296808f4b94bf9c0c20633db75b5b2112ec13d8d7dd4f9bf57362ed48782f317b11d05a44f35
   languageName: node
   linkType: hard
 
@@ -8315,10 +8315,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.2.3":
-  version: 19.2.3
-  resolution: "react@npm:19.2.3"
-  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
+"react@npm:19.2.4":
+  version: 19.2.4
+  resolution: "react@npm:19.2.4"
+  checksum: 10c0/cd2c9ff67a720799cc3b38a516009986f7fc4cb8d3e15716c6211cf098d1357ee3e348ab05ad0600042bbb0fd888530ba92e329198c92eafa0994f5213396596
   languageName: node
   linkType: hard
 

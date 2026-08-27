@@ -1,76 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Heatmap, ColumnDatum, HeatmapCellId } from "@weng-lab/visualization";
-import {
-    Stack,
-    Box,
-    CircularProgress,
-    Typography,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    SelectChangeEvent,
-} from "@mui/material";
+import { Stack, Box, CircularProgress, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { MetallomicsSample, SharedMetallomicsProps } from "./page";
 
-const formatValue = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
-
 const MetallomicsQuantificationHeatmap = ({
     metallomicsData,
-    tableProps,
+    sortedFilteredData,
     selected,
     setSelected,
     ref,
 }: SharedMetallomicsProps) => {
     const theme = useTheme();
     const heatmapColors: [string, string, string, string] = [theme.palette.primary.main, theme.palette.primary.light, theme.palette.secondary.light, theme.palette.secondary.main];
-    const { data, loading } = metallomicsData;
-    const [siteFilter, setSiteFilter] = useState<string>("");
-    const [statusFilter, setStatusFilter] = useState<string>("");
-    const [sexFilter, setSexFilter] = useState<string>("");
+    const { loading } = metallomicsData;
 
-    const samples: MetallomicsSample[] = useMemo(
-        () => (data ?? []).filter((row): row is MetallomicsSample => row !== null),
-        [data]
-    );
-
-    const siteOptions = useMemo(() => Array.from(new Set(samples.map((s) => s.site))).sort(), [samples]);
-    const statusOptions = useMemo(() => Array.from(new Set(samples.map((s) => s.status))).sort(), [samples]);
-    const sexOptions = useMemo(() => Array.from(new Set(samples.map((s) => s.sex))).sort(), [samples]);
-
-    const effectiveSite = siteFilter || siteOptions[0] || "";
-    const effectiveStatus = statusFilter || statusOptions[0] || "";
-    const effectiveSex = sexFilter || sexOptions[0] || "";
-
-    useEffect(() => {
-        const api = tableProps.apiRef.current;
-        if (!api || !effectiveSite || !effectiveStatus || !effectiveSex) return;
-
-        const otherItems = api.state.filter.filterModel.items.filter(
-            (item) => item.field !== "site" && item.field !== "status" && item.field !== "sex"
-        );
-
-        api.setFilterModel({
-            items: [
-                ...otherItems,
-                { field: "site", operator: "is", value: effectiveSite },
-                { field: "status", operator: "is", value: effectiveStatus },
-                { field: "sex", operator: "is", value: effectiveSex },
-            ],
-        });
-    }, [tableProps.apiRef, effectiveSite, effectiveStatus, effectiveSex]);
-
-    const filteredSamples = useMemo(
-        () =>
-            samples.filter(
-                (sample) =>
-                    sample.site === effectiveSite &&
-                    sample.status === effectiveStatus &&
-                    sample.sex === effectiveSex
-            ),
-        [samples, effectiveSite, effectiveStatus, effectiveSex]
-    );
+    const samples: MetallomicsSample[] = sortedFilteredData;
 
     const metals = useMemo(
         () =>
@@ -88,7 +33,7 @@ const MetallomicsQuantificationHeatmap = ({
 
     const heatmapData: ColumnDatum<MetallomicsSample>[] = useMemo(
         () =>
-            filteredSamples.map((sample) => {
+            samples.map((sample) => {
                 const valueByMetal = new Map(
                     sample.quantification
                         .filter((q): q is NonNullable<typeof q> => q !== null)
@@ -104,7 +49,7 @@ const MetallomicsQuantificationHeatmap = ({
                     })),
                 };
             }),
-        [filteredSamples, metals]
+        [samples, metals]
     );
 
     const selectedCells: HeatmapCellId[] = useMemo(() => {
@@ -117,7 +62,7 @@ const MetallomicsQuantificationHeatmap = ({
     }, [heatmapData, selected]);
 
     const handleCellClick = (sampleId: string) => {
-        const sample = filteredSamples.find((s) => s.sample_id === sampleId);
+        const sample = samples.find((s) => s.sample_id === sampleId);
         if (!sample) return;
 
         setSelected((prev) =>
@@ -137,54 +82,10 @@ const MetallomicsQuantificationHeatmap = ({
 
     return (
         <Stack width="100%" height="100%">
-            <Stack direction="row" flexWrap="wrap" gap={1}>
-                <FormControl sx={{ minWidth: 120 }}>
-                    <InputLabel>Site</InputLabel>
-                    <Select
-                        value={effectiveSite}
-                        label="Site"
-                        onChange={(event: SelectChangeEvent) => setSiteFilter(event.target.value)}
-                        MenuProps={{ disableScrollLock: true }}
-                        size="small"
-                    >
-                        {siteOptions.map((site) => (
-                            <MenuItem key={site} value={site}>{site}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl sx={{ minWidth: 120 }}>
-                    <InputLabel>Status</InputLabel>
-                    <Select
-                        value={effectiveStatus}
-                        label="Status"
-                        onChange={(event: SelectChangeEvent) => setStatusFilter(event.target.value)}
-                        MenuProps={{ disableScrollLock: true }}
-                        size="small"
-                    >
-                        {statusOptions.map((status) => (
-                            <MenuItem key={status} value={status}>{formatValue(status)}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl sx={{ minWidth: 120 }}>
-                    <InputLabel>Sex</InputLabel>
-                    <Select
-                        value={effectiveSex}
-                        label="Sex"
-                        onChange={(event: SelectChangeEvent) => setSexFilter(event.target.value)}
-                        MenuProps={{ disableScrollLock: true }}
-                        size="small"
-                    >
-                        {sexOptions.map((sex) => (
-                            <MenuItem key={sex} value={sex}>{formatValue(sex)}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Stack>
             <Box sx={{ flexGrow: 1, minHeight: 0 }}>
                 {heatmapData.length === 0 ? (
                     <Stack width="100%" height="100%" alignItems="center" justifyContent="center">
-                        <Typography color="text.secondary">No samples match the selected filters.</Typography>
+                        <Typography color="text.secondary">No samples match the current table filters.</Typography>
                     </Stack>
                 ) : (
                     <Heatmap
@@ -197,6 +98,8 @@ const MetallomicsQuantificationHeatmap = ({
                         downloadFileName="metallomics_quantification_heatmap"
                         selectedCells={selectedCells}
                         onClick={(bin) => handleCellClick(bin.datum.columnName)}
+                        cellWidth={25}
+                        cellHeight={20}
                         xLabelOrientation="leftDiagonal"
                         tooltipBody={(bin) => (
                             <>
