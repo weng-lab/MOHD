@@ -9,7 +9,6 @@ type LipidomicsRow = BaseSampleMetadata;
 const config: OmeDownloadsConfig<LipidomicsRow> = {
   omeKey: "lipidomics",
   displayName: "Lipidomics",
-  noOpenAccess: true,
   datasetFilters: [
     { field: "sex", label: "Sex" },
     { field: "status", label: "Status" },

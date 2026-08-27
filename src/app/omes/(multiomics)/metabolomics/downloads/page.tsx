@@ -9,7 +9,6 @@ type MetabolomicsRow = BaseSampleMetadata;
 const config: OmeDownloadsConfig<MetabolomicsRow> = {
   omeKey: "metabolomics",
   displayName: "Metabolomics",
-  noOpenAccess: true,
   datasetFilters: [
     { field: "sex", label: "Sex" },
     { field: "status", label: "Status" },
