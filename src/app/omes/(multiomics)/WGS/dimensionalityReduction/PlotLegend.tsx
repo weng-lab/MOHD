@@ -6,7 +6,7 @@ import type { GroupInfo } from "./colors";
 export type PlotLegendProps = {
   groups: GroupInfo[];
   /** Group values currently hidden from the plot. */
-  hidden: Set<string>;
+  hidden: ReadonlySet<string>;
   onToggle: (value: string) => void;
 };
 
@@ -15,7 +15,11 @@ export type PlotLegendProps = {
  * are toggled here and filtered out of pointData before it reaches the plot.
  */
 const PlotLegend = ({ groups, hidden, onToggle }: PlotLegendProps) => (
-  <Stack direction="row" flexWrap="wrap" gap={0.5} sx={{ maxHeight: 72, overflowY: "auto" }}>
+  // Natural height, no cap: the widest option is 9 groups (age bands) and the
+  // longest labels are the reported race/ethnicity values, so this wraps to a few
+  // rows at most. A maxHeight clipped the last row rather than scrolling visibly,
+  // and flexShrink: 0 stops the plot below it from squeezing the rows instead.
+  <Stack direction="row" flexWrap="wrap" gap={0.5} flexShrink={0}>
     {groups.map(({ value, color, count }) => {
       const off = hidden.has(value);
       return (

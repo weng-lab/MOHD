@@ -1,10 +1,12 @@
 "use client";
 
-import { Box, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { ScatterPlot, ScatterPlotSync, getSharedDomains, type Point } from "@weng-lab/visualization";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { buildGroups, groupValue, type GroupInfo } from "./colors";
-import PlotLegend from "./PlotLegend";
+import { CARD_SX, PLOT_HEIGHT } from "./dimensions";
+import PlotCard from "./PlotCard";
+import { useSharedPlotSize } from "./useSharedPlotSize";
 import {
   MOHD_COLOR_OPTIONS,
   PC_COUNT,
@@ -15,15 +17,6 @@ import {
 } from "./types";
 
 type Meta<T> = { row: T; group: string };
-
-/**
- * Height of a single plot pane.
- *
- * Applied to the row when the panes sit side by side, and to each pane once they
- * stack - a fixed height on the row would then have to hold both, clipping the
- * second into the footer instead of letting the page grow.
- */
-const PLOT_HEIGHT = "max(60vh, 520px)";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => ({ value: i, label: `PC${i + 1}` }));
 
@@ -61,6 +54,38 @@ const Tooltip = <T,>({ row, options }: { row: T; options: ColorOption<T>[] }) =>
   </Box>
 );
 
+/**
+ * One shared axis. Renders its value inline ("X - PC1") rather than through a
+ * floating label, which keeps the header row a single line tall.
+ */
+const AxisSelect = ({
+  axis,
+  value,
+  onChange,
+}: {
+  axis: "X" | "Y";
+  value: number;
+  onChange: (pc: number) => void;
+}) => (
+  <Select
+    size="small"
+    value={value}
+    onChange={(e) => onChange(Number(e.target.value))}
+    renderValue={(pc) => `${axis} · PC${Number(pc) + 1}`}
+    inputProps={{ "aria-label": `${axis} axis` }}
+    sx={{
+      bgcolor: "background.paper",
+      "& .MuiSelect-select": { py: 0.75, fontSize: 13 },
+    }}
+  >
+    {PC_CHOICES.map((o) => (
+      <MenuItem key={o.value} value={o.value}>
+        {o.label}
+      </MenuItem>
+    ))}
+  </Select>
+);
+
 export type WGSPCAPlotsProps = {
   reference: ReferenceRow[];
   mohd: MohdRow[];
@@ -75,6 +100,12 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
   const [mohdKey, setMohdKey] = useState<keyof MohdRow>("case_status");
   const [hiddenRef, setHiddenRef] = useState<ReadonlySet<string>>(new Set());
   const [hiddenMohd, setHiddenMohd] = useState<ReadonlySet<string>>(new Set());
+
+  // One size drives both plots - see useSharedPlotSize for why they can't size
+  // themselves here.
+  const refPlotRef = useRef<HTMLDivElement>(null);
+  const mohdPlotRef = useRef<HTMLDivElement>(null);
+  const plotSize = useSharedPlotSize(refPlotRef, mohdPlotRef);
 
   const refGroups = useMemo(() => buildGroups(reference, refKey), [reference, refKey]);
   const mohdGroups = useMemo(() => buildGroups(mohd, mohdKey), [mohd, mohdKey]);
@@ -114,77 +145,101 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
 
   return (
     <Stack gap={2} height="100%">
-      <Stack direction={{ xs: "column", sm: "row" }} gap={2} flexWrap="wrap">
-        <TextField
-          select size="small" label="X" value={xPc} sx={{ minWidth: 110 }}
-          onChange={(e) => setXPc(Number(e.target.value))}
-        >
-          {PC_CHOICES.map((o) => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
-        </TextField>
-        <TextField
-          select size="small" label="Y" value={yPc} sx={{ minWidth: 110 }}
-          onChange={(e) => setYPc(Number(e.target.value))}
-        >
-          {PC_CHOICES.map((o) => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
-        </TextField>
-        <TextField
-          select size="small" label="1000G+HGDP color by" value={refKey} sx={{ minWidth: 210 }}
-          onChange={(e) => {
-            setRefKey(e.target.value as keyof ReferenceRow);
-            setHiddenRef(new Set());
+      {/*
+        Three columns so the axis cluster lands over the gutter between the two
+        cards, equidistant from both: it drives them both, and nothing about its
+        position should suggest otherwise. The empty third column is what centres
+        it - there is no content for it to hold.
+      */}
+      <Box
+        display="grid"
+        gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }}
+        alignItems="center"
+        gap={1}
+      >
+        <Typography variant="h5">Ancestry PCA</Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+          gap={1}
+          sx={{
+            px: 1.5,
+            py: 0.75,
+            // Dashed, and outside either card's border: the one control group on
+            // the page that deliberately belongs to neither cohort.
+            border: 1,
+            borderStyle: "dashed",
+            borderColor: "divider",
+            borderRadius: 2,
+            bgcolor: "surface.light",
+            justifySelf: { sm: "center" },
           }}
         >
-          {REFERENCE_COLOR_OPTIONS.map((o) => (
-            <MenuItem key={String(o.key)} value={String(o.key)}>{o.label}</MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          select size="small" label="MOHD color by" value={mohdKey} sx={{ minWidth: 210 }}
-          onChange={(e) => {
-            setMohdKey(e.target.value as keyof MohdRow);
-            setHiddenMohd(new Set());
-          }}
-        >
-          {MOHD_COLOR_OPTIONS.map((o) => (
-            <MenuItem key={String(o.key)} value={String(o.key)}>{o.label}</MenuItem>
-          ))}
-        </TextField>
-      </Stack>
+          <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1 }}>
+            Shared axes
+          </Typography>
+          <AxisSelect axis="X" value={xPc} onChange={setXPc} />
+          <AxisSelect axis="Y" value={yPc} onChange={setYPc} />
+        </Stack>
+      </Box>
 
       <ScatterPlotSync {...domains}>
         {(sync) => (
           <Stack direction={{ xs: "column", lg: "row" }} gap={2} height={{ lg: PLOT_HEIGHT }}>
-            <Stack flex={{ xs: "0 0 auto", lg: 1 }} minWidth={0} gap={1} height={{ xs: PLOT_HEIGHT, lg: "auto" }}>
-              <Typography variant="subtitle2">1000G+HGDP ({reference.length})</Typography>
-              <PlotLegend groups={refGroups} hidden={hiddenRef as Set<string>} onToggle={toggle(setHiddenRef)} />
-              <Box flex={1} minHeight={0}>
-                <ScatterPlot
-                  pointData={visibleRef}
-                  loading={false}
-                  bottomAxisLabel={xLabel}
-                  leftAxisLabel={yLabel}
-                  tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} />}
-                  miniMap={MINIMAP_POSITION}
-                  {...sync}
-                />
-              </Box>
-            </Stack>
-            <Stack flex={{ xs: "0 0 auto", lg: 1 }} minWidth={0} gap={1} height={{ xs: PLOT_HEIGHT, lg: "auto" }}>
-              <Typography variant="subtitle2">MOHD ({mohd.length})</Typography>
-              <PlotLegend groups={mohdGroups} hidden={hiddenMohd as Set<string>} onToggle={toggle(setHiddenMohd)} />
-              <Box flex={1} minHeight={0}>
-                <ScatterPlot
-                  pointData={visibleMohd}
-                  loading={false}
-                  bottomAxisLabel={xLabel}
-                  leftAxisLabel={yLabel}
-                  controlsPosition="right"
-                  tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} />}
-                  miniMap={MINIMAP_POSITION}
-                  {...sync}
-                />
-              </Box>
-            </Stack>
+            <PlotCard
+              sx={CARD_SX}
+              title="1000G+HGDP"
+              count={reference.length}
+              options={REFERENCE_COLOR_OPTIONS}
+              colorBy={refKey}
+              onColorByChange={(key) => {
+                setRefKey(key);
+                setHiddenRef(new Set());
+              }}
+              groups={refGroups}
+              hidden={hiddenRef}
+              onToggle={toggle(setHiddenRef)}
+              plotRef={refPlotRef}
+            >
+              <ScatterPlot
+                pointData={visibleRef}
+                loading={false}
+                {...plotSize}
+                bottomAxisLabel={xLabel}
+                leftAxisLabel={yLabel}
+                tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} />}
+                miniMap={MINIMAP_POSITION}
+                {...sync}
+              />
+            </PlotCard>
+
+            <PlotCard
+              sx={CARD_SX}
+              title="MOHD"
+              count={mohd.length}
+              options={MOHD_COLOR_OPTIONS}
+              colorBy={mohdKey}
+              onColorByChange={(key) => {
+                setMohdKey(key);
+                setHiddenMohd(new Set());
+              }}
+              groups={mohdGroups}
+              hidden={hiddenMohd}
+              onToggle={toggle(setHiddenMohd)}
+              plotRef={mohdPlotRef}
+            >
+              <ScatterPlot
+                pointData={visibleMohd}
+                loading={false}
+                {...plotSize}
+                bottomAxisLabel={xLabel}
+                leftAxisLabel={yLabel}
+                controlsPosition="right"
+                tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} />}
+                miniMap={MINIMAP_POSITION}
+                {...sync}
+              />
+            </PlotCard>
           </Stack>
         )}
       </ScatterPlotSync>

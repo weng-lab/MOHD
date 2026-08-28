@@ -1,7 +1,7 @@
-import { Box, Skeleton, Typography } from "@mui/material";
 import { cacheLife, cacheTag } from "next/cache";
 import { Suspense } from "react";
 import { query } from "@/common/apollo/client";
+import PCASkeleton, { PCAFrame } from "./PCASkeleton";
 import { GET_WGS_PCA } from "./queries";
 import { PC_COUNT, type MohdRow, type PCAData, type ReferenceRow } from "./types";
 import WGSPCAPlots from "./WGSPCAPlots";
@@ -75,16 +75,13 @@ const getPCAData = async (): Promise<PCAData> => {
   return { reference, mohd };
 };
 
-// minHeight rather than height: the app shell caps this grid row at the viewport,
-// so a fixed 100% clips the stacked layout instead of letting the page grow.
 const WGSDimensionalityReduction = () => {
   return (
-    <Box p={3} display="flex" flexDirection="column" gap={2} minHeight="100%">
-      <Typography variant="h5">Ancestry PCA</Typography>
-      <Suspense fallback={<Skeleton variant="rounded" height="max(60vh, 520px)" />}>
+    <PCAFrame>
+      <Suspense fallback={<PCASkeleton />}>
         <WGSPCASection />
       </Suspense>
-    </Box>
+    </PCAFrame>
   );
 };
 
