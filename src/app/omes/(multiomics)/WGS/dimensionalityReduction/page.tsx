@@ -75,9 +75,11 @@ const getPCAData = async (): Promise<PCAData> => {
   return { reference, mohd };
 };
 
+// minHeight rather than height: the app shell caps this grid row at the viewport,
+// so a fixed 100% clips the stacked layout instead of letting the page grow.
 const WGSDimensionalityReduction = () => {
   return (
-    <Box p={3} display="flex" flexDirection="column" gap={2} height="100%">
+    <Box p={3} display="flex" flexDirection="column" gap={2} minHeight="100%">
       <Typography variant="h5">Ancestry PCA</Typography>
       <Suspense fallback={<Skeleton variant="rounded" height="max(60vh, 520px)" />}>
         <WGSPCASection />

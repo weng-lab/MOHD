@@ -16,6 +16,15 @@ import {
 
 type Meta<T> = { row: T; group: string };
 
+/**
+ * Height of a single plot pane.
+ *
+ * Applied to the row when the panes sit side by side, and to each pane once they
+ * stack - a fixed height on the row would then have to hold both, clipping the
+ * second into the footer instead of letting the page grow.
+ */
+const PLOT_HEIGHT = "max(60vh, 520px)";
+
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => ({ value: i, label: `PC${i + 1}` }));
 
 /** Builds plot points for one cohort, colouring each by its group. */
@@ -144,8 +153,8 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
 
       <ScatterPlotSync {...domains}>
         {(sync) => (
-          <Stack direction={{ xs: "column", lg: "row" }} gap={2} height="max(60vh, 520px)">
-            <Stack flex={1} minWidth={0} gap={1}>
+          <Stack direction={{ xs: "column", lg: "row" }} gap={2} height={{ lg: PLOT_HEIGHT }}>
+            <Stack flex={{ xs: "0 0 auto", lg: 1 }} minWidth={0} gap={1} height={{ xs: PLOT_HEIGHT, lg: "auto" }}>
               <Typography variant="subtitle2">1000G+HGDP ({reference.length})</Typography>
               <PlotLegend groups={refGroups} hidden={hiddenRef as Set<string>} onToggle={toggle(setHiddenRef)} />
               <Box flex={1} minHeight={0}>
@@ -160,7 +169,7 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
                 />
               </Box>
             </Stack>
-            <Stack flex={1} minWidth={0} gap={1}>
+            <Stack flex={{ xs: "0 0 auto", lg: 1 }} minWidth={0} gap={1} height={{ xs: PLOT_HEIGHT, lg: "auto" }}>
               <Typography variant="subtitle2">MOHD ({mohd.length})</Typography>
               <PlotLegend groups={mohdGroups} hidden={hiddenMohd as Set<string>} onToggle={toggle(setHiddenMohd)} />
               <Box flex={1} minHeight={0}>
