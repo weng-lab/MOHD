@@ -3,6 +3,10 @@ import { Typography, Box, Grid, Link as MuiLink, Stack } from "@mui/material";
 import Image from "next/image";
 import { LinkComponent } from "./LinkComponent";
 
+// Evaluated once at module load rather than per render: reading the clock during
+// render is request-time data, which cacheComponents refuses to prerender.
+const COPYRIGHT_YEAR = new Date().getFullYear();
+
 export default function Footer() {
   const sections = [
     {
@@ -72,7 +76,7 @@ export default function Footer() {
               <MuiLink color="inherit" href="https://sites.google.com/view/moore-lab/">
                 Moore Lab
               </MuiLink>{" "}
-              {new Date().getFullYear()}.
+              {COPYRIGHT_YEAR}.
             </Typography>
           </Stack>
         </Grid>

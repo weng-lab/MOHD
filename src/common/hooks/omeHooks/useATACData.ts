@@ -13,7 +13,6 @@ query fetchATACMetadata {
     protocol
     umap_x
     umap_y
-    opc_id
   }
 }
  `);

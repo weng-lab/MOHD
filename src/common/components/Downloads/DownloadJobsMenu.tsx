@@ -57,7 +57,12 @@ const AUTO_OPEN_ON_SUBMIT = true;
  * this clock on every render, so a late tick just reports the truth later.
  */
 function useExpiryClock(jobs: DownloadJob[]): number {
-  const [now, setNow] = useState(() => Date.now());
+  // Starts at 0 rather than the current time: reading the clock during render is
+  // request-time data, which cacheComponents refuses to prerender. Nothing reads
+  // as expired at 0, which is accurate - loadFromStorage prunes expired jobs at
+  // startup, so every job present at mount is still live. The timer below takes
+  // over from there.
+  const [now, setNow] = useState(0);
 
   const nextExpiry = jobs.reduce<number | null>((soonest, job) => {
     const expiry = Date.parse(job.expiresAt);

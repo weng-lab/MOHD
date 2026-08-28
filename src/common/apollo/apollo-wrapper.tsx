@@ -20,7 +20,7 @@ export function makeClient() {
     uri: isServer ? Config.API.MOHDAPI : "/api/mohd-graphql",
     headers: isServer
       ? {
-          "api-key": process.env.MOHD_API_KEY!,
+          Authorization: "Bearer " + process.env.MOHD_API_KEY!,
         }
       : undefined,
   });
