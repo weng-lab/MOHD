@@ -19,8 +19,12 @@ const MetallomicsQuantificationTable = ({
         {
             field: "site",
             headerName: "Site",
+            renderCell: (params) => params.value || "Control",
             type: "singleSelect",
-            valueOptions: Array.from(new Set(rows.map((row) => row.site))),
+            valueOptions: Array.from(new Set(rows.map((row) => row.site))).map((site) => ({
+                value: site,
+                label: site || "Control",
+            })),
         },
         {
             field: "status",
@@ -31,9 +35,16 @@ const MetallomicsQuantificationTable = ({
         {
             field: "sex",
             headerName: "Sex",
-            renderCell: (params) => (params.value === "female" ? "F" : "M"),
+            renderCell: (params) => {
+                if (params.value === "female") return "F";
+                if (params.value === "male") return "M";
+                return "Control";
+            },
             type: "singleSelect",
-            valueOptions: Array.from(new Set(rows.map((row) => row.sex))),
+            valueOptions: Array.from(new Set(rows.map((row) => row.sex))).map((sex) => ({
+                value: sex,
+                label: sex === "female" ? "F" : sex === "male" ? "M" : "Control",
+            })),
         },
     ];
     const initialSort: GridSortModel = useMemo(() => [{ field: "sample_id", sort: "asc" }], []);
