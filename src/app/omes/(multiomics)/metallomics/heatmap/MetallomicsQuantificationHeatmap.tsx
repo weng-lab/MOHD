@@ -9,6 +9,7 @@ const MetallomicsQuantificationHeatmap = ({
     sortedFilteredData,
     selected,
     setSelected,
+    autoSort,
     ref,
 }: SharedMetallomicsProps) => {
     const theme = useTheme();
@@ -102,6 +103,7 @@ const MetallomicsQuantificationHeatmap = ({
                         cellHeight={20}
                         xLabelOrientation="leftDiagonal"
                         showMiniMap
+                        scrollToSelection={!autoSort}
                         tooltipBody={(bin) => (
                             <>
                                 <Typography><b>Dataset:</b> {bin.datum.columnName}</Typography>

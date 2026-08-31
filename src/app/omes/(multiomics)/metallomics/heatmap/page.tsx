@@ -3,7 +3,7 @@ import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import MetallomicsQuantificationTable from "./MetallomicsQuantificationTable"
 import { GridOn } from "@mui/icons-material"
 import MetallomicsQuantificationHeatmap from "./MetallomicsQuantificationHeatmap"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { DownloadPlotHandle } from "@weng-lab/visualization";
 import { useMetallomicsData, UseMetallomicsDataReturn } from "@/common/hooks/omeHooks/useMetallomicsData";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
@@ -18,6 +18,8 @@ export type SharedMetallomicsProps = {
     setSelected: React.Dispatch<React.SetStateAction<MetallomicsMetadata>>;
     sortedFilteredData: MetallomicsMetadata;
     tableProps: ReturnType<typeof useTablePlotSync<MetallomicsSample>>["tableProps"];
+    autoSort: boolean;
+    setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
     ref?: React.RefObject<DownloadPlotHandle | null>;
 }
 
@@ -34,6 +36,7 @@ const MetallomicsHeatmap = () => {
         rows,
         getRowId: (row) => row.sample_id,
     });
+    const [autoSort, setAutoSort] = useState(false);
 
     const SharedMetallomicsProps: SharedMetallomicsProps = useMemo(
         () => ({
@@ -43,8 +46,10 @@ const MetallomicsHeatmap = () => {
             setSelected,
             sortedFilteredData,
             tableProps,
+            autoSort,
+            setAutoSort,
         }),
-        [metallomicsData, rows, selected, setSelected, sortedFilteredData, tableProps]
+        [metallomicsData, rows, selected, setSelected, sortedFilteredData, tableProps, autoSort]
     );
 
     return (

@@ -1,13 +1,14 @@
 import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { MetallomicsSample, SharedMetallomicsProps } from "./page";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Typography } from "@mui/material";
 
 const MetallomicsQuantificationTable = ({
     rows,
     metallomicsData,
     tableProps,
+    setAutoSort,
 }: SharedMetallomicsProps) => {
     const { loading, error } = metallomicsData;
     const columns: TableColDef<MetallomicsSample>[] = [
@@ -36,12 +37,16 @@ const MetallomicsQuantificationTable = ({
         },
     ];
     const initialSort: GridSortModel = useMemo(() => [{ field: "sample_id", sort: "asc" }], []);
-    const { syncedTableProps } = useSyncedTable({
+    const { syncedTableProps, autoSort } = useSyncedTable({
         tableProps,
         columns,
         initialSort,
         isPresorted: false,
     });
+
+    useEffect(() => {
+        setAutoSort(autoSort);
+    }, [autoSort, setAutoSort]);
 
     return (
         <Table
