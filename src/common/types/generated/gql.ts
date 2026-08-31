@@ -15,6 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\nquery fetchATACMetadata {\n  atac_metadata {\n    kit\n    protocol\n    sample_id\n    sex\n    site\n    status\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n  }\n}\n ": typeof types.FetchAtacMetadataDocument,
+    "\nquery fetchExposomicsData {\n  exposomics_molecules {\n    position\n    molecule_list\n    molecule_name\n    precursor_mz\n    precursor_ion_type\n    smiles\n    formula\n    inchikey\n    num_detected_samples\n  }\n  exposomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n}\n ": typeof types.FetchExposomicsDataDocument,
     "\nquery fetchLipidomicsData {\n  lipidomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  lipidomics_molecules {\n    position\n    molecule_name\n  }\n}\n ": typeof types.FetchLipidomicsDataDocument,
     "\nquery fetchMetabolomicsData {\n  metabolomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  metabolomics_compounds {\n    position\n    compound\n    mode\n  }\n}\n ": typeof types.FetchMetabolomicsDataDocument,
     "\nquery fetchMetallomicsData {\n  metallomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  metallomics_metals {\n    metal\n    position\n  }\n}\n ": typeof types.FetchMetallomicsDataDocument,
@@ -25,6 +26,7 @@ type Documents = {
 };
 const documents: Documents = {
     "\nquery fetchATACMetadata {\n  atac_metadata {\n    kit\n    protocol\n    sample_id\n    sex\n    site\n    status\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n  }\n}\n ": types.FetchAtacMetadataDocument,
+    "\nquery fetchExposomicsData {\n  exposomics_molecules {\n    position\n    molecule_list\n    molecule_name\n    precursor_mz\n    precursor_ion_type\n    smiles\n    formula\n    inchikey\n    num_detected_samples\n  }\n  exposomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n}\n ": types.FetchExposomicsDataDocument,
     "\nquery fetchLipidomicsData {\n  lipidomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  lipidomics_molecules {\n    position\n    molecule_name\n  }\n}\n ": types.FetchLipidomicsDataDocument,
     "\nquery fetchMetabolomicsData {\n  metabolomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  metabolomics_compounds {\n    position\n    compound\n    mode\n  }\n}\n ": types.FetchMetabolomicsDataDocument,
     "\nquery fetchMetallomicsData {\n  metallomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  metallomics_metals {\n    metal\n    position\n  }\n}\n ": types.FetchMetallomicsDataDocument,
@@ -52,6 +54,10 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nquery fetchATACMetadata {\n  atac_metadata {\n    kit\n    protocol\n    sample_id\n    sex\n    site\n    status\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n  }\n}\n "): (typeof documents)["\nquery fetchATACMetadata {\n  atac_metadata {\n    kit\n    protocol\n    sample_id\n    sex\n    site\n    status\n    pca_x\n    pca_y\n    umap_x\n    umap_y\n  }\n}\n "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery fetchExposomicsData {\n  exposomics_molecules {\n    position\n    molecule_list\n    molecule_name\n    precursor_mz\n    precursor_ion_type\n    smiles\n    formula\n    inchikey\n    num_detected_samples\n  }\n  exposomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n}\n "): (typeof documents)["\nquery fetchExposomicsData {\n  exposomics_molecules {\n    position\n    molecule_list\n    molecule_name\n    precursor_mz\n    precursor_ion_type\n    smiles\n    formula\n    inchikey\n    num_detected_samples\n  }\n  exposomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n}\n "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
