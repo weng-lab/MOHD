@@ -97,9 +97,18 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
   const [xPc, setXPc] = useState(0);
   const [yPc, setYPc] = useState(1);
   const [refKey, setRefKey] = useState<keyof ReferenceRow>("superpop");
-  const [mohdKey, setMohdKey] = useState<keyof MohdRow>("case_status");
+  const [mohdKey, setMohdKey] = useState<keyof MohdRow>("reported_race_ethnicity");
   const [hiddenRef, setHiddenRef] = useState<ReadonlySet<string>>(new Set());
   const [hiddenMohd, setHiddenMohd] = useState<ReadonlySet<string>>(new Set());
+  // The highlight runs both ways. plotHover* is the group under the cursor in the
+  // plot, published by ScatterPlot, and rings the matching chip. legendHover* is the
+  // chip under the cursor, and is handed back to the plot as hoveredPoints so its
+  // group swells. Only one can be set at a time - reaching a chip means leaving the
+  // plot - but they are kept apart so neither can feed the other back into itself.
+  const [plotHoverRef, setPlotHoverRef] = useState<string | null>(null);
+  const [plotHoverMohd, setPlotHoverMohd] = useState<string | null>(null);
+  const [legendHoverRef, setLegendHoverRef] = useState<string | null>(null);
+  const [legendHoverMohd, setLegendHoverMohd] = useState<string | null>(null);
 
   // One size drives both plots - see useSharedPlotSize for why they can't size
   // themselves here.
@@ -130,6 +139,17 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
   const visibleMohd = useMemo(
     () => mohdPoints.filter((p) => !hiddenMohd.has(p.metaData!.group)),
     [mohdPoints, hiddenMohd],
+  );
+
+  // Drawn from the visible points rather than all of them, so hovering the chip of a
+  // group that is toggled off highlights nothing - there is none of it on the plot.
+  const hoveredRefPoints = useMemo(
+    () => (legendHoverRef ? visibleRef.filter((p) => p.metaData!.group === legendHoverRef) : undefined),
+    [visibleRef, legendHoverRef],
+  );
+  const hoveredMohdPoints = useMemo(
+    () => (legendHoverMohd ? visibleMohd.filter((p) => p.metaData!.group === legendHoverMohd) : undefined),
+    [visibleMohd, legendHoverMohd],
   );
 
   const toggle = (setHidden: (fn: (prev: ReadonlySet<string>) => ReadonlySet<string>) => void) =>
@@ -183,36 +203,16 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
         </Stack>
       </Box>
 
-      <ScatterPlotSync {...domains}>
+      {/*
+        The shared size goes here rather than on each plot. ScatterPlotSync forwards its own
+        width and height to both children, so a {...sync} spread after {...plotSize} on a plot
+        overwrites the shared size with undefined and sends each plot back to measuring its own
+        container - which only diverges once the two legends wrap to different heights, and then
+        the synced zoom drifts because its transform is in pixels.
+      */}
+      <ScatterPlotSync {...domains} {...plotSize}>
         {(sync) => (
           <Stack direction={{ xs: "column", lg: "row" }} gap={2} height={{ lg: PLOT_HEIGHT }}>
-            <PlotCard
-              sx={CARD_SX}
-              title="1000G+HGDP"
-              count={reference.length}
-              options={REFERENCE_COLOR_OPTIONS}
-              colorBy={refKey}
-              onColorByChange={(key) => {
-                setRefKey(key);
-                setHiddenRef(new Set());
-              }}
-              groups={refGroups}
-              hidden={hiddenRef}
-              onToggle={toggle(setHiddenRef)}
-              plotRef={refPlotRef}
-            >
-              <ScatterPlot
-                pointData={visibleRef}
-                loading={false}
-                {...plotSize}
-                bottomAxisLabel={xLabel}
-                leftAxisLabel={yLabel}
-                tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} />}
-                miniMap={MINIMAP_POSITION}
-                {...sync}
-              />
-            </PlotCard>
-
             <PlotCard
               sx={CARD_SX}
               title="MOHD"
@@ -224,6 +224,8 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
                 setHiddenMohd(new Set());
               }}
               groups={mohdGroups}
+              highlighted={plotHoverMohd ?? legendHoverMohd}
+              onHover={setLegendHoverMohd}
               hidden={hiddenMohd}
               onToggle={toggle(setHiddenMohd)}
               plotRef={mohdPlotRef}
@@ -231,12 +233,46 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
               <ScatterPlot
                 pointData={visibleMohd}
                 loading={false}
-                {...plotSize}
                 bottomAxisLabel={xLabel}
                 leftAxisLabel={yLabel}
                 controlsPosition="right"
                 tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} />}
+                hoveredPoints={hoveredMohdPoints}
+                onHoveredPointChange={(p) => setPlotHoverMohd(p?.metaData?.group ?? null)}
                 miniMap={MINIMAP_POSITION}
+                groupPointsAnchor="group"
+                {...sync}
+              />
+            </PlotCard>
+
+            <PlotCard
+              sx={CARD_SX}
+              title="1000G+HGDP"
+              count={reference.length}
+              options={REFERENCE_COLOR_OPTIONS}
+              colorBy={refKey}
+              onColorByChange={(key) => {
+                setRefKey(key);
+                setHiddenRef(new Set());
+              }}
+              groups={refGroups}
+              highlighted={plotHoverRef ?? legendHoverRef}
+              onHover={setLegendHoverRef}
+              hidden={hiddenRef}
+              onToggle={toggle(setHiddenRef)}
+              plotRef={refPlotRef}
+            >
+              <ScatterPlot
+                pointData={visibleRef}
+                loading={false}
+                bottomAxisLabel={xLabel}
+                leftAxisLabel={yLabel}
+                controlsPosition="right"
+                tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} />}
+                hoveredPoints={hoveredRefPoints}
+                onHoveredPointChange={(p) => setPlotHoverRef(p?.metaData?.group ?? null)}
+                miniMap={MINIMAP_POSITION}
+                groupPointsAnchor="group"
                 {...sync}
               />
             </PlotCard>

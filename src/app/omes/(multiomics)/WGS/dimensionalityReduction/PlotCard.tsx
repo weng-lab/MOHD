@@ -27,6 +27,10 @@ export type PlotCardProps<T> = {
   groups: GroupInfo[];
   hidden: ReadonlySet<string>;
   onToggle: (value: string) => void;
+  /** Group to highlight in the legend, from either direction. */
+  highlighted?: string | null;
+  /** Fired as the cursor enters and leaves a legend chip. */
+  onHover?: (value: string | null) => void;
   sx?: SxProps<Theme>;
   /** Measured by the parent so both plots can be given one shared size. */
   plotRef?: RefObject<HTMLDivElement | null>;
@@ -55,6 +59,8 @@ const PlotCard = <T,>({
   groups,
   hidden,
   onToggle,
+  highlighted,
+  onHover,
   sx,
   plotRef,
   children,
@@ -112,8 +118,27 @@ const PlotCard = <T,>({
     </Stack>
 
     <Stack gap={1} sx={{ px: 1.5, pt: 1.25, pb: 1.5, flex: 1, minHeight: 0 }}>
-      <PlotLegend groups={groups} hidden={hidden} onToggle={onToggle} />
-      <Box ref={plotRef} flex={1} minHeight={0}>
+      <PlotLegend
+        groups={groups}
+        hidden={hidden}
+        onToggle={onToggle}
+        highlighted={highlighted}
+        onHover={onHover}
+      />
+      {/*
+        Bottom-aligned, not centred. Both plots render at the smaller of the two containers, so
+        the card with the shorter legend has room to spare below its plot. Pinning the plot to
+        the bottom puts both x-axes on the same line, which is what makes the two cohorts
+        readable side by side.
+      */}
+      <Box
+        ref={plotRef}
+        flex={1}
+        minHeight={0}
+        display="flex"
+        flexDirection="column"
+        justifyContent="flex-end"
+      >
         {children}
       </Box>
     </Stack>

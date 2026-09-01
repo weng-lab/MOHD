@@ -22,6 +22,18 @@ const ageBin = (age: number | null | undefined): string | null => {
 };
 
 /**
+ * Coordinate precision, in decimal places.
+ *
+ * The API returns roughly six significant figures, far more than the plot can
+ * draw. The tightest axis (PC1) spans 0.047 across a 409px data area, so one
+ * pixel is 1.1e-4 and a 1e-5 step falls well inside it - the rendered plot is
+ * pixel-identical until about 11x zoom. Rounding here takes ~71KB off the
+ * gzipped page, a third of its total weight, and costs 26 of the 3,400
+ * reference samples a coordinate they shared with a neighbour anyway.
+ */
+const PC_DECIMALS = 5;
+
+/**
  * Fetches and reshapes the PCA data.
  *
  * Cached: wgs_pca is identical for every visitor and only changes on a data
@@ -42,10 +54,10 @@ const getPCAData = async (): Promise<PCAData> => {
 
   for (const row of rows) {
     // The API returns pc1..pc10 as separate fields; an array indexes far more
-    // cleanly against the axis selects on the client.
-    const pcs = Array.from(
-      { length: PC_COUNT },
-      (_, i) => row[`pc${i + 1}` as keyof typeof row] as number,
+    // cleanly against the axis selects on the client. Rounded on the way in so
+    // the trimmed values are what gets cached and serialised - see PC_DECIMALS.
+    const pcs = Array.from({ length: PC_COUNT }, (_, i) =>
+      Number((row[`pc${i + 1}` as keyof typeof row] as number).toFixed(PC_DECIMALS)),
     );
 
     if (row.cohort === "MOHD") {

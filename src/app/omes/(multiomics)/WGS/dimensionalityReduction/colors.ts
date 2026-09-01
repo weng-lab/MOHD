@@ -1,13 +1,20 @@
 /**
  * Colour assignment for the PCA plots.
  *
- * Categorical groups get a fixed qualitative palette; ordered groups (the age
- * bands) get a sequential ramp so the ordering reads off the colour.
+ * MOHD fields reuse the palettes in src/common/colors.ts, so a site or a case
+ * status is the same colour here as it is anywhere else in the app. The
+ * reference cohort's fields are external to this project and have no repo-wide
+ * convention, so they fall back to a local palette. Ordered groups (the age
+ * bands) get a sequential ramp instead, so the ordering reads off the colour.
  */
 
-/** Explicit colours for groups the reference applet already had a convention for. */
-const KNOWN_COLORS: Record<string, string> = {
-  // 1000G+HGDP super populations (ColorBrewer Set1)
+import { sex_color_map, site_color_map, status_color_map } from "@/common/colors";
+
+/**
+ * 1000G+HGDP super populations (ColorBrewer Set1). A reference-panel
+ * convention rather than a MOHD one, so it lives here and not in the shared map.
+ */
+const SUPERPOP_COLORS: Record<string, string> = {
   AFR: "#984EA3",
   EUR: "#377EB8",
   CSA: "#FF7F00",
@@ -15,11 +22,23 @@ const KNOWN_COLORS: Record<string, string> = {
   OCE: "#999999",
   EAS: "#4DAF4A",
   AMR: "#E41A1C",
-  // MOHD case status
-  case: "#BF3831",
-  control: "#159875",
-  "low risk": "#1f77b4",
-  "high risk": "#ff7f0e",
+};
+
+type Palette = Record<string, string | undefined>;
+
+/**
+ * The palette to use for each colour-by field, keyed by its name on the row.
+ * Anything not listed here falls back to QUALITATIVE.
+ *
+ * Reference `sex` shares sex_color_map with MOHD `sex_at_birth` on purpose: the
+ * two plots sit side by side, so male and female have to agree across them.
+ */
+const FIELD_PALETTES: Record<string, Palette | undefined> = {
+  case_status: status_color_map,
+  site: site_color_map,
+  sex_at_birth: sex_color_map,
+  sex: sex_color_map,
+  superpop: SUPERPOP_COLORS,
 };
 
 /** Fallback qualitative palette for everything else. */
@@ -75,15 +94,25 @@ export const buildGroups = <T,>(rows: T[], key: keyof T): GroupInfo[] => {
 
   const ordered = orderGroups(counts);
   const sequential = isAgeBand(ordered.filter((v) => v !== "Unknown"));
+  const palette = FIELD_PALETTES[String(key)] ?? {};
+
+  // The cursor advances only for groups the palette did not answer for, so an
+  // uncovered value takes the next qualitative colour in sequence rather than
+  // whatever sits at its position in the legend - indexing by position is how
+  // "prefer no answer" used to come out the same green as "male".
+  let cursor = 0;
 
   return ordered.map((value, i) => ({
     value,
     count: counts.get(value) ?? 0,
+    // The palette wins even for "Unknown" - the status map names its own grey.
     color:
-      value === "Unknown"
+      palette[value] ??
+      (value === "Unknown"
         ? UNKNOWN_COLOR
-        : KNOWN_COLORS[value] ??
-          (sequential ? sequentialColor(i, ordered.length) : QUALITATIVE[i % QUALITATIVE.length]),
+        : sequential
+          ? sequentialColor(i, ordered.length)
+          : QUALITATIVE[cursor++ % QUALITATIVE.length]),
   }));
 };
 
