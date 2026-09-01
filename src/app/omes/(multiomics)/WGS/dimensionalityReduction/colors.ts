@@ -67,18 +67,14 @@ const sequentialColor = (index: number, count: number): string => {
   return `rgb(${lerp(from[0], to[0], f)},${lerp(from[1], to[1], f)},${lerp(from[2], to[2], f)})`;
 };
 
-/** Age bands sort numerically ("80+" last); everything else by descending count. */
+/** True when every value is an age band ("40-49", "80+"). "Unknown" is not one. */
 const isAgeBand = (values: string[]) => values.every((v) => /^\d+(-\d+|\+)$/.test(v));
 
-const orderGroups = (counts: Map<string, number>): string[] => {
-  const values = [...counts.keys()];
-  if (isAgeBand(values)) {
-    return values.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
-  }
-  return values.sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || a.localeCompare(b));
-};
-
 export type GroupInfo = { value: string; color: string; count: number };
+
+/** Normalises a raw field value to the group label used by buildGroups. */
+export const groupValue = (raw: unknown): string =>
+  raw === null || raw === undefined || raw === "" ? "Unknown" : String(raw);
 
 /**
  * Builds the ordered group list for a field, with a colour for each.
@@ -87,13 +83,26 @@ export type GroupInfo = { value: string; color: string; count: number };
 export const buildGroups = <T,>(rows: T[], key: keyof T): GroupInfo[] => {
   const counts = new Map<string, number>();
   for (const row of rows) {
-    const raw = row[key];
-    const value = raw === null || raw === undefined || raw === "" ? "Unknown" : String(raw);
+    const value = groupValue(row[key]);
     counts.set(value, (counts.get(value) ?? 0) + 1);
   }
 
-  const ordered = orderGroups(counts);
-  const sequential = isAgeBand(ordered.filter((v) => v !== "Unknown"));
+  // "Unknown" is held out of the age test, and of the ordering and ramp that
+  // follow from it. It is not a band, so leaving it in used to make one missing
+  // age enough to fail the test: the field then fell back to count order while
+  // the ramp was still applied over it, and the age scale came out scrambled.
+  const values = [...counts.keys()];
+  const bands = values.filter((v) => v !== "Unknown");
+  const sequential = isAgeBand(bands);
+
+  // Age bands sort numerically, with any "Unknown" pinned after them - it has no
+  // position on the scale, and parseInt("Unknown") is NaN, which would leave the
+  // whole comparator, and so the whole legend order, undefined. Everything else
+  // sorts by descending count, "Unknown" included.
+  const ordered = sequential
+    ? [...bands.sort((a, b) => parseInt(a, 10) - parseInt(b, 10)), ...(counts.has("Unknown") ? ["Unknown"] : [])]
+    : values.sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || a.localeCompare(b));
+
   const palette = FIELD_PALETTES[String(key)] ?? {};
 
   // The cursor advances only for groups the palette did not answer for, so an
@@ -111,11 +120,9 @@ export const buildGroups = <T,>(rows: T[], key: keyof T): GroupInfo[] => {
       (value === "Unknown"
         ? UNKNOWN_COLOR
         : sequential
-          ? sequentialColor(i, ordered.length)
+          ? // Ramped across the bands alone; "Unknown" sorts after them, so a
+            // band's legend index is its band index.
+            sequentialColor(i, bands.length)
           : QUALITATIVE[cursor++ % QUALITATIVE.length]),
   }));
 };
-
-/** Normalises a raw field value to the group label used by buildGroups. */
-export const groupValue = (raw: unknown): string =>
-  raw === null || raw === undefined || raw === "" ? "Unknown" : String(raw);

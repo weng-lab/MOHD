@@ -51,7 +51,7 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                         iconWidth={50}
                     />
                 </Box>
-                <Stack id="main-content" spacing={2} mx={2} mb={2} gridColumn={{ xs: 1, md: 2 }} gridRow={1}>
+                <Stack id="main-content" gap={2} m={2} gridColumn={{ xs: 1, md: 2 }} gridRow={1}>
                     <Box id="horizonatal-view-tabs-container" display={{ xs: "block", md: "none" }}>
                         <DetailsTabs
                             tabs={tabs}

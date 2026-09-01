@@ -1,23 +1,5 @@
 import { Box, Skeleton, Stack } from "@mui/material";
-import type { ReactNode } from "react";
 import { AXIS_CLUSTER_SIZE, CARD_SX, PLOT_HEIGHT } from "./dimensions";
-
-/**
- * The page's outer frame.
- *
- * Owned here so page.tsx and loading.tsx can't drift apart on it.
- *
- * No horizontal padding: the shell already applies mx={2} to this grid cell, so
- * a page-level px doubled it and pulled the cards away from the tab rail.
- *
- * minHeight rather than height: the app shell caps this grid row at the viewport,
- * so a fixed 100% clips the stacked layout instead of letting the page grow.
- */
-export const PCAFrame = ({ children }: { children: ReactNode }) => (
-  <Box px={0} py={2} display="flex" flexDirection="column" minHeight="100%">
-    {children}
-  </Box>
-);
 
 /**
  * Stand-in for the real layout, shaped like it.
@@ -29,7 +11,7 @@ export const PCAFrame = ({ children }: { children: ReactNode }) => (
  * space their skeleton was already occupying.
  */
 const PCASkeleton = () => (
-  <Stack gap={2} height="100%">
+  <Stack gap={2}>
     <Box
       display="grid"
       gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }}

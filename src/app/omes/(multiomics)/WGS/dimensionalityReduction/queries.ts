@@ -16,7 +16,6 @@ query fetchWGSPCA {
     pc9
     pc10
     superpop
-    population
     sex
     project
     age
@@ -25,7 +24,6 @@ query fetchWGSPCA {
     site
     recruited_condition
     reported_race_ethnicity
-    reported_races
     gnomad_pop
   }
 }

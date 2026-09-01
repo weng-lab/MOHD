@@ -4,7 +4,7 @@ import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { ScatterPlot, ScatterPlotSync, getSharedDomains, type Point } from "@weng-lab/visualization";
 import { useMemo, useRef, useState } from "react";
 import { buildGroups, groupValue, type GroupInfo } from "./colors";
-import { CARD_SX, PLOT_HEIGHT } from "./dimensions";
+import { PLOT_HEIGHT } from "./dimensions";
 import PlotCard from "./PlotCard";
 import { useSharedPlotSize } from "./useSharedPlotSize";
 import {
@@ -164,7 +164,7 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
   const yLabel = `PC${yPc + 1}`;
 
   return (
-    <Stack gap={2} height="100%">
+    <Stack gap={2}>
       {/*
         Three columns so the axis cluster lands over the gutter between the two
         cards, equidistant from both: it drives them both, and nothing about its
@@ -214,7 +214,6 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
         {(sync) => (
           <Stack direction={{ xs: "column", lg: "row" }} gap={2} height={{ lg: PLOT_HEIGHT }}>
             <PlotCard
-              sx={CARD_SX}
               title="MOHD"
               count={mohd.length}
               options={MOHD_COLOR_OPTIONS}
@@ -246,7 +245,6 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
             </PlotCard>
 
             <PlotCard
-              sx={CARD_SX}
               title="1000G+HGDP"
               count={reference.length}
               options={REFERENCE_COLOR_OPTIONS}

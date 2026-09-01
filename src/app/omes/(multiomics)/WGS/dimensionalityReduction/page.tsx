@@ -1,7 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { Suspense } from "react";
 import { query } from "@/common/apollo/client";
-import PCASkeleton, { PCAFrame } from "./PCASkeleton";
+import PCASkeleton from "./PCASkeleton";
 import { GET_WGS_PCA } from "./queries";
 import { PC_COUNT, type MohdRow, type PCAData, type ReferenceRow } from "./types";
 import WGSPCAPlots from "./WGSPCAPlots";
@@ -89,11 +89,9 @@ const getPCAData = async (): Promise<PCAData> => {
 
 const WGSDimensionalityReduction = () => {
   return (
-    <PCAFrame>
-      <Suspense fallback={<PCASkeleton />}>
-        <WGSPCASection />
-      </Suspense>
-    </PCAFrame>
+    <Suspense fallback={<PCASkeleton />}>
+      <WGSPCASection />
+    </Suspense>
   );
 };
 

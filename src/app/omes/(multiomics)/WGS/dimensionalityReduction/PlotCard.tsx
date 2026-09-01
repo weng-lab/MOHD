@@ -1,17 +1,9 @@
 "use client";
 
-import {
-  Box,
-  MenuItem,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-  type SxProps,
-  type Theme,
-} from "@mui/material";
+import { Box, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
 import type { ReactNode, RefObject } from "react";
 import type { GroupInfo } from "./colors";
+import { CARD_SX } from "./dimensions";
 import PlotLegend from "./PlotLegend";
 import type { ColorOption } from "./types";
 
@@ -28,12 +20,11 @@ export type PlotCardProps<T> = {
   hidden: ReadonlySet<string>;
   onToggle: (value: string) => void;
   /** Group to highlight in the legend, from either direction. */
-  highlighted?: string | null;
+  highlighted: string | null;
   /** Fired as the cursor enters and leaves a legend chip. */
-  onHover?: (value: string | null) => void;
-  sx?: SxProps<Theme>;
+  onHover: (value: string | null) => void;
   /** Measured by the parent so both plots can be given one shared size. */
-  plotRef?: RefObject<HTMLDivElement | null>;
+  plotRef: RefObject<HTMLDivElement | null>;
   /** The plot itself. */
   children: ReactNode;
 };
@@ -61,23 +52,20 @@ const PlotCard = <T,>({
   onToggle,
   highlighted,
   onHover,
-  sx,
   plotRef,
   children,
 }: PlotCardProps<T>) => (
   <Paper
     variant="outlined"
-    sx={[
-      {
-        display: "flex",
-        flexDirection: "column",
-        minWidth: 0,
-        minHeight: 0,
-        overflow: "hidden",
-        borderRadius: 2,
-      },
-      ...(Array.isArray(sx) ? sx : [sx]),
-    ]}
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      minWidth: 0,
+      minHeight: 0,
+      overflow: "hidden",
+      borderRadius: 2,
+      ...CARD_SX,
+    }}
   >
     <Stack
       direction="row"
