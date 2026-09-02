@@ -1,16 +1,15 @@
 import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
-import { WGBSMetadata, SharedWGBSDimenionalityProps } from "./page";
+import { SharedWGBSDimenionalityProps } from "./WGBSDimensionalityReductionClient";
+import type { WGBSRow } from "./types";
 import { useMemo } from "react";
 import { Typography } from "@mui/material";
 
 const WGBSDimensionalityTable = ({
     rows,
-    WGBSData,
     tableProps,
 }: SharedWGBSDimenionalityProps) => {
-    const { loading, error } = WGBSData;
-    const columns: TableColDef<WGBSMetadata[number]>[] = [
+    const columns: TableColDef<WGBSRow>[] = [
         {
             field: "sample_id",
             headerName: "Dataset",
@@ -48,8 +47,6 @@ const WGBSDimensionalityTable = ({
             {...syncedTableProps}
             label={<Typography noWrap>WGBS Dimensionality Reduction</Typography>}
             rows={rows}
-            loading={loading}
-            error={!!error}
         />
     );
 }

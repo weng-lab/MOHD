@@ -15,6 +15,8 @@ export type DimensionalityReductionMeta = {
     protocol?: string;
     /** Sensitive - only ever surface this as a bin via getAgeBin(), never the raw value. */
     age_at_enrollment?: number | null;
+    /** Precomputed on the server via getAgeBin(); preferred over age_at_enrollment when present. */
+    age_bin?: string | null;
 };
 
 export type DimensionalityScatterPlotProps<
@@ -88,7 +90,7 @@ const DimensionalityScatterPlot = <
                     } else if (colorScheme === "protocol") {
                         return protocol_color_map[x.protocol as keyof typeof protocol_color_map];
                     } else if (colorScheme === "age") {
-                        return age_bin_color_map[getAgeBin(x.age_at_enrollment)];
+                        return age_bin_color_map[x.age_bin ?? getAgeBin(x.age_at_enrollment)];
                     }
                 } else return "#CCCCCC";
             };

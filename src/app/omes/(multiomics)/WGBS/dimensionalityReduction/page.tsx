@@ -1,75 +1,56 @@
-"use client";
-import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
-import WGBSDimensionalityTable from "./WGBSDimensionalityTable"
-import { ScatterPlot } from "@mui/icons-material"
-import WGBSDimensionalityScatterPlot from "./WGBSUMAP"
-import WGBSDimensionalityPCAPlot from "./WGBSPCA"
-import { useMemo } from "react"
-import { DownloadPlotHandle } from "@weng-lab/visualization"
-import { useWGBSData, UseWGBSDataReturn } from "@/common/hooks/omeHooks/useWGBSData";
-import usePlotDownload from "@/common/hooks/usePlotDownload";
+import { cacheLife, cacheTag } from "next/cache";
+import { Suspense } from "react";
+import { query } from "@/common/apollo/client";
+import { getAgeBin } from "@/common/ageBins";
+import WGBSSkeleton from "./WGBSSkeleton";
+import { GET_WGBS_DATA } from "./queries";
+import type { WGBSRow } from "./types";
+import WGBSDimensionalityReductionClient from "./WGBSDimensionalityReductionClient";
 
-export type WGBSMetadata =
-    NonNullable<UseWGBSDataReturn["data"]>;
+/**
+ * Fetches and reshapes the WGBS metadata.
+ *
+ * Cached: wgbs_metadata is identical for every visitor and only changes on a
+ * data release, so one upstream query serves everyone. Bust it with
+ * revalidateTag("wgbs-metadata") when new data lands.
+ */
+const getWGBSData = async (): Promise<WGBSRow[]> => {
+  "use cache";
+  cacheLife("days");
+  cacheTag("wgbs-metadata");
 
-export type SharedWGBSDimenionalityProps = {
-    rows: WGBSMetadata;
-    WGBSData: UseWGBSDataReturn;
-    selected: WGBSMetadata;
-    setSelected: React.Dispatch<React.SetStateAction<WGBSMetadata>>;
-    sortedFilteredData: WGBSMetadata;
-    tableProps: ReturnType<typeof useTablePlotSync<WGBSMetadata[number]>>["tableProps"];
-    ref?: React.RefObject<DownloadPlotHandle | null>;
-}
+  const { data, error } = await query({ query: GET_WGBS_DATA });
+  if (error) throw error;
+
+  const rows = data?.wgbs_metadata ?? [];
+
+  return rows.map((row) => ({
+    sample_id: row.sample_id,
+    kit: row.kit,
+    pca_x: row.pca_x ?? null,
+    pca_y: row.pca_y ?? null,
+    umap_x: row.umap_x ?? null,
+    umap_y: row.umap_y ?? null,
+    sex: row.sex,
+    site: row.site,
+    status: row.status,
+    // Binned here so raw age never enters the cache or the RSC payload.
+    age_bin: getAgeBin(row.age_at_enrollment),
+  }));
+};
 
 const WGBSDimensionalityReduction = () => {
-    const { ref: umapRef, ...umapDownload } = usePlotDownload();
-    const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
-    const WGBSData = useWGBSData({ skip: false });
+  return (
+    <Suspense fallback={<WGBSSkeleton />}>
+      <WGBSSection />
+    </Suspense>
+  );
+};
 
-    const rows: WGBSMetadata = useMemo(() => {
-        if (!WGBSData.data) return [];
-        return WGBSData.data;
-    }, [WGBSData]);
-
-    const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-        rows,
-        getRowId: (row) => row.sample_id,
-    });
-
-    const SharedWGBSDimenionalityProps: SharedWGBSDimenionalityProps = useMemo(
-        () => ({
-            rows,
-            WGBSData,
-            selected,
-            setSelected,
-            sortedFilteredData,
-            tableProps,
-        }),
-        [WGBSData, rows, selected, setSelected, sortedFilteredData, tableProps]
-    );
-
-    return (
-        <TwoPaneLayout
-            direction={{ xs: "column", lg: "row" }}
-            rowHeight="max(60vh, 700px)"
-            TableComponent={<WGBSDimensionalityTable {...SharedWGBSDimenionalityProps} />}
-            plots={[
-                {
-                    tabTitle: "UMAP",
-                    icon: <ScatterPlot />,
-                    plotComponent: <WGBSDimensionalityScatterPlot ref={umapRef} {...SharedWGBSDimenionalityProps} />,
-                    ...umapDownload,
-                },
-                {
-                    tabTitle: "PCA",
-                    icon: <ScatterPlot />,
-                    plotComponent: <WGBSDimensionalityPCAPlot ref={pcaRef} {...SharedWGBSDimenionalityProps} />,
-                    ...pcaDownload,
-                },
-            ]}
-        />
-    )
-}
+/** The await lives here so only this subtree sits behind the Suspense boundary. */
+const WGBSSection = async () => {
+  const rows = await getWGBSData();
+  return <WGBSDimensionalityReductionClient rows={rows} />;
+};
 
 export default WGBSDimensionalityReduction;

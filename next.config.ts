@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     "arch.crane-tawny.ts.net:3000",
   ],
   reactCompiler: true,
+  cacheComponents: true,
 };
 
 export default nextConfig;

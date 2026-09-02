@@ -41,7 +41,7 @@ export default function UMAPLegend<T extends DimensionalityReductionMeta>({
           key = meta.protocol ?? "missing";
           break;
         case "age":
-          key = getAgeBin(meta.age_at_enrollment);
+          key = meta.age_bin ?? getAgeBin(meta.age_at_enrollment);
           break;
         default:
           key = "missing";
