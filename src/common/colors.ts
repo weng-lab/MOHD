@@ -10,7 +10,7 @@ export const OME_COLORS: Record<string, string> = {
   wgs: "#59acd8",
 };
 
-export const status_color_map = {'case' : '#e41a1c', 'control' : '#377eb8'}
+export const status_color_map = {'case' : '#e41a1c', 'control' : '#377eb8', 'high risk': "#F5761A", 'low risk': "#FEE12B"}
 
 export const site_color_map = {'CCH' : '#BF3831',
                'CKD' : '#79B4F0',
