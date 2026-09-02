@@ -127,10 +127,17 @@ function saveToStorage(jobs: DownloadJob[]) {
  * try/catch shapes React Compiler bails on, so it still gets optimized.
  */
 
-/** The job's latest status, or null when the request failed or wasn't parseable. */
-async function fetchJobStatus(id: string): Promise<StatusResponse | null> {
+/**
+ * The job's latest status, or null when the request failed, wasn't parseable, or
+ * was aborted. Callers distinguish the abort case themselves — see the poll
+ * effect, which drops the result rather than reading it as a failed check.
+ */
+async function fetchJobStatus(
+  id: string,
+  signal: AbortSignal,
+): Promise<StatusResponse | null> {
   try {
-    const res = await fetch(`${BASE_URL}/status/${id}`);
+    const res = await fetch(`${BASE_URL}/status/${id}`, { signal });
     if (!res.ok) return null;
     return (await res.json()) as StatusResponse;
   } catch {
@@ -192,20 +199,31 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
   // only the still-running ids get a fresh one.
   const pollableIds = jobs.flatMap((j) => (isPollable(j) ? [j.id] : [])).join(",");
 
+  // Polling a job queue is genuinely an effect-and-timer job, and there is no
+  // REST data-fetching layer to route it through — Apollo covers GraphQL only.
+  // The hazards the rule names are each handled below: `inFlight` prevents
+  // double-fire, the AbortController cancels the request on teardown, and
+  // `stopped` keeps a late resolution from writing after this effect is gone.
+  // Revisit if the service grows a progress stream — that turns this into a
+  // subscription with no fetch in it at all.
+  // react-doctor-disable-next-line react-doctor/no-fetch-in-effect
   useEffect(() => {
     if (!pollableIds) return;
 
     // A status request slower than the interval would otherwise stack up behind
     // itself, and a job that just finished would get one more request before the
     // state update tears this effect down.
+    const controller = new AbortController();
     const inFlight = new Set<string>();
     let stopped = false;
 
     const tick = async (id: string) => {
       if (stopped || inFlight.has(id)) return;
       inFlight.add(id);
-      const data = await fetchJobStatus(id);
+      const data = await fetchJobStatus(id, controller.signal);
       inFlight.delete(id);
+      // A teardown abort also lands here as null, so this guard is what keeps it
+      // from being written back as a failed status check.
       if (stopped) return;
       if (!data) {
         setJobs((prev) =>
@@ -238,6 +256,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
 
     return () => {
       stopped = true;
+      controller.abort();
       timers.forEach(clearInterval);
     };
   }, [pollableIds]);
