@@ -3,27 +3,41 @@
 import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { ScatterPlot, ScatterPlotSync, getSharedDomains, type Point } from "@weng-lab/visualization";
 import { useMemo, useRef, useState } from "react";
-import { buildGroups, groupValue, type GroupInfo } from "./colors";
 import { PLOT_HEIGHT } from "./dimensions";
-import PlotCard from "./PlotCard";
-import { useSharedPlotSize } from "./useSharedPlotSize";
 import {
   MOHD_COLOR_OPTIONS,
-  PC_COUNT,
   REFERENCE_COLOR_OPTIONS,
+  type ColorField,
   type ColorOption,
-  type MohdRow,
-  type ReferenceRow,
-} from "./types";
+  type MohdColorField,
+  type ReferenceColorField,
+} from "./fields";
+import { buildGroups, displayValue, groupValue, type GroupInfo } from "./groups";
+import PlotCard from "./PlotCard";
+import { useSharedPlotSize } from "./useSharedPlotSize";
+import { PC_COUNT, type MohdRow, type ReferenceRow } from "./types";
 
 type Meta<T> = { row: T; group: string };
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => ({ value: i, label: `PC${i + 1}` }));
 
-/** Builds plot points for one cohort, colouring each by its group. */
+/**
+ * Axis label for a PC: "PC1 (41.2%)", or a bare "PC1" where the API has no
+ * variance for it.
+ *
+ * Rounded here rather than on the server because the decimal has to be a
+ * *rendered* one - a PC that lands on 1.0% is the number 1 once rounded, and
+ * would otherwise reach the axis as "1%" beside its neighbours' "41.2%".
+ */
+const axisLabel = (pc: number, pve: (number | null)[]) => {
+  const value = pve[pc];
+  return value === null || value === undefined ? `PC${pc + 1}` : `PC${pc + 1} (${value.toFixed(1)}%)`;
+};
+
+/** Builds plot points for one cohort, coloring each by its group. */
 const toPoints = <T extends { sample_id: string; pcs: number[] }>(
   rows: T[],
-  key: keyof T,
+  key: keyof T & ColorField,
   groups: GroupInfo[],
   xPc: number,
   yPc: number,
@@ -41,14 +55,14 @@ const toPoints = <T extends { sample_id: string; pcs: number[] }>(
   });
 };
 
-const Tooltip = <T,>({ row, options }: { row: T; options: ColorOption<T>[] }) => (
+const Tooltip = <T,>({ row, options }: { row: T; options: readonly ColorOption<keyof T & ColorField>[] }) => (
   <Box sx={{ p: 1 }}>
     <Typography variant="body2">
       <strong>{String((row as { sample_id: string }).sample_id)}</strong>
     </Typography>
     {options.map(({ key, label }) => (
       <Typography key={String(key)} variant="caption" display="block">
-        {label}: {groupValue(row[key])}
+        {label}: {displayValue(key, row[key])}
       </Typography>
     ))}
   </Box>
@@ -89,15 +103,17 @@ const AxisSelect = ({
 export type WGSPCAPlotsProps = {
   reference: ReferenceRow[];
   mohd: MohdRow[];
+  /** Percent of variance explained, zero-indexed to match a row's `pcs`. */
+  pve: (number | null)[];
 };
 
 const MINIMAP_POSITION = { position: { right: 50, bottom: 50 } };
 
-const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
+const WGSPCAPlots = ({ reference, mohd, pve }: WGSPCAPlotsProps) => {
   const [xPc, setXPc] = useState(0);
   const [yPc, setYPc] = useState(1);
-  const [refKey, setRefKey] = useState<keyof ReferenceRow>("superpop");
-  const [mohdKey, setMohdKey] = useState<keyof MohdRow>("reported_race_ethnicity");
+  const [refKey, setRefKey] = useState<ReferenceColorField>("superpop");
+  const [mohdKey, setMohdKey] = useState<MohdColorField>("reported_race_ethnicity");
   const [hiddenRef, setHiddenRef] = useState<ReadonlySet<string>>(new Set());
   const [hiddenMohd, setHiddenMohd] = useState<ReadonlySet<string>>(new Set());
   // The highlight runs both ways. plotHover* is the group under the cursor in the
@@ -160,8 +176,8 @@ const WGSPCAPlots = ({ reference, mohd }: WGSPCAPlotsProps) => {
         return next;
       });
 
-  const xLabel = `PC${xPc + 1}`;
-  const yLabel = `PC${yPc + 1}`;
+  const xLabel = axisLabel(xPc, pve);
+  const yLabel = axisLabel(yPc, pve);
 
   return (
     <Stack gap={2}>

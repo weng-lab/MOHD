@@ -26,5 +26,9 @@ query fetchWGSPCA {
     reported_race_ethnicity
     gnomad_pop
   }
+  wgs_pca_variance {
+    pc
+    pve
+  }
 }
 `);

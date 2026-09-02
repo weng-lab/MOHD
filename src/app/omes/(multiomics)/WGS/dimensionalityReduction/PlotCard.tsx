@@ -2,20 +2,25 @@
 
 import { Box, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
 import type { ReactNode, RefObject } from "react";
-import type { GroupInfo } from "./colors";
 import { CARD_SX } from "./dimensions";
+import type { ColorField, ColorOption } from "./fields";
+import type { GroupInfo } from "./groups";
 import PlotLegend from "./PlotLegend";
-import type { ColorOption } from "./types";
 
-export type PlotCardProps<T> = {
+/**
+ * Generic over the color-by field rather than the row type: the row never
+ * reaches this component, and the three props below are the only ones that have
+ * to agree with each other.
+ */
+export type PlotCardProps<K extends ColorField> = {
   /** Cohort name, shown in the header. */
   title: string;
   /** Sample count for the cohort, shown beside the title. */
   count: number;
-  /** Fields this cohort can be coloured by. */
-  options: ColorOption<T>[];
-  colorBy: keyof T;
-  onColorByChange: (key: keyof T) => void;
+  /** Fields this cohort can be colored by. */
+  options: readonly ColorOption<K>[];
+  colorBy: K;
+  onColorByChange: (key: K) => void;
   groups: GroupInfo[];
   hidden: ReadonlySet<string>;
   onToggle: (value: string) => void;
@@ -41,7 +46,7 @@ export type PlotCardProps<T> = {
  * The axis selects stay outside this component for the same reason: they drive
  * both plots through ScatterPlotSync, so they must not sit inside either card.
  */
-const PlotCard = <T,>({
+const PlotCard = <K extends ColorField,>({
   title,
   count,
   options,
@@ -54,7 +59,7 @@ const PlotCard = <T,>({
   onHover,
   plotRef,
   children,
-}: PlotCardProps<T>) => (
+}: PlotCardProps<K>) => (
   <Paper
     variant="outlined"
     sx={{
@@ -94,7 +99,7 @@ const PlotCard = <T,>({
         size="small"
         label="Color by"
         value={String(colorBy)}
-        onChange={(e) => onColorByChange(e.target.value as keyof T)}
+        onChange={(e) => onColorByChange(e.target.value as K)}
         sx={{ minWidth: 200, flexShrink: 0, bgcolor: "background.paper" }}
       >
         {options.map((o) => (

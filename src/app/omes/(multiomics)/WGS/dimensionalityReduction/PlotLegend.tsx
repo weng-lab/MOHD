@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Chip, Stack, Typography } from "@mui/material";
-import type { GroupInfo } from "./colors";
+import type { GroupInfo } from "./groups";
 
 export type PlotLegendProps = {
   groups: GroupInfo[];
@@ -24,7 +24,7 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLege
   // rows at most. A maxHeight clipped the last row rather than scrolling visibly,
   // and flexShrink: 0 stops the plot below it from squeezing the rows instead.
   <Stack direction="row" flexWrap="wrap" gap={0.5} flexShrink={0}>
-    {groups.map(({ value, color, count }) => {
+    {groups.map(({ value, label, color, count }) => {
       const off = hidden.has(value);
       const on = value === highlighted;
       return (
@@ -48,7 +48,7 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLege
                 }}
               />
               <Typography variant="caption" sx={{ textDecoration: off ? "line-through" : "none" }}>
-                {value}
+                {label}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {count}

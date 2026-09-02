@@ -10,7 +10,7 @@ import WGSPCAPlots from "./WGSPCAPlots";
  * 10-year age band, top-coded at 80+.
  *
  * Raw age is identifying: at 10-year granularity the oldest participant is alone
- * in a 90-99 band, and would show up as the only point of its colour on the plot.
+ * in a 90-99 band, and would show up as the only point of its color on the plot.
  * Folding 80-89 and above together keeps that top band at n=30, and also satisfies
  * the HIPAA Safe Harbor rule that ages over 89 be aggregated.
  */
@@ -48,6 +48,11 @@ const getPCAData = async (): Promise<PCAData> => {
   const { data, error } = await query({ query: GET_WGS_PCA });
   if (error) throw error;
 
+  // Keyed by pc rather than taken in order, so the array stays indexed by PC
+  // number - a reordered or missing row from the API can't shift the rest.
+  const pveByPc = new Map((data?.wgs_pca_variance ?? []).map((v) => [v.pc, v.pve]));
+  const pve = Array.from({ length: PC_COUNT }, (_, i) => pveByPc.get(i + 1) ?? null);
+
   const rows = data?.wgs_pca ?? [];
   const reference: ReferenceRow[] = [];
   const mohd: MohdRow[] = [];
@@ -84,7 +89,7 @@ const getPCAData = async (): Promise<PCAData> => {
     }
   }
 
-  return { reference, mohd };
+  return { reference, mohd, pve };
 };
 
 const WGSDimensionalityReduction = () => {
@@ -97,8 +102,8 @@ const WGSDimensionalityReduction = () => {
 
 /** The await lives here so only this subtree sits behind the Suspense boundary. */
 const WGSPCASection = async () => {
-  const { reference, mohd } = await getPCAData();
-  return <WGSPCAPlots reference={reference} mohd={mohd} />;
+  const { reference, mohd, pve } = await getPCAData();
+  return <WGSPCAPlots reference={reference} mohd={mohd} pve={pve} />;
 };
 
 export default WGSDimensionalityReduction;

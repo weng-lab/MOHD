@@ -1,5 +1,5 @@
 /**
- * Client-facing shapes for the WGS PCA page.
+ * Client-facing data shapes for the WGS PCA page.
  *
  * These are deliberately NOT the raw GraphQL row type. The server splits the
  * single flat `wgs_pca` type into its two cohorts (the schema packs both into
@@ -37,23 +37,8 @@ export type MohdRow = {
 export type PCAData = {
   reference: ReferenceRow[];
   mohd: MohdRow[];
+  /**
+   * Percent of variance explained, zero-indexed to match `pcs`: pve[0] is PC1's.
+   */
+  pve: (number | null)[];
 };
-
-/** A field a plot can be colored by, and the label shown in its select. */
-export type ColorOption<T> = { key: keyof T; label: string };
-
-export const REFERENCE_COLOR_OPTIONS: ColorOption<ReferenceRow>[] = [
-  { key: "superpop", label: "Super Population" },
-  { key: "gnomad_pop", label: "gnomAD Population" },
-  { key: "sex", label: "Sex" },
-  { key: "project", label: "Project" },
-];
-
-export const MOHD_COLOR_OPTIONS: ColorOption<MohdRow>[] = [
-  { key: "case_status", label: "Case Status" },
-  { key: "sex_at_birth", label: "Sex at Birth" },
-  { key: "site", label: "Site" },
-  { key: "recruited_condition", label: "Recruited Condition" },
-  { key: "reported_race_ethnicity", label: "Reported Race/Ethnicity" },
-  { key: "age_bin", label: "Age" },
-];
