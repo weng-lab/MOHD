@@ -4,7 +4,7 @@ import OmeDualPaneDownloads, {
 } from "@/common/components/Downloads/OmeDualPaneDownloads";
 import type { BaseSampleMetadata } from "@/common/components/Downloads/types";
 
-type ATACRow = BaseSampleMetadata & { protocol: string; opc_id: string };
+type ATACRow = BaseSampleMetadata & { protocol: string };
 
 const config: OmeDownloadsConfig<ATACRow> = {
   omeKey: "atac",

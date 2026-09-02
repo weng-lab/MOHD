@@ -1,5 +1,4 @@
 "use client";
-import { useMemo } from "react";
 import { Histogram } from "@weng-lab/visualization";
 
 type HistogramSeries = { values: number[]; label: string; color: string };
@@ -13,31 +12,38 @@ type Props = {
   quantVarName: string;
 };
 
+/** One histogram series per category, holding that category's numeric values. */
+function buildSeries(
+  rawData: PhenotypicalDataPoint[],
+  catVarName: string,
+  quantVarName: string
+): HistogramSeries[] {
+  const catRows = rawData.filter((p) => p.variable_name === catVarName);
+  const quantRows = rawData.filter((p) => p.variable_name === quantVarName);
+
+  const quantMap = new Map<string, number>();
+  for (const p of quantRows) {
+    if (p.value_numeric != null) quantMap.set(p.participant_profile_dss, p.value_numeric);
+  }
+
+  const groups = new Map<string, number[]>();
+  for (const p of catRows) {
+    const cat = p.value_text ?? "Unknown";
+    const num = quantMap.get(p.participant_profile_dss);
+    if (num == null) continue;
+    if (!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat)!.push(num);
+  }
+
+  return Array.from(groups.entries()).map(([label, values], i) => ({
+    label,
+    values,
+    color: COLORS[i % COLORS.length],
+  }));
+}
+
 export default function CategoricalQuantitativePlot({ rawData, catVarName, quantVarName }: Props) {
-  const series: HistogramSeries[] = useMemo(() => {
-    const catRows = rawData.filter((p) => p.variable_name === catVarName);
-    const quantRows = rawData.filter((p) => p.variable_name === quantVarName);
-
-    const quantMap = new Map<string, number>();
-    for (const p of quantRows) {
-      if (p.value_numeric != null) quantMap.set(p.participant_profile_dss, p.value_numeric);
-    }
-
-    const groups = new Map<string, number[]>();
-    for (const p of catRows) {
-      const cat = p.value_text ?? "Unknown";
-      const num = quantMap.get(p.participant_profile_dss);
-      if (num == null) continue;
-      if (!groups.has(cat)) groups.set(cat, []);
-      groups.get(cat)!.push(num);
-    }
-
-    return Array.from(groups.entries()).map(([label, values], i) => ({
-      label,
-      values,
-      color: COLORS[i % COLORS.length],
-    }));
-  }, [rawData, catVarName, quantVarName]);
+  const series = buildSeries(rawData, catVarName, quantVarName);
 
   if (series.length === 0) return null;
 

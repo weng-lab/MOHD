@@ -1,5 +1,4 @@
 "use client";
-import { useMemo } from "react";
 import { Histogram } from "@weng-lab/visualization";
 import { type PhenotypicalDataPoint } from "@/common/hooks/usePhenotypicalData";
 
@@ -9,12 +8,8 @@ type Props = {
 };
 
 export default function QuantitativeHistogram({ rawData, var1Name }: Props) {
-  const values = useMemo(
-    () =>
-      rawData
-        .filter((p) => p.variable_name === var1Name && p.value_numeric != null)
-        .map((p) => p.value_numeric as number),
-    [rawData, var1Name]
+  const values = rawData.flatMap((p) =>
+    p.variable_name === var1Name && p.value_numeric != null ? [p.value_numeric] : []
   );
 
   if (values.length === 0) return null;

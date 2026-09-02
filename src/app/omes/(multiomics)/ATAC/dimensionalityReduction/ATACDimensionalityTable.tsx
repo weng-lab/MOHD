@@ -1,7 +1,6 @@
 import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
-import { useMemo } from "react";
 import { Typography } from "@mui/material";
 
 const ATACDimensionalityTable = ({
@@ -42,7 +41,7 @@ const ATACDimensionalityTable = ({
             valueOptions: Array.from(new Set(rows.map((row) => row.protocol))),
         }
     ];
-    const initialSort: GridSortModel = useMemo(() => [{ field: "sample_id", sort: "asc" }], []);
+    const initialSort: GridSortModel = [{ field: "sample_id", sort: "asc" }];
     const { syncedTableProps } = useSyncedTable({
         tableProps,
         columns,

@@ -8,7 +8,7 @@ export type AutoCompleteProps = Partial<GenomeSearchProps> & {
   closeDrawer?: () => void;
 };
 
-export const defaultHumanResults: Result[] = [
+const defaultHumanResults: Result[] = [
   {
     title: "chr19:44,905,754-44,909,393",
     domain: {
@@ -57,7 +57,7 @@ export const defaultHumanResults: Result[] = [
   },
 ];
 
-export function makeResultLink(result: Result) {
+function makeResultLink(result: Result) {
   let url = "";
   const base = "https://screen.wenglab.org/GRCh38";
   switch (result.type) {

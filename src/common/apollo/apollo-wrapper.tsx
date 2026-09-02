@@ -14,7 +14,7 @@ import Config from "../config.json";
 
 // See https://www.apollographql.com/blog/using-apollo-client-with-next-js-13-releasing-an-official-library-to-support-the-app-router
 
-export function makeClient() {
+function makeClient() {
   const isServer = typeof window === "undefined";
   const httpLink = new HttpLink({
     uri: isServer ? Config.API.MOHDAPI : "/api/mohd-graphql",

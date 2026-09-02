@@ -1,4 +1,4 @@
-import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import type { GridFilterModel, GridRowSelectionModel } from "@mui/x-data-grid-premium";
 import { TableColDef } from "@weng-lab/ui-components";
 import { useOmeCatalog } from "@/common/hooks/useOmeCatalog";
@@ -82,6 +82,10 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
  * then wires together the focused hooks — dataset filters, file filters, and
  * selection — plus the pure column/summary derivations, into the single object
  * the component consumes.
+ *
+ * The derivations are unmemoized on purpose: React Compiler caches them, and it
+ * also keeps the column arrays stable enough for the grid to preserve column
+ * identity across renders.
  */
 export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   config: OmeDownloadsConfig<T>
@@ -92,28 +96,18 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   const { datasets, loading, error } = useOmeCatalog<T>(omeKey);
 
   // Group files by dataset straight off the nested response — no client merge.
-  const filesByDataset = useMemo(() => {
-    const map = new Map<string, CatalogFile[]>();
-    for (const dataset of datasets) map.set(dataset.sample_id, dataset.files);
-    return map;
-  }, [datasets]);
+  const filesByDataset = new Map<string, CatalogFile[]>();
+  const bundlesByDataset = new Map<string, DatasetBundle>();
+  for (const dataset of datasets) {
+    filesByDataset.set(dataset.sample_id, dataset.files);
+    if (dataset.bundle) bundlesByDataset.set(dataset.sample_id, dataset.bundle);
+  }
 
-  const bundlesByDataset = useMemo(() => {
-    const map = new Map<string, DatasetBundle>();
-    for (const dataset of datasets) {
-      if (dataset.bundle) map.set(dataset.sample_id, dataset.bundle);
-    }
-    return map;
-  }, [datasets]);
-
-  const files: CatalogFile[] = useMemo(() => datasets.flatMap((d) => d.files), [datasets]);
+  const files: CatalogFile[] = datasets.flatMap((d) => d.files);
 
   // Which dataset is shown on the right, and its files.
   const [activeDataset, setActiveDataset] = useState<string | null>(null);
-  const activeFiles = useMemo(
-    () => (activeDataset ? filesByDataset.get(activeDataset) ?? [] : []),
-    [filesByDataset, activeDataset]
-  );
+  const activeFiles = activeDataset ? filesByDataset.get(activeDataset) ?? [] : [];
   const activeBundle = activeDataset ? bundlesByDataset.get(activeDataset) : undefined;
 
   // Per-pane filtering.
@@ -123,20 +117,17 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
 
   // Bridge filters -> selection: which files each dataset can contribute to a
   // bulk job (open access, and passing the active file filter).
-  const selectableByDataset = useMemo(() => {
-    const map = new Map<string, Set<string>>();
-    for (const [id, datasetFiles] of filesByDataset) {
-      map.set(
-        id,
-        new Set(
-          datasetFiles
-            .filter((f) => isFileBulkSelectable(f) && passesFileFilter(f))
-            .map((f) => f.filename)
+  const selectableByDataset = new Map<string, Set<string>>();
+  for (const [id, datasetFiles] of filesByDataset) {
+    selectableByDataset.set(
+      id,
+      new Set(
+        datasetFiles.flatMap((f) =>
+          isFileBulkSelectable(f) && passesFileFilter(f) ? [f.filename] : []
         )
-      );
-    }
-    return map;
-  }, [filesByDataset, passesFileFilter]);
+      )
+    );
+  }
 
   const selectionState = useDownloadSelection({
     selectableByDataset,
@@ -146,51 +137,42 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   });
   const { selection } = selectionState;
 
-  // Column definitions (kept memoized so the grid preserves column identity).
-  const datasetColumns: TableColDef<T>[] = useMemo(() => {
-    const filterCols: TableColDef<T>[] = datasetFilters.map((f) => ({
+  // Column definitions.
+  const datasetColumns: TableColDef<T>[] = [
+    { field: "sample_id", headerName: "Dataset", flex: 1, minWidth: 120 },
+    ...datasetFilters.map((f) => ({
       field: f.field,
       headerName: f.label,
       type: "singleSelect" as const,
       valueOptions: datasetFiltersState.datasetOptionsMap[f.field],
       filterOperators: customSingleSelectOperators,
-    }));
-    return [
-      { field: "sample_id", headerName: "Dataset", flex: 1, minWidth: 120},
-      ...filterCols,
-    ];
-  }, [datasetFilters, datasetFiltersState.datasetOptionsMap]);
+    })),
+  ];
 
-  const fileColumns: TableColDef<CatalogFile>[] = useMemo(() => {
-    const cols: TableColDef<CatalogFile>[] = [
-      {
-        field: "file_type",
-        headerName: "File Type",
-        minWidth: 150,
-        type: "singleSelect" as const,
-        valueOptions: fileFiltersState.fileTypeOptions,
-        filterOperators: customSingleSelectOperators,
-      },
-    ];
-    // Restricted-only omes carry no size in the response, so the column is noise.
-    if (!noOpenAccess) {
-      cols.push({
-        field: "size",
-        headerName: "File Size",
-        valueFormatter: formatBytes,
-        align: "right" as const,
-      });
-    }
-    return cols;
-  }, [fileFiltersState.fileTypeOptions, noOpenAccess]);
+  const fileColumns: TableColDef<CatalogFile>[] = [
+    {
+      field: "file_type",
+      headerName: "File Type",
+      minWidth: 150,
+      type: "singleSelect" as const,
+      valueOptions: fileFiltersState.fileTypeOptions,
+      filterOperators: customSingleSelectOperators,
+    },
+  ];
+  // Restricted-only omes carry no size in the response, so the column is noise.
+  if (!noOpenAccess) {
+    fileColumns.push({
+      field: "size",
+      headerName: "File Size",
+      valueFormatter: formatBytes,
+      align: "right" as const,
+    });
+  }
 
   // Selection summaries for the chip / modal / job submission.
-  const filePaths = useMemo(() => collectFilePaths(selection, filesByDataset), [selection, filesByDataset]);
-  const totalSize = useMemo(() => totalSelectedSize(selection, filesByDataset), [selection, filesByDataset]);
-  const bulkDownloadItems = useMemo(
-    () => buildBulkDownloadItems(selection, filesByDataset),
-    [selection, filesByDataset]
-  );
+  const filePaths = collectFilePaths(selection, filesByDataset);
+  const totalSize = totalSelectedSize(selection, filesByDataset);
+  const bulkDownloadItems = buildBulkDownloadItems(selection, filesByDataset);
 
   return {
     loading,

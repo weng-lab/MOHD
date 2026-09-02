@@ -1,0 +1,10 @@
+{
+  "$schema": "https://react.doctor/schema/config.json",
+  "ignore": {
+    "files": [
+      "src/common/types/generated/**",
+      "src/common/apollo/client.ts",
+      "src/app/omes/OmeDescriptions.tsx"
+    ]
+  }
+}

@@ -22,7 +22,6 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@mui/icons-material": "^7",
-    "@mui/lab": "^7.0.0-beta.0",
     "@mui/material": "^7",
     "@mui/material-nextjs": "^7",
     "@mui/system": "^7",
@@ -33,7 +32,7 @@
     "@weng-lab/genomebrowser-ui": "0.4.0",
     "@weng-lab/ui-components": "^3.2.1",
     "@weng-lab/visualization": "^1.4.3",
-    "next": "^16.2.4",
+    "next": "^16.2.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "rxjs": "^7.8.2"
@@ -50,7 +49,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9",
-    "eslint-config-next": "^16.2.4",
+    "eslint-config-next": "^16.2.6",
     "graphql": "^16",
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.58.0"

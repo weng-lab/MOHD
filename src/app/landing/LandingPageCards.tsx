@@ -45,7 +45,7 @@ const LandingPageCards = () => {
                         <Grow
                             in={visible[index]}
                             timeout={800 + index * 300}
-                            key={`${page}-${index}`}
+                            key={page.title}
                         >
                             <Grid
                                 ref={(el) => {

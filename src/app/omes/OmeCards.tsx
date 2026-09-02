@@ -41,7 +41,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
             in={omesVisible[index]}
             timeout={500 + index * 120}
             style={{ transformOrigin: "left center" }}
-            key={`${ome}-${index}`}
+            key={ome}
           >
             <Box
               sx={{

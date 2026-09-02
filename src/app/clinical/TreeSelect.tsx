@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useMemo, useId } from "react";
+import { useState, useRef, useId } from "react";
 import {
   Box, Divider, FormControl, InputAdornment, InputLabel,
   ListSubheader, MenuItem, OutlinedInput, Popover,
@@ -42,15 +42,11 @@ export default function TreeSelect({
   const anchorRef = useRef<HTMLDivElement>(null);
   const id = useId();
 
-  const categoryTrees = useMemo(
-    () =>
-      (["Categorical", "Quantitative"] as const).flatMap((cat) => {
-        const group = variables.filter((v) => v.variable_category === cat);
-        if (group.length === 0) return [];
-        return [{ category: cat, tree: buildTree(group) }];
-      }),
-    [variables]
-  );
+  const categoryTrees = (["Categorical", "Quantitative"] as const).flatMap((cat) => {
+    const group = variables.filter((v) => v.variable_category === cat);
+    if (group.length === 0) return [];
+    return [{ category: cat, tree: buildTree(group) }];
+  });
   const open = Boolean(anchorEl);
 
   const displayValue =

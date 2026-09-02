@@ -35,6 +35,22 @@ const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
 type CopyState = "idle" | "copied" | "error";
 
+/**
+ * True once the text is on the clipboard. `navigator.clipboard` is undefined
+ * outside a secure context, where `writeText` isn't reachable at all. Kept at
+ * module scope so the component body stays free of the try/catch shape React
+ * Compiler bails on.
+ */
+async function copyToClipboard(text: string): Promise<boolean> {
+  if (!navigator.clipboard) return false;
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function CopyButton({
   text,
   label,
@@ -57,14 +73,7 @@ function CopyButton({
   );
 
   const handleCopy = async () => {
-    try {
-      // Undefined outside a secure context, where writeText isn't reachable.
-      if (!navigator.clipboard) throw new Error("Clipboard unavailable");
-      await navigator.clipboard.writeText(text);
-      setState("copied");
-    } catch {
-      setState("error");
-    }
+    setState((await copyToClipboard(text)) ? "copied" : "error");
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setState("idle"), 2000);
   };
@@ -136,8 +145,8 @@ function CommandBlock({ command }: { command: string }) {
 function CommandSteps({ steps }: { steps: CommandStep[] }) {
   return (
     <Stack spacing={1.5}>
-      {steps.map((step, i) => (
-        <Stack key={i} spacing={0.5}>
+      {steps.map((step) => (
+        <Stack key={step.command} spacing={0.5}>
           {step.caption && (
             <Typography variant="caption" color="text.secondary">
               {step.caption}

@@ -1,74 +1,87 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Point } from "@weng-lab/visualization";
 import { ATACMetadata } from "@/app/omes/(multiomics)/ATAC/dimensionalityReduction/page";
 import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
 import { RNAMetadata } from "@/app/omes/(multiomics)/RNA/dimensionalityReduction/page";
+
+type ColorScheme = "sex" | "status" | "site" | "protocol";
+
 type UMAPLegendProps<T extends ATACMetadata[number] | RNAMetadata[number]> = {
-  colorScheme: "sex" | "status" | "site" | "protocol";
+  colorScheme: ColorScheme;
   scatterData: Point<T>[];
 };
 
-export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[number]>({
+type LegendEntry = {
+  /** The raw metadata value, kept as the list key — `label` is display-only. */
+  id: string;
+  label: string;
+  value: number;
+  color: string | undefined;
+};
 
+function schemeValue(
+  meta: ATACMetadata[number] | RNAMetadata[number],
+  colorScheme: ColorScheme
+): string {
+  switch (colorScheme) {
+    case "sex":
+      return meta.sex;
+    case "status":
+      return meta.status;
+    case "site":
+      return meta.site;
+    case "protocol":
+      return "protocol" in meta ? meta.protocol : meta.kit;
+    default:
+      return "missing";
+  }
+}
+
+function schemeColor(label: string, colorScheme: ColorScheme) {
+  switch (colorScheme) {
+    case "sex":
+      return sex_color_map[label as keyof typeof sex_color_map];
+    case "status":
+      return status_color_map[label as keyof typeof status_color_map];
+    case "site":
+      return site_color_map[label as keyof typeof site_color_map];
+    case "protocol":
+      return protocol_color_map[label as keyof typeof protocol_color_map];
+  }
+}
+
+/** Counts of each value under the active scheme, most common first. */
+function buildLegendEntries<T extends ATACMetadata[number] | RNAMetadata[number]>(
+  scatterData: Point<T>[],
+  colorScheme: ColorScheme
+): LegendEntry[] {
+  if (!scatterData.length) return [];
+
+  const counts = new Map<string, number>();
+  for (const point of scatterData) {
+    const meta = point.metaData;
+    if (!meta) continue;
+    const key = schemeValue(meta, colorScheme);
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+
+  return Array.from(counts.entries())
+    .map(([label, value]) => ({
+      id: label,
+      label: label.replaceAll(" method", ""),
+      value,
+      color: schemeColor(label, colorScheme),
+    }))
+    .sort((a, b) => b.value - a.value);
+}
+
+export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[number]>({
   colorScheme,
   scatterData,
 }: UMAPLegendProps<T>) {
-
-  const legendEntries = useMemo(() => {
-    if (!scatterData.length) return [];
-
-    const counts = new Map<string, number>();
-
-    scatterData.forEach((point) => {
-      const meta = point.metaData;
-      if (!meta) return;
-
-      let key: string;
-
-      switch (colorScheme) {
-        case "sex":
-          key = meta.sex;
-          break;
-        case "status":
-          key = meta.status;
-          break;
-        case "site":
-          key = meta.site;
-          break;
-        case "protocol":
-          key = "protocol" in meta ? meta.protocol : meta.kit;
-          break;
-        default:
-          key = "missing";
-      }
-
-      counts.set(key, (counts.get(key) || 0) + 1);
-    });
-
-    const getColor = (label: string) => {
-      switch (colorScheme) {
-        case "sex":
-          return sex_color_map[label as keyof typeof sex_color_map];
-        case "status":
-          return status_color_map[label as keyof typeof status_color_map];
-        case "site":
-          return site_color_map[label as keyof typeof site_color_map];
-        case "protocol":
-          return protocol_color_map[label as keyof typeof protocol_color_map];
-      }
-    };
-
-    return Array.from(counts.entries())
-      .map(([label, value]) => ({
-        label: label.replaceAll(" method", ""),
-        value,
-        color: getColor(label),
-      }))
-      .sort((a, b) => b.value - a.value);
-
-  }, [scatterData, colorScheme]);
+  const legendEntries = buildLegendEntries(scatterData, colorScheme);
 
   return (
       <Stack
@@ -88,9 +101,9 @@ export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[
         <Typography color="text.secondary" fontWeight="bold">
           Legend:
         </Typography>
-        {legendEntries.map((entry, i) => (
+        {legendEntries.map((entry) => (
           <Box
-            key={i}
+            key={entry.id}
             sx={{
               display: "flex",
               alignItems: "center",

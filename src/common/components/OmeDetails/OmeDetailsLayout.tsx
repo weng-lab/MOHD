@@ -6,6 +6,7 @@ import { DetailsTabs } from "@weng-lab/ui-components";
 import Link from "next/link";
 import { OME_TABS } from "@/common/components/OmeDetails/omeTabs";
 import type { OmesDataType } from "@/common/types/globalTypes";
+import { useOmeHeaderHeight } from "@/common/hooks/useOmeHeaderHeight";
 
 export type OmeDetailsLayoutProps = {
 } & { children: React.ReactNode };
@@ -16,6 +17,9 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
     const ome = pathname.split("/")[2] as OmesDataType;
 
     const tabs = OME_TABS[ome];
+
+    // #ome-header only exists on ome pages, so it is measured here rather than at the app root.
+    useOmeHeaderHeight();
 
     return (
         <OmeHeader>
@@ -31,8 +35,8 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                     gridRow={1}
                     bgcolor={"surface.light"}
                     position={"sticky"}
-                    top={"calc(64px + var(--ome-header-height, 66px))"}
-                    maxHeight={"calc(100vh - 64px - var(--ome-header-height, 66px))"}
+                    top={"calc(var(--header-height, 64px) + var(--ome-header-height, 66px))"}
+                    maxHeight={"calc(100vh - var(--header-height, 64px) - var(--ome-header-height, 66px))"}
                     display={{ xs: "none", md: "block" }}
                 >
                     <DetailsTabs
@@ -43,7 +47,7 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                         selectedBackgroundColor="#e1edec"
                         sx={{
                             position: "sticky",
-                            top: "calc(64px + var(--ome-header-height, 66px))",
+                            top: "calc(var(--header-height, 64px) + var(--ome-header-height, 66px))",
                             width: 100,
                             maxHeight: "100%",
                         }}
@@ -61,7 +65,7 @@ export default function OmeDetailsLayout({ children }: OmeDetailsLayoutProps) {
                             selectedBackgroundColor="#e1edec"
                             sx={{
                                 position: "sticky",
-                                top: "calc(64px + var(--ome-header-height, 66px))",
+                                top: "calc(var(--header-height, 64px) + var(--ome-header-height, 66px))",
                             }}
                             iconHeight={40}
                             iconWidth={40}

@@ -1,6 +1,6 @@
 import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
 import { Point, ScatterPlot, ChartProps } from "@weng-lab/visualization";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
 import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -13,6 +13,28 @@ export type ATACDimensionalityUmapProps<
 > =
     SharedATACDimenionalityProps &
     Partial<ChartProps<ATACMetadata[number], S, Z>>;
+
+const TooltipBody = (point: Point<ATACMetadata[number]>) => {
+    return (
+        <>
+            <Typography>
+                <b>Dataset:</b> {point.metaData?.sample_id}
+            </Typography>
+            <Typography>
+                <b>Status:</b> {point.metaData?.status}
+            </Typography>
+            <Typography>
+                <b>Site:</b> {point.metaData?.site}
+            </Typography>
+            <Typography>
+                <b>Sex:</b> {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ''}
+            </Typography>
+            <Typography>
+                <b>Protocol:</b> {point.metaData?.protocol.replaceAll(" method", "")}
+            </Typography>
+        </>
+    );
+};
 
 const map = {
     position: {
@@ -39,7 +61,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
         setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol");
     };
 
-    const scatterData: Point<ATACMetadata[number]>[] = useMemo(() => {
+    const scatterData: Point<ATACMetadata[number]>[] = (() => {
         if (!data) return [];
 
         const isHighlighted = (x: ATACMetadata[number]) => selected.some((y) => y.sample_id === x.sample_id);
@@ -68,16 +90,16 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
                 metaData: x,
             };
         });
-    }, [data, selected, colorScheme]);
+    })();
 
     const handlePointsSelected = (
         selectedPoints: Point<ATACMetadata[number]>[]
     ) => {
         setSelected([
             ...selected,
-            ...selectedPoints
-                .map((point) => point.metaData)
-                .filter(Boolean) as ATACMetadata[number][],
+            ...selectedPoints.flatMap((point) =>
+                point.metaData ? [point.metaData] : []
+            ),
         ]);
     };
 
@@ -93,28 +115,6 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
         } else {
             setSelected([...selected, selectedPoint.metaData]);
         }
-    };
-
-    const TooltipBody = (point: Point<ATACMetadata[number]>) => {
-        return (
-            <>
-                <Typography>
-                    <b>Dataset:</b> {point.metaData?.sample_id}
-                </Typography>
-                <Typography>
-                    <b>Status:</b> {point.metaData?.status}
-                </Typography>
-                <Typography>
-                    <b>Site:</b> {point.metaData?.site}
-                </Typography>
-                <Typography>
-                    <b>Sex:</b> {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ''}
-                </Typography>
-                <Typography>
-                    <b>Protocol:</b> {point.metaData?.protocol.replaceAll(" method", "")}
-                </Typography>
-            </>
-        );
     };
 
     return (

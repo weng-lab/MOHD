@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import { Button } from "@mui/material";
@@ -47,24 +47,18 @@ export default function GenomeBrowserView({
   const [trackSelectOpen, setTrackSelectOpen] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
 
-  const FOLDERS = useMemo(() => {
-    if (!mohdOme) {
-      return ALL_FOLDERS;
-    }
-
-    return ALL_FOLDERS.map((folder) => {
-      if (folder.id !== MOHD_FOLDER_ID) {
-        return folder;
-      }
-
-      return {
-        ...folder,
-        rows: (folder.rows as MohdRowInfo[]).filter(
-          (row) => row.ome === mohdOme,
-        ),
-      };
-    });
-  }, [mohdOme]);
+  const FOLDERS = !mohdOme
+    ? ALL_FOLDERS
+    : ALL_FOLDERS.map((folder) =>
+        folder.id !== MOHD_FOLDER_ID
+          ? folder
+          : {
+              ...folder,
+              rows: (folder.rows as MohdRowInfo[]).filter(
+                (row) => row.ome === mohdOme,
+              ),
+            },
+      );
 
   const [useBrowserStore] = useState(() =>
     createBrowserStore(DEFAULT_BROWSER_STATE),

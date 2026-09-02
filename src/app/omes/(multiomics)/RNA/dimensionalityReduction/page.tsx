@@ -1,7 +1,6 @@
 "use client";
 import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import { ScatterPlot } from "@mui/icons-material"
-import { useMemo } from "react"
 import { DownloadPlotHandle } from "@weng-lab/visualization"
 import { useRNAData, UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
 import RNADimensionalityScatterPlot from "./RNAUMAP"
@@ -25,27 +24,21 @@ const RNADimensionalityReduction = () => {
     const { ref: umapRef, ...umapDownload } = usePlotDownload();
     const RNAData = useRNAData({ skip: false });
 
-    const rows: RNAMetadata = useMemo(() => {
-        if (!RNAData.data) return [];
-        return RNAData.data;
-    }, [RNAData]);
+    const rows: RNAMetadata = RNAData.data ?? [];
 
     const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
         rows,
         getRowId: (row) => row.sample_id,
     });
 
-    const SharedRNADimenionalityProps: SharedRNADimenionalityProps = useMemo(
-        () => ({
-            rows,
-            RNAData,
-            selected,
-            setSelected,
-            sortedFilteredData,
-            tableProps,
-        }),
-        [RNAData, rows, selected, setSelected, sortedFilteredData, tableProps]
-    );
+    const SharedRNADimenionalityProps: SharedRNADimenionalityProps = {
+        rows,
+        RNAData,
+        selected,
+        setSelected,
+        sortedFilteredData,
+        tableProps,
+    };
 
     return (
         <TwoPaneLayout
