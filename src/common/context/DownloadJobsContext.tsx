@@ -180,6 +180,16 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
   // Rehydrate from localStorage on mount. Reading storage while rendering would
   // disagree with the empty list the server rendered, so the restore has to land
   // after mount.
+  //
+  // That lands the tray one paint late for a returning user, which is the
+  // flicker the rule names. There is no way around it: localStorage doesn't
+  // exist on the server, so no snapshot it could render would match. A
+  // useSyncExternalStore rewrite would still have to return [] from
+  // getServerSnapshot and surface the tray after hydration, so it would silence
+  // the rule without removing the flash. The tray's FAB is position: fixed, so
+  // its arrival costs no layout shift, and it deliberately stays closed on a
+  // rehydrate — see submitCount.
+  // react-doctor-disable-next-line react-doctor/rendering-hydration-no-flicker
   useEffect(() => {
     // Deliberate: a lazy useState initializer would read storage during render
     // and hydrate a tray the server rendered empty.
