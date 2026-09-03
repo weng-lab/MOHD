@@ -62,6 +62,12 @@ const LipidomicsHeatmap = () => {
                     icon: <GridOn />,
                     plotComponent: <LipidomicsQuantificationHeatmap ref={heatmapRef} {...SharedLipidomicsProps} />,
                     ...heatmapDownload,
+                    dataDownloadLinks: [
+                        {
+                            title: "Lipidomics Quantification (TSV)",
+                            link: "https://downloads.mohdconsortium.org/6_Lipidomics/snapshot1_lipidomics_quant.tsv",
+                        },
+                    ],
                 },
             ]}
         />

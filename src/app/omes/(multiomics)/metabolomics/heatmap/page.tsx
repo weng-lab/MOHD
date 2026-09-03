@@ -62,6 +62,12 @@ const MetabolomicsHeatmap = () => {
                     icon: <GridOn />,
                     plotComponent: <MetabolomicsQuantificationHeatmap ref={heatmapRef} {...SharedMetabolomicsProps} />,
                     ...heatmapDownload,
+                    dataDownloadLinks: [
+                        {
+                            title: "Metabolomics Quantification (TSV)",
+                            link: "https://downloads.mohdconsortium.org/5_Metabolomics/snapshot1_metabolomics_quant.tsv",
+                        },
+                    ],
                 },
             ]}
         />

@@ -63,6 +63,12 @@ const MetallomicsHeatmap = () => {
                     icon: <GridOn />,
                     plotComponent: <MetallomicsQuantificationHeatmap ref={heatmapRef} {...SharedMetallomicsProps} />,
                     ...heatmapDownload,
+                    dataDownloadLinks: [
+                        {
+                            title: "Metallomics Quantification (TSV)",
+                            link: "https://downloads.mohdconsortium.org/Metals/snapshot1_metallomics_quant.tsv",
+                        },
+                    ],
                 },
             ]}
         />

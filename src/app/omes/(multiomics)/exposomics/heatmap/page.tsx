@@ -62,6 +62,12 @@ const ExposomicsHeatmap = () => {
                     icon: <GridOn />,
                     plotComponent: <ExposomicsQuantificationHeatmap ref={heatmapRef} {...SharedExposomicsProps} />,
                     ...heatmapDownload,
+                    dataDownloadLinks: [
+                        {
+                            title: "Exposomics Quantification (TSV)",
+                            link: "https://downloads.mohdconsortium.org/7_Exposomics/snapshot1_exposomics_quant.tsv",
+                        },
+                    ],
                 },
             ]}
         />
