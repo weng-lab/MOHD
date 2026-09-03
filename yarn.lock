@@ -3719,9 +3719,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/visualization@npm:2.4.0-beta.6":
-  version: 2.4.0-beta.6
-  resolution: "@weng-lab/visualization@npm:2.4.0-beta.6"
+"@weng-lab/visualization@npm:2.4.0-beta.7":
+  version: 2.4.0-beta.7
+  resolution: "@weng-lab/visualization@npm:2.4.0-beta.7"
   dependencies:
     "@types/d3-hierarchy": "npm:^3.1.7"
     "@types/d3-shape": "npm:^3.1.8"
@@ -3744,7 +3744,7 @@ __metadata:
     "@visx/visx": ^4.0.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/317163fc86b61abd81c363a4e14bc5a837f78513e20d01f09f9aacf4d96c47a41124192a6031f8e61fbfd8c3892603b5fbdf72c11578ca8cf3a122164e5a1927
+  checksum: 10c0/ce0e1505b2513ffb4ed7f0a08b6271d9993478fc62c1d30a2b974faa28291aa801bd3252b7451dbbcedb39689014c1f6336fc5714f0863baf994c419ad729cb3
   languageName: node
   linkType: hard
 
@@ -7663,7 +7663,7 @@ __metadata:
     "@weng-lab/genomebrowser": "npm:1.8.5"
     "@weng-lab/genomebrowser-ui": "npm:0.4.0"
     "@weng-lab/ui-components": "npm:^3.2.1"
-    "@weng-lab/visualization": "npm:2.4.0-beta.6"
+    "@weng-lab/visualization": "npm:2.4.0-beta.7"
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"
     eslint: "npm:^9"
