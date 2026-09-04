@@ -1,0 +1,59 @@
+# ESLint — runs `yarn lint` on every PR so lint errors are caught before merge.
+
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches: ["staging"]
+
+# The default GITHUB_TOKEN scopes are narrowed to the minimum: this job only
+# reads the repo, it never comments or writes statuses of its own.
+permissions:
+  contents: read
+
+# One in-flight run per PR (or per branch on push). A new commit cancels the
+# previous run instead of queueing behind it.
+concurrency:
+  group: lint-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      # package.json pins `packageManager: yarn@4.12.0`; corepack reads that
+      # field and downloads the matching Yarn. This repo does not commit a Yarn
+      # release under .yarn/releases, so corepack is the only thing standing
+      # between the runner and its bundled Yarn 1, which does not understand
+      # this project's config.
+      - run: corepack enable
+
+      # Yarn 4 defaults to `enableGlobalCache: true` and keeps package archives
+      # in ~/.yarn/berry/cache, not in the project — that default holds under CI
+      # too, so this is the path worth caching. Keying on yarn.lock reuses the
+      # cache verbatim until a dependency actually changes; restore-keys lets a
+      # near-miss still warm most of the tree.
+      - uses: actions/cache@v5
+        with:
+          path: ~/.yarn/berry/cache
+          key: yarn-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: yarn-${{ runner.os }}-
+
+      # --immutable installs exactly what yarn.lock resolved and fails if
+      # anything would change it, so CI can never silently drift from local and a
+      # PR that edits package.json without regenerating the lock gets caught here.
+      # (Yarn 4 would apply this by default under CI=true; setting it explicitly
+      # keeps the intent readable and makes local reproduction identical.)
+      - run: yarn install --immutable
+
+      # --max-warnings 0 makes warn-level rules (no-unused-vars) blocking too.
+      # The tree is clean at zero warnings today; drop the flag if that ever
+      # becomes too strict.
+      - run: yarn lint --max-warnings 0

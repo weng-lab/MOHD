@@ -6,6 +6,9 @@ export default function DomainDisplay({
 }: {
   useBrowserStore: BrowserStoreInstance;
 }) {
+  // The store hook is passed in as a prop, so the compiler can't prove it's the same
+  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const domain = useBrowserStore((state) => state.domain);
 
   return (

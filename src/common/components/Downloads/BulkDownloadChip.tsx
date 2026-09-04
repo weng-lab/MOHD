@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Button,
   IconButton,
@@ -12,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import BulkDownloadModal from "./BulkDownloadModal";
-import { Close, Download, Start, Tune } from "@mui/icons-material";
+import { Close, Download, Tune } from "@mui/icons-material";
 import { useState } from "react";
 import { formatBytes } from "@/common/downloads";
 import type { BulkDownloadDatasetItem } from "@/common/hooks/useOmeDownloadsState";

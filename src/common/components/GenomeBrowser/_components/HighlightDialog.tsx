@@ -399,9 +399,15 @@ export default function HighlightDialog({
   onClose: () => void;
   useBrowserStore: BrowserStoreInstance;
 }) {
+  // The store hook is passed in as a prop, so the compiler can't prove it's the same
+  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const domain = useBrowserStore((state) => state.domain);
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const highlights = useBrowserStore((state) => state.highlights);
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const addHighlight = useBrowserStore((state) => state.addHighlight);
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const removeHighlight = useBrowserStore((state) => state.removeHighlight);
   return (
     <>

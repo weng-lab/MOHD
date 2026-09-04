@@ -10,7 +10,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "doctor": "npx react-doctor@latest",
     "gen-types": "dotenv -e .env.local -- graphql-codegen",
     "gen-types -w": "dotenv -e .env.local -- graphql-codegen -w"
   },

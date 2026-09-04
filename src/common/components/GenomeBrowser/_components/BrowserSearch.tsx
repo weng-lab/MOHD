@@ -22,6 +22,9 @@ export default function BrowserSearch({
   useBrowserStore: BrowserStoreInstance;
 }) {
   const theme = useTheme();
+  // The store hook is passed in as a prop, so the compiler can't prove it's the same
+  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const setDomain = useBrowserStore(state => state.setDomain)
 
   const handleSearchSubmit = (result: Result) => {

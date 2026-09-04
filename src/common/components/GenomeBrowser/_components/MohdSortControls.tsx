@@ -116,7 +116,11 @@ export default function MohdSortControls({
   folders: Array<{ id: string; rows?: MohdRowInfo[] }>;
   useTrackStore: TrackStoreInstance;
 }) {
+  // The store hook is passed in as a prop, so the compiler can't prove it's the same
+  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const tracks = useTrackStore((s) => s.tracks);
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const reorderTracks = useTrackStore((s) => s.reorderTracks);
 
   const mohdRowById = useMemo(() => {
