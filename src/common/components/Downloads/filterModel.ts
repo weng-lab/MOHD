@@ -1,8 +1,4 @@
-import {
-  getGridSingleSelectOperators,
-  type GridFilterItem,
-  type GridFilterModel,
-} from "@mui/x-data-grid-premium";
+import { getGridSingleSelectOperators, type GridFilterItem, type GridFilterModel } from "@mui/x-data-grid-premium";
 
 /**
  * Pure helpers for the `GridFilterModel`s that back both download panes. No
@@ -14,22 +10,19 @@ import {
 export const customSingleSelectOperators = getGridSingleSelectOperators().map((op) =>
   op.value === "isAnyOf"
     ? {
-      ...op,
-      getApplyFilterFn: (filterItem: GridFilterItem) => {
-        if (!Array.isArray(filterItem.value)) return null;
-        if (filterItem.value.length === 0) return () => false;
-        const filterValues = filterItem.value as string[];
-        return (value: string) => filterValues.includes(value);
-      },
-    }
+        ...op,
+        getApplyFilterFn: (filterItem: GridFilterItem) => {
+          if (!Array.isArray(filterItem.value)) return null;
+          if (filterItem.value.length === 0) return () => false;
+          const filterValues = filterItem.value as string[];
+          return (value: string) => filterValues.includes(value);
+        },
+      }
     : op
 );
 
 /** Apply a filter model to a plain row, mirroring the grid's own evaluation. */
-export function passesFilter<T extends Record<string, unknown>>(
-  row: T,
-  filterModel: GridFilterModel
-): boolean {
+export function passesFilter<T extends Record<string, unknown>>(row: T, filterModel: GridFilterModel): boolean {
   const { items, logicOperator = "and" } = filterModel;
   if (items.length === 0) return true;
 
@@ -47,11 +40,23 @@ export function passesFilter<T extends Record<string, unknown>>(
       case "isAnyOf":
         return Array.isArray(item.value) && item.value.includes(value);
       case "contains":
-        return typeof value === "string" && typeof item.value === "string" && value.toLowerCase().includes(item.value.toLowerCase());
+        return (
+          typeof value === "string" &&
+          typeof item.value === "string" &&
+          value.toLowerCase().includes(item.value.toLowerCase())
+        );
       case "startsWith":
-        return typeof value === "string" && typeof item.value === "string" && value.toLowerCase().startsWith(item.value.toLowerCase());
+        return (
+          typeof value === "string" &&
+          typeof item.value === "string" &&
+          value.toLowerCase().startsWith(item.value.toLowerCase())
+        );
       case "endsWith":
-        return typeof value === "string" && typeof item.value === "string" && value.toLowerCase().endsWith(item.value.toLowerCase());
+        return (
+          typeof value === "string" &&
+          typeof item.value === "string" &&
+          value.toLowerCase().endsWith(item.value.toLowerCase())
+        );
       case "isEmpty":
         return !value;
       case "isNotEmpty":
@@ -87,11 +92,7 @@ export function hasActiveFilter(filterModel: GridFilterModel): boolean {
  * Decode a field's active constraint into the list of currently-selected
  * values, defaulting to all options when the field is unconstrained.
  */
-export function selectedValuesForField(
-  field: string,
-  filterModel: GridFilterModel,
-  options: string[]
-): string[] {
+export function selectedValuesForField(field: string, filterModel: GridFilterModel, options: string[]): string[] {
   const item = filterModel.items.find((i) => i.field === field);
   if (!item) return options;
   if (item.operator === "isAnyOf" && Array.isArray(item.value)) return item.value;

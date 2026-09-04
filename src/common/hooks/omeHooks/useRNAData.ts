@@ -18,7 +18,7 @@ query fetchRNAMetadata {
  `);
 
 export type UseRNADataParams = {
-  skip?: boolean
+  skip?: boolean;
 };
 
 export type UseRNADataReturn = {

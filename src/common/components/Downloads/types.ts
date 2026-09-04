@@ -1,7 +1,7 @@
 /**
  * Base constraint: every ome's dataset metadata has at least these fields.
  * The catalog flattens the ome's metadata columns onto each dataset row, so
- * any extra ome-specific fields (opc_id, protocol, ...) also live here.
+ * any extra ome-specific fields (protocol, ...) also live here.
  */
 export type BaseSampleMetadata = {
   sample_id: string;

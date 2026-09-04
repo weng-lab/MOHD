@@ -76,7 +76,38 @@ function useExpiryClock(jobs: DownloadJob[]): number {
   return now;
 }
 
-function JobRow({
+function clampProgress(progress?: number): number {
+  return Math.max(0, Math.min(100, progress ?? 0));
+}
+
+/** A job the service is still working on, so the row shows live progress. */
+function isJobActive(job: DownloadJob): boolean {
+  return job.status === "pending" || job.status === "processing";
+}
+
+/**
+ * The status text under a row. Expiry wins over everything — the artifact is
+ * gone whatever the job did — then a live job reports its own phase, and
+ * anything settled reports its final state.
+ */
+function statusLabel(job: DownloadJob, isExpired: boolean): string {
+  if (isExpired) return "Expired";
+  if (!isJobActive(job)) return STATUS_LABEL[job.status];
+  if (job.cancelling) return "Cancelling\u2026";
+  if (job.status === "processing") {
+    return `Processing... ${clampProgress(job.progress)}%`;
+  }
+  return STATUS_LABEL[job.status];
+}
+
+/** Failure is worth colouring even once expired; anything unsettled stays muted. */
+function statusColor(job: DownloadJob, isExpired: boolean): string {
+  if (job.status === "failed") return "error";
+  return isExpired || isJobActive(job) ? "text.secondary" : "success.main";
+}
+
+/** The per-row button cluster: fetch the artifact, retry, or drop the job. */
+function JobRowActions({
   job,
   isExpired,
   onShowCommands,
@@ -86,17 +117,79 @@ function JobRow({
   onShowCommands: (id: string) => void;
 }) {
   const { removeJob, retryJob } = useDownloadJobs();
-  const isActive = job.status === "pending" || job.status === "processing";
-  const isDone = job.status === "done";
-  const isFailed = job.status === "failed";
-  const isCancelling = Boolean(job.cancelling);
-  const progress = Math.max(0, Math.min(100, job.progress ?? 0));
-  const activeLabel = isCancelling
-    ? "Cancelling…"
-    : job.status === "processing"
-      ? `Processing... ${progress}%`
-      : STATUS_LABEL[job.status];
+  // Both actions lead to the archive host, which 404s once the service
+  // has swept the artifact — so expiry retires them together.
+  const canDownload = job.status === "done" && Boolean(job.downloadUrl) && !isExpired;
 
+  return (
+    <Stack direction="row" alignItems="center" spacing={0.5}>
+      {canDownload && (
+        <>
+          <Tooltip title={job.format === "script" ? "Download script" : "Download archive"} arrow placement="bottom">
+            <IconButton size="small" component="a" href={job.downloadUrl} download>
+              <DownloadIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Get command" arrow placement="bottom">
+            <IconButton aria-label="Get command" size="small" onClick={() => onShowCommands(job.id)}>
+              <TerminalIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </>
+      )}
+      {job.status === "failed" && (
+        <Button size="small" onClick={() => retryJob(job.id)} sx={{ minWidth: 0, px: 1 }}>
+          Retry
+        </Button>
+      )}
+      <Tooltip title={isJobActive(job) ? "Cancel download" : "Remove"} arrow placement="bottom">
+        {/* span keeps the tooltip working while the button is disabled */}
+        <span>
+          <IconButton size="small" disabled={Boolean(job.cancelling)} onClick={() => void removeJob(job.id)}>
+            <DeleteForeverIcon fontSize="small" />
+          </IconButton>
+        </span>
+      </Tooltip>
+    </Stack>
+  );
+}
+
+/** The file count / size / status line under a row's title. */
+function JobRowMeta({ job, isExpired }: { job: DownloadJob; isExpired: boolean }) {
+  return (
+    <Stack direction="row" alignItems="center" spacing={1}>
+      <Typography variant="caption" color="text.secondary">
+        {job.files.length} file{job.files.length !== 1 ? "s" : ""}
+      </Typography>
+      {job.sizeBytes ? (
+        <>
+          <Typography variant="caption" color="text.disabled">
+            ·
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {formatBytes(job.sizeBytes)}
+          </Typography>
+        </>
+      ) : null}
+      <Typography variant="caption" color="text.disabled">
+        ·
+      </Typography>
+      <Typography variant="caption" color={statusColor(job, isExpired)}>
+        {statusLabel(job, isExpired)}
+      </Typography>
+    </Stack>
+  );
+}
+
+function JobRow({
+  job,
+  isExpired,
+  onShowCommands,
+}: {
+  job: DownloadJob;
+  isExpired: boolean;
+  onShowCommands: (id: string) => void;
+}) {
   return (
     <Stack spacing={0.75} sx={{ py: 1.5, px: 2 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -118,86 +211,10 @@ function JobRow({
             {job.ome || "Download"}
           </Typography>
         </Stack>
-        <Stack direction="row" alignItems="center" spacing={0.5}>
-          {/* Both actions lead to the archive host, which 404s once the service
-              has swept the artifact — so expiry retires them together. */}
-          {isDone && job.downloadUrl && !isExpired && (
-            <>
-              <Tooltip
-                title={job.format === "script" ? "Download script" : "Download archive"}
-                arrow
-                placement="bottom"
-              >
-                <IconButton
-                  size="small"
-                  component="a"
-                  href={job.downloadUrl}
-                  download
-                >
-                  <DownloadIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Get command" arrow placement="bottom">
-                <IconButton
-                  aria-label="Get command"
-                  size="small"
-                  onClick={() => onShowCommands(job.id)}
-                >
-                  <TerminalIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </>
-          )}
-          {isFailed && (
-            <Button size="small" onClick={() => retryJob(job.id)} sx={{ minWidth: 0, px: 1 }}>
-              Retry
-            </Button>
-          )}
-          <Tooltip
-            title={isActive ? "Cancel download" : "Remove"}
-            arrow
-            placement="bottom"
-          >
-            {/* span keeps the tooltip working while the button is disabled */}
-            <span>
-              <IconButton
-                size="small"
-                disabled={isCancelling}
-                onClick={() => void removeJob(job.id)}
-              >
-                <DeleteForeverIcon fontSize="small" />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </Stack>
+        <JobRowActions job={job} isExpired={isExpired} onShowCommands={onShowCommands} />
       </Stack>
 
-      <Stack direction="row" alignItems="center" spacing={1}>
-        <Typography variant="caption" color="text.secondary">
-          {job.files.length} file{job.files.length !== 1 ? "s" : ""}
-        </Typography>
-        {job.sizeBytes ? (
-          <>
-            <Typography variant="caption" color="text.disabled">·</Typography>
-            <Typography variant="caption" color="text.secondary">
-              {formatBytes(job.sizeBytes)}
-            </Typography>
-          </>
-        ) : null}
-        <Typography variant="caption" color="text.disabled">·</Typography>
-        <Typography
-          variant="caption"
-          color={
-            isFailed
-              ? "error"
-              : isExpired || isActive
-                ? "text.secondary"
-                : "success.main"
-          }
-        >
-          {isExpired ? "Expired" : isActive ? activeLabel : STATUS_LABEL[job.status]}
-        </Typography>
-      </Stack>
+      <JobRowMeta job={job} isExpired={isExpired} />
 
       {job.cancelError && (
         <Typography variant="caption" color="error">
@@ -205,10 +222,10 @@ function JobRow({
         </Typography>
       )}
 
-      {isActive && (
+      {isJobActive(job) && (
         <LinearProgress
-          variant={isCancelling ? "indeterminate" : "determinate"}
-          value={progress}
+          variant={job.cancelling ? "indeterminate" : "determinate"}
+          value={clampProgress(job.progress)}
           sx={{ borderRadius: 1, height: 3 }}
         />
       )}
@@ -237,9 +254,7 @@ export default function DownloadJobsMenu() {
   // without the count-in-a-circle badge that was awkward to fit around the
   // icon. Opening the tray means the user has seen the change and clears it
   // (handled at the open handlers below).
-  const finishedCount = jobs.filter(
-    (j) => j.status === "done" || j.status === "failed"
-  ).length;
+  const finishedCount = jobs.filter((j) => j.status === "done" || j.status === "failed").length;
   const [prevFinishedCount, setPrevFinishedCount] = useState(finishedCount);
   const [hasUnseenCompletion, setHasUnseenCompletion] = useState(false);
 
@@ -275,18 +290,14 @@ export default function DownloadJobsMenu() {
     if (AUTO_OPEN_ON_SUBMIT) setAnchorEl(buttonRef.current);
   }, [submitCount]);
 
-  const activeCount = jobs.filter(
-    (j) => j.status === "pending" || j.status === "processing"
-  ).length;
+  const activeCount = jobs.filter((j) => j.status === "pending" || j.status === "processing").length;
 
   const hasExpired = (job: DownloadJob) => {
     const expiry = Date.parse(job.expiresAt);
     return !Number.isNaN(expiry) && expiry <= now;
   };
 
-  const commandJob = commandJobId
-    ? jobs.find((j) => j.id === commandJobId) ?? null
-    : null;
+  const commandJob = commandJobId ? (jobs.find((j) => j.id === commandJobId) ?? null) : null;
 
   // Nothing to surface until a download exists.
   if (jobs.length === 0) return null;
@@ -321,12 +332,7 @@ export default function DownloadJobsMenu() {
               }
             }}
           >
-            <Badge
-              variant="dot"
-              color="secondary"
-              overlap="circular"
-              invisible={!hasUnseenCompletion}
-            >
+            <Badge variant="dot" color="secondary" overlap="circular" invisible={!hasUnseenCompletion}>
               <FolderZip />
             </Badge>
             {activeCount > 0 && (

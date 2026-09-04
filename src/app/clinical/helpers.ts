@@ -26,13 +26,21 @@ export function formatSegment(seg: string): string {
 export function formatVariableName(name: string): string {
   return name
     .split(".")
-    .map((seg) =>
-      seg.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
-    )
+    .map((seg) => seg.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()))
     .join(" › ");
 }
 
 export function ancestorsOf(value: string): string[] {
   const segs = value.split(".");
   return segs.slice(0, -1).map((_, i) => segs.slice(0, i + 1).join("."));
+}
+
+/**
+ * Heading over the plot: both variables when a second is picked, just the first
+ * when it isn't, and a prompt until anything is selected.
+ */
+export function plotHeading(var1Name: string, var2Name: string): string {
+  if (!var1Name) return "Select a variable";
+  if (var2Name === "none") return `[${formatVariableName(var1Name)}]`;
+  return `[${formatVariableName(var1Name)} vs ${formatVariableName(var2Name)}]`;
 }

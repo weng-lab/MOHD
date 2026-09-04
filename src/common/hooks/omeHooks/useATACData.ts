@@ -13,13 +13,12 @@ query fetchATACMetadata {
     protocol
     umap_x
     umap_y
-    opc_id
   }
 }
  `);
 
 export type UseATACDataParams = {
-  skip?: boolean
+  skip?: boolean;
 };
 
 export type UseATACDataReturn = {

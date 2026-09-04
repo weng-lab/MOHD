@@ -54,10 +54,7 @@ const MS_PER_HOUR = 60 * MS_PER_MINUTE;
  * `now` is injectable so the result is testable. Returns null when the
  * timestamp cannot be parsed, leaving the caller to decide on a fallback.
  */
-export const formatExpiry = (
-  expiresAt: string,
-  now: number = Date.now(),
-): string | null => {
+export const formatExpiry = (expiresAt: string, now: number = Date.now()): string | null => {
   const expiry = Date.parse(expiresAt);
   if (Number.isNaN(expiry)) return null;
 

@@ -1,9 +1,5 @@
-
 const ExposomicsDimensionalityReduction = () => {
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};
 
 export default ExposomicsDimensionalityReduction;

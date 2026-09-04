@@ -13,11 +13,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Add, Delete, ExpandMore } from "@mui/icons-material";
-import {
-  type BrowserStoreInstance,
-  type Chromosome,
-  type Highlight as GBHighlight,
-} from "@weng-lab/genomebrowser";
+import { type BrowserStoreInstance, type Chromosome, type Highlight as GBHighlight } from "@weng-lab/genomebrowser";
 import { type Domain } from "@weng-lab/genomebrowser";
 import { useState } from "react";
 
@@ -66,10 +62,7 @@ type HighlightsListProps = {
   removeHighlight: (id: string) => void;
 };
 
-function HighlightCreationForm({
-  currentDomain,
-  addHighlight,
-}: HighlightCreationFormProps) {
+function HighlightCreationForm({ currentDomain, addHighlight }: HighlightCreationFormProps) {
   const [newHighlight, setNewHighlight] = useState<HighlightFormState>({
     id: "",
     chromosome: "",
@@ -111,16 +104,10 @@ function HighlightCreationForm({
     return "";
   };
 
-  const handleInputChange = (
-    field: keyof HighlightFormState,
-    value: string,
-  ) => {
+  const handleInputChange = (field: keyof HighlightFormState, value: string) => {
     setNewHighlight((previous) => ({ ...previous, [field]: value }));
 
-    if (
-      (field === "chromosome" || field === "start" || field === "end") &&
-      errors[field]
-    ) {
+    if ((field === "chromosome" || field === "start" || field === "end") && errors[field]) {
       setErrors((previous) => ({ ...previous, [field]: "" }));
     }
   };
@@ -198,9 +185,7 @@ function HighlightCreationForm({
               fullWidth
               label="Chromosome"
               value={newHighlight.chromosome}
-              onChange={(event) =>
-                handleInputChange("chromosome", event.target.value)
-              }
+              onChange={(event) => handleInputChange("chromosome", event.target.value)}
               size="small"
               placeholder="e.g., chr1"
               error={!!errors.chromosome}
@@ -212,9 +197,7 @@ function HighlightCreationForm({
               fullWidth
               label="Start Position"
               value={newHighlight.start}
-              onChange={(event) =>
-                handleInputChange("start", event.target.value)
-              }
+              onChange={(event) => handleInputChange("start", event.target.value)}
               size="small"
               placeholder="e.g., 1000000"
               type="number"
@@ -240,9 +223,7 @@ function HighlightCreationForm({
               fullWidth
               label="Color"
               value={newHighlight.color}
-              onChange={(event) =>
-                handleInputChange("color", event.target.value)
-              }
+              onChange={(event) => handleInputChange("color", event.target.value)}
               size="small"
               type="color"
               sx={{
@@ -264,11 +245,7 @@ function HighlightCreationForm({
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Button
-              variant="contained"
-              fullWidth
-              onClick={handleSetCurrentDomain}
-            >
+            <Button variant="contained" fullWidth onClick={handleSetCurrentDomain}>
               Use Current Region
             </Button>
           </Grid>
@@ -278,12 +255,7 @@ function HighlightCreationForm({
               variant="contained"
               startIcon={<Add />}
               onClick={handleAddHighlight}
-              disabled={
-                !newHighlight.id ||
-                !newHighlight.chromosome ||
-                !newHighlight.start ||
-                !newHighlight.end
-              }
+              disabled={!newHighlight.id || !newHighlight.chromosome || !newHighlight.start || !newHighlight.end}
             >
               Add Highlight
             </Button>
@@ -318,12 +290,7 @@ function HighlightItem({
       p={2}
       mb={1}
     >
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
         <Typography variant="body1" color={highlight.color}>
           {decodeURIComponent(highlight.id)}
         </Typography>
@@ -341,15 +308,9 @@ function HighlightItem({
           <Delete fontSize="small" />
         </IconButton>
       </Box>
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
         <Typography variant="body2" color="gray">
-          {highlight.domain.chromosome}:
-          {highlight.domain.start.toLocaleString()}-
+          {highlight.domain.chromosome}:{highlight.domain.start.toLocaleString()}-
           {highlight.domain.end.toLocaleString()}
         </Typography>
       </Box>
@@ -379,12 +340,7 @@ function HighlightsList({ highlights, removeHighlight }: HighlightsListProps) {
   return (
     <>
       {highlights.map((highlight, index) => (
-        <HighlightItem
-          key={highlight.id}
-          highlight={highlight}
-          index={index}
-          removeHighlight={removeHighlight}
-        />
+        <HighlightItem key={highlight.id} highlight={highlight} index={index} removeHighlight={removeHighlight} />
       ))}
     </>
   );
@@ -399,31 +355,26 @@ export default function HighlightDialog({
   onClose: () => void;
   useBrowserStore: BrowserStoreInstance;
 }) {
+  // The store hook is passed in as a prop, so the compiler can't prove it's the same
+  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const domain = useBrowserStore((state) => state.domain);
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const highlights = useBrowserStore((state) => state.highlights);
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const addHighlight = useBrowserStore((state) => state.addHighlight);
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const removeHighlight = useBrowserStore((state) => state.removeHighlight);
   return (
     <>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>Current Highlights</DialogTitle>
         <DialogContent>
-          <HighlightCreationForm
-            currentDomain={domain}
-            addHighlight={addHighlight}
-          />
+          <HighlightCreationForm currentDomain={domain} addHighlight={addHighlight} />
           <Typography variant="h6" sx={{ mb: 1 }}>
             Active Highlights
           </Typography>
-          <HighlightsList
-            highlights={highlights}
-            removeHighlight={removeHighlight}
-          />
+          <HighlightsList highlights={highlights} removeHighlight={removeHighlight} />
         </DialogContent>
       </Dialog>
     </>

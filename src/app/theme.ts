@@ -1,5 +1,5 @@
 "use client";
-import { createTheme } from "@mui/material/styles"; 
+import { createTheme } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -20,11 +20,11 @@ export const theme = createTheme({
     },
     secondary: {
       main: "#ca5702",
-      light: "#e17b2e"
+      light: "#e17b2e",
     },
     surface: {
       main: "#e8fffd",
-      light: "#f6faf9"
+      light: "#f6faf9",
     },
   },
   typography: {
