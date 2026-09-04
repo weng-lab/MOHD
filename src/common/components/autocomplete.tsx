@@ -94,6 +94,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
   const [pendingScreenResult, setPendingScreenResult] = useState<Result | null>(null);
 
   const handleSearchSubmit = (r: Result) => {
+    console.log(r)
     const link = makeResultLink(r);
     //needed to trigger closing the mobile menu drawer
     if (closeDrawer) {
@@ -177,7 +178,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
         graphqlUrl="/api/screen-graphql"
         showiCREFlag={false}
         queries={["Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
-        staticLists={{ Omes }}
+        staticLists={{ Ome: Omes }}
         onSearchSubmit={handleSearchSubmit}
         //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton
         onKeyDown={(e) => {

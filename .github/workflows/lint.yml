@@ -27,12 +27,21 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+          # setup-node v5 turns package-manager caching on by default. It probes
+          # `yarn --version` to decide which package manager it is dealing with,
+          # and that probe runs inside this step — before `corepack enable`
+          # below, using the image's global Yarn. We already cache the Yarn
+          # store explicitly a few steps down, so turn the built-in off rather
+          # than have two steps caching the same directory under different keys.
+          package-manager-cache: false
 
-      # package.json pins `packageManager: yarn@4.12.0`; corepack reads that
-      # field and downloads the matching Yarn. This repo does not commit a Yarn
-      # release under .yarn/releases, so corepack is the only thing standing
-      # between the runner and its bundled Yarn 1, which does not understand
-      # this project's config.
+      # The runner image ships Yarn 1.22.22 on PATH. Two things stop it from
+      # being what actually runs: .yarnrc.yml sets `yarnPath` to the Yarn 4.12.0
+      # release committed under .yarn/releases, which Yarn 1 detects and hands
+      # off to, and corepack reads package.json's `packageManager` field and
+      # routes `yarn` to the same version. The committed release is the load
+      # bearing half — without it Yarn 1 refuses to run at all, since it sees
+      # `packageManager: yarn@4.12.0` and has nothing to delegate to.
       - run: corepack enable
 
       # Yarn 4 defaults to `enableGlobalCache: true` and keeps package archives
