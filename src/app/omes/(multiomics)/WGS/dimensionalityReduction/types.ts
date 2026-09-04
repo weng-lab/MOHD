@@ -29,6 +29,7 @@ export type MohdRow = {
   sex_at_birth: string | null;
   site: string | null;
   recruited_condition: string | null;
+  /** May arrive as PRIVACY_BIN rather than a category - see binReportedRace(). */
   reported_race_ethnicity: string | null;
   /** 10-year band, top-coded at "80+". Raw age stays on the server. */
   age_bin: string | null;
@@ -41,4 +42,10 @@ export type PCAData = {
    * Percent of variance explained, zero-indexed to match `pcs`: pve[0] is PC1's.
    */
   pve: (number | null)[];
+  /**
+   * The reported race/ethnicity categories folded into the privacy bin, for the
+   * legend's hover. Labels only - a count beside any one of them would undo the
+   * binning. Empty when nothing tripped the threshold.
+   */
+  binnedRaceEthnicity: string[];
 };

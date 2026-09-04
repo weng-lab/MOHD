@@ -2,6 +2,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { Suspense } from "react";
 import { query } from "@/common/apollo/client";
 import PCASkeleton from "./PCASkeleton";
+import { binReportedRace } from "./privacy";
 import { GET_WGS_PCA } from "./queries";
 import { PC_COUNT, type MohdRow, type PCAData, type ReferenceRow } from "./types";
 import WGSPCAPlots from "./WGSPCAPlots";
@@ -89,7 +90,13 @@ const getPCAData = async (): Promise<PCAData> => {
     }
   }
 
-  return { reference, mohd, pve };
+  // Folded here rather than in the browser, and for the same reason as age above:
+  // a category of one has to stay out of the cache and the RSC payload, not just
+  // off the legend. It also keeps the point tooltip honest for free - the tooltip
+  // reads this field, so a binned row already shows the bin.
+  const { rows: binnedMohd, members } = binReportedRace(mohd);
+
+  return { reference, mohd: binnedMohd, pve, binnedRaceEthnicity: members };
 };
 
 const WGSDimensionalityReduction = () => {
@@ -102,8 +109,15 @@ const WGSDimensionalityReduction = () => {
 
 /** The await lives here so only this subtree sits behind the Suspense boundary. */
 const WGSPCASection = async () => {
-  const { reference, mohd, pve } = await getPCAData();
-  return <WGSPCAPlots reference={reference} mohd={mohd} pve={pve} />;
+  const { reference, mohd, pve, binnedRaceEthnicity } = await getPCAData();
+  return (
+    <WGSPCAPlots
+      reference={reference}
+      mohd={mohd}
+      pve={pve}
+      binnedRaceEthnicity={binnedRaceEthnicity}
+    />
+  );
 };
 
 export default WGSDimensionalityReduction;

@@ -105,11 +105,13 @@ export type WGSPCAPlotsProps = {
   mohd: MohdRow[];
   /** Percent of variance explained, zero-indexed to match a row's `pcs`. */
   pve: (number | null)[];
+  /** Reported race/ethnicity categories the server folded into the privacy bin. */
+  binnedRaceEthnicity: string[];
 };
 
 const MINIMAP_POSITION = { position: { right: 50, bottom: 50 } };
 
-const WGSPCAPlots = ({ reference, mohd, pve }: WGSPCAPlotsProps) => {
+const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsProps) => {
   const [xPc, setXPc] = useState(0);
   const [yPc, setYPc] = useState(1);
   const [refKey, setRefKey] = useState<ReferenceColorField>("superpop");
@@ -133,7 +135,10 @@ const WGSPCAPlots = ({ reference, mohd, pve }: WGSPCAPlotsProps) => {
   const plotSize = useSharedPlotSize(refPlotRef, mohdPlotRef);
 
   const refGroups = useMemo(() => buildGroups(reference, refKey), [reference, refKey]);
-  const mohdGroups = useMemo(() => buildGroups(mohd, mohdKey), [mohd, mohdKey]);
+  const mohdGroups = useMemo(
+    () => buildGroups(mohd, mohdKey, binnedRaceEthnicity),
+    [mohd, mohdKey, binnedRaceEthnicity],
+  );
 
   const refPoints = useMemo(
     () => toPoints(reference, refKey, refGroups, xPc, yPc),

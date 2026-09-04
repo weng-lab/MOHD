@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Box, Chip, Stack, Tooltip, Typography } from "@mui/material";
 import type { GroupInfo } from "./groups";
 
 export type PlotLegendProps = {
@@ -24,10 +24,10 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLege
   // rows at most. A maxHeight clipped the last row rather than scrolling visibly,
   // and flexShrink: 0 stops the plot below it from squeezing the rows instead.
   <Stack direction="row" flexWrap="wrap" gap={0.5} flexShrink={0}>
-    {groups.map(({ value, label, color, count }) => {
+    {groups.map(({ value, label, color, count, members }) => {
       const off = hidden.has(value);
       const on = value === highlighted;
-      return (
+      const chip = (
         <Chip
           key={value}
           size="small"
@@ -64,6 +64,36 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLege
             outlineOffset: 1,
           }}
         />
+      );
+
+      // The bin's chip names what went into it. Which responses the survey
+      // offers is worth showing even where a category is too small to plot on
+      // its own - without counts, which is the whole point of having folded
+      // them. MUI composes the chip's own hover handlers with the tooltip's, so
+      // the highlight above still fires, and the tooltip opens on focus too.
+      return members?.length ? (
+        <Tooltip
+          key={value}
+          arrow
+          title={
+            <>
+              <Typography variant="caption" component="p">
+               Combined to protect participant privacy:
+              </Typography>
+              <Box component="ul" sx={{ m: 0, mt: 0.5, pl: 2 }}>
+                {members.map((member) => (
+                  <Typography key={member} component="li" variant="caption">
+                    {member}
+                  </Typography>
+                ))}
+              </Box>
+            </>
+          }
+        >
+          {chip}
+        </Tooltip>
+      ) : (
+        chip
       );
     })}
   </Stack>
