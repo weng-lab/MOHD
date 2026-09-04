@@ -4,9 +4,12 @@ import { Typography } from "@mui/material";
 import { SharedMetabolomicsProps } from "./page";
 import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsData";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
+import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 
 const compoundKey = (compound: string, mode: string) => `${compound}::${mode}`;
 const truncateCompoundName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
+
+type CompoundRowMeta = { fullName: string; mode: string; rawValue: number };
 
 const MetabolomicsQuantificationHeatmap = ({
     metabolomicsData,
@@ -32,25 +35,32 @@ const MetabolomicsQuantificationHeatmap = ({
         [samples]
     );
 
-    const heatmapData: ColumnDatum<MetabolomicsSample>[] = useMemo(
-        () =>
-            samples.map((sample) => {
-                const valueByCompound = new Map(
-                    sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q.value])
-                );
+    const heatmapData: ColumnDatum<MetabolomicsSample, CompoundRowMeta>[] = useMemo(() => {
+        const valueByCompoundPerSample = samples.map(
+            (sample) => new Map(sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q.value]))
+        );
 
+        const zScoreByCompound = new Map(
+            compounds.map((compound) => {
+                const key = compoundKey(compound.compound, compound.mode);
+                return [key, zScoreByRow(valueByCompoundPerSample.map((valueByCompound) => valueByCompound.get(key) ?? null))];
+            })
+        );
+
+        return samples.map((sample, sampleIndex) => ({
+            columnName: sample.sample_id,
+            metadata: sample,
+            rows: compounds.map((compound) => {
+                const key = compoundKey(compound.compound, compound.mode);
+                const rawValue = valueByCompoundPerSample[sampleIndex].get(key) ?? null;
                 return {
-                    columnName: sample.sample_id,
-                    metadata: sample,
-                    rows: compounds.map((compound) => ({
-                        rowName: truncateCompoundName(compound.compound),
-                        count: valueByCompound.get(compoundKey(compound.compound, compound.mode)) ?? null,
-                        metadata: { fullName: compound.compound, mode: compound.mode },
-                    })),
+                    rowName: truncateCompoundName(compound.compound),
+                    count: rawValue === null ? null : zScoreByCompound.get(key)!(rawValue),
+                    metadata: rawValue === null ? undefined : { fullName: compound.compound, mode: compound.mode, rawValue },
                 };
             }),
-        [samples, compounds]
-    );
+        }));
+    }, [samples, compounds]);
 
     return (
         <OmeHeatmapShell
@@ -68,7 +78,7 @@ const MetabolomicsQuantificationHeatmap = ({
                     <Typography><b>Dataset:</b> {bin.datum.columnName}</Typography>
                     <Typography><b>Compound:</b> {bin.bin.metadata?.fullName ?? bin.bin.rowName}</Typography>
                     <Typography><b>Mode:</b> {bin.bin.metadata?.mode}</Typography>
-                    <Typography><b>Value:</b> {bin.bin.count ?? "No data"}</Typography>
+                    <Typography><b>Value:</b> {bin.bin.metadata?.rawValue ?? "No data"}</Typography>
                 </>
             )}
         />

@@ -4,8 +4,11 @@ import { Typography } from "@mui/material";
 import { SharedLipidomicsProps } from "./page";
 import { LipidomicsSample } from "@/common/hooks/omeHooks/useLipidomicsData";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
+import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 
 const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
+
+type MoleculeRowMeta = { fullName: string; rawValue: number };
 
 const LipidomicsQuantificationHeatmap = ({
     lipidomicsData,
@@ -29,25 +32,31 @@ const LipidomicsQuantificationHeatmap = ({
         [samples]
     );
 
-    const heatmapData: ColumnDatum<LipidomicsSample>[] = useMemo(
-        () =>
-            samples.map((sample) => {
-                const valueByMolecule = new Map(
-                    sample.quantification.map((q) => [q.molecule_name, q.value])
-                );
+    const heatmapData: ColumnDatum<LipidomicsSample, MoleculeRowMeta>[] = useMemo(() => {
+        const valueByMoleculePerSample = samples.map(
+            (sample) => new Map(sample.quantification.map((q) => [q.molecule_name, q.value]))
+        );
 
+        const zScoreByMolecule = new Map(
+            molecules.map((molecule) => [
+                molecule,
+                zScoreByRow(valueByMoleculePerSample.map((valueByMolecule) => valueByMolecule.get(molecule) ?? null)),
+            ])
+        );
+
+        return samples.map((sample, sampleIndex) => ({
+            columnName: sample.sample_id,
+            metadata: sample,
+            rows: molecules.map((molecule) => {
+                const rawValue = valueByMoleculePerSample[sampleIndex].get(molecule) ?? null;
                 return {
-                    columnName: sample.sample_id,
-                    metadata: sample,
-                    rows: molecules.map((molecule) => ({
-                        rowName: truncateMoleculeName(molecule),
-                        count: valueByMolecule.get(molecule) ?? null,
-                        metadata: { fullName: molecule },
-                    })),
+                    rowName: truncateMoleculeName(molecule),
+                    count: rawValue === null ? null : zScoreByMolecule.get(molecule)!(rawValue),
+                    metadata: rawValue === null ? undefined : { fullName: molecule, rawValue },
                 };
             }),
-        [samples, molecules]
-    );
+        }));
+    }, [samples, molecules]);
 
     return (
         <OmeHeatmapShell
@@ -64,7 +73,7 @@ const LipidomicsQuantificationHeatmap = ({
                 <>
                     <Typography><b>Dataset:</b> {bin.datum.columnName}</Typography>
                     <Typography><b>Molecule:</b> {bin.bin.metadata?.fullName ?? bin.bin.rowName}</Typography>
-                    <Typography><b>Value:</b> {bin.bin.count ?? "No data"}</Typography>
+                    <Typography><b>Value:</b> {bin.bin.metadata?.rawValue ?? "No data"}</Typography>
                 </>
             )}
         />
