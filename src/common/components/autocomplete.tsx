@@ -94,7 +94,6 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
   const [pendingScreenResult, setPendingScreenResult] = useState<Result | null>(null);
 
   const handleSearchSubmit = (r: Result) => {
-    console.log(r)
     const link = makeResultLink(r);
     //needed to trigger closing the mobile menu drawer
     if (closeDrawer) {
