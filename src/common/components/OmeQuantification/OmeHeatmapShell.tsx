@@ -60,7 +60,7 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
                         ref={ref}
                         data={heatmapData}
                         colors={heatmapColors}
-                        xLabel="Sample"
+                        xLabel="Dataset"
                         yLabel={yLabel}
                         showLegend
                         downloadFileName={downloadFileName}

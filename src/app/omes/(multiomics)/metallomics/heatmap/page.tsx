@@ -24,7 +24,8 @@ export type SharedMetallomicsProps = {
 }
 
 const MetallomicsHeatmap = () => {
-    const { ref: heatmapRef, ...heatmapDownload } = usePlotDownload();
+    const { ref: baseHeatmapRef, ...baseHeatmapDownload } = usePlotDownload();
+    const { ref: ucrHeatmapRef, ...ucrHeatmapDownload } = usePlotDownload();
     const metallomicsData = useMetallomicsData({ skip: false });
 
     const rows: MetallomicsMetadata = useMemo(() => {
@@ -59,10 +60,36 @@ const MetallomicsHeatmap = () => {
             TableComponent={<MetallomicsQuantificationTable {...SharedMetallomicsProps} />}
             plots={[
                 {
-                    tabTitle: "Heatmap",
+                    tabTitle: "Base Metals",
                     icon: <GridOn />,
-                    plotComponent: <MetallomicsQuantificationHeatmap ref={heatmapRef} {...SharedMetallomicsProps} />,
-                    ...heatmapDownload,
+                    plotComponent: (
+                        <MetallomicsQuantificationHeatmap
+                            ref={baseHeatmapRef}
+                            metalGroup="base"
+                            downloadFileName="metallomics_quantification_heatmap_base_metals"
+                            {...SharedMetallomicsProps}
+                        />
+                    ),
+                    ...baseHeatmapDownload,
+                    dataDownloadLinks: [
+                        {
+                            title: "Metallomics Quantification (TSV)",
+                            link: "https://downloads.mohdconsortium.org/Metals/snapshot1_metallomics_quant.tsv",
+                        },
+                    ],
+                },
+                {
+                    tabTitle: "UCr-Normalized",
+                    icon: <GridOn />,
+                    plotComponent: (
+                        <MetallomicsQuantificationHeatmap
+                            ref={ucrHeatmapRef}
+                            metalGroup="ucr"
+                            downloadFileName="metallomics_quantification_heatmap_ucr_normalized"
+                            {...SharedMetallomicsProps}
+                        />
+                    ),
+                    ...ucrHeatmapDownload,
                     dataDownloadLinks: [
                         {
                             title: "Metallomics Quantification (TSV)",
