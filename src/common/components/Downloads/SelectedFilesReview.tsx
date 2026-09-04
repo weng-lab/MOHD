@@ -27,15 +27,9 @@ export type SelectedFilesReviewProps = {
  * open is local state — nothing above the list reads it, and the modal
  * unmounting on close is what resets it.
  */
-export default function SelectedFilesReview({
-  items,
-  onRemoveFile,
-  onRemoveDataset,
-}: SelectedFilesReviewProps) {
+export default function SelectedFilesReview({ items, onRemoveFile, onRemoveDataset }: SelectedFilesReviewProps) {
   // A Set rather than an array: this is looked up once per dataset per render.
-  const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(
-    () => new Set(),
-  );
+  const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(() => new Set());
 
   const toggleExpanded = (id: string) => {
     setExpandedIds((current) => {
@@ -59,8 +53,7 @@ export default function SelectedFilesReview({
     <Stack>
       {items.length === 0 && (
         <Typography variant="body1" color="text.secondary">
-          No files selected. Close this dialog and pick files from the table to
-          start a download.
+          No files selected. Close this dialog and pick files from the table to start a download.
         </Typography>
       )}
       {items.map((dataset, i) => {
@@ -90,12 +83,7 @@ export default function SelectedFilesReview({
                   },
                 }}
               >
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{ width: "100%" }}
-                >
+                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ width: "100%" }}>
                   <Box>
                     <Typography variant="subtitle1">
                       <b>{dataset.sampleId}</b>

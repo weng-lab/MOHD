@@ -1,21 +1,16 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
-import Autocomplete, {
-  AutocompleteChangeDetails,
-  AutocompleteChangeReason,
-} from "@mui/material/Autocomplete";
+import Autocomplete, { AutocompleteChangeDetails, AutocompleteChangeReason } from "@mui/material/Autocomplete";
 import { capitalize, Chip } from "@mui/material";
 
 export type MultiSelectOnChange<T> = (
   event: React.SyntheticEvent,
   value: T[],
   reason: AutocompleteChangeReason,
-  details?: AutocompleteChangeDetails<T | T[]>,
+  details?: AutocompleteChangeDetails<T | T[]>
 ) => void;
 
-export interface MultiSelectProps<
-  T extends string | { label: string; [key: string]: unknown },
-> {
+export interface MultiSelectProps<T extends string | { label: string; [key: string]: unknown }> {
   onChange?: MultiSelectOnChange<T>;
   options: T[];
   /** Controlled selection. An unconstrained field passes every option. */
@@ -31,20 +26,11 @@ export interface MultiSelectProps<
   chipMaxWidth?: number;
 }
 
-function isLabeledObject(
-  value: unknown,
-): value is { label: string; [key: string]: unknown } {
-  return (
-    value !== null &&
-    typeof value === "object" &&
-    "label" in value &&
-    typeof value.label === "string"
-  );
+function isLabeledObject(value: unknown): value is { label: string; [key: string]: unknown } {
+  return value !== null && typeof value === "object" && "label" in value && typeof value.label === "string";
 }
 
-const MultiSelect = <
-  T extends string | { label: string; [key: string]: unknown },
->({
+const MultiSelect = <T extends string | { label: string; [key: string]: unknown }>({
   onChange,
   options,
   placeholder,
@@ -71,9 +57,7 @@ const MultiSelect = <
       options={options}
       disableCloseOnSelect
       slotProps={{ popper: { sx: { zIndex: 1 } } }}
-      renderInput={(params) => (
-        <TextField {...params} placeholder={placeholder} />
-      )}
+      renderInput={(params) => <TextField {...params} placeholder={placeholder} />}
       renderOption={(props, option) => {
         const { key, ...optionProps } = props;
         return (
@@ -89,11 +73,7 @@ const MultiSelect = <
             <Chip
               {...tagProps}
               // override maxWidth through style, selector specificity created through sx didn't beat className from tagProps
-              style={
-                !focused && chipMaxWidth != null
-                  ? { maxWidth: chipMaxWidth }
-                  : undefined
-              }
+              style={!focused && chipMaxWidth != null ? { maxWidth: chipMaxWidth } : undefined}
               size="small"
               key={key}
               label={isLabeledObject(option) ? option.label : option}

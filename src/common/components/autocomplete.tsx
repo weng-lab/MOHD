@@ -80,7 +80,7 @@ function makeResultLink(result: Result) {
       url = `https://screen.wenglab.org/search?q=${result.title}&assembly=GRCh38`;
       break;
     case "Ome":
-      url = `/omes/${result.id}/dimensionalityReduction`
+      url = `/omes/${result.id}/dimensionalityReduction`;
   }
   return url;
 }
@@ -94,7 +94,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
   const [pendingScreenResult, setPendingScreenResult] = useState<Result | null>(null);
 
   const handleSearchSubmit = (r: Result) => {
-    const link = makeResultLink(r)
+    const link = makeResultLink(r);
     //needed to trigger closing the mobile menu drawer
     if (closeDrawer) {
       closeDrawer();
@@ -122,52 +122,52 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
   const geneVersion = [29, 40];
 
   const Omes: StaticListOption[] = [
-  {
-    label: "Proteomics",
-    value: "proteomics",
-    keywords: ["protein", "mass spec"],
-  },
-  {
-    label: "WGS",
-    value: "WGS",
-    keywords: ["whole genome sequencing", "genome sequencing", "genomics"],
-    description: "Whole Genome Sequencing"
-  },
-  {
-    label: "WGBS",
-    value: "WGBS",
-    keywords: ["whole genome bisulfite sequencing", "epigenomics", "methylation"],
-    description: "Whole Genome Bisulfite Sequencing"
-  },
-  {
-    label: "ATAC",
-    value: "ATAC",
-    keywords: ["chromatin accessibility", "atac-seq"],
-    description: "ATAC-seq"
-  },
-  {
-    label: "RNA",
-    value: "RNA",
-    keywords: ["rna-seq", "transcriptomics", "gene expression"],
-    description: "RNA-seq"
-  },
-  {
-    label: "Metabolomics",
-    value: "metabolomics",
-  },
-  {
-    label: "Lipidomics",
-    value: "lipidomics",
-  },
-  {
-    label: "Metallomics",
-    value: "metallomics",
-  },
-  {
-    label: "Exposomics",
-    value: "exposomics",
-  },
-];
+    {
+      label: "Proteomics",
+      value: "proteomics",
+      keywords: ["protein", "mass spec"],
+    },
+    {
+      label: "WGS",
+      value: "WGS",
+      keywords: ["whole genome sequencing", "genome sequencing", "genomics"],
+      description: "Whole Genome Sequencing",
+    },
+    {
+      label: "WGBS",
+      value: "WGBS",
+      keywords: ["whole genome bisulfite sequencing", "epigenomics", "methylation"],
+      description: "Whole Genome Bisulfite Sequencing",
+    },
+    {
+      label: "ATAC",
+      value: "ATAC",
+      keywords: ["chromatin accessibility", "atac-seq"],
+      description: "ATAC-seq",
+    },
+    {
+      label: "RNA",
+      value: "RNA",
+      keywords: ["rna-seq", "transcriptomics", "gene expression"],
+      description: "RNA-seq",
+    },
+    {
+      label: "Metabolomics",
+      value: "metabolomics",
+    },
+    {
+      label: "Lipidomics",
+      value: "lipidomics",
+    },
+    {
+      label: "Metallomics",
+      value: "metallomics",
+    },
+    {
+      label: "Exposomics",
+      value: "exposomics",
+    },
+  ];
 
   return (
     <>
@@ -177,7 +177,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
         graphqlUrl="/api/screen-graphql"
         showiCREFlag={false}
         queries={["Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
-        staticLists={{Omes}}
+        staticLists={{ Omes }}
         onSearchSubmit={handleSearchSubmit}
         //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton
         onKeyDown={(e) => {

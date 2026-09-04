@@ -1,7 +1,5 @@
 "use client";
-import OmeDualPaneDownloads, {
-  type OmeDownloadsConfig,
-} from "@/common/components/Downloads/OmeDualPaneDownloads";
+import OmeDualPaneDownloads, { type OmeDownloadsConfig } from "@/common/components/Downloads/OmeDualPaneDownloads";
 import type { BaseSampleMetadata } from "@/common/components/Downloads/types";
 
 type RnaRow = BaseSampleMetadata;

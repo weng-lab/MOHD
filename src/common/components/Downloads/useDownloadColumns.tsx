@@ -14,12 +14,7 @@ const FileDownloadCell = ({ file }: { file: CatalogFile }) => {
   if (!open_access) {
     return (
       <Tooltip title="This file is restricted. Please visit the MOHD page on AnVIL to register for access to restricted files.">
-        <IconButton
-          component="a"
-          href={ANVIL_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <IconButton component="a" href={ANVIL_URL} target="_blank" rel="noopener noreferrer">
           <Image src="/logo-mark-Anvil.png" alt="AnVIL" width={28} height={28} />
         </IconButton>
       </Tooltip>
@@ -80,8 +75,7 @@ export function useDownloadColumns({
           checked={allCheckState === "checked"}
           indeterminate={allCheckState === "indeterminate"}
           disabled={
-            allCheckState === "unchecked" &&
-            visibleDatasets.every((d) => !selectableByDataset.get(d.sample_id)?.size)
+            allCheckState === "unchecked" && visibleDatasets.every((d) => !selectableByDataset.get(d.sample_id)?.size)
           }
           onClick={toggleAll}
         />

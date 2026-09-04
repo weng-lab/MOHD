@@ -1,8 +1,5 @@
 const ATACCellTypeDecomposition = () => {
-    return (
-        <>
-        </>
-    );
+  return <></>;
 };
 
 export default ATACCellTypeDecomposition;

@@ -21,10 +21,7 @@ type LegendEntry = {
   color: string | undefined;
 };
 
-function schemeValue(
-  meta: ATACMetadata[number] | RNAMetadata[number],
-  colorScheme: ColorScheme
-): string {
+function schemeValue(meta: ATACMetadata[number] | RNAMetadata[number], colorScheme: ColorScheme): string {
   switch (colorScheme) {
     case "sex":
       return meta.sex;
@@ -84,46 +81,46 @@ export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[
   const legendEntries = buildLegendEntries(scatterData, colorScheme);
 
   return (
-      <Stack
-        direction={"row"}
-        spacing={1}
-        alignItems="center"
-        mr={1}
-        sx={{
-          cursor: "default",
-          px: 1,
-          py: 0.25,
-          borderRadius: 1,
-          bgcolor: "action.hover",
-        }}
-      >
-        <InfoOutlinedIcon fontSize="small" color="action" />
-        <Typography color="text.secondary" fontWeight="bold">
-          Legend:
-        </Typography>
-        {legendEntries.map((entry) => (
+    <Stack
+      direction={"row"}
+      spacing={1}
+      alignItems="center"
+      mr={1}
+      sx={{
+        cursor: "default",
+        px: 1,
+        py: 0.25,
+        borderRadius: 1,
+        bgcolor: "action.hover",
+      }}
+    >
+      <InfoOutlinedIcon fontSize="small" color="action" />
+      <Typography color="text.secondary" fontWeight="bold">
+        Legend:
+      </Typography>
+      {legendEntries.map((entry) => (
+        <Box
+          key={entry.id}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mr: 1,
+          }}
+        >
           <Box
-            key={entry.id}
             sx={{
-              display: "flex",
-              alignItems: "center",
-              mr: 1,
+              width: 12,
+              height: 12,
+              bgcolor: entry.color,
+              borderRadius: "50%",
+              mr: 0.5,
             }}
-          >
-            <Box
-              sx={{
-                width: 12,
-                height: 12,
-                bgcolor: entry.color,
-                borderRadius: "50%",
-                mr: 0.5,
-              }}
-            />
-            <Typography variant="body2" color="text.secondary">
-              {entry.label}
-            </Typography>
-          </Box>
-        ))}
-      </Stack>
+          />
+          <Typography variant="body2" color="text.secondary">
+            {entry.label}
+          </Typography>
+        </Box>
+      ))}
+    </Stack>
   );
 }

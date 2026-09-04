@@ -1,8 +1,4 @@
-import type {
-  Chromosome,
-  Domain,
-  InitialBrowserState,
-} from "@weng-lab/genomebrowser";
+import type { Chromosome, Domain, InitialBrowserState } from "@weng-lab/genomebrowser";
 
 export const DEFAULT_DOMAIN: Domain = {
   chromosome: "chr12" as Chromosome,

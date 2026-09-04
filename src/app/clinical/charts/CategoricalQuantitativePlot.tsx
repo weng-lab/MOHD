@@ -13,11 +13,7 @@ type Props = {
 };
 
 /** One histogram series per category, holding that category's numeric values. */
-function buildSeries(
-  rawData: PhenotypicalDataPoint[],
-  catVarName: string,
-  quantVarName: string
-): HistogramSeries[] {
+function buildSeries(rawData: PhenotypicalDataPoint[], catVarName: string, quantVarName: string): HistogramSeries[] {
   const catRows = rawData.filter((p) => p.variable_name === catVarName);
   const quantRows = rawData.filter((p) => p.variable_name === quantVarName);
 

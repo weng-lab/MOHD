@@ -18,31 +18,32 @@ export default function ContactForm() {
 
   const handleSubmit = async () => {
     //Check fields to see if valid
-    const newErrorState = { name: false, email: false, message: false }
-    if (!contactName) newErrorState.name = true
-    if (!isValidEmail(contactEmail)) newErrorState.email = true
-    if (!contactMessage) newErrorState.message = true
+    const newErrorState = { name: false, email: false, message: false };
+    if (!contactName) newErrorState.name = true;
+    if (!isValidEmail(contactEmail)) newErrorState.email = true;
+    if (!contactMessage) newErrorState.message = true;
 
     //If all fields valid: Try to send email and form fields, catch any error
     if (!newErrorState.name && !newErrorState.email && !newErrorState.message) {
       try {
-        await sendEmail()
-        setContactName('')
-        setContactEmail('')
-        setContactMessage('')
-        setSuccess(true)
+        await sendEmail();
+        setContactName("");
+        setContactEmail("");
+        setContactMessage("");
+        setSuccess(true);
       } catch (error) {
-        console.error(error)
-        window.alert("Something went wrong, please try again soon" + '\n' + JSON.stringify(error))
+        console.error(error);
+        window.alert("Something went wrong, please try again soon" + "\n" + JSON.stringify(error));
       }
     }
-    setError(newErrorState)
-  }
+    setError(newErrorState);
+  };
 
   const sendEmail = () => {
     return new Promise((resolve, reject) => {
       //These IDs come from the emailjs website (using screenumass gmail account)
-      emailjs.sendForm('service_k7xidgk', 'contactUs', form.current ?? "", 'VU9U1vX9cAro8XtUK')
+      emailjs
+        .sendForm("service_k7xidgk", "contactUs", form.current ?? "", "VU9U1vX9cAro8XtUK")
         .then((result) => {
           resolve(result);
         })
@@ -59,7 +60,7 @@ export default function ContactForm() {
         ref={form}
         id="contact-us"
         sx={{
-          '& > :not(style)': { width: '50ch' },
+          "& > :not(style)": { width: "50ch" },
         }}
         noValidate
         autoComplete="off"
@@ -78,7 +79,7 @@ export default function ContactForm() {
           error={error.name}
           name="user_name"
           type="text"
-          sx={{ display: 'block', mb: 1 }}
+          sx={{ display: "block", mb: 1 }}
           id="outlined-basic"
           label="Name"
           variant="outlined"
@@ -93,11 +94,11 @@ export default function ContactForm() {
               setError((current) => ({ ...current, email: false }));
             }
           }}
-          error={error.email || contactEmail !== '' && !isValidEmail(contactEmail)}
+          error={error.email || (contactEmail !== "" && !isValidEmail(contactEmail))}
           helperText={error.email && "Please enter a valid email"}
           name="user_email"
           type="email"
-          sx={{ display: 'block', mb: 1 }}
+          sx={{ display: "block", mb: 1 }}
           id="outlined-basic"
           label="Email"
           variant="outlined"
@@ -117,16 +118,13 @@ export default function ContactForm() {
           type="text"
           fullWidth
           rows={4}
-          sx={{ display: 'block' }}
-          multiline id="outlined-basic"
+          sx={{ display: "block" }}
+          multiline
+          id="outlined-basic"
           label="Message"
           variant="outlined"
         />
-        <Button
-          sx={{ mt: 1 }}
-          variant="contained"
-          onClick={handleSubmit}
-        >
+        <Button sx={{ mt: 1 }} variant="contained" onClick={handleSubmit}>
           Submit
         </Button>
       </Box>

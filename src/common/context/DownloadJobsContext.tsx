@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  type ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { type ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
 
 export type BulkJobStatus = "pending" | "processing" | "done" | "failed";
@@ -51,10 +45,7 @@ type DownloadJobsContextValue = {
   // restore repopulates `jobs` but never touches this.
   submitCount: number;
   addJob: (job: DownloadJob) => void;
-  updateJob: (
-    id: string,
-    patch: Partial<Pick<DownloadJob, "status" | "progress">>,
-  ) => void;
+  updateJob: (id: string, patch: Partial<Pick<DownloadJob, "status" | "progress">>) => void;
   // Cancels the job upstream when it is still running, otherwise just dismisses it locally.
   removeJob: (id: string) => Promise<void>;
   retryJob: (id: string) => Promise<void>;
@@ -66,15 +57,11 @@ const STORAGE_KEY = "mohd_download_jobs:v1";
 const POLL_INTERVAL_MS = 500;
 const BASE_URL = "/api/bulk-download";
 
-const DownloadJobsContext = createContext<DownloadJobsContextValue | null>(
-  null,
-);
+const DownloadJobsContext = createContext<DownloadJobsContextValue | null>(null);
 
 /** A job the status poller should still be asking the service about. */
 function isPollable(job: DownloadJob): boolean {
-  return (
-    !job.cancelling && (job.status === "pending" || job.status === "processing")
-  );
+  return !job.cancelling && (job.status === "pending" || job.status === "processing");
 }
 
 function loadFromStorage(): DownloadJob[] {
@@ -132,10 +119,7 @@ function saveToStorage(jobs: DownloadJob[]) {
  * was aborted. Callers distinguish the abort case themselves — see the poll
  * effect, which drops the result rather than reading it as a failed check.
  */
-async function fetchJobStatus(
-  id: string,
-  signal: AbortSignal,
-): Promise<StatusResponse | null> {
+async function fetchJobStatus(id: string, signal: AbortSignal): Promise<StatusResponse | null> {
   try {
     const res = await fetch(`${BASE_URL}/status/${id}`, { signal });
     if (!res.ok) return null;
@@ -158,7 +142,7 @@ async function cancelJobUpstream(id: string): Promise<boolean> {
 /** The accepted job's id and expiry, or null when submission failed. */
 async function submitJobUpstream(
   format: BulkDownloadFormat,
-  files: string[],
+  files: string[]
 ): Promise<{ id: string; expires_at: string } | null> {
   try {
     const res = await fetch(`${BASE_URL}/jobs`, {
@@ -236,9 +220,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
       // from being written back as a failed status check.
       if (stopped) return;
       if (!data) {
-        setJobs((prev) =>
-          prev.map((j) => (j.id === id ? { ...j, status: "failed" } : j)),
-        );
+        setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status: "failed" } : j)));
         return;
       }
       const progress = normalizeProgress(data.progress, data.status);
@@ -255,14 +237,12 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
                 downloadUrl: data.download_url,
                 sizeBytes: data.size_bytes,
               }
-            : j,
-        ),
+            : j
+        )
       );
     };
 
-    const timers = pollableIds
-      .split(",")
-      .map((id) => setInterval(() => void tick(id), POLL_INTERVAL_MS));
+    const timers = pollableIds.split(",").map((id) => setInterval(() => void tick(id), POLL_INTERVAL_MS));
 
     return () => {
       stopped = true;
@@ -276,10 +256,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
     setSubmitCount((n) => n + 1);
   };
 
-  const updateJob = (
-    id: string,
-    patch: Partial<Pick<DownloadJob, "status" | "progress">>,
-  ) => {
+  const updateJob = (id: string, patch: Partial<Pick<DownloadJob, "status" | "progress">>) => {
     setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, ...patch } : j)));
   };
 
@@ -298,11 +275,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
 
     // Flagging it `cancelling` drops it out of the pollable set, which stops its
     // timer before the DELETE goes out so a status tick can't revive the row.
-    setJobs((prev) =>
-      prev.map((j) =>
-        j.id === id ? { ...j, cancelling: true, cancelError: undefined } : j,
-      ),
-    );
+    setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, cancelling: true, cancelError: undefined } : j)));
 
     if (await cancelJobUpstream(id)) {
       setJobs((prev) => prev.filter((j) => j.id !== id));
@@ -319,8 +292,8 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
               cancelling: false,
               cancelError: "Could not cancel — try again",
             }
-          : j,
-      ),
+          : j
+      )
     );
   };
 
@@ -347,15 +320,13 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
               cancelling: false,
               cancelError: undefined,
             }
-          : j,
-      ),
+          : j
+      )
     );
   };
 
   return (
-    <DownloadJobsContext.Provider
-      value={{ jobs, submitCount, addJob, updateJob, removeJob, retryJob }}
-    >
+    <DownloadJobsContext.Provider value={{ jobs, submitCount, addJob, updateJob, removeJob, retryJob }}>
       {children}
     </DownloadJobsContext.Provider>
   );
@@ -363,7 +334,6 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
 
 export function useDownloadJobs(): DownloadJobsContextValue {
   const ctx = useContext(DownloadJobsContext);
-  if (!ctx)
-    throw new Error("useDownloadJobs must be used within DownloadJobsProvider");
+  if (!ctx) throw new Error("useDownloadJobs must be used within DownloadJobsProvider");
   return ctx;
 }

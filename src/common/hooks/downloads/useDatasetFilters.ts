@@ -6,11 +6,7 @@ import {
   selectedValuesForField,
   withFieldFilter,
 } from "@/common/components/Downloads/filterModel";
-import type {
-  BaseSampleMetadata,
-  CatalogDataset,
-  FilterFieldConfig,
-} from "@/common/components/Downloads/types";
+import type { BaseSampleMetadata, CatalogDataset, FilterFieldConfig } from "@/common/components/Downloads/types";
 
 export type DatasetFiltersState<T extends BaseSampleMetadata> = {
   datasetFilterModel: GridFilterModel;
@@ -53,22 +49,14 @@ export function useDatasetFilters<T extends BaseSampleMetadata>(
 
   const datasetSelectedValues: Record<string, string[]> = {};
   for (const field of filterFields) {
-    datasetSelectedValues[field] = selectedValuesForField(
-      field,
-      datasetFilterModel,
-      datasetOptionsMap[field]
-    );
+    datasetSelectedValues[field] = selectedValuesForField(field, datasetFilterModel, datasetOptionsMap[field]);
   }
 
   const handleDatasetToggleChange = (field: string, value: string[] | null) => {
-    setDatasetFilterModel((prev) =>
-      withFieldFilter(prev, field, value ?? [], datasetOptionsMap[field])
-    );
+    setDatasetFilterModel((prev) => withFieldFilter(prev, field, value ?? [], datasetOptionsMap[field]));
   };
 
-  const visibleDatasets = datasets.filter((d) =>
-    passesFilter(d as Record<string, unknown>, datasetFilterModel)
-  );
+  const visibleDatasets = datasets.filter((d) => passesFilter(d as Record<string, unknown>, datasetFilterModel));
 
   return {
     datasetFilterModel,

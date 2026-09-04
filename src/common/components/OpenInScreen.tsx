@@ -1,9 +1,19 @@
 "use client";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { Stack } from "@mui/system";
 import { Result } from "@weng-lab/ui-components";
-import CloseIcon from '@mui/icons-material/Close';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import CloseIcon from "@mui/icons-material/Close";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 type OpenInScreenProps = {
   open: boolean;
@@ -14,23 +24,15 @@ type OpenInScreenProps = {
 
 export default function OpenInScreen({ open, result, onClose, onConfirm }: OpenInScreenProps) {
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-    >
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle
         sx={{
           background: "#e1edec",
         }}
       >
         <Stack direction="row" alignItems="center" justifyContent={"space-between"}>
-          <Typography sx={{ fontWeight: 700 }}>
-            Continue to SCREEN
-          </Typography>
-          <IconButton
-            onClick={onClose}
-            size="small"
-          >
+          <Typography sx={{ fontWeight: 700 }}>Continue to SCREEN</Typography>
+          <IconButton onClick={onClose} size="small">
             <CloseIcon />
           </IconButton>
         </Stack>
@@ -55,7 +57,8 @@ export default function OpenInScreen({ open, result, onClose, onConfirm }: OpenI
           </Box>
         )}
         <DialogContentText>
-          This {result?.type} is available in SCREEN. Would you like to open it in a new tab and continue exploring there?
+          This {result?.type} is available in SCREEN. Would you like to open it in a new tab and continue exploring
+          there?
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2.5, pt: 0 }}>

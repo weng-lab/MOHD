@@ -32,15 +32,9 @@ export type FileFiltersState = {
 export function useFileFilters(files: CatalogFile[]): FileFiltersState {
   const [fileFilterModel, setFileFilterModel] = useState<GridFilterModel>({ items: [] });
 
-  const fileTypeOptions = [
-    ...new Set(files.flatMap((f) => (f.file_type ? [f.file_type] : []))),
-  ];
+  const fileTypeOptions = [...new Set(files.flatMap((f) => (f.file_type ? [f.file_type] : [])))];
 
-  const fileSelectedValues = selectedValuesForField(
-    FILE_TYPE_FIELD,
-    fileFilterModel,
-    fileTypeOptions
-  );
+  const fileSelectedValues = selectedValuesForField(FILE_TYPE_FIELD, fileFilterModel, fileTypeOptions);
 
   const handleFileTypeSelectChange: MultiSelectOnChange<string> = (_event, value) => {
     setFileFilterModel((prev) => withFieldFilter(prev, FILE_TYPE_FIELD, value, fileTypeOptions));

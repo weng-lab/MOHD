@@ -4,10 +4,7 @@ import { TableColDef } from "@weng-lab/ui-components";
 import { useOmeCatalog } from "@/common/hooks/useOmeCatalog";
 import { useDatasetFilters } from "@/common/hooks/downloads/useDatasetFilters";
 import { useFileFilters } from "@/common/hooks/downloads/useFileFilters";
-import {
-  useDownloadSelection,
-  type CheckState,
-} from "@/common/hooks/downloads/useDownloadSelection";
+import { useDownloadSelection, type CheckState } from "@/common/hooks/downloads/useDownloadSelection";
 import { formatBytes, isFileBulkSelectable } from "@/common/downloads";
 import { customSingleSelectOperators } from "@/common/components/Downloads/filterModel";
 import {
@@ -107,7 +104,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
 
   // Which dataset is shown on the right, and its files.
   const [activeDataset, setActiveDataset] = useState<string | null>(null);
-  const activeFiles = activeDataset ? filesByDataset.get(activeDataset) ?? [] : [];
+  const activeFiles = activeDataset ? (filesByDataset.get(activeDataset) ?? []) : [];
   const activeBundle = activeDataset ? bundlesByDataset.get(activeDataset) : undefined;
 
   // Per-pane filtering.
@@ -121,11 +118,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   for (const [id, datasetFiles] of filesByDataset) {
     selectableByDataset.set(
       id,
-      new Set(
-        datasetFiles.flatMap((f) =>
-          isFileBulkSelectable(f) && passesFileFilter(f) ? [f.filename] : []
-        )
-      )
+      new Set(datasetFiles.flatMap((f) => (isFileBulkSelectable(f) && passesFileFilter(f) ? [f.filename] : [])))
     );
   }
 

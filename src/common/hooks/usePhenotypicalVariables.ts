@@ -12,8 +12,7 @@ const GET_PHENOTYPICAL_VARIABLES = gql(`
   }
 `);
 
-export type PhenotypicalVariable =
-  Fetch_Phenotypical_VariableQuery["phenotypical_variables"][number];
+export type PhenotypicalVariable = Fetch_Phenotypical_VariableQuery["phenotypical_variables"][number];
 
 export function usePhenotypicalVariables(): {
   data: PhenotypicalVariable[] | undefined;

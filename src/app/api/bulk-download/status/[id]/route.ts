@@ -3,10 +3,7 @@ import { proxyRequest } from "@/common/apiProxy";
 
 const BASE_URL = Config.API.BULK_DOWNLOAD;
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   return proxyRequest({

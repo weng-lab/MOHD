@@ -8,159 +8,145 @@ import { ColorBySelect } from "@/common/components/ColorBySelect";
 import UMAPLegend from "@/common/components/UMAPLegend";
 
 export type ATACDimensionalityUmapProps<
-    S extends boolean | undefined,
-    Z extends boolean | undefined
-> =
-    SharedATACDimenionalityProps &
-    Partial<ChartProps<ATACMetadata[number], S, Z>>;
+  S extends boolean | undefined,
+  Z extends boolean | undefined,
+> = SharedATACDimenionalityProps & Partial<ChartProps<ATACMetadata[number], S, Z>>;
 
 const TooltipBody = (point: Point<ATACMetadata[number]>) => {
-    return (
-        <>
-            <Typography>
-                <b>Dataset:</b> {point.metaData?.sample_id}
-            </Typography>
-            <Typography>
-                <b>Status:</b> {point.metaData?.status}
-            </Typography>
-            <Typography>
-                <b>Site:</b> {point.metaData?.site}
-            </Typography>
-            <Typography>
-                <b>Sex:</b> {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ''}
-            </Typography>
-            <Typography>
-                <b>Protocol:</b> {point.metaData?.protocol.replaceAll(" method", "")}
-            </Typography>
-        </>
-    );
+  return (
+    <>
+      <Typography>
+        <b>Dataset:</b> {point.metaData?.sample_id}
+      </Typography>
+      <Typography>
+        <b>Status:</b> {point.metaData?.status}
+      </Typography>
+      <Typography>
+        <b>Site:</b> {point.metaData?.site}
+      </Typography>
+      <Typography>
+        <b>Sex:</b>{" "}
+        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ""}
+      </Typography>
+      <Typography>
+        <b>Protocol:</b> {point.metaData?.protocol.replaceAll(" method", "")}
+      </Typography>
+    </>
+  );
 };
 
 const map = {
-    position: {
-        right: 50,
-        bottom: 50,
-    },
+  position: {
+    right: 50,
+    bottom: 50,
+  },
 };
 
 const ATACUMAP = <S extends true, Z extends boolean | undefined>({
-    selected,
-    ATACData,
-    setSelected,
-    ref,
-    ...rest
+  selected,
+  ATACData,
+  setSelected,
+  ref,
+  ...rest
 }: ATACDimensionalityUmapProps<S, Z>) => {
-    const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol">("site");
-    const theme = useTheme();
-    const isXs = useMediaQuery(theme.breakpoints.down("md"));
+  const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol">("site");
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down("md"));
 
+  const { loading, data } = ATACData;
 
-    const { loading, data } = ATACData;
+  const handleColorSchemeChange = (event: SelectChangeEvent) => {
+    setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol");
+  };
 
-    const handleColorSchemeChange = (event: SelectChangeEvent) => {
-        setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol");
-    };
+  const scatterData: Point<ATACMetadata[number]>[] = (() => {
+    if (!data) return [];
 
-    const scatterData: Point<ATACMetadata[number]>[] = (() => {
-        if (!data) return [];
+    const isHighlighted = (x: ATACMetadata[number]) => selected.some((y) => y.sample_id === x.sample_id);
 
-        const isHighlighted = (x: ATACMetadata[number]) => selected.some((y) => y.sample_id === x.sample_id);
+    return data.map((x) => {
+      const getColor = () => {
+        if (isHighlighted(x) || selected.length === 0) {
+          if (colorScheme === "sex") {
+            return sex_color_map[x.sex as keyof typeof sex_color_map];
+          } else if (colorScheme === "status") {
+            return status_color_map[x.status as keyof typeof status_color_map];
+          } else if (colorScheme === "site") {
+            return site_color_map[x.site as keyof typeof site_color_map];
+          } else if (colorScheme === "protocol") {
+            return protocol_color_map[x.protocol as keyof typeof protocol_color_map];
+          }
+        } else return "#CCCCCC";
+      };
 
-        return data.map((x) => {
+      return {
+        x: x.umap_x ?? 0,
+        y: x.umap_y ?? 0,
+        r: isHighlighted(x) ? 6 : 4,
+        color: getColor(),
+        metaData: x,
+      };
+    });
+  })();
 
-            const getColor = () => {
-                if (isHighlighted(x) || selected.length === 0) {
-                    if (colorScheme === "sex") {
-                        return sex_color_map[x.sex as keyof typeof sex_color_map];
-                    } else if (colorScheme === "status") {
-                        return status_color_map[x.status as keyof typeof status_color_map];
-                    } else if (colorScheme === "site") {
-                        return site_color_map[x.site as keyof typeof site_color_map];
-                    } else if (colorScheme === "protocol") {
-                        return protocol_color_map[x.protocol as keyof typeof protocol_color_map];
-                    }
-                } else return "#CCCCCC";
-            };
+  const handlePointsSelected = (selectedPoints: Point<ATACMetadata[number]>[]) => {
+    setSelected([...selected, ...selectedPoints.flatMap((point) => (point.metaData ? [point.metaData] : []))]);
+  };
 
-            return {
-                x: x.umap_x ?? 0,
-                y: x.umap_y ?? 0,
-                r: isHighlighted(x) ? 6 : 4,
-                color: getColor(),
-                metaData: x,
-            };
-        });
-    })();
+  const handlePointSelected = (selectedPoint: Point<ATACMetadata[number]>) => {
+    if (!selectedPoint.metaData) return;
 
-    const handlePointsSelected = (
-        selectedPoints: Point<ATACMetadata[number]>[]
-    ) => {
-        setSelected([
-            ...selected,
-            ...selectedPoints.flatMap((point) =>
-                point.metaData ? [point.metaData] : []
-            ),
-        ]);
-    };
+    const id = selectedPoint.metaData.sample_id;
 
-    const handlePointSelected = (
-        selectedPoint: Point<ATACMetadata[number]>
-    ) => {
-        if (!selectedPoint.metaData) return;
+    if (selected.some((x) => x.sample_id === id)) {
+      setSelected(selected.filter((x) => x.sample_id !== id));
+    } else {
+      setSelected([...selected, selectedPoint.metaData]);
+    }
+  };
 
-        const id = selectedPoint.metaData.sample_id;
-
-        if (selected.some((x) => x.sample_id === id)) {
-            setSelected(selected.filter((x) => x.sample_id !== id));
-        } else {
-            setSelected([...selected, selectedPoint.metaData]);
-        }
-    };
-
-    return (
-        <Stack
-            width={"100%"}
-            height={"100%"}
-        >
-            {scatterData &&
-                scatterData.length > 0 && (
-                    <>
-                        <Stack direction={{xs: "column", md: "row"}} justifyContent={{xs: "center", md: "space-between"}} alignItems="center" gap={{xs: 1, md: 0}}>
-                            <ColorBySelect 
-                                colorScheme={colorScheme} 
-                                handleColorSchemeChange={handleColorSchemeChange}
-                                protocol={true} 
-                            />
-                            <UMAPLegend
-                                colorScheme={colorScheme}
-                                scatterData={scatterData}
-                            />
-                        </Stack>
-                        <Box sx={{ flexGrow: 1 }}>
-                            <ScatterPlot
-                                {...rest}
-                                onSelectionChange={handlePointsSelected}
-                                onPointClicked={handlePointSelected}
-                                controlsHighlight={theme.palette.primary.main}
-                                controlsPosition={isXs ? "right" : "left"}
-                                pointData={scatterData}
-                                selectable
-                                loading={loading}
-                                miniMap={map}
-                                tooltipBody={(point) => <TooltipBody {...point} />}
-                                leftAxisLabel="UMAP-2"
-                                bottomAxisLabel="UMAP-1"
-                                ref={ref}
-                                downloadFileName={`ATAC_dimesionality_reduction_UMAP`}
-                                animation="scale"
-                                animationBuffer={0.025}
-                                animationGroupSize={5}
-                            />
-                        </Box>
-                    </>
-                )}
-        </Stack>
-    );
-}
+  return (
+    <Stack width={"100%"} height={"100%"}>
+      {scatterData && scatterData.length > 0 && (
+        <>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            justifyContent={{ xs: "center", md: "space-between" }}
+            alignItems="center"
+            gap={{ xs: 1, md: 0 }}
+          >
+            <ColorBySelect
+              colorScheme={colorScheme}
+              handleColorSchemeChange={handleColorSchemeChange}
+              protocol={true}
+            />
+            <UMAPLegend colorScheme={colorScheme} scatterData={scatterData} />
+          </Stack>
+          <Box sx={{ flexGrow: 1 }}>
+            <ScatterPlot
+              {...rest}
+              onSelectionChange={handlePointsSelected}
+              onPointClicked={handlePointSelected}
+              controlsHighlight={theme.palette.primary.main}
+              controlsPosition={isXs ? "right" : "left"}
+              pointData={scatterData}
+              selectable
+              loading={loading}
+              miniMap={map}
+              tooltipBody={(point) => <TooltipBody {...point} />}
+              leftAxisLabel="UMAP-2"
+              bottomAxisLabel="UMAP-1"
+              ref={ref}
+              downloadFileName={`ATAC_dimesionality_reduction_UMAP`}
+              animation="scale"
+              animationBuffer={0.025}
+              animationGroupSize={5}
+            />
+          </Box>
+        </>
+      )}
+    </Stack>
+  );
+};
 
 export default ATACUMAP;

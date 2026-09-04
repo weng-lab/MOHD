@@ -1,9 +1,5 @@
-
 const ProteomicsHeatMap = () => {
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};
 
 export default ProteomicsHeatMap;

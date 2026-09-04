@@ -59,11 +59,7 @@ export function detectPlatform(): CommandPlatform {
  * field was populated: download_url is always <archive base>/<filename>, so the
  * last path segment is the same string rather than a guess at it.
  */
-export function artifactName(
-  format: BulkDownloadFormat,
-  url: string,
-  filename?: string,
-): string {
+export function artifactName(format: BulkDownloadFormat, url: string, filename?: string): string {
   if (filename) return filename;
   const lastSegment = url.split("?")[0].split("/").pop();
   return lastSegment || `download${EXTENSIONS[format]}`;

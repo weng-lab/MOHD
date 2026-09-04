@@ -1,8 +1,15 @@
 "use client";
 import { useState, useRef, useId } from "react";
 import {
-  Box, Divider, FormControl, InputAdornment, InputLabel,
-  ListSubheader, MenuItem, OutlinedInput, Popover,
+  Box,
+  Divider,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  ListSubheader,
+  MenuItem,
+  OutlinedInput,
+  Popover,
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
@@ -49,10 +56,7 @@ export default function TreeSelect({
   });
   const open = Boolean(anchorEl);
 
-  const displayValue =
-    value === "none" ? "-none-"
-    : value ? formatVariableName(value)
-    : "";
+  const displayValue = value === "none" ? "-none-" : value ? formatVariableName(value) : "";
 
   function handleOpen() {
     if (!disabled && anchorRef.current) {
@@ -129,7 +133,9 @@ export default function TreeSelect({
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         disableScrollLock
-        slotProps={{ paper: { sx: { width: popoverWidth, maxHeight: { xs: "55vh", sm: 400 }, overflow: "auto", mt: 0.5 } } }}
+        slotProps={{
+          paper: { sx: { width: popoverWidth, maxHeight: { xs: "55vh", sm: 400 }, overflow: "auto", mt: 0.5 } },
+        }}
       >
         {allowNone && (
           <>

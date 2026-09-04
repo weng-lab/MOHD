@@ -125,26 +125,13 @@ function JobRowActions({
     <Stack direction="row" alignItems="center" spacing={0.5}>
       {canDownload && (
         <>
-          <Tooltip
-            title={job.format === "script" ? "Download script" : "Download archive"}
-            arrow
-            placement="bottom"
-          >
-            <IconButton
-              size="small"
-              component="a"
-              href={job.downloadUrl}
-              download
-            >
+          <Tooltip title={job.format === "script" ? "Download script" : "Download archive"} arrow placement="bottom">
+            <IconButton size="small" component="a" href={job.downloadUrl} download>
               <DownloadIcon fontSize="small" />
             </IconButton>
           </Tooltip>
           <Tooltip title="Get command" arrow placement="bottom">
-            <IconButton
-              aria-label="Get command"
-              size="small"
-              onClick={() => onShowCommands(job.id)}
-            >
+            <IconButton aria-label="Get command" size="small" onClick={() => onShowCommands(job.id)}>
               <TerminalIcon fontSize="small" />
             </IconButton>
           </Tooltip>
@@ -155,18 +142,10 @@ function JobRowActions({
           Retry
         </Button>
       )}
-      <Tooltip
-        title={isJobActive(job) ? "Cancel download" : "Remove"}
-        arrow
-        placement="bottom"
-      >
+      <Tooltip title={isJobActive(job) ? "Cancel download" : "Remove"} arrow placement="bottom">
         {/* span keeps the tooltip working while the button is disabled */}
         <span>
-          <IconButton
-            size="small"
-            disabled={Boolean(job.cancelling)}
-            onClick={() => void removeJob(job.id)}
-          >
+          <IconButton size="small" disabled={Boolean(job.cancelling)} onClick={() => void removeJob(job.id)}>
             <DeleteForeverIcon fontSize="small" />
           </IconButton>
         </span>
@@ -184,13 +163,17 @@ function JobRowMeta({ job, isExpired }: { job: DownloadJob; isExpired: boolean }
       </Typography>
       {job.sizeBytes ? (
         <>
-          <Typography variant="caption" color="text.disabled">·</Typography>
+          <Typography variant="caption" color="text.disabled">
+            ·
+          </Typography>
           <Typography variant="caption" color="text.secondary">
             {formatBytes(job.sizeBytes)}
           </Typography>
         </>
       ) : null}
-      <Typography variant="caption" color="text.disabled">·</Typography>
+      <Typography variant="caption" color="text.disabled">
+        ·
+      </Typography>
       <Typography variant="caption" color={statusColor(job, isExpired)}>
         {statusLabel(job, isExpired)}
       </Typography>
@@ -271,9 +254,7 @@ export default function DownloadJobsMenu() {
   // without the count-in-a-circle badge that was awkward to fit around the
   // icon. Opening the tray means the user has seen the change and clears it
   // (handled at the open handlers below).
-  const finishedCount = jobs.filter(
-    (j) => j.status === "done" || j.status === "failed"
-  ).length;
+  const finishedCount = jobs.filter((j) => j.status === "done" || j.status === "failed").length;
   const [prevFinishedCount, setPrevFinishedCount] = useState(finishedCount);
   const [hasUnseenCompletion, setHasUnseenCompletion] = useState(false);
 
@@ -309,18 +290,14 @@ export default function DownloadJobsMenu() {
     if (AUTO_OPEN_ON_SUBMIT) setAnchorEl(buttonRef.current);
   }, [submitCount]);
 
-  const activeCount = jobs.filter(
-    (j) => j.status === "pending" || j.status === "processing"
-  ).length;
+  const activeCount = jobs.filter((j) => j.status === "pending" || j.status === "processing").length;
 
   const hasExpired = (job: DownloadJob) => {
     const expiry = Date.parse(job.expiresAt);
     return !Number.isNaN(expiry) && expiry <= now;
   };
 
-  const commandJob = commandJobId
-    ? jobs.find((j) => j.id === commandJobId) ?? null
-    : null;
+  const commandJob = commandJobId ? (jobs.find((j) => j.id === commandJobId) ?? null) : null;
 
   // Nothing to surface until a download exists.
   if (jobs.length === 0) return null;
@@ -355,12 +332,7 @@ export default function DownloadJobsMenu() {
               }
             }}
           >
-            <Badge
-              variant="dot"
-              color="secondary"
-              overlap="circular"
-              invisible={!hasUnseenCompletion}
-            >
+            <Badge variant="dot" color="secondary" overlap="circular" invisible={!hasUnseenCompletion}>
               <FolderZip />
             </Badge>
             {activeCount > 0 && (

@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { type PhenotypicalDataPoint } from "@/common/hooks/usePhenotypicalData";
 
-type Metadata = { x: number, y: number };
+type Metadata = { x: number; y: number };
 
 type Props = {
   rawData: PhenotypicalDataPoint[];

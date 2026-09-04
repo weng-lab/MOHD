@@ -38,8 +38,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
         transition: "opacity 320ms ease, transform 320ms ease",
         borderRadius: 3,
         border: "1px solid rgba(255,255,255,0.28)",
-        background:
-          "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(242,249,248,0.68) 100%)",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(242,249,248,0.68) 100%)",
         boxShadow: "0 24px 60px rgba(0, 0, 0, 0.16)",
         backdropFilter: "blur(16px)",
         color: "text.primary",
@@ -74,27 +73,24 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
                   }}
                 />
               </Box>
-                <Stack>
-              <Box>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: "rgba(20, 39, 37, 0.96)",
-                    textTransform:
-                      selectedOme === "WGS" || selectedOme === "WGBS" ? "uppercase" : "none",
-                  }}
-                >
-                  {getOmeLabel(selectedOme)}
-                </Typography>
-              </Box>
-              {(selectedOme === "WGS" || selectedOme === "WGBS") && (
-                <Typography
-                  variant="h5"
-                >
-                  {selectedOme === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
-                </Typography>
-              )}
-            </Stack>
+              <Stack>
+                <Box>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      color: "rgba(20, 39, 37, 0.96)",
+                      textTransform: selectedOme === "WGS" || selectedOme === "WGBS" ? "uppercase" : "none",
+                    }}
+                  >
+                    {getOmeLabel(selectedOme)}
+                  </Typography>
+                </Box>
+                {(selectedOme === "WGS" || selectedOme === "WGBS") && (
+                  <Typography variant="h5">
+                    {selectedOme === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
+                  </Typography>
+                )}
+              </Stack>
             </Stack>
             <IconButton
               aria-label="Close selected OME"
@@ -119,7 +115,12 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             {OME_DESCRIPTIONS[selectedOme] ?? "Description coming soon."}
           </Typography>
         </Stack>
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent={{ xs: "flex-start", sm: "space-between" }} gap={{ xs: 1, sm: 0 }} mt={2}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent={{ xs: "flex-start", sm: "space-between" }}
+          gap={{ xs: 1, sm: 0 }}
+          mt={2}
+        >
           <Button
             // component={genomeBrowserHref ? Link : "button"}
             // href={genomeBrowserHref ?? undefined}
@@ -127,7 +128,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             // disabled={!genomeBrowserHref}
             sx={{
               minWidth: 170,
-              backgroundColor: "secondary.main"
+              backgroundColor: "secondary.main",
             }}
           >
             Genome Browser

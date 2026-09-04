@@ -11,7 +11,6 @@ import {
 } from "@apollo/client-integration-nextjs";
 import Config from "../config.json";
 
-
 // See https://www.apollographql.com/blog/using-apollo-client-with-next-js-13-releasing-an-official-library-to-support-the-app-router
 
 function makeClient() {
@@ -27,15 +26,14 @@ function makeClient() {
 
   return new ApolloClient({
     cache: new InMemoryCache(),
-    link:
-      isServer
-        ? ApolloLink.from([
-            new SSRMultipartLink({
-              stripDefer: true,
-            }),
-            httpLink,
-          ])
-        : httpLink,
+    link: isServer
+      ? ApolloLink.from([
+          new SSRMultipartLink({
+            stripDefer: true,
+          }),
+          httpLink,
+        ])
+      : httpLink,
   });
 }
 

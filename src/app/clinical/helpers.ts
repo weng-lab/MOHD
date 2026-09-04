@@ -26,9 +26,7 @@ export function formatSegment(seg: string): string {
 export function formatVariableName(name: string): string {
   return name
     .split(".")
-    .map((seg) =>
-      seg.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
-    )
+    .map((seg) => seg.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()))
     .join(" › ");
 }
 

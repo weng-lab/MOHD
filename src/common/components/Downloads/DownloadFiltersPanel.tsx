@@ -34,13 +34,7 @@ const ControlLabelWrapper = ({ label, children }: { label: string; children: Rea
  * Reset button for a filter group. Stops click propagation so the instance inside
  * the accordion summary doesn't also toggle the accordion open/closed.
  */
-const ResetFiltersButton = ({
-  label,
-  onReset,
-}: {
-  label: string;
-  onReset: () => void;
-}) => (
+const ResetFiltersButton = ({ label, onReset }: { label: string; onReset: () => void }) => (
   <Tooltip title={label}>
     <IconButton
       size="small"

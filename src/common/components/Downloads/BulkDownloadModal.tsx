@@ -17,10 +17,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import type { BulkDownloadDatasetItem } from "@/common/hooks/useOmeDownloadsState";
 import SelectedFilesReview from "@/common/components/Downloads/SelectedFilesReview";
-import {
-  BulkDownloadFormat,
-  useBulkDownloadJob,
-} from "@/common/hooks/useBulkDownloadJob";
+import { BulkDownloadFormat, useBulkDownloadJob } from "@/common/hooks/useBulkDownloadJob";
 import { ARCHIVE_SIZE_LIMIT_BYTES, formatBytes } from "@/common/downloads";
 import { Start } from "@mui/icons-material";
 
@@ -104,26 +101,14 @@ const BulkDownloadModal = ({
           }}
         >
           <Stack spacing={1} p={2}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems={"flex-end"}
-            >
-              <Typography variant="h5">
-                Bulk Download
-              </Typography>
-              <IconButton
-                aria-label="Close"
-                onClick={handleClose}
-                disabled={isSubmitting}
-                sx={{ mt: -0.5, mr: -0.5 }}
-              >
+            <Stack direction="row" justifyContent="space-between" alignItems={"flex-end"}>
+              <Typography variant="h5">Bulk Download</Typography>
+              <IconButton aria-label="Close" onClick={handleClose} disabled={isSubmitting} sx={{ mt: -0.5, mr: -0.5 }}>
                 <CloseIcon />
               </IconButton>
             </Stack>
             <Typography variant="body1" color="text.secondary">
-              Please review your selected files before submitting them for
-              processing.
+              Please review your selected files before submitting them for processing.
             </Typography>
             <Alert
               severity="info"
@@ -146,12 +131,9 @@ const BulkDownloadModal = ({
           >
             <Stack direction="row" justifyContent="space-between" spacing={2}>
               <Typography>
-                  {datasetCount} dataset{datasetCount !== 1 ? "s" : ""} •{" "}
-                  {fileCount} file{fileCount !== 1 ? "s" : ""}
+                {datasetCount} dataset{datasetCount !== 1 ? "s" : ""} • {fileCount} file{fileCount !== 1 ? "s" : ""}
               </Typography>
-              <Typography>
-                {formatBytes(totalSize)}
-              </Typography>
+              <Typography>{formatBytes(totalSize)}</Typography>
             </Stack>
           </Box>
           <Divider />
@@ -169,65 +151,45 @@ const BulkDownloadModal = ({
           </Box>
           <Divider />
           <Stack spacing={1} sx={{ p: 2 }}>
-            <Typography >
-              Select format
-            </Typography>
+            <Typography>Select format</Typography>
             <Typography variant="caption" color="text.secondary">
-              .zip or .tar.gz for a direct archive download, or shell script to
-              pull the files yourself
+              .zip or .tar.gz for a direct archive download, or shell script to pull the files yourself
             </Typography>
             {isOverArchiveLimit && (
               <Alert severity="warning">
-                This selection is {formatBytes(totalSize)}, over the{" "}
-                {formatBytes(ARCHIVE_SIZE_LIMIT_BYTES)} limit for .zip and
-                .tar.gz archives. Download with the shell script, or remove
-                files to get under the limit.
+                This selection is {formatBytes(totalSize)}, over the {formatBytes(ARCHIVE_SIZE_LIMIT_BYTES)} limit for
+                .zip and .tar.gz archives. Download with the shell script, or remove files to get under the limit.
               </Alert>
             )}
             <RadioGroup
               row
               value={effectiveFormat}
-              onChange={(event) =>
-                setFormat(event.target.value as BulkDownloadFormat)
-              }
+              onChange={(event) => setFormat(event.target.value as BulkDownloadFormat)}
               sx={{ gap: { xs: 1, sm: 2.5 }, flexWrap: "wrap" }}
             >
-              {(Object.keys(FORMAT_LABELS) as BulkDownloadFormat[]).map(
-                (key) => (
-                  <FormControlLabel
-                    key={key}
-                    value={key}
-                    control={<Radio />}
-                    label={FORMAT_LABELS[key]}
-                    disabled={isOverArchiveLimit && key !== "script"}
-                    sx={{ mr: 0 }}
-                  />
-                ),
-              )}
+              {(Object.keys(FORMAT_LABELS) as BulkDownloadFormat[]).map((key) => (
+                <FormControlLabel
+                  key={key}
+                  value={key}
+                  control={<Radio />}
+                  label={FORMAT_LABELS[key]}
+                  disabled={isOverArchiveLimit && key !== "script"}
+                  sx={{ mr: 0 }}
+                />
+              ))}
             </RadioGroup>
             {status === "failed" && (
               <Alert severity="error" sx={{ mt: 2 }}>
-                Couldn&apos;t start download. Check your connection and try
-                again.
+                Couldn&apos;t start download. Check your connection and try again.
               </Alert>
             )}
             <Stack direction="row" justifyContent="flex-end" spacing={1}>
-              <Button
-                onClick={handleClose}
-                disabled={isSubmitting}
-                variant="outlined"
-              >
+              <Button onClick={handleClose} disabled={isSubmitting} variant="outlined">
                 Cancel
               </Button>
               <Button
                 variant="contained"
-                endIcon={
-                  isSubmitting ? (
-                    <CircularProgress size={16} color="inherit" />
-                  ) : (
-                    <Start />
-                  )
-                }
+                endIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : <Start />}
                 onClick={handleSubmit}
                 disabled={fileCount === 0 || isSubmitting}
               >

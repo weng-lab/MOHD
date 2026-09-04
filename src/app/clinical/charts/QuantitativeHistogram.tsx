@@ -24,7 +24,6 @@ export default function QuantitativeHistogram({ rawData, var1Name }: Props) {
       animationType="slideUp"
       color="#e67e22"
       densityLineColor="#e74c3c"
-      
     />
   );
 }

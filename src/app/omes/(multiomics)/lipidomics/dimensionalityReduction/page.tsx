@@ -1,9 +1,5 @@
-
 const LipidomicsDimensionalityReduction = () => {
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};
 
 export default LipidomicsDimensionalityReduction;

@@ -40,6 +40,7 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
     "@graphql-codegen/cli": "^5.0.5",
     "@graphql-codegen/client-preset": "^4",
     "@graphql-typed-document-node/core": "^3",
@@ -50,9 +51,15 @@
     "@typescript-eslint/parser": "^8.58.0",
     "babel-plugin-react-compiler": "1.0.0",
     "dotenv-cli": "^11.0.0",
-    "eslint": "^9",
+    "eslint": "^9.38.0",
     "eslint-config-next": "^16.2.6",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.0",
+    "eslint-plugin-unused-imports": "^4.3.0",
     "graphql": "^16",
+    "prettier": "^3.6.2",
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.58.0"
   }

@@ -14,10 +14,7 @@ type JobResponse = {
  * scope so the hook body stays free of the try/catch shape React Compiler
  * bails on.
  */
-async function postJob(
-  files: string[],
-  format: BulkDownloadFormat,
-): Promise<JobResponse | null> {
+async function postJob(files: string[], format: BulkDownloadFormat): Promise<JobResponse | null> {
   try {
     const res = await fetch(`/api/bulk-download/jobs`, {
       method: "POST",
@@ -39,11 +36,7 @@ export function useBulkDownloadJob() {
   const reset = () => setStatus("idle");
 
   /** Resolves true once the job is accepted and queued, false if submission failed. */
-  const submit = async (
-    files: string[],
-    format: BulkDownloadFormat,
-    ome?: string,
-  ): Promise<boolean> => {
+  const submit = async (files: string[], format: BulkDownloadFormat, ome?: string): Promise<boolean> => {
     setStatus("submitting");
 
     const data = await postJob(files, format);

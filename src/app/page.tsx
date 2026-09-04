@@ -34,14 +34,7 @@ export default function Home() {
               borderRadius: 99,
             }}
           >
-            <Image
-              src="/logo.png"
-              alt="logo"
-              height={150}
-              width={150}
-              priority
-              id="header-helix"
-            />
+            <Image src="/logo.png" alt="logo" height={150} width={150} priority id="header-helix" />
           </Box>
           <Stack alignItems="center" flexWrap={"wrap"} textAlign={"center"}>
             <Typography variant="h4" fontWeight={500}>

@@ -79,8 +79,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                   textAlign: "left",
                   cursor: "pointer",
                   appearance: "none",
-                  transition:
-                    "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
+                  transition: "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
                   "&:hover": {
                     transform: "translateY(-3px)",
                     boxShadow: "0 14px 28px rgba(0, 0, 0, 0.18)",
@@ -136,11 +135,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                 )}
               </Box>
               {isMobile && (
-                <Typography
-                  className="ome-label"
-                  variant="body1"
-                  title={label}
-                >
+                <Typography className="ome-label" variant="body1" title={label}>
                   {label}
                 </Typography>
               )}

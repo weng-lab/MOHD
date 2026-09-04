@@ -9,10 +9,7 @@ import FilesPane from "./FilesPane";
 import BulkDownloadChip from "./BulkDownloadChip";
 import { LinkComponent } from "@/common/components/LinkComponent";
 import { ANVIL_URL } from "@/common/downloads";
-import type {
-  BaseSampleMetadata,
-  FilterFieldConfig,
-} from "@/common/components/Downloads/types";
+import type { BaseSampleMetadata, FilterFieldConfig } from "@/common/components/Downloads/types";
 
 /**
  * Configuration object each ome page provides to this component. Dataset + file
@@ -48,9 +45,7 @@ type OmeDualPaneDownloadsProps<T extends BaseSampleMetadata> = {
   config: OmeDownloadsConfig<T>;
 };
 
-const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
-  config,
-}: OmeDualPaneDownloadsProps<T>) => {
+const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({ config }: OmeDualPaneDownloadsProps<T>) => {
   const state = useOmeDownloadsState(config);
 
   const {
@@ -178,8 +173,8 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({
 };
 
 // Wrapper to make the generic component usable as a default export
-const OmeDualPaneDownloads = <T extends BaseSampleMetadata>(
-  props: OmeDualPaneDownloadsProps<T>
-) => <OmeDualPaneDownloadsInner {...props} />;
+const OmeDualPaneDownloads = <T extends BaseSampleMetadata>(props: OmeDualPaneDownloadsProps<T>) => (
+  <OmeDualPaneDownloadsInner {...props} />
+);
 
 export default OmeDualPaneDownloads;

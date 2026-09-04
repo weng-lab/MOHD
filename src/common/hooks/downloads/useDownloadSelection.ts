@@ -29,10 +29,7 @@ export type DownloadSelectionState = {
 };
 
 /** How many of `selectable` are currently selected. */
-function countSelected(
-  selectable: ReadonlySet<string>,
-  selected: ReadonlySet<string> | undefined
-): number {
+function countSelected(selectable: ReadonlySet<string>, selected: ReadonlySet<string> | undefined): number {
   if (!selected) return 0;
   let count = 0;
   for (const f of selectable) if (selected.has(f)) count++;
@@ -51,10 +48,7 @@ function buildDatasetCheckState(
 ): Map<string, CheckState> {
   const map = new Map<string, CheckState>();
   for (const [id, selectable] of selectableByDataset) {
-    map.set(
-      id,
-      checkStateFor(countSelected(selectable, selection.get(id)), selectable.size)
-    );
+    map.set(id, checkStateFor(countSelected(selectable, selection.get(id)), selectable.size));
   }
   return map;
 }
@@ -110,7 +104,7 @@ export function useDownloadSelection({
 
   const activeSelectionModel: GridRowSelectionModel = {
     type: "include",
-    ids: new Set<string>(activeDataset ? selection.get(activeDataset) ?? [] : []),
+    ids: new Set<string>(activeDataset ? (selection.get(activeDataset) ?? []) : []),
   };
 
   let numSelectedFiles = 0;

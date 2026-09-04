@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  ButtonGroup as MuiButtonGroup,
-  Divider,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, ButtonGroup as MuiButtonGroup, Divider, Stack, Typography } from "@mui/material";
 import type { BrowserStoreInstance } from "@weng-lab/genomebrowser";
 
 type ButtonConfig = {
@@ -50,16 +43,12 @@ function TwoSidedControl({
       {label ? <Typography variant="body2">{label}</Typography> : null}
       <Stack direction="row" spacing={0.5} alignItems="center">
         <Stack direction="column" alignItems="center">
-          {leftLabel ? (
-            <Typography variant="body2">{leftLabel}</Typography>
-          ) : null}
+          {leftLabel ? <Typography variant="body2">{leftLabel}</Typography> : null}
           <ButtonGroup buttons={leftButtons} />
         </Stack>
         <Divider orientation="vertical" flexItem />
         <Stack direction="column" alignItems="center">
-          {rightLabel ? (
-            <Typography variant="body2">{rightLabel}</Typography>
-          ) : null}
+          {rightLabel ? <Typography variant="body2">{rightLabel}</Typography> : null}
           <ButtonGroup buttons={rightButtons} />
         </Stack>
       </Stack>
@@ -67,11 +56,7 @@ function TwoSidedControl({
   );
 }
 
-export default function ControlButtons({
-  useBrowserStore,
-}: {
-  useBrowserStore: BrowserStoreInstance;
-}) {
+export default function ControlButtons({ useBrowserStore }: { useBrowserStore: BrowserStoreInstance }) {
   // The store hook is passed in as a prop, so the compiler can't prove it's the same
   // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
   // react-doctor-disable-next-line react-hooks-js/hooks
@@ -137,13 +122,7 @@ export default function ControlButtons({
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="row"
-      flexWrap="wrap"
-      justifyContent="center"
-      gap={2}
-    >
+    <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" gap={2}>
       <TwoSidedControl
         key={`${domainKey}-move`}
         leftButtons={buttonGroups.moveLeft}

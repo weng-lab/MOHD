@@ -65,8 +65,7 @@ export function buildBulkDownloadItems(
   const withFiles: (readonly [string, (CatalogFile & { bulk_path: string })[]])[] = [];
   for (const [datasetId, filenames] of selection) {
     const datasetFiles = (filesByDataset.get(datasetId) ?? []).filter(
-      (f): f is CatalogFile & { bulk_path: string } =>
-        filenames.has(f.filename) && Boolean(f.bulk_path)
+      (f): f is CatalogFile & { bulk_path: string } => filenames.has(f.filename) && Boolean(f.bulk_path)
     );
     if (datasetFiles.length > 0) withFiles.push([datasetId, datasetFiles] as const);
   }
@@ -81,9 +80,7 @@ export function buildBulkDownloadItems(
 
       const children: BulkDownloadFileItem[] = datasetFiles.map((f) => ({
         id: f.filename,
-        label: typeCount.get(f.file_type)! > 1
-          ? `${f.file_type} (${f.filename})`
-          : f.file_type,
+        label: typeCount.get(f.file_type)! > 1 ? `${f.file_type} (${f.filename})` : f.file_type,
         path: f.bulk_path,
         size: Number(f.size ?? 0),
       }));

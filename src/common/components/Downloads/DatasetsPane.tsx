@@ -47,9 +47,7 @@ export default function DatasetsPane({
           columns={columns}
           onRowClick={(params) => onActivate(params.row.sample_id)}
           divHeight={{ height: "100%" }}
-          getRowClassName={(params) =>
-            params.row.sample_id === activeDataset ? "Mui-selected" : ""
-          }
+          getRowClassName={(params) => (params.row.sample_id === activeDataset ? "Mui-selected" : "")}
           filterModel={filterModel}
           onFilterModelChange={onFilterModelChange}
           initialState={{
