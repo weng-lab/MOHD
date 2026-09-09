@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { gql } from "@/common/types/generated/gql";
 import { FetchLipidomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
@@ -49,25 +50,27 @@ export const useLipidomicsQuantification = ({
     skip: skip,
   });
 
-  const molecules = [...(data?.lipidomics_molecules ?? [])].sort((a, b) => a.position - b.position);
+  const samples = useMemo<LipidomicsSample[] | undefined>(() => {
+    const molecules = [...(data?.lipidomics_molecules ?? [])].sort((a, b) => a.position - b.position);
 
-  const samples: LipidomicsSample[] | undefined = !data?.lipidomics_quantification
-    ? undefined
-    : data.lipidomics_quantification
-        .filter(
-          (row): row is NonNullable<FetchLipidomicsQuantificationQuery["lipidomics_quantification"][number]> =>
-            row !== null
-        )
-        .map((row) => ({
-          sample_id: row.sample_id,
-          site: row.site ?? "",
-          status: row.status ?? "",
-          sex: row.sex ?? "",
-          quantification: molecules.map((molecule, index) => ({
-            molecule_name: molecule.molecule_name,
-            value: row.quant_values?.[index] ?? null,
-          })),
-        }));
+    if (!data?.lipidomics_quantification) return undefined;
+
+    return data.lipidomics_quantification
+      .filter(
+        (row): row is NonNullable<FetchLipidomicsQuantificationQuery["lipidomics_quantification"][number]> =>
+          row !== null
+      )
+      .map((row) => ({
+        sample_id: row.sample_id,
+        site: row.site ?? "",
+        status: row.status ?? "",
+        sex: row.sex ?? "",
+        quantification: molecules.map((molecule, index) => ({
+          molecule_name: molecule.molecule_name,
+          value: row.quant_values?.[index] ?? null,
+        })),
+      }));
+  }, [data]);
 
   return {
     data: samples,

@@ -99,13 +99,16 @@ const DimensionalityScatterPlot = <
     setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol" | "age");
   };
 
-  const isHighlighted = (x: T) => selected.some((y) => y.sample_id === x.sample_id);
+  const selectedIds = new Set(selected.map((y) => y.sample_id));
+  const isHighlighted = (x: T) => selectedIds.has(x.sample_id);
 
   const scatterData: Point<T>[] = !data
     ? []
     : data.map((x) => {
+        const highlighted = isHighlighted(x);
+
         const getColor = () => {
-          if (isHighlighted(x) || selected.length === 0) {
+          if (highlighted || selected.length === 0) {
             if (colorScheme === "sex") {
               return sex_color_map[x.sex as keyof typeof sex_color_map];
             } else if (colorScheme === "status") {
@@ -123,7 +126,7 @@ const DimensionalityScatterPlot = <
         return {
           x: getX(x) ?? 0,
           y: getY(x) ?? 0,
-          r: isHighlighted(x) ? 6 : 4,
+          r: highlighted ? 6 : 4,
           color: getColor(),
           metaData: x,
         };

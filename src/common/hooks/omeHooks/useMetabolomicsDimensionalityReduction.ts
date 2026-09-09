@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { gql } from "@/common/types/generated/gql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
@@ -71,29 +72,33 @@ export const useMetabolomicsDimensionalityReduction = ({
     skip: skip,
   });
 
-  const samples: MetabolomicsDimensionalityReductionSample[] | undefined = data?.metabolomics_metadata.map((row) => ({
-    sample_id: row.sample_id,
-    kit: row.kit ?? "",
-    protocol: row.protocol ?? undefined,
-    sex: row.sex ?? "",
-    site: row.site ?? "",
-    status: row.status ?? "",
-    age_at_enrollment: row.age_at_enrollment,
-    tube: row.tube ?? "",
-    visit: row.visit ?? "",
-    participant_id: row.participant_id ?? "",
-    condition: row.condition ?? "",
-    pc1: row.pc1 ?? null,
-    pc2: row.pc2 ?? null,
-    pc3: row.pc3 ?? null,
-    pc4: row.pc4 ?? null,
-    pc5: row.pc5 ?? null,
-    pc6: row.pc6 ?? null,
-    pc7: row.pc7 ?? null,
-    pc8: row.pc8 ?? null,
-    pc9: row.pc9 ?? null,
-    pc10: row.pc10 ?? null,
-  }));
+  const samples = useMemo<MetabolomicsDimensionalityReductionSample[] | undefined>(
+    () =>
+      data?.metabolomics_metadata.map((row) => ({
+        sample_id: row.sample_id,
+        kit: row.kit ?? "",
+        protocol: row.protocol ?? undefined,
+        sex: row.sex ?? "",
+        site: row.site ?? "",
+        status: row.status ?? "",
+        age_at_enrollment: row.age_at_enrollment,
+        tube: row.tube ?? "",
+        visit: row.visit ?? "",
+        participant_id: row.participant_id ?? "",
+        condition: row.condition ?? "",
+        pc1: row.pc1 ?? null,
+        pc2: row.pc2 ?? null,
+        pc3: row.pc3 ?? null,
+        pc4: row.pc4 ?? null,
+        pc5: row.pc5 ?? null,
+        pc6: row.pc6 ?? null,
+        pc7: row.pc7 ?? null,
+        pc8: row.pc8 ?? null,
+        pc9: row.pc9 ?? null,
+        pc10: row.pc10 ?? null,
+      })),
+    [data]
+  );
 
   return {
     data: samples,

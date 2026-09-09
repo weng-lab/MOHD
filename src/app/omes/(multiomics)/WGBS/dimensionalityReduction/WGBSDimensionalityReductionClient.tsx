@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import WGBSDimensionalityTable from "./WGBSDimensionalityTable";
 import { ScatterPlot } from "@mui/icons-material";
@@ -14,6 +15,7 @@ export type SharedWGBSDimenionalityProps = {
   setSelected: React.Dispatch<React.SetStateAction<WGBSRow[]>>;
   sortedFilteredData: WGBSRow[];
   tableProps: ReturnType<typeof useTablePlotSync<WGBSRow>>["tableProps"];
+  setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -29,6 +31,7 @@ const WGBSDimensionalityReductionClient = ({ rows }: WGBSDimensionalityReduction
     rows,
     getRowId: (row) => row.sample_id,
   });
+  const [, setAutoSort] = useState(false);
 
   const SharedWGBSDimenionalityProps: SharedWGBSDimenionalityProps = {
     rows,
@@ -36,6 +39,7 @@ const WGBSDimensionalityReductionClient = ({ rows }: WGBSDimensionalityReduction
     setSelected,
     sortedFilteredData,
     tableProps,
+    setAutoSort,
   };
 
   return (

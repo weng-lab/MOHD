@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import LipidomicsDimensionalityTable from "./LipidomicsDimensionalityTable";
 import { ScatterPlot } from "@mui/icons-material";
@@ -20,6 +21,7 @@ export type SharedLipidomicsDimenionalityProps = {
   setSelected: React.Dispatch<React.SetStateAction<LipidomicsDimenionalityMetadata>>;
   sortedFilteredData: LipidomicsDimenionalityMetadata;
   tableProps: ReturnType<typeof useTablePlotSync<LipidomicsDimenionalityMetadata[number]>>["tableProps"];
+  setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -33,6 +35,7 @@ const LipidomicsDimensionalityReduction = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
+  const [, setAutoSort] = useState(false);
 
   const SharedLipidomicsDimenionalityProps: SharedLipidomicsDimenionalityProps = {
     rows,
@@ -41,6 +44,7 @@ const LipidomicsDimensionalityReduction = () => {
     setSelected,
     sortedFilteredData,
     tableProps,
+    setAutoSort,
   };
 
   return (
