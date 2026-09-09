@@ -2,19 +2,41 @@ import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
 import { ChartProps } from "@weng-lab/visualization";
 import DimensionalityScatterPlot from "@/common/components/DimensionalityScatterPlot";
 
+
 export type ATACDimensionalityUmapProps<
-    S extends boolean | undefined,
-    Z extends boolean | undefined
-> =
-    SharedATACDimenionalityProps &
-    Partial<ChartProps<ATACMetadata[number], S, Z>>;
+  S extends boolean | undefined,
+  Z extends boolean | undefined,
+> = SharedATACDimenionalityProps & Partial<ChartProps<ATACMetadata[number], S, Z>>;
+
+const TooltipBody = (point: Point<ATACMetadata[number]>) => {
+  return (
+    <>
+      <Typography>
+        <b>Dataset:</b> {point.metaData?.sample_id}
+      </Typography>
+      <Typography>
+        <b>Status:</b> {point.metaData?.status}
+      </Typography>
+      <Typography>
+        <b>Site:</b> {point.metaData?.site}
+      </Typography>
+      <Typography>
+        <b>Sex:</b>{" "}
+        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ""}
+      </Typography>
+      <Typography>
+        <b>Protocol:</b> {point.metaData?.protocol.replaceAll(" method", "")}
+      </Typography>
+    </>
+  );
+};
 
 const ATACUMAP = <S extends true, Z extends boolean | undefined>({
-    selected,
-    ATACData,
-    setSelected,
-    ref,
-    ...rest
+  selected,
+  ATACData,
+  setSelected,
+  ref,
+  ...rest
 }: ATACDimensionalityUmapProps<S, Z>) => {
     const { loading, data } = ATACData;
 

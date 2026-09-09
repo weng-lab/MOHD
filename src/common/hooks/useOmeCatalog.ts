@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import type {
-  BaseSampleMetadata,
-  CatalogDataset,
-} from "@/common/components/Downloads/types";
+import type { BaseSampleMetadata, CatalogDataset } from "@/common/components/Downloads/types";
 
 // The catalog lives on the same service as the bulk-download jobs API,
 // proxied through our own API routes so the auth token stays server-side.
@@ -31,9 +28,7 @@ type Loaded<T extends BaseSampleMetadata> = {
  * metadata flattened on and their files nested — replacing the old two-fetch
  * (GraphQL metadata + GraphQL file list) client-side merge.
  */
-export function useOmeCatalog<T extends BaseSampleMetadata>(
-  omeKey: string,
-): CatalogState<T> {
+export function useOmeCatalog<T extends BaseSampleMetadata>(omeKey: string): CatalogState<T> {
   const [loaded, setLoaded] = useState<Loaded<T> | null>(null);
 
   useEffect(() => {

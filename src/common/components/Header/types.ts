@@ -3,4 +3,4 @@ export type PageInfo = {
   link: string;
   dropdownID?: number;
   subPages?: { pageName: string; link: string }[];
-}
+};

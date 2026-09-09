@@ -28,6 +28,7 @@ export const ColorBySelect = ({ colorScheme, handleColorSchemeChange, protocol, 
       {age && (
         <MenuItem value={"age"}>Age</MenuItem>
       )}
+
     </Select>
   </FormControl>
 );

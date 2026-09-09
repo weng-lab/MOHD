@@ -53,4 +53,5 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
         { value: "heatmap", label: "Heatmap", icon: heatmapIcon, href: "/omes/metallomics/heatmap" },
         { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/metallomics/downloads" },
     ],
+
 };

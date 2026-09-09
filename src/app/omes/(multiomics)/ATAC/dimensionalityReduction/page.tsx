@@ -6,48 +6,43 @@ import ATACDimensionalityScatterPlot from "./ATACUMAP"
 import ATACDimensionalityPCAPlot from "./ATACPCA"
 import { useMemo } from "react"
 import { DownloadPlotHandle } from "@weng-lab/visualization"
+
 import { useATACData, UseATACDataReturn } from "@/common/hooks/omeHooks/useATACData";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
-export type ATACMetadata =
-    NonNullable<UseATACDataReturn["data"]>;
+export type ATACMetadata = NonNullable<UseATACDataReturn["data"]>;
 
 export type SharedATACDimenionalityProps = {
-    rows: ATACMetadata;
-    ATACData: UseATACDataReturn;
-    selected: ATACMetadata;
-    setSelected: React.Dispatch<React.SetStateAction<ATACMetadata>>;
-    sortedFilteredData: ATACMetadata;
-    tableProps: ReturnType<typeof useTablePlotSync<ATACMetadata[number]>>["tableProps"];
-    ref?: React.RefObject<DownloadPlotHandle | null>;
-}
+  rows: ATACMetadata;
+  ATACData: UseATACDataReturn;
+  selected: ATACMetadata;
+  setSelected: React.Dispatch<React.SetStateAction<ATACMetadata>>;
+  sortedFilteredData: ATACMetadata;
+  tableProps: ReturnType<typeof useTablePlotSync<ATACMetadata[number]>>["tableProps"];
+  ref?: React.RefObject<DownloadPlotHandle | null>;
+};
 
 const ATACDimensionalityReduction = () => {
     const { ref: umapRef, ...umapDownload } = usePlotDownload();
     const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
     const ATACData = useATACData({ skip: false });
 
-    const rows: ATACMetadata = useMemo(() => {
-        if (!ATACData.data) return [];
-        return ATACData.data;
-    }, [ATACData]);
 
-    const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-        rows,
-        getRowId: (row) => row.sample_id,
-    });
+  const rows: ATACMetadata = ATACData.data ?? [];
 
-    const SharedATACDimenionalityProps: SharedATACDimenionalityProps = useMemo(
-        () => ({
-            rows,
-            ATACData,
-            selected,
-            setSelected,
-            sortedFilteredData,
-            tableProps,
-        }),
-        [ATACData, rows, selected, setSelected, sortedFilteredData, tableProps]
-    );
+  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
+    rows,
+    getRowId: (row) => row.sample_id,
+  });
+
+  const SharedATACDimenionalityProps: SharedATACDimenionalityProps = {
+    rows,
+    ATACData,
+    selected,
+    setSelected,
+    sortedFilteredData,
+    tableProps,
+  };
 
     return (
         <TwoPaneLayout

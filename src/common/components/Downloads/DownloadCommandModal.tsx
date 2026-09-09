@@ -35,15 +35,23 @@ const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
 type CopyState = "idle" | "copied" | "error";
 
-function CopyButton({
-  text,
-  label,
-  onDark = false,
-}: {
-  text: string;
-  label: string;
-  onDark?: boolean;
-}) {
+/**
+ * True once the text is on the clipboard. `navigator.clipboard` is undefined
+ * outside a secure context, where `writeText` isn't reachable at all. Kept at
+ * module scope so the component body stays free of the try/catch shape React
+ * Compiler bails on.
+ */
+async function copyToClipboard(text: string): Promise<boolean> {
+  if (!navigator.clipboard) return false;
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function CopyButton({ text, label, onDark = false }: { text: string; label: string; onDark?: boolean }) {
   const [state, setState] = useState<CopyState>("idle");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -53,28 +61,17 @@ function CopyButton({
     () => () => {
       if (timer.current) clearTimeout(timer.current);
     },
-    [],
+    []
   );
 
   const handleCopy = async () => {
-    try {
-      // Undefined outside a secure context, where writeText isn't reachable.
-      if (!navigator.clipboard) throw new Error("Clipboard unavailable");
-      await navigator.clipboard.writeText(text);
-      setState("copied");
-    } catch {
-      setState("error");
-    }
+    setState((await copyToClipboard(text)) ? "copied" : "error");
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setState("idle"), 2000);
   };
 
   const title =
-    state === "copied"
-      ? "Copied"
-      : state === "error"
-        ? "Couldn't copy — select the text and copy it manually"
-        : label;
+    state === "copied" ? "Copied" : state === "error" ? "Couldn't copy — select the text and copy it manually" : label;
 
   return (
     <Tooltip title={title} arrow placement="left">
@@ -89,11 +86,7 @@ function CopyButton({
           "&:hover": { bgcolor: onDark ? "rgba(255,255,255,0.18)" : undefined },
         }}
       >
-        {state === "copied" ? (
-          <CheckIcon fontSize="small" />
-        ) : (
-          <ContentCopyIcon fontSize="small" />
-        )}
+        {state === "copied" ? <CheckIcon fontSize="small" /> : <ContentCopyIcon fontSize="small" />}
       </IconButton>
     </Tooltip>
   );
@@ -136,8 +129,8 @@ function CommandBlock({ command }: { command: string }) {
 function CommandSteps({ steps }: { steps: CommandStep[] }) {
   return (
     <Stack spacing={1.5}>
-      {steps.map((step, i) => (
-        <Stack key={i} spacing={0.5}>
+      {steps.map((step) => (
+        <Stack key={step.command} spacing={0.5}>
           {step.caption && (
             <Typography variant="caption" color="text.secondary">
               {step.caption}
@@ -163,12 +156,7 @@ export type DownloadCommandModalProps = {
   onClose: () => void;
 };
 
-export default function DownloadCommandModal({
-  job,
-  downloadUrl,
-  isExpired,
-  onClose,
-}: DownloadCommandModalProps) {
+export default function DownloadCommandModal({ job, downloadUrl, isExpired, onClose }: DownloadCommandModalProps) {
   const [platform, setPlatform] = useState<CommandPlatform>(detectPlatform);
   const [inspectFirst, setInspectFirst] = useState(false);
 
@@ -206,12 +194,7 @@ export default function DownloadCommandModal({
             flexDirection: "column",
           }}
         >
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="flex-start"
-            sx={{ p: 2, pb: 1.5 }}
-          >
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ p: 2, pb: 1.5 }}>
             <Box sx={{ minWidth: 0 }}>
               <Typography variant="h6">Get {job.ome || "download"}</Typography>
               <Typography variant="body2" color="text.secondary">
@@ -232,12 +215,7 @@ export default function DownloadCommandModal({
               sx={{ px: 2, minHeight: 40, borderBottom: 1, borderColor: "divider" }}
             >
               {(Object.keys(PLATFORM_LABELS) as CommandPlatform[]).map((key) => (
-                <Tab
-                  key={key}
-                  value={key}
-                  label={PLATFORM_LABELS[key]}
-                  sx={{ minHeight: 40, py: 0 }}
-                />
+                <Tab key={key} value={key} label={PLATFORM_LABELS[key]} sx={{ minHeight: 40, py: 0 }} />
               ))}
             </Tabs>
           )}
@@ -248,8 +226,7 @@ export default function DownloadCommandModal({
               // has already deleted, so none of them are offered — a copyable
               // command that 404s is worse than no command.
               <Alert severity="error">
-                This link has expired and the files have been cleaned up. Start a
-                new download to get a fresh one.
+                This link has expired and the files have been cleaned up. Start a new download to get a fresh one.
               </Alert>
             ) : (
               <Stack spacing={1.5}>

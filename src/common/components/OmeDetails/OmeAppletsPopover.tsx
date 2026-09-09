@@ -5,54 +5,51 @@ import { OmesList, OmesDataType } from "@/common/types/globalTypes";
 import { getOmeLabel, getOmeInfoHref } from "@/app/omes/omeContent";
 
 type OmeAppletsPopoverProps = {
-    anchorEl: HTMLElement | null;
-    currentOme: OmesDataType;
-    onClose: () => void;
+  anchorEl: HTMLElement | null;
+  currentOme: OmesDataType;
+  onClose: () => void;
 };
 
 export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: OmeAppletsPopoverProps) {
-    return (
-        <Popover
-            open={Boolean(anchorEl)}
-            anchorEl={anchorEl}
-            onClose={onClose}
-            anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-            }}
-            transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-            }}
-            slotProps={{
-                paper: {
-                    sx: {
-                        p: 2,
-                        borderRadius: 3,
-                        width: 320,
-                        boxShadow: "0 18px 48px rgba(0, 0, 0, 0.18)",
-                    },
-                },
-            }}
+  return (
+    <Popover
+      open={Boolean(anchorEl)}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "right",
+      }}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      slotProps={{
+        paper: {
+          sx: {
+            p: 2,
+            borderRadius: 3,
+            width: 320,
+            boxShadow: "0 18px 48px rgba(0, 0, 0, 0.18)",
+          },
+        },
+      }}
+    >
+      <Box sx={{ display: "grid", gap: 1 }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "text.secondary" }}>
+          Omes
+        </Typography>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: 1,
+          }}
         >
-            <Box sx={{ display: "grid", gap: 1 }}>
-                <Typography
-                    variant="subtitle2"
-                    sx={{ fontWeight: 700, color: "text.secondary" }}
-                >
-                    Omes
-                </Typography>
-                <Box
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                        gap: 1,
-                    }}
-                >
-                    {OmesList.map((omeOption) => {
-                        const isCurrent = omeOption === currentOme;
-                        const omeLabel = getOmeLabel(omeOption);
-                        const omeImage = `/OmeIcons/NoBgrnd/${omeOption.toLowerCase().split("-")[0]}.png`;
+          {OmesList.map((omeOption) => {
+            const isCurrent = omeOption === currentOme;
+            const omeLabel = getOmeLabel(omeOption);
+            const omeImage = `/OmeIcons/NoBgrnd/${omeOption.toLowerCase().split("-")[0]}.png`;
 
                         return (
                             <Box
@@ -105,4 +102,5 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
             </Box>
         </Popover>
     );
+
 }

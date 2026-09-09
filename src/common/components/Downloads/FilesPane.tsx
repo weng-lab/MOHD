@@ -104,9 +104,7 @@ export default function FilesPane({
               borderRadius: 1,
             }}
           >
-            <Typography color="text.secondary">
-              Click a dataset to view its files
-            </Typography>
+            <Typography color="text.secondary">Click a dataset to view its files</Typography>
           </Box>
         )}
       </Box>

@@ -1,9 +1,5 @@
-
 const MetabolomicsDimensionalityReduction = () => {
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};
 
 export default MetabolomicsDimensionalityReduction;

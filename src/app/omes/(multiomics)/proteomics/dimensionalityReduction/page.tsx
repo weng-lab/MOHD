@@ -1,9 +1,5 @@
-
 const ProteomicsDimensionalityReduction = () => {
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};
 
 export default ProteomicsDimensionalityReduction;

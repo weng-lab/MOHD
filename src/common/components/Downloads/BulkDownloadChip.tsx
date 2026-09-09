@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Button,
   IconButton,
@@ -12,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import BulkDownloadModal from "./BulkDownloadModal";
-import { Close, Download, Start, Tune } from "@mui/icons-material";
+import { Close, Download, Tune } from "@mui/icons-material";
 import { useState } from "react";
 import { formatBytes } from "@/common/downloads";
 import type { BulkDownloadDatasetItem } from "@/common/hooks/useOmeDownloadsState";
@@ -114,10 +113,7 @@ const BulkDownloadChip = ({
                         <Close fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip
-                      title={`Download ${numFiles} file${numFiles === 1 ? "" : "s"}`}
-                      arrow
-                    >
+                    <Tooltip title={`Download ${numFiles} file${numFiles === 1 ? "" : "s"}`} arrow>
                       <IconButton
                         onClick={() => setOpen(true)}
                         aria-label={`Download ${numFiles} file${numFiles === 1 ? "" : "s"}`}
@@ -134,11 +130,7 @@ const BulkDownloadChip = ({
                   </>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      onClick={onClear}
-                      sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
-                    >
+                    <Button variant="outlined" onClick={onClear} sx={{ flexShrink: 0, whiteSpace: "nowrap" }}>
                       Clear
                     </Button>
                     <Button

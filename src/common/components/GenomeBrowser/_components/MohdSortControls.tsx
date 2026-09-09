@@ -1,7 +1,5 @@
 import { Button, ButtonGroup } from "@mui/material";
-import {
-  type MohdRowInfo,
-} from "@weng-lab/genomebrowser-ui";
+import { type MohdRowInfo } from "@weng-lab/genomebrowser-ui";
 import type { TrackStoreInstance } from "@weng-lab/genomebrowser";
 import { useMemo } from "react";
 
@@ -59,12 +57,7 @@ function compareBySampleId(a: MohdRowInfo, b: MohdRowInfo) {
   return a.sampleId.localeCompare(b.sampleId);
 }
 
-function compareKnownRows(
-  a: MohdRowInfo,
-  b: MohdRowInfo,
-  mode: MohdSortMode,
-  fallbackIndexDiff: number,
-) {
+function compareKnownRows(a: MohdRowInfo, b: MohdRowInfo, mode: MohdSortMode, fallbackIndexDiff: number) {
   const byKitId = compareByKitId(a, b);
   const byOme = getOmeRank(a.ome) - getOmeRank(b.ome);
   const byTrackType = getTrackRank(a) - getTrackRank(b);
@@ -116,7 +109,11 @@ export default function MohdSortControls({
   folders: Array<{ id: string; rows?: MohdRowInfo[] }>;
   useTrackStore: TrackStoreInstance;
 }) {
+  // The store hook is passed in as a prop, so the compiler can't prove it's the same
+  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const tracks = useTrackStore((s) => s.tracks);
+  // react-doctor-disable-next-line react-hooks-js/hooks
   const reorderTracks = useTrackStore((s) => s.reorderTracks);
 
   const mohdRowById = useMemo(() => {
@@ -171,25 +168,13 @@ export default function MohdSortControls({
       return compareKnownRows(a.row, b.row, mode, a.index - b.index);
     });
 
-    reorderTracks([
-      ...nonMohdTracks.map((track) => track.id),
-      ...mohdTracks.map((track) => track.id),
-    ]);
+    reorderTracks([...nonMohdTracks.map((track) => track.id), ...mohdTracks.map((track) => track.id)]);
   };
 
   return (
-    <ButtonGroup
-      variant="outlined"
-      size="small"
-      aria-label="Sort MOHD tracks"
-      sx={{ minHeight: 44 }}
-    >
-      <Button onClick={() => sortMohdTracks("kitId")}>
-        Sort by Kit ID
-      </Button>
-      <Button onClick={() => sortMohdTracks("fileType")}>
-        Sort by File Type
-      </Button>
+    <ButtonGroup variant="outlined" size="small" aria-label="Sort MOHD tracks" sx={{ minHeight: 44 }}>
+      <Button onClick={() => sortMohdTracks("kitId")}>Sort by Kit ID</Button>
+      <Button onClick={() => sortMohdTracks("fileType")}>Sort by File Type</Button>
     </ButtonGroup>
   );
 }

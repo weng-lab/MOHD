@@ -1,8 +1,15 @@
 "use client";
-import { useState, useRef, useMemo, useId } from "react";
+import { useState, useRef, useId } from "react";
 import {
-  Box, Divider, FormControl, InputAdornment, InputLabel,
-  ListSubheader, MenuItem, OutlinedInput, Popover,
+  Box,
+  Divider,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  ListSubheader,
+  MenuItem,
+  OutlinedInput,
+  Popover,
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
@@ -42,21 +49,14 @@ export default function TreeSelect({
   const anchorRef = useRef<HTMLDivElement>(null);
   const id = useId();
 
-  const categoryTrees = useMemo(
-    () =>
-      (["Categorical", "Quantitative"] as const).flatMap((cat) => {
-        const group = variables.filter((v) => v.variable_category === cat);
-        if (group.length === 0) return [];
-        return [{ category: cat, tree: buildTree(group) }];
-      }),
-    [variables]
-  );
+  const categoryTrees = (["Categorical", "Quantitative"] as const).flatMap((cat) => {
+    const group = variables.filter((v) => v.variable_category === cat);
+    if (group.length === 0) return [];
+    return [{ category: cat, tree: buildTree(group) }];
+  });
   const open = Boolean(anchorEl);
 
-  const displayValue =
-    value === "none" ? "-none-"
-    : value ? formatVariableName(value)
-    : "";
+  const displayValue = value === "none" ? "-none-" : value ? formatVariableName(value) : "";
 
   function handleOpen() {
     if (!disabled && anchorRef.current) {
@@ -133,7 +133,9 @@ export default function TreeSelect({
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         disableScrollLock
-        slotProps={{ paper: { sx: { width: popoverWidth, maxHeight: { xs: "55vh", sm: 400 }, overflow: "auto", mt: 0.5 } } }}
+        slotProps={{
+          paper: { sx: { width: popoverWidth, maxHeight: { xs: "55vh", sm: 400 }, overflow: "auto", mt: 0.5 } },
+        }}
       >
         {allowNone && (
           <>

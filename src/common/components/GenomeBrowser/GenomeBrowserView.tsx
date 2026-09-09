@@ -1,15 +1,11 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import { Button } from "@mui/material";
 import { Stack, useMediaQuery } from "@mui/system";
 import { ScreenApolloWrapper } from "@/common/apollo/apollo-wrapper";
-import {
-  Browser,
-  createBrowserStore,
-  createTrackStore,
-} from "@weng-lab/genomebrowser";
+import { Browser, createBrowserStore, createTrackStore } from "@weng-lab/genomebrowser";
 import {
   foldersByAssembly,
   InitialSelectedIdsByAssembly,
@@ -26,9 +22,7 @@ import { DEFAULT_BROWSER_STATE } from "./defaultDomain";
 const ASSEMBLY = "GRCh38";
 const FOLDER_IDS = new Set(["human-genes", "human-mohd"]);
 const MOHD_FOLDER_ID = "human-mohd";
-const ALL_FOLDERS = foldersByAssembly[ASSEMBLY].filter((folder) =>
-  FOLDER_IDS.has(folder.id),
-);
+const ALL_FOLDERS = foldersByAssembly[ASSEMBLY].filter((folder) => FOLDER_IDS.has(folder.id));
 
 export type GenomeBrowserViewProps = {
   /** Tracks selected by default when the browser first loads (and no session-stored selection exists). */
@@ -39,36 +33,22 @@ export type GenomeBrowserViewProps = {
   mohdOme?: MohdRowInfo["ome"];
 };
 
-export default function GenomeBrowserView({
-  initialSelectedIds,
-  sessionStorageKey,
-  mohdOme,
-}: GenomeBrowserViewProps) {
+export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKey, mohdOme }: GenomeBrowserViewProps) {
   const [trackSelectOpen, setTrackSelectOpen] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
 
-  const FOLDERS = useMemo(() => {
-    if (!mohdOme) {
-      return ALL_FOLDERS;
-    }
+  const FOLDERS = !mohdOme
+    ? ALL_FOLDERS
+    : ALL_FOLDERS.map((folder) =>
+        folder.id !== MOHD_FOLDER_ID
+          ? folder
+          : {
+              ...folder,
+              rows: (folder.rows as MohdRowInfo[]).filter((row) => row.ome === mohdOme),
+            }
+      );
 
-    return ALL_FOLDERS.map((folder) => {
-      if (folder.id !== MOHD_FOLDER_ID) {
-        return folder;
-      }
-
-      return {
-        ...folder,
-        rows: (folder.rows as MohdRowInfo[]).filter(
-          (row) => row.ome === mohdOme,
-        ),
-      };
-    });
-  }, [mohdOme]);
-
-  const [useBrowserStore] = useState(() =>
-    createBrowserStore(DEFAULT_BROWSER_STATE),
-  );
+  const [useBrowserStore] = useState(() => createBrowserStore(DEFAULT_BROWSER_STATE));
   const [useTrackStore] = useState(() => createTrackStore([]));
 
   const isMedium = useMediaQuery("(max-width:900px)");
@@ -80,11 +60,7 @@ export default function GenomeBrowserView({
   useEffect(() => {
     const current = useBrowserStore.getState();
 
-    if (
-      current.trackWidth === trackWidth &&
-      current.titleSize === titleSize &&
-      current.fontSize === fontSize
-    ) {
+    if (current.trackWidth === trackWidth && current.titleSize === titleSize && current.fontSize === fontSize) {
       return;
     }
 
@@ -150,11 +126,7 @@ export default function GenomeBrowserView({
         </Stack>
         <Browser browserStore={useBrowserStore} trackStore={useTrackStore} />
       </Stack>
-      <HighlightDialog
-        open={highlightOpen}
-        onClose={() => setHighlightOpen(false)}
-        useBrowserStore={useBrowserStore}
-      />
+      <HighlightDialog open={highlightOpen} onClose={() => setHighlightOpen(false)} useBrowserStore={useBrowserStore} />
       <TrackSelect
         assembly={ASSEMBLY}
         folders={FOLDERS}
