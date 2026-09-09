@@ -1,9 +1,8 @@
 import { Button, ButtonGroup } from "@mui/material";
-import { type MohdRowInfo } from "@weng-lab/genomebrowser-ui";
 import type { TrackStoreInstance } from "@weng-lab/genomebrowser";
-import { useMemo } from "react";
+import { MOHD_COLLECTION_ID, type MohdTrackInfo } from "../tracks";
 
-const MOHD_FOLDER_ID = "human-mohd";
+const MOHD_TRACK_PREFIX = `${MOHD_COLLECTION_ID}::`;
 const OME_ORDER = new Map([
   ["ATAC", 0],
   ["RNA", 1],
@@ -28,7 +27,7 @@ function getOmeRank(ome: string) {
   return OME_ORDER.get(ome) ?? Number.MAX_SAFE_INTEGER;
 }
 
-function getTrackRank(row: MohdRowInfo) {
+function getTrackRank(row: MohdTrackInfo) {
   if (row.ome === "ATAC") {
     return ATAC_TRACK_ORDER.get(row.description) ?? Number.MAX_SAFE_INTEGER;
   }
@@ -40,7 +39,7 @@ function getTrackRank(row: MohdRowInfo) {
   return Number.MAX_SAFE_INTEGER;
 }
 
-function compareByKitId(a: MohdRowInfo, b: MohdRowInfo) {
+function compareByKitId(a: MohdTrackInfo, b: MohdTrackInfo) {
   const aKitId = a.kitId?.trim();
   const bKitId = b.kitId?.trim();
 
@@ -53,11 +52,11 @@ function compareByKitId(a: MohdRowInfo, b: MohdRowInfo) {
   return 0;
 }
 
-function compareBySampleId(a: MohdRowInfo, b: MohdRowInfo) {
+function compareBySampleId(a: MohdTrackInfo, b: MohdTrackInfo) {
   return a.sampleId.localeCompare(b.sampleId);
 }
 
-function compareKnownRows(a: MohdRowInfo, b: MohdRowInfo, mode: MohdSortMode, fallbackIndexDiff: number) {
+function compareKnownRows(a: MohdTrackInfo, b: MohdTrackInfo, mode: MohdSortMode, fallbackIndexDiff: number) {
   const byKitId = compareByKitId(a, b);
   const byOme = getOmeRank(a.ome) - getOmeRank(b.ome);
   const byTrackType = getTrackRank(a) - getTrackRank(b);
@@ -103,49 +102,33 @@ function compareKnownRows(a: MohdRowInfo, b: MohdRowInfo, mode: MohdSortMode, fa
 }
 
 export default function MohdSortControls({
-  folders,
+  trackInfoById,
   useTrackStore,
 }: {
-  folders: Array<{ id: string; rows?: MohdRowInfo[] }>;
+  trackInfoById: Map<string, MohdTrackInfo>;
   useTrackStore: TrackStoreInstance;
 }) {
   // The store hook is passed in as a prop, so the compiler can't prove it's the same
-  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
+  // function every render. These controls render outside <GenomeBrowser>, so the
+  // store context hooks aren't available here.
   // react-doctor-disable-next-line react-hooks-js/hooks
   const tracks = useTrackStore((s) => s.tracks);
   // react-doctor-disable-next-line react-hooks-js/hooks
   const reorderTracks = useTrackStore((s) => s.reorderTracks);
 
-  const mohdRowById = useMemo(() => {
-    const mohdFolder = folders.find((folder) => folder.id === MOHD_FOLDER_ID);
-    const rows = (mohdFolder?.rows ?? []) as MohdRowInfo[];
-
-    return new Map(rows.map((row) => [row.id, row]));
-  }, [folders]);
-
   const sortMohdTracks = (mode: MohdSortMode) => {
-    if (!reorderTracks) {
-      return;
-    }
-
-    const nonMohdTracks: typeof tracks = [];
-    const mohdTracks: Array<{
-      id: string;
-      index: number;
-      row?: MohdRowInfo;
-    }> = [];
+    const nonMohdTrackIds: string[] = [];
+    const mohdTracks: Array<{ id: string; index: number; row?: MohdTrackInfo }> = [];
 
     tracks.forEach((track, index) => {
-      if (!track.id.startsWith(`${MOHD_FOLDER_ID}/`)) {
-        nonMohdTracks.push(track);
+      const id = track.base.id;
+
+      if (!id.startsWith(MOHD_TRACK_PREFIX)) {
+        nonMohdTrackIds.push(id);
         return;
       }
 
-      mohdTracks.push({
-        id: track.id,
-        index,
-        row: mohdRowById.get(track.id),
-      });
+      mohdTracks.push({ id, index, row: trackInfoById.get(id) });
     });
 
     if (mohdTracks.length === 0) {
@@ -168,7 +151,8 @@ export default function MohdSortControls({
       return compareKnownRows(a.row, b.row, mode, a.index - b.index);
     });
 
-    reorderTracks([...nonMohdTracks.map((track) => track.id), ...mohdTracks.map((track) => track.id)]);
+    // reorderTracks requires the complete set of track IDs, not just the moved ones.
+    reorderTracks([...nonMohdTrackIds, ...mohdTracks.map((track) => track.id)]);
   };
 
   return (
