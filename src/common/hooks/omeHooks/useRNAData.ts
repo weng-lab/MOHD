@@ -13,8 +13,16 @@ query fetchRNAMetadata {
     status
     umap_x
     umap_y
-    pca_x
-    pca_y
+    pc1
+    pc2
+    pc3
+    pc4
+    pc5
+    pc6
+    pc7
+    pc8
+    pc9
+    pc10
   }
 }
  `);

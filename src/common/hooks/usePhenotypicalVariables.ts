@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client/react";
 const GET_PHENOTYPICAL_VARIABLES = gql(`
   query fetch_phenotypical_variable {
     phenotypical_variables {
+      unit
       variable_category
       variable_name
     }

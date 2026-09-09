@@ -1,7 +1,10 @@
+import { useState } from "react";
+import { Stack } from "@mui/material";
 import { SharedWGBSDimenionalityProps } from "./WGBSDimensionalityReductionClient";
 import type { WGBSRow } from "./types";
 import { ChartProps } from "@weng-lab/visualization";
 import DimensionalityScatterPlot from "@/common/components/DimensionalityScatterPlot";
+import { PcAxisSelect, PcField, formatPcLabel } from "@/common/components/PcAxisSelect";
 
 export type WGBSDimensionalityPcaProps<
     S extends boolean | undefined,
@@ -17,6 +20,9 @@ const WGBSPCA = <S extends true, Z extends boolean | undefined>({
     ref,
     ...rest
 }: WGBSDimensionalityPcaProps<S, Z>) => {
+    const [xField, setXField] = useState<PcField>("pc1");
+    const [yField, setYField] = useState<PcField>("pc2");
+
     return (
         <DimensionalityScatterPlot
             {...rest}
@@ -25,12 +31,18 @@ const WGBSPCA = <S extends true, Z extends boolean | undefined>({
             loading={false}
             selected={selected}
             setSelected={setSelected}
-            getX={(row) => row.pca_x}
-            getY={(row) => row.pca_y}
-            leftAxisLabel="PC-2"
-            bottomAxisLabel="PC-1"
+            getX={(row) => row[xField]}
+            getY={(row) => row[yField]}
+            leftAxisLabel={formatPcLabel(yField)}
+            bottomAxisLabel={formatPcLabel(xField)}
             downloadFileName="WGBS_dimesionality_reduction_PCA"
             hasAge
+            axisSelectors={
+                <Stack direction="row" gap={1}>
+                    <PcAxisSelect label="X Axis" value={xField} onChange={setXField} disabledValue={yField} />
+                    <PcAxisSelect label="Y Axis" value={yField} onChange={setYField} disabledValue={xField} />
+                </Stack>
+            }
         />
     );
 }

@@ -8,8 +8,16 @@
 export type WGBSRow = {
   sample_id: string;
   kit: string;
-  pca_x: number | null;
-  pca_y: number | null;
+  pc1: number | null;
+  pc2: number | null;
+  pc3: number | null;
+  pc4: number | null;
+  pc5: number | null;
+  pc6: number | null;
+  pc7: number | null;
+  pc8: number | null;
+  pc9: number | null;
+  pc10: number | null;
   umap_x: number | null;
   umap_y: number | null;
   sex: string;

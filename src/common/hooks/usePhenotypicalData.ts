@@ -6,8 +6,6 @@ import { useQuery } from "@apollo/client/react";
 const GET_PHENOTYPICAL_DATA = gql(`
   query fetch_phenotypical_data($variable_name: [String!]!) {
     phenotypical_data(variable_name: $variable_name) {
-      participant_profile_dss
-      participant_profile_dss_internal_id
       value_numeric
       value_text
       variable_name

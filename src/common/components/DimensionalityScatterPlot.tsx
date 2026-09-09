@@ -35,6 +35,7 @@ export type DimensionalityScatterPlotProps<
     downloadFileName: string;
     hasProtocol?: boolean;
     hasAge?: boolean;
+    axisSelectors?: React.ReactNode;
     ref?: React.Ref<DownloadPlotHandle>;
 } & Partial<ChartProps<T, S, Z>>;
 
@@ -61,6 +62,7 @@ const DimensionalityScatterPlot = <
     downloadFileName,
     hasProtocol = false,
     hasAge = false,
+    axisSelectors,
     ref,
     ...rest
 }: DimensionalityScatterPlotProps<T, S, Z>) => {
@@ -163,12 +165,15 @@ const DimensionalityScatterPlot = <
                 scatterData.length > 0 && (
                     <>
                         <Stack direction={{xs: "column", md: "row"}} justifyContent={{xs: "center", md: "space-between"}} alignItems="center" gap={{xs: 1, md: 0}}>
-                            <ColorBySelect
-                                colorScheme={colorScheme}
-                                handleColorSchemeChange={handleColorSchemeChange}
-                                protocol={hasProtocol}
-                                age={hasAge}
-                            />
+                            <Stack direction={{xs: "column", sm: "row"}} alignItems="center" gap={1}>
+                                <ColorBySelect
+                                    colorScheme={colorScheme}
+                                    handleColorSchemeChange={handleColorSchemeChange}
+                                    protocol={hasProtocol}
+                                    age={hasAge}
+                                />
+                                {axisSelectors}
+                            </Stack>
                             <UMAPLegend
                                 colorScheme={colorScheme}
                                 scatterData={scatterData}
