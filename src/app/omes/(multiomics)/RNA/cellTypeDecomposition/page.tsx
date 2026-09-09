@@ -1,8 +1,5 @@
 const RNACellTypeDecomposition = () => {
-    return (
-        <>
-        </>
-    );
+  return <></>;
 };
 
 export default RNACellTypeDecomposition;

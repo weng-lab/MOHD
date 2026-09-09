@@ -16,10 +16,12 @@ const GET_PHENOTYPICAL_DATA = gql(`
   }
 `);
 
-export type PhenotypicalDataPoint =
-  Fetch_Phenotypical_DataQuery["phenotypical_data"][number];
+export type PhenotypicalDataPoint = Fetch_Phenotypical_DataQuery["phenotypical_data"][number];
 
-export function usePhenotypicalData(variableNames: string[], skip = false): {
+export function usePhenotypicalData(
+  variableNames: string[],
+  skip = false
+): {
   data: PhenotypicalDataPoint[] | undefined;
   loading: boolean;
   error: ErrorLike | undefined;

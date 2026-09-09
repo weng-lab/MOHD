@@ -18,7 +18,7 @@ query fetchATACMetadata {
  `);
 
 export type UseATACDataParams = {
-  skip?: boolean
+  skip?: boolean;
 };
 
 export type UseATACDataReturn = {

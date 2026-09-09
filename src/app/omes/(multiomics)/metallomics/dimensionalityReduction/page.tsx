@@ -1,9 +1,5 @@
-
 const MetallomicsDimensionalityReduction = () => {
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};
 
 export default MetallomicsDimensionalityReduction;

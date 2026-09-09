@@ -1,9 +1,5 @@
-
 const WGBSDimensionalityReduction = () => {
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};
 
 export default WGBSDimensionalityReduction;

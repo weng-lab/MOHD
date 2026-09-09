@@ -7,16 +7,15 @@ export const OmesList = [
   "metabolomics",
   "lipidomics",
   "exposomics",
-  "metallomics"
+  "metallomics",
 ] as const;
 
 export type OmesDataType = (typeof OmesList)[number];
-
 
 export type Site = "CCH" | "CKD" | "EXP" | "MOM" | "UIC";
 
 export type Status = "case" | "control" | "unknown";
 
-export type Sex = "male"  | "female";
+export type Sex = "male" | "female";
 
 export type Protocol = "Buffy Coat" | "OPC" | "CPT";

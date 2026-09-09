@@ -63,7 +63,7 @@ const getPCAData = async (): Promise<PCAData> => {
     // cleanly against the axis selects on the client. Rounded on the way in so
     // the trimmed values are what gets cached and serialised - see PC_DECIMALS.
     const pcs = Array.from({ length: PC_COUNT }, (_, i) =>
-      Number((row[`pc${i + 1}` as keyof typeof row] as number).toFixed(PC_DECIMALS)),
+      Number((row[`pc${i + 1}` as keyof typeof row] as number).toFixed(PC_DECIMALS))
     );
 
     if (row.cohort === "MOHD") {
@@ -110,14 +110,7 @@ const WGSDimensionalityReduction = () => {
 /** The await lives here so only this subtree sits behind the Suspense boundary. */
 const WGSPCASection = async () => {
   const { reference, mohd, pve, binnedRaceEthnicity } = await getPCAData();
-  return (
-    <WGSPCAPlots
-      reference={reference}
-      mohd={mohd}
-      pve={pve}
-      binnedRaceEthnicity={binnedRaceEthnicity}
-    />
-  );
+  return <WGSPCAPlots reference={reference} mohd={mohd} pve={pve} binnedRaceEthnicity={binnedRaceEthnicity} />;
 };
 
 export default WGSDimensionalityReduction;

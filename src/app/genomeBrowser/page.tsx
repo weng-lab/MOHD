@@ -8,9 +8,6 @@ import {
 
 export default function GenomeBrowserPage() {
   return (
-    <GenomeBrowserView
-      initialSelectedIds={DEFAULT_SELECTED_TRACK_IDS}
-      sessionStorageKey={TRACK_SELECT_SESSION_KEY}
-    />
+    <GenomeBrowserView initialSelectedIds={DEFAULT_SELECTED_TRACK_IDS} sessionStorageKey={TRACK_SELECT_SESSION_KEY} />
   );
 }
