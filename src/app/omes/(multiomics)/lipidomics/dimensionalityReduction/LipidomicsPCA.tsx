@@ -35,7 +35,6 @@ const LipidomicsPCA = <S extends true, Z extends boolean | undefined>({
       leftAxisLabel={formatPcLabel(yField)}
       bottomAxisLabel={formatPcLabel(xField)}
       downloadFileName="lipidomics_dimensionality_reduction_PCA"
-      hasProtocol
       hasAge
       axisSelectors={
         <Stack direction="row" gap={1}>

@@ -1,6 +1,6 @@
 import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { useState } from "react";
-import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
+import { CONTROL_LABEL, getCategoricalLabel, getCategoricalColor } from "@/common/colors";
 import { getAgeBin, age_bin_color_map } from "@/common/ageBins";
 import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -53,18 +53,18 @@ const TooltipBody = ({ point, hasProtocol }: { point: Point<DimensionalityReduct
         <b>Dataset:</b> {point.metaData?.sample_id}
       </Typography>
       <Typography>
-        <b>Status:</b> {point.metaData?.status}
+        <b>Status:</b> {getCategoricalLabel(point.metaData?.status)}
       </Typography>
       <Typography>
-        <b>Site:</b> {point.metaData?.site}
+        <b>Site:</b> {getCategoricalLabel(point.metaData?.site)}
       </Typography>
       <Typography>
         <b>Sex:</b>{" "}
-        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ""}
+        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : CONTROL_LABEL}
       </Typography>
       {hasProtocol && (
         <Typography>
-          <b>Protocol:</b> {point.metaData?.protocol?.replaceAll(" method", "")}
+          <b>Protocol:</b> {getCategoricalLabel(point.metaData?.protocol).replaceAll(" method", "")}
         </Typography>
       )}
     </>
@@ -110,13 +110,13 @@ const DimensionalityScatterPlot = <
         const getColor = () => {
           if (highlighted || selected.length === 0) {
             if (colorScheme === "sex") {
-              return sex_color_map[x.sex as keyof typeof sex_color_map];
+              return getCategoricalColor("sex", getCategoricalLabel(x.sex));
             } else if (colorScheme === "status") {
-              return status_color_map[x.status as keyof typeof status_color_map];
+              return getCategoricalColor("status", getCategoricalLabel(x.status));
             } else if (colorScheme === "site") {
-              return site_color_map[x.site as keyof typeof site_color_map];
+              return getCategoricalColor("site", getCategoricalLabel(x.site));
             } else if (colorScheme === "protocol") {
-              return protocol_color_map[x.protocol as keyof typeof protocol_color_map];
+              return getCategoricalColor("protocol", getCategoricalLabel(x.protocol));
             } else if (colorScheme === "age") {
               return age_bin_color_map[x.age_bin ?? getAgeBin(x.age_at_enrollment)];
             }
@@ -157,9 +157,11 @@ const DimensionalityScatterPlot = <
             justifyContent={{ xs: "center", md: "space-between" }}
             alignItems="center"
             gap={{ xs: 1, md: 0 }}
+            rowGap={1}
+            flexWrap="wrap"
             mb={1}
           >
-            <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" gap={1}>
+            <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" gap={1} flexWrap="wrap">
               <ColorBySelect
                 colorScheme={colorScheme}
                 handleColorSchemeChange={handleColorSchemeChange}

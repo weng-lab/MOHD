@@ -8,7 +8,6 @@ query fetchMetabolomicsDimensionalityReduction {
   metabolomics_metadata {
     sample_id
     kit
-    protocol
     sex
     site
     status
@@ -34,7 +33,6 @@ query fetchMetabolomicsDimensionalityReduction {
 export type MetabolomicsDimensionalityReductionSample = {
   sample_id: string;
   kit: string;
-  protocol?: string;
   sex: string;
   site: string;
   status: string;
@@ -77,7 +75,6 @@ export const useMetabolomicsDimensionalityReduction = ({
       data?.metabolomics_metadata.map((row) => ({
         sample_id: row.sample_id,
         kit: row.kit ?? "",
-        protocol: row.protocol ?? undefined,
         sex: row.sex ?? "",
         site: row.site ?? "",
         status: row.status ?? "",

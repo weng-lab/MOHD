@@ -10,11 +10,47 @@ export const OME_COLORS: Record<string, string> = {
   wgs: "#59acd8",
 };
 
-export const status_color_map = { case: "#e41a1c", control: "#377eb8", unknown: "lightgray", "high risk": "#F5761A", "low risk": "#FEE12B" };
+export const status_color_map = {
+  case: "#e41a1c",
+  control: "#377eb8",
+  unknown: "lightgray",
+  "high risk": "#F5761A",
+  "low risk": "#FEE12B",
+};
 
-export const site_color_map = { CCH: "#BF3831", CKD: "#79B4F0", EXP: "#159875", LEO: "#F5AB54", MOM: "#CDA0E8", UIC: "#31487D" };
+export const site_color_map = {
+  CCH: "#BF3831",
+  CKD: "#79B4F0",
+  EXP: "#159875",
+  LEO: "#F5AB54",
+  MOM: "#CDA0E8",
+  UIC: "#31487D",
+};
 
 export const sex_color_map = { female: "#9d5ca3", male: "#62A35C", "prefer no answer": "lightsteelblue" };
 
 export const protocol_color_map = { "Buffy Coat method": "#d1495b", "OPC method": "#00798c", "CPT method": "#edae49" };
 
+// Samples with no site/status/sex/protocol on record (e.g. QC blanks) are grouped as "Control" and rendered grey.
+export const CONTROL_LABEL = "Control";
+export const CONTROL_COLOR = "#CCCCCC";
+
+export type CategoricalColorScheme = "sex" | "status" | "site" | "protocol";
+
+export function getCategoricalLabel(value: string | null | undefined): string {
+  return value ? value : CONTROL_LABEL;
+}
+
+export function getCategoricalColor(colorScheme: CategoricalColorScheme, label: string): string | undefined {
+  if (label === CONTROL_LABEL) return CONTROL_COLOR;
+  switch (colorScheme) {
+    case "sex":
+      return sex_color_map[label as keyof typeof sex_color_map];
+    case "status":
+      return status_color_map[label as keyof typeof status_color_map];
+    case "site":
+      return site_color_map[label as keyof typeof site_color_map];
+    case "protocol":
+      return protocol_color_map[label as keyof typeof protocol_color_map];
+  }
+}
