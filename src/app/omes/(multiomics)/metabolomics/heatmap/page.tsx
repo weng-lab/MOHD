@@ -6,17 +6,17 @@ import MetabolomicsQuantificationHeatmap from "./MetabolomicsQuantificationHeatm
 import { useState } from "react";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
 import {
-  useMetabolomicsData,
-  UseMetabolomicsDataReturn,
+  useMetabolomicsQuantification,
+  UseMetabolomicsQuantificationReturn,
   MetabolomicsSample,
-} from "@/common/hooks/omeHooks/useMetabolomicsData";
+} from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type MetabolomicsMetadata = MetabolomicsSample[];
 
 export type SharedMetabolomicsProps = {
   rows: MetabolomicsMetadata;
-  metabolomicsData: UseMetabolomicsDataReturn;
+  metabolomicsData: UseMetabolomicsQuantificationReturn;
   selected: MetabolomicsMetadata;
   setSelected: React.Dispatch<React.SetStateAction<MetabolomicsMetadata>>;
   sortedFilteredData: MetabolomicsMetadata;
@@ -28,7 +28,7 @@ export type SharedMetabolomicsProps = {
 
 const MetabolomicsHeatmap = () => {
   const { ref: heatmapRef, ...heatmapDownload } = usePlotDownload();
-  const metabolomicsData = useMetabolomicsData({ skip: false });
+  const metabolomicsData = useMetabolomicsQuantification({ skip: false });
 
   const rows: MetabolomicsMetadata = metabolomicsData.data ?? [];
 

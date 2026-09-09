@@ -6,17 +6,17 @@ import LipidomicsQuantificationHeatmap from "./LipidomicsQuantificationHeatmap";
 import { useState } from "react";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
 import {
-  useLipidomicsData,
-  UseLipidomicsDataReturn,
+  useLipidomicsQuantification,
+  UseLipidomicsQuantificationReturn,
   LipidomicsSample,
-} from "@/common/hooks/omeHooks/useLipidomicsData";
+} from "@/common/hooks/omeHooks/useLipidomicsQuantification";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type LipidomicsMetadata = LipidomicsSample[];
 
 export type SharedLipidomicsProps = {
   rows: LipidomicsMetadata;
-  lipidomicsData: UseLipidomicsDataReturn;
+  lipidomicsData: UseLipidomicsQuantificationReturn;
   selected: LipidomicsMetadata;
   setSelected: React.Dispatch<React.SetStateAction<LipidomicsMetadata>>;
   sortedFilteredData: LipidomicsMetadata;
@@ -28,7 +28,7 @@ export type SharedLipidomicsProps = {
 
 const LipidomicsHeatmap = () => {
   const { ref: heatmapRef, ...heatmapDownload } = usePlotDownload();
-  const lipidomicsData = useLipidomicsData({ skip: false });
+  const lipidomicsData = useLipidomicsQuantification({ skip: false });
 
   const rows: LipidomicsMetadata = lipidomicsData.data ?? [];
 

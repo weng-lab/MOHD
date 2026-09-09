@@ -1,10 +1,10 @@
 import { gql } from "@/common/types/generated/gql";
-import { FetchMetabolomicsDataQuery } from "@/common/types/generated/graphql";
+import { FetchMetabolomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 
-const GET_METABOLOMICS_DATA = gql(`
-query fetchMetabolomicsData {
+const GET_METABOLOMICS_QUANTIFICATION = gql(`
+query fetchMetabolomicsQuantification {
   metabolomics_quantification {
     sample_id
     site
@@ -34,18 +34,20 @@ export type MetabolomicsSample = {
   quantification: MetabolomicsCompoundValue[];
 };
 
-export type UseMetabolomicsDataParams = {
+export type UseMetabolomicsQuantificationParams = {
   skip?: boolean;
 };
 
-export type UseMetabolomicsDataReturn = {
+export type UseMetabolomicsQuantificationReturn = {
   data: MetabolomicsSample[] | undefined;
   loading: boolean;
   error: ErrorLike | undefined;
 };
 
-export const useMetabolomicsData = ({ skip }: UseMetabolomicsDataParams): UseMetabolomicsDataReturn => {
-  const { data, loading, error } = useQuery(GET_METABOLOMICS_DATA, {
+export const useMetabolomicsQuantification = ({
+  skip,
+}: UseMetabolomicsQuantificationParams): UseMetabolomicsQuantificationReturn => {
+  const { data, loading, error } = useQuery(GET_METABOLOMICS_QUANTIFICATION, {
     skip: skip,
   });
 
@@ -55,7 +57,8 @@ export const useMetabolomicsData = ({ skip }: UseMetabolomicsDataParams): UseMet
     ? undefined
     : data.metabolomics_quantification
         .filter(
-          (row): row is NonNullable<FetchMetabolomicsDataQuery["metabolomics_quantification"][number]> => row !== null
+          (row): row is NonNullable<FetchMetabolomicsQuantificationQuery["metabolomics_quantification"][number]> =>
+            row !== null
         )
         .map((row) => ({
           sample_id: row.sample_id,

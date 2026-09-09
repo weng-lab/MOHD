@@ -1,33 +1,15 @@
-import { Table, TableColDef, useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
+import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
-import { useEffect } from "react";
+import { MetabolomicsDimenionalityMetadata, SharedMetabolomicsDimenionalityProps } from "./page";
 import { Typography } from "@mui/material";
 
-export type QuantificationSample = {
-  sample_id: string;
-  site: string;
-  status: string;
-  sex: string;
-};
-
-export type OmeQuantificationTableProps<TSample extends QuantificationSample> = {
-  label: string;
-  rows: TSample[];
-  loading: boolean;
-  error: unknown;
-  tableProps: ReturnType<typeof useTablePlotSync<TSample>>["tableProps"];
-  setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const OmeQuantificationTable = <TSample extends QuantificationSample>({
-  label,
+const MetabolomicsDimensionalityTable = ({
   rows,
-  loading,
-  error,
+  metabolomicsMetadata,
   tableProps,
-  setAutoSort,
-}: OmeQuantificationTableProps<TSample>) => {
-  const columns: TableColDef<TSample>[] = [
+}: SharedMetabolomicsDimenionalityProps) => {
+  const { loading, error } = metabolomicsMetadata;
+  const columns: TableColDef<MetabolomicsDimenionalityMetadata[number]>[] = [
     {
       field: "sample_id",
       headerName: "Dataset",
@@ -68,21 +50,17 @@ const OmeQuantificationTable = <TSample extends QuantificationSample>({
     },
   ];
   const initialSort: GridSortModel = [{ field: "sample_id", sort: "asc" }];
-  const { syncedTableProps, autoSort } = useSyncedTable({
+  const { syncedTableProps } = useSyncedTable({
     tableProps,
     columns,
     initialSort,
     isPresorted: false,
   });
 
-  useEffect(() => {
-    setAutoSort(autoSort);
-  }, [autoSort, setAutoSort]);
-
   return (
     <Table
       {...syncedTableProps}
-      label={<Typography noWrap>{label}</Typography>}
+      label={<Typography noWrap>Metabolomics Dimensionality Reduction</Typography>}
       rows={rows}
       loading={loading}
       error={!!error}
@@ -90,4 +68,4 @@ const OmeQuantificationTable = <TSample extends QuantificationSample>({
   );
 };
 
-export default OmeQuantificationTable;
+export default MetabolomicsDimensionalityTable;

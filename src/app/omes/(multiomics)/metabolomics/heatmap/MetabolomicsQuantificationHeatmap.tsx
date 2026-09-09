@@ -1,7 +1,7 @@
 import { ColumnDatum } from "@weng-lab/visualization";
 import { Typography } from "@mui/material";
 import { SharedMetabolomicsProps } from "./page";
-import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsData";
+import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";

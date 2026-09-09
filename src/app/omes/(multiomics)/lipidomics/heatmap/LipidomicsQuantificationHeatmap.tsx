@@ -1,7 +1,7 @@
 import { ColumnDatum } from "@weng-lab/visualization";
 import { Typography } from "@mui/material";
 import { SharedLipidomicsProps } from "./page";
-import { LipidomicsSample } from "@/common/hooks/omeHooks/useLipidomicsData";
+import { LipidomicsSample } from "@/common/hooks/omeHooks/useLipidomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";

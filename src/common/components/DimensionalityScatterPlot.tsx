@@ -154,6 +154,7 @@ const DimensionalityScatterPlot = <
             justifyContent={{ xs: "center", md: "space-between" }}
             alignItems="center"
             gap={{ xs: 1, md: 0 }}
+            mb={1}
           >
             <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" gap={1}>
               <ColorBySelect

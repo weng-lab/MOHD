@@ -1,10 +1,10 @@
 import { gql } from "@/common/types/generated/gql";
-import { FetchLipidomicsDataQuery } from "@/common/types/generated/graphql";
+import { FetchLipidomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 
-const GET_LIPIDOMICS_DATA = gql(`
-query fetchLipidomicsData {
+const GET_LIPIDOMICS_QUANTIFICATION = gql(`
+query fetchLipidomicsQuantification {
   lipidomics_quantification {
     sample_id
     site
@@ -32,18 +32,20 @@ export type LipidomicsSample = {
   quantification: LipidomicsMoleculeValue[];
 };
 
-export type UseLipidomicsDataParams = {
+export type UseLipidomicsQuantificationParams = {
   skip?: boolean;
 };
 
-export type UseLipidomicsDataReturn = {
+export type UseLipidomicsQuantificationReturn = {
   data: LipidomicsSample[] | undefined;
   loading: boolean;
   error: ErrorLike | undefined;
 };
 
-export const useLipidomicsData = ({ skip }: UseLipidomicsDataParams): UseLipidomicsDataReturn => {
-  const { data, loading, error } = useQuery(GET_LIPIDOMICS_DATA, {
+export const useLipidomicsQuantification = ({
+  skip,
+}: UseLipidomicsQuantificationParams): UseLipidomicsQuantificationReturn => {
+  const { data, loading, error } = useQuery(GET_LIPIDOMICS_QUANTIFICATION, {
     skip: skip,
   });
 
@@ -53,7 +55,8 @@ export const useLipidomicsData = ({ skip }: UseLipidomicsDataParams): UseLipidom
     ? undefined
     : data.lipidomics_quantification
         .filter(
-          (row): row is NonNullable<FetchLipidomicsDataQuery["lipidomics_quantification"][number]> => row !== null
+          (row): row is NonNullable<FetchLipidomicsQuantificationQuery["lipidomics_quantification"][number]> =>
+            row !== null
         )
         .map((row) => ({
           sample_id: row.sample_id,
