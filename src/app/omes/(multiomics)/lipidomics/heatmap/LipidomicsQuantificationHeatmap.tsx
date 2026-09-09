@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { ColumnDatum } from "@weng-lab/visualization";
 import { Typography } from "@mui/material";
 import { SharedLipidomicsProps } from "./page";
@@ -12,76 +11,74 @@ const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice
 type MoleculeRowMeta = { fullName: string; rawValue: number };
 
 const LipidomicsQuantificationHeatmap = ({
-    lipidomicsData,
-    sortedFilteredData,
-    selected,
-    setSelected,
-    autoSort,
-    ref,
+  lipidomicsData,
+  sortedFilteredData,
+  selected,
+  setSelected,
+  autoSort,
+  ref,
 }: SharedLipidomicsProps) => {
-    const { loading } = lipidomicsData;
+  const { loading } = lipidomicsData;
 
-    const samples: LipidomicsSample[] = sortedFilteredData;
+  const samples: LipidomicsSample[] = sortedFilteredData;
 
-    const molecules = useMemo(
-        () =>
-            Array.from(
-                new Set(
-                    samples.flatMap((sample) => sample.quantification.map((q) => q.molecule_name))
-                )
-            ).sort(),
-        [samples]
-    );
+  const molecules = Array.from(
+    new Set(samples.flatMap((sample) => sample.quantification.map((q) => q.molecule_name)))
+  ).sort();
 
-    const heatmapData: ColumnDatum<LipidomicsSample, MoleculeRowMeta>[] = useMemo(() => {
-        const valueByMoleculePerSample = samples.map(
-            (sample) => new Map(sample.quantification.map((q) => [q.molecule_name, q.value]))
-        );
+  const valueByMoleculePerSample = samples.map(
+    (sample) => new Map(sample.quantification.map((q) => [q.molecule_name, q.value]))
+  );
 
-        const zScoreByMolecule = new Map(
-            molecules.map((molecule) => [
-                molecule,
-                zScoreByRow(valueByMoleculePerSample.map((valueByMolecule) => valueByMolecule.get(molecule) ?? null)),
-            ])
-        );
+  const zScoreByMolecule = new Map(
+    molecules.map((molecule) => [
+      molecule,
+      zScoreByRow(valueByMoleculePerSample.map((valueByMolecule) => valueByMolecule.get(molecule) ?? null)),
+    ])
+  );
 
-        return samples.map((sample, sampleIndex) => ({
-            columnName: sample.sample_id,
-            metadata: sample,
-            rows: molecules.map((molecule) => {
-                const rawValue = valueByMoleculePerSample[sampleIndex].get(molecule) ?? null;
-                return {
-                    rowName: truncateMoleculeName(molecule),
-                    count: rawValue === null ? null : zScoreByMolecule.get(molecule)!(rawValue),
-                    metadata: rawValue === null ? undefined : { fullName: molecule, rawValue },
-                };
-            }),
-        }));
-    }, [samples, molecules]);
+  const heatmapData: ColumnDatum<LipidomicsSample, MoleculeRowMeta>[] = samples.map((sample, sampleIndex) => ({
+    columnName: sample.sample_id,
+    metadata: sample,
+    rows: molecules.map((molecule) => {
+      const rawValue = valueByMoleculePerSample[sampleIndex].get(molecule) ?? null;
+      return {
+        rowName: truncateMoleculeName(molecule),
+        count: rawValue === null ? null : zScoreByMolecule.get(molecule)!(rawValue),
+        metadata: rawValue === null ? undefined : { fullName: molecule, rawValue },
+      };
+    }),
+  }));
 
-    const colorDomain = useMemo(() => symmetricColorDomain(heatmapData), [heatmapData]);
+  const colorDomain = symmetricColorDomain(heatmapData);
 
-    return (
-        <OmeHeatmapShell
-            loading={loading}
-            samples={samples}
-            heatmapData={heatmapData}
-            selected={selected}
-            setSelected={setSelected}
-            autoSort={autoSort}
-            yLabel="Molecule"
-            downloadFileName="lipidomics_quantification_heatmap"
-            colorDomain={colorDomain}
-            ref={ref}
-            tooltipBody={(bin) => (
-                <>
-                    <Typography><b>Dataset:</b> {bin.datum.columnName}</Typography>
-                    <Typography><b>Molecule:</b> {bin.bin.metadata?.fullName ?? bin.bin.rowName}</Typography>
-                    <Typography><b>Value:</b> {bin.bin.metadata?.rawValue ?? "No data"}</Typography>
-                </>
-            )}
-        />
-    );
+  return (
+    <OmeHeatmapShell
+      loading={loading}
+      samples={samples}
+      heatmapData={heatmapData}
+      selected={selected}
+      setSelected={setSelected}
+      autoSort={autoSort}
+      yLabel="Molecule"
+      downloadFileName="lipidomics_quantification_heatmap"
+      colorDomain={colorDomain}
+      ref={ref}
+      tooltipBody={(bin) => (
+        <>
+          <Typography>
+            <b>Dataset:</b> {bin.datum.columnName}
+          </Typography>
+          <Typography>
+            <b>Molecule:</b> {bin.bin.metadata?.fullName ?? bin.bin.rowName}
+          </Typography>
+          <Typography>
+            <b>Value:</b> {bin.bin.metadata?.rawValue ?? "No data"}
+          </Typography>
+        </>
+      )}
+    />
+  );
 };
 
 export default LipidomicsQuantificationHeatmap;

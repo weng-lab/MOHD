@@ -2,7 +2,6 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchLipidomicsDataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { useMemo } from "react";
 
 const GET_LIPIDOMICS_DATA = gql(`
 query fetchLipidomicsData {
@@ -34,7 +33,7 @@ export type LipidomicsSample = {
 };
 
 export type UseLipidomicsDataParams = {
-  skip?: boolean
+  skip?: boolean;
 };
 
 export type UseLipidomicsDataReturn = {
@@ -48,27 +47,24 @@ export const useLipidomicsData = ({ skip }: UseLipidomicsDataParams): UseLipidom
     skip: skip,
   });
 
-  const molecules = useMemo(
-    () => [...(data?.lipidomics_molecules ?? [])].sort((a, b) => a.position - b.position),
-    [data]
-  );
+  const molecules = [...(data?.lipidomics_molecules ?? [])].sort((a, b) => a.position - b.position);
 
-  const samples: LipidomicsSample[] | undefined = useMemo(() => {
-    if (!data?.lipidomics_quantification) return undefined;
-
-    return data.lipidomics_quantification
-      .filter((row): row is NonNullable<FetchLipidomicsDataQuery["lipidomics_quantification"][number]> => row !== null)
-      .map((row) => ({
-        sample_id: row.sample_id,
-        site: row.site ?? "",
-        status: row.status ?? "",
-        sex: row.sex ?? "",
-        quantification: molecules.map((molecule, index) => ({
-          molecule_name: molecule.molecule_name,
-          value: row.quant_values?.[index] ?? null,
-        })),
-      }));
-  }, [data, molecules]);
+  const samples: LipidomicsSample[] | undefined = !data?.lipidomics_quantification
+    ? undefined
+    : data.lipidomics_quantification
+        .filter(
+          (row): row is NonNullable<FetchLipidomicsDataQuery["lipidomics_quantification"][number]> => row !== null
+        )
+        .map((row) => ({
+          sample_id: row.sample_id,
+          site: row.site ?? "",
+          status: row.status ?? "",
+          sex: row.sex ?? "",
+          quantification: molecules.map((molecule, index) => ({
+            molecule_name: molecule.molecule_name,
+            value: row.quant_values?.[index] ?? null,
+          })),
+        }));
 
   return {
     data: samples,

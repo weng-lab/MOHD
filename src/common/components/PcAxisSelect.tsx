@@ -1,9 +1,5 @@
 import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
-
-export const PC_OPTIONS = ["pc1", "pc2", "pc3", "pc4", "pc5", "pc6", "pc7", "pc8", "pc9", "pc10"] as const;
-export type PcField = typeof PC_OPTIONS[number];
-
-export const formatPcLabel = (field: PcField) => `PC-${field.slice(2)}`;
+import { PC_OPTIONS, PcField, formatPcLabel } from "./pcAxis";
 
 type PcAxisSelectProps = {
   label: string;
@@ -20,13 +16,7 @@ export const PcAxisSelect = ({ label, value, onChange, disabledValue }: PcAxisSe
   return (
     <FormControl sx={{ alignSelf: "flex-start", minWidth: 100 }}>
       <InputLabel>{label}</InputLabel>
-      <Select
-        value={value}
-        label={label}
-        onChange={handleChange}
-        MenuProps={{ disableScrollLock: true }}
-        size="small"
-      >
+      <Select value={value} label={label} onChange={handleChange} MenuProps={{ disableScrollLock: true }} size="small">
         {PC_OPTIONS.map((pc) => (
           <MenuItem key={pc} value={pc} disabled={pc === disabledValue}>
             {formatPcLabel(pc)}

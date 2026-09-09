@@ -2,7 +2,6 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchExposomicsDataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { useMemo } from "react";
 
 const GET_EXPOSOMICS_DATA = gql(`
 query fetchExposomicsData {
@@ -49,7 +48,7 @@ export type ExposomicsSample = {
 };
 
 export type UseExposomicsDataParams = {
-  skip?: boolean
+  skip?: boolean;
 };
 
 export type UseExposomicsDataReturn = {
@@ -63,35 +62,32 @@ export const useExposomicsData = ({ skip }: UseExposomicsDataParams): UseExposom
     skip: skip,
   });
 
-  const molecules = useMemo(
-    () => [...(data?.exposomics_molecules ?? [])].sort((a, b) => a.position - b.position),
-    [data]
-  );
+  const molecules = [...(data?.exposomics_molecules ?? [])].sort((a, b) => a.position - b.position);
 
-  const samples: ExposomicsSample[] | undefined = useMemo(() => {
-    if (!data?.exposomics_quantification) return undefined;
-
-    return data.exposomics_quantification
-      .filter((row): row is NonNullable<FetchExposomicsDataQuery["exposomics_quantification"][number]> => row !== null)
-      .map((row) => ({
-        sample_id: row.sample_id,
-        site: row.site ?? "",
-        status: row.status ?? "",
-        sex: row.sex ?? "",
-        quantification: molecules.map((molecule, index) => ({
-          position: molecule.position,
-          molecule_name: molecule.molecule_name ?? "",
-          molecule_list: molecule.molecule_list ?? "",
-          precursor_mz: molecule.precursor_mz ?? null,
-          precursor_ion_type: molecule.precursor_ion_type ?? "",
-          smiles: molecule.smiles ?? "",
-          formula: molecule.formula ?? "",
-          inchikey: molecule.inchikey ?? "",
-          num_detected_samples: molecule.num_detected_samples ?? null,
-          value: row.quant_values?.[index] ?? null,
-        })),
-      }));
-  }, [data, molecules]);
+  const samples: ExposomicsSample[] | undefined = !data?.exposomics_quantification
+    ? undefined
+    : data.exposomics_quantification
+        .filter(
+          (row): row is NonNullable<FetchExposomicsDataQuery["exposomics_quantification"][number]> => row !== null
+        )
+        .map((row) => ({
+          sample_id: row.sample_id,
+          site: row.site ?? "",
+          status: row.status ?? "",
+          sex: row.sex ?? "",
+          quantification: molecules.map((molecule, index) => ({
+            position: molecule.position,
+            molecule_name: molecule.molecule_name ?? "",
+            molecule_list: molecule.molecule_list ?? "",
+            precursor_mz: molecule.precursor_mz ?? null,
+            precursor_ion_type: molecule.precursor_ion_type ?? "",
+            smiles: molecule.smiles ?? "",
+            formula: molecule.formula ?? "",
+            inchikey: molecule.inchikey ?? "",
+            num_detected_samples: molecule.num_detected_samples ?? null,
+            value: row.quant_values?.[index] ?? null,
+          })),
+        }));
 
   return {
     data: samples,
