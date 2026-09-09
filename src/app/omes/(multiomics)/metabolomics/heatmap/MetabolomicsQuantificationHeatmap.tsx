@@ -5,6 +5,7 @@ import { SharedMetabolomicsProps } from "./page";
 import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsData";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
+import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
 
 const compoundKey = (compound: string, mode: string) => `${compound}::${mode}`;
 const truncateCompoundName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
@@ -62,6 +63,8 @@ const MetabolomicsQuantificationHeatmap = ({
         }));
     }, [samples, compounds]);
 
+    const colorDomain = useMemo(() => symmetricColorDomain(heatmapData), [heatmapData]);
+
     return (
         <OmeHeatmapShell
             loading={loading}
@@ -72,6 +75,7 @@ const MetabolomicsQuantificationHeatmap = ({
             autoSort={autoSort}
             yLabel="Compound"
             downloadFileName="metabolomics_quantification_heatmap"
+            colorDomain={colorDomain}
             ref={ref}
             tooltipBody={(bin) => (
                 <>

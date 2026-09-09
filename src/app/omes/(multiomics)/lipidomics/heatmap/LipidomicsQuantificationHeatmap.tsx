@@ -5,6 +5,7 @@ import { SharedLipidomicsProps } from "./page";
 import { LipidomicsSample } from "@/common/hooks/omeHooks/useLipidomicsData";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
+import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
 
 const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
 
@@ -58,6 +59,8 @@ const LipidomicsQuantificationHeatmap = ({
         }));
     }, [samples, molecules]);
 
+    const colorDomain = useMemo(() => symmetricColorDomain(heatmapData), [heatmapData]);
+
     return (
         <OmeHeatmapShell
             loading={loading}
@@ -68,6 +71,7 @@ const LipidomicsQuantificationHeatmap = ({
             autoSort={autoSort}
             yLabel="Molecule"
             downloadFileName="lipidomics_quantification_heatmap"
+            colorDomain={colorDomain}
             ref={ref}
             tooltipBody={(bin) => (
                 <>
