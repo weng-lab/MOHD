@@ -27,22 +27,27 @@ const ATACDimensionalityReduction = () => {
     const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
     const ATACData = useATACData({ skip: false });
 
+    const rows: ATACMetadata = useMemo(() => {
+        if (!ATACData.data) return [];
+        return ATACData.data;
+    }, [ATACData]);
 
-  const rows: ATACMetadata = ATACData.data ?? [];
+    const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
+        rows,
+        getRowId: (row) => row.sample_id,
+    });
 
-  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-    rows,
-    getRowId: (row) => row.sample_id,
-  });
-
-  const SharedATACDimenionalityProps: SharedATACDimenionalityProps = {
-    rows,
-    ATACData,
-    selected,
-    setSelected,
-    sortedFilteredData,
-    tableProps,
-  };
+    const SharedATACDimenionalityProps: SharedATACDimenionalityProps = useMemo(
+        () => ({
+            rows,
+            ATACData,
+            selected,
+            setSelected,
+            sortedFilteredData,
+            tableProps,
+        }),
+        [ATACData, rows, selected, setSelected, sortedFilteredData, tableProps]
+    );
 
     return (
         <TwoPaneLayout

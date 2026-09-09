@@ -8,26 +8,6 @@ export type RNADimensionalityUmapProps<
   Z extends boolean | undefined,
 > = SharedRNADimenionalityProps & Partial<ChartProps<RNAMetadata[number], S, Z>>;
 
-const TooltipBody = (point: Point<RNAMetadata[number]>) => {
-  return (
-    <>
-      <Typography>
-        <b>Dataset:</b> {point.metaData?.sample_id}
-      </Typography>
-      <Typography>
-        <b>Status:</b> {point.metaData?.status}
-      </Typography>
-      <Typography>
-        <b>Site:</b> {point.metaData?.site}
-      </Typography>
-      <Typography>
-        <b>Sex:</b>{" "}
-        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : ""}
-      </Typography>
-    </>
-  );
-};
-
 const RNAUMAP = <S extends true, Z extends boolean | undefined>({
   selected,
   RNAData,

@@ -18,5 +18,3 @@ export const sex_color_map = { female: "#9d5ca3", male: "#62A35C", "prefer no an
 
 export const protocol_color_map = { "Buffy Coat method": "#d1495b", "OPC method": "#00798c", "CPT method": "#edae49" };
 
-
-export const protocol_color_map = { "Buffy Coat method": "#d1495b", "OPC method": "#00798c", "CPT method": "#edae49" };
