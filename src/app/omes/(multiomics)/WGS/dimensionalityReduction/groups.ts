@@ -2,29 +2,15 @@
  * Grouping for the PCA plots: one field on a row becomes the ordered, counted,
  * labelled and colored list of groups the legend renders and the plot colors by.
  *
- * The per-field tables this reads - which palette and which labels a field gets -
- * are declared in fields.ts. What lives here is the algorithm, and the fallbacks
- * for whatever those tables do not answer for: a qualitative palette for
- * unordered values, and a sequential ramp for ordered ones (the age bands), so
- * that where an ordering exists it reads off the color.
+ * The per-field tables this reads - which palette and which labels a field gets,
+ * and which fallback pool its cohort draws from - are declared in fields.ts. What
+ * lives here is the algorithm, and the one fallback that is not per-cohort: a
+ * sequential ramp for ordered values (the age bands), so that where an ordering
+ * exists it reads off the color.
  */
 
-import { FIELD_LABELS, FIELD_PALETTES, type ColorField, type Palette } from "./fields";
+import { FIELD_LABELS, FIELD_PALETTES, fallbackPalette, type ColorField, type Palette } from "./fields";
 import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";
-
-/** Fallback qualitative palette for values no field palette covers. */
-const QUALITATIVE = [
-  "#E41A1C",
-  "#377EB8",
-  "#4DAF4A",
-  "#984EA3",
-  "#FF7F00",
-  "#A65628",
-  "#F781BF",
-  "#17BECF",
-  "#BCBD22",
-  "#999999",
-];
 
 const UNKNOWN_COLOR = "#C7C7C7";
 
@@ -130,6 +116,11 @@ export const buildGroups = <T>(
 
   const palette: Palette = FIELD_PALETTES[key] ?? {};
 
+  // Per cohort, not one shared pool: the reference and MOHD plots are on screen
+  // at once, and a color they had in common would invite the reader to pair the
+  // groups that carry it. See the two lists in fields.ts.
+  const fallback = fallbackPalette(key);
+
   // The cursor advances only for groups the palette did not answer for, so an
   // uncovered value takes the next qualitative color in sequence rather than
   // whatever sits at its position in the legend - indexing by position is how
@@ -154,6 +145,6 @@ export const buildGroups = <T>(
             ? // Ramped across the bands alone; "Unknown" sorts after them, so a
               // band's legend index is its band index.
               sequentialColor(i, bands.length)
-            : QUALITATIVE[cursor++ % QUALITATIVE.length]),
+            : fallback[cursor++ % fallback.length]),
   }));
 };
