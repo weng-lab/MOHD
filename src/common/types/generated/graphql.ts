@@ -38,8 +38,16 @@ export type AtacSampleMetadata = {
   frip_score?: Maybe<Scalars['Float']['output']>;
   kit: Scalars['String']['output'];
   participant_id: Scalars['String']['output'];
-  pca_x?: Maybe<Scalars['Float']['output']>;
-  pca_y?: Maybe<Scalars['Float']['output']>;
+  pc1?: Maybe<Scalars['Float']['output']>;
+  pc2?: Maybe<Scalars['Float']['output']>;
+  pc3?: Maybe<Scalars['Float']['output']>;
+  pc4?: Maybe<Scalars['Float']['output']>;
+  pc5?: Maybe<Scalars['Float']['output']>;
+  pc6?: Maybe<Scalars['Float']['output']>;
+  pc7?: Maybe<Scalars['Float']['output']>;
+  pc8?: Maybe<Scalars['Float']['output']>;
+  pc9?: Maybe<Scalars['Float']['output']>;
+  pc10?: Maybe<Scalars['Float']['output']>;
   protocol: Scalars['String']['output'];
   reads_mapped?: Maybe<Scalars['Float']['output']>;
   sample_id: Scalars['String']['output'];
@@ -101,10 +109,28 @@ export type LipidomicsQuantifications = {
 
 export type LipidomicsSampleMetadata = {
   __typename?: 'LipidomicsSampleMetadata';
+  age_at_enrollment?: Maybe<Scalars['Int']['output']>;
+  condition?: Maybe<Scalars['String']['output']>;
+  entity_id?: Maybe<Scalars['String']['output']>;
+  kit?: Maybe<Scalars['String']['output']>;
+  participant_id?: Maybe<Scalars['String']['output']>;
+  pc1?: Maybe<Scalars['Float']['output']>;
+  pc2?: Maybe<Scalars['Float']['output']>;
+  pc3?: Maybe<Scalars['Float']['output']>;
+  pc4?: Maybe<Scalars['Float']['output']>;
+  pc5?: Maybe<Scalars['Float']['output']>;
+  pc6?: Maybe<Scalars['Float']['output']>;
+  pc7?: Maybe<Scalars['Float']['output']>;
+  pc8?: Maybe<Scalars['Float']['output']>;
+  pc9?: Maybe<Scalars['Float']['output']>;
+  pc10?: Maybe<Scalars['Float']['output']>;
+  protocol?: Maybe<Scalars['String']['output']>;
   sample_id: Scalars['String']['output'];
   sex?: Maybe<Scalars['String']['output']>;
-  site: Scalars['String']['output'];
+  site?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
+  tube?: Maybe<Scalars['String']['output']>;
+  visit?: Maybe<Scalars['String']['output']>;
 };
 
 export type MetabolomicsQuantifications = {
@@ -118,10 +144,28 @@ export type MetabolomicsQuantifications = {
 
 export type MetabolomicsSampleMetadata = {
   __typename?: 'MetabolomicsSampleMetadata';
+  age_at_enrollment?: Maybe<Scalars['Int']['output']>;
+  condition?: Maybe<Scalars['String']['output']>;
+  entity_id?: Maybe<Scalars['String']['output']>;
+  kit?: Maybe<Scalars['String']['output']>;
+  participant_id?: Maybe<Scalars['String']['output']>;
+  pc1?: Maybe<Scalars['Float']['output']>;
+  pc2?: Maybe<Scalars['Float']['output']>;
+  pc3?: Maybe<Scalars['Float']['output']>;
+  pc4?: Maybe<Scalars['Float']['output']>;
+  pc5?: Maybe<Scalars['Float']['output']>;
+  pc6?: Maybe<Scalars['Float']['output']>;
+  pc7?: Maybe<Scalars['Float']['output']>;
+  pc8?: Maybe<Scalars['Float']['output']>;
+  pc9?: Maybe<Scalars['Float']['output']>;
+  pc10?: Maybe<Scalars['Float']['output']>;
+  protocol?: Maybe<Scalars['String']['output']>;
   sample_id: Scalars['String']['output'];
   sex?: Maybe<Scalars['String']['output']>;
-  site: Scalars['String']['output'];
+  site?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
+  tube?: Maybe<Scalars['String']['output']>;
+  visit?: Maybe<Scalars['String']['output']>;
 };
 
 export type MetalDescription = {
@@ -248,8 +292,16 @@ export type RnaSampleMetadata = {
   entity_id: Scalars['String']['output'];
   kit: Scalars['String']['output'];
   participant_id: Scalars['String']['output'];
-  pca_x?: Maybe<Scalars['Float']['output']>;
-  pca_y?: Maybe<Scalars['Float']['output']>;
+  pc1?: Maybe<Scalars['Float']['output']>;
+  pc2?: Maybe<Scalars['Float']['output']>;
+  pc3?: Maybe<Scalars['Float']['output']>;
+  pc4?: Maybe<Scalars['Float']['output']>;
+  pc5?: Maybe<Scalars['Float']['output']>;
+  pc6?: Maybe<Scalars['Float']['output']>;
+  pc7?: Maybe<Scalars['Float']['output']>;
+  pc8?: Maybe<Scalars['Float']['output']>;
+  pc9?: Maybe<Scalars['Float']['output']>;
+  pc10?: Maybe<Scalars['Float']['output']>;
   protocol: Scalars['String']['output'];
   sample_id: Scalars['String']['output'];
   sex: Scalars['String']['output'];
@@ -269,8 +321,16 @@ export type WgbsSampleMetadata = {
   frip_score?: Maybe<Scalars['Float']['output']>;
   kit: Scalars['String']['output'];
   participant_id: Scalars['String']['output'];
-  pca_x?: Maybe<Scalars['Float']['output']>;
-  pca_y?: Maybe<Scalars['Float']['output']>;
+  pc1?: Maybe<Scalars['Float']['output']>;
+  pc2?: Maybe<Scalars['Float']['output']>;
+  pc3?: Maybe<Scalars['Float']['output']>;
+  pc4?: Maybe<Scalars['Float']['output']>;
+  pc5?: Maybe<Scalars['Float']['output']>;
+  pc6?: Maybe<Scalars['Float']['output']>;
+  pc7?: Maybe<Scalars['Float']['output']>;
+  pc8?: Maybe<Scalars['Float']['output']>;
+  pc9?: Maybe<Scalars['Float']['output']>;
+  pc10?: Maybe<Scalars['Float']['output']>;
   protocol: Scalars['String']['output'];
   reads_mapped?: Maybe<Scalars['Float']['output']>;
   sample_id: Scalars['String']['output'];
@@ -326,6 +386,11 @@ export type WgsSampleMetadata = {
   status: Scalars['String']['output'];
 };
 
+export type FetchWgspcaQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchWgspcaQuery = { __typename?: 'Query', wgs_pca: Array<{ __typename?: 'WgsPca', sample_id: string, cohort: string, pc1: number, pc2: number, pc3: number, pc4: number, pc5: number, pc6: number, pc7: number, pc8: number, pc9: number, pc10: number, superpop?: string | null, sex?: string | null, project?: string | null, age?: number | null, case_status?: string | null, sex_at_birth?: string | null, site?: string | null, recruited_condition?: string | null, reported_race_ethnicity?: string | null, gnomad_pop?: string | null }>, wgs_pca_variance: Array<{ __typename?: 'WgsPcaVariance', pc: number, pve?: number | null }> };
+
 export type FetchAtacMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -349,6 +414,7 @@ export type Fetch_Phenotypical_VariableQueryVariables = Exact<{ [key: string]: n
 export type Fetch_Phenotypical_VariableQuery = { __typename?: 'Query', phenotypical_variables: Array<{ __typename?: 'PhenotypicalDataVariables', variable_category?: string | null, variable_name: string }> };
 
 
+export const FetchWgspcaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGSPCA"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgs_pca"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"cohort"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}},{"kind":"Field","name":{"kind":"Name","value":"superpop"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"project"}},{"kind":"Field","name":{"kind":"Name","value":"age"}},{"kind":"Field","name":{"kind":"Name","value":"case_status"}},{"kind":"Field","name":{"kind":"Name","value":"sex_at_birth"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"recruited_condition"}},{"kind":"Field","name":{"kind":"Name","value":"reported_race_ethnicity"}},{"kind":"Field","name":{"kind":"Name","value":"gnomad_pop"}}]}},{"kind":"Field","name":{"kind":"Name","value":"wgs_pca_variance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pc"}},{"kind":"Field","name":{"kind":"Name","value":"pve"}}]}}]}}]} as unknown as DocumentNode<FetchWgspcaQuery, FetchWgspcaQueryVariables>;
 export const FetchAtacMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchATACMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"atac_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}}]}}]} as unknown as DocumentNode<FetchAtacMetadataQuery, FetchAtacMetadataQueryVariables>;
 export const FetchRnaMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchRNAMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rna_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}}]}}]} as unknown as DocumentNode<FetchRnaMetadataQuery, FetchRnaMetadataQueryVariables>;
 export const Fetch_Phenotypical_DataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetch_phenotypical_data"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"variable_name"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"phenotypical_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"variable_name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"variable_name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"participant_profile_dss"}},{"kind":"Field","name":{"kind":"Name","value":"participant_profile_dss_internal_id"}},{"kind":"Field","name":{"kind":"Name","value":"value_numeric"}},{"kind":"Field","name":{"kind":"Name","value":"value_text"}},{"kind":"Field","name":{"kind":"Name","value":"variable_name"}},{"kind":"Field","name":{"kind":"Name","value":"variable_status"}}]}}]}}]} as unknown as DocumentNode<Fetch_Phenotypical_DataQuery, Fetch_Phenotypical_DataQueryVariables>;
