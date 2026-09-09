@@ -5,6 +5,7 @@ import { LinkComponent } from "./LinkComponent";
 
 // Evaluated once at module load rather than per render: reading the clock during
 // render is request-time data, which cacheComponents refuses to prerender.
+// react-doctor-disable-next-line react-doctor/no-impure-call-at-module-scope -- intentional, see above
 const COPYRIGHT_YEAR = new Date().getFullYear();
 
 export default function Footer() {

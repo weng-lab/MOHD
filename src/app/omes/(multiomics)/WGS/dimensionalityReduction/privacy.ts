@@ -72,7 +72,7 @@ export const binReportedRace = (rows: MohdRow[]): { rows: MohdRow[]; members: st
     rows: rows.map((row) =>
       row.reported_race_ethnicity && binned.has(row.reported_race_ethnicity)
         ? { ...row, reported_race_ethnicity: PRIVACY_BIN }
-        : row,
+        : row
     ),
     // Alphabetical rather than by count: the hover is a list of responses, and
     // ordering it by size would put back the ranking the binning just removed.

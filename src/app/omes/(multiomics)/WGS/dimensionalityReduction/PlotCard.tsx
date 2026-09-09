@@ -46,7 +46,7 @@ export type PlotCardProps<K extends ColorField> = {
  * The axis selects stay outside this component for the same reason: they drive
  * both plots through ScatterPlotSync, so they must not sit inside either card.
  */
-const PlotCard = <K extends ColorField,>({
+const PlotCard = <K extends ColorField>({
   title,
   count,
   options,
@@ -111,27 +111,14 @@ const PlotCard = <K extends ColorField,>({
     </Stack>
 
     <Stack gap={1} sx={{ px: 1.5, pt: 1.25, pb: 1.5, flex: 1, minHeight: 0 }}>
-      <PlotLegend
-        groups={groups}
-        hidden={hidden}
-        onToggle={onToggle}
-        highlighted={highlighted}
-        onHover={onHover}
-      />
+      <PlotLegend groups={groups} hidden={hidden} onToggle={onToggle} highlighted={highlighted} onHover={onHover} />
       {/*
         Bottom-aligned, not centred. Both plots render at the smaller of the two containers, so
         the card with the shorter legend has room to spare below its plot. Pinning the plot to
         the bottom puts both x-axes on the same line, which is what makes the two cohorts
         readable side by side.
       */}
-      <Box
-        ref={plotRef}
-        flex={1}
-        minHeight={0}
-        display="flex"
-        flexDirection="column"
-        justifyContent="flex-end"
-      >
+      <Box ref={plotRef} flex={1} minHeight={0} display="flex" flexDirection="column" justifyContent="flex-end">
         {children}
       </Box>
     </Stack>

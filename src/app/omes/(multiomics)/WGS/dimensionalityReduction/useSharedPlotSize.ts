@@ -22,13 +22,14 @@ export type PlotSize = { width: number; height: number };
  */
 export const useSharedPlotSize = (
   a: RefObject<HTMLElement | null>,
-  b: RefObject<HTMLElement | null>,
+  b: RefObject<HTMLElement | null>
 ): PlotSize | undefined => {
   const [size, setSize] = useState<PlotSize>();
   // Kept in a ref so the effect can bail on an unchanged size without listing
   // the current size as a dependency and re-subscribing on every measurement.
   const latest = useRef<PlotSize>(undefined);
 
+  // react-doctor-disable-next-line react-doctor/no-derived-state-effect -- measures the DOM; there is no render-time source for these sizes
   useEffect(() => {
     const elements = [a.current, b.current].filter((el) => el !== null);
     if (elements.length === 0) return;
@@ -39,6 +40,7 @@ export const useSharedPlotSize = (
       if (width <= 0 || height <= 0) return;
       if (latest.current?.width === width && latest.current?.height === height) return;
       latest.current = { width, height };
+      // react-doctor-disable-next-line react-doctor/no-derived-state -- a ResizeObserver measurement, not derived state: clientWidth cannot be read during render
       setSize(latest.current);
     };
 

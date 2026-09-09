@@ -2,7 +2,7 @@
 
 import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { ScatterPlot, ScatterPlotSync, getSharedDomains, type Point } from "@weng-lab/visualization";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { PLOT_HEIGHT } from "./dimensions";
 import {
   MOHD_COLOR_OPTIONS,
@@ -40,7 +40,7 @@ const toPoints = <T extends { sample_id: string; pcs: number[] }>(
   key: keyof T & ColorField,
   groups: GroupInfo[],
   xPc: number,
-  yPc: number,
+  yPc: number
 ): Point<Meta<T>>[] => {
   const colors = new Map(groups.map((g) => [g.value, g.color]));
   return rows.map((row) => {
@@ -72,15 +72,7 @@ const Tooltip = <T,>({ row, options }: { row: T; options: readonly ColorOption<k
  * One shared axis. Renders its value inline ("X - PC1") rather than through a
  * floating label, which keeps the header row a single line tall.
  */
-const AxisSelect = ({
-  axis,
-  value,
-  onChange,
-}: {
-  axis: "X" | "Y";
-  value: number;
-  onChange: (pc: number) => void;
-}) => (
+const AxisSelect = ({ axis, value, onChange }: { axis: "X" | "Y"; value: number; onChange: (pc: number) => void }) => (
   <Select
     size="small"
     value={value}
@@ -134,52 +126,32 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
   const mohdPlotRef = useRef<HTMLDivElement>(null);
   const plotSize = useSharedPlotSize(refPlotRef, mohdPlotRef);
 
-  const refGroups = useMemo(() => buildGroups(reference, refKey), [reference, refKey]);
-  const mohdGroups = useMemo(
-    () => buildGroups(mohd, mohdKey, binnedRaceEthnicity),
-    [mohd, mohdKey, binnedRaceEthnicity],
-  );
+  const refGroups = buildGroups(reference, refKey);
+  const mohdGroups = buildGroups(mohd, mohdKey, binnedRaceEthnicity);
 
-  const refPoints = useMemo(
-    () => toPoints(reference, refKey, refGroups, xPc, yPc),
-    [reference, refKey, refGroups, xPc, yPc],
-  );
-  const mohdPoints = useMemo(
-    () => toPoints(mohd, mohdKey, mohdGroups, xPc, yPc),
-    [mohd, mohdKey, mohdGroups, xPc, yPc],
-  );
+  const refPoints = toPoints(reference, refKey, refGroups, xPc, yPc);
+  const mohdPoints = toPoints(mohd, mohdKey, mohdGroups, xPc, yPc);
 
   // Domains come from every point, not just the visible ones, so toggling a
   // group off doesn't rescale the axes underneath the remaining points.
-  const domains = useMemo(() => getSharedDomains(refPoints, mohdPoints), [refPoints, mohdPoints]);
+  const domains = getSharedDomains(refPoints, mohdPoints);
 
-  const visibleRef = useMemo(
-    () => refPoints.filter((p) => !hiddenRef.has(p.metaData!.group)),
-    [refPoints, hiddenRef],
-  );
-  const visibleMohd = useMemo(
-    () => mohdPoints.filter((p) => !hiddenMohd.has(p.metaData!.group)),
-    [mohdPoints, hiddenMohd],
-  );
+  const visibleRef = refPoints.filter((p) => !hiddenRef.has(p.metaData!.group));
+  const visibleMohd = mohdPoints.filter((p) => !hiddenMohd.has(p.metaData!.group));
 
   // Drawn from the visible points rather than all of them, so hovering the chip of a
   // group that is toggled off highlights nothing - there is none of it on the plot.
-  const hoveredRefPoints = useMemo(
-    () => (legendHoverRef ? visibleRef.filter((p) => p.metaData!.group === legendHoverRef) : undefined),
-    [visibleRef, legendHoverRef],
-  );
-  const hoveredMohdPoints = useMemo(
-    () => (legendHoverMohd ? visibleMohd.filter((p) => p.metaData!.group === legendHoverMohd) : undefined),
-    [visibleMohd, legendHoverMohd],
-  );
+  const hoveredRefPoints = legendHoverRef ? visibleRef.filter((p) => p.metaData!.group === legendHoverRef) : undefined;
+  const hoveredMohdPoints = legendHoverMohd
+    ? visibleMohd.filter((p) => p.metaData!.group === legendHoverMohd)
+    : undefined;
 
-  const toggle = (setHidden: (fn: (prev: ReadonlySet<string>) => ReadonlySet<string>) => void) =>
-    (value: string) =>
-      setHidden((prev) => {
-        const next = new Set(prev);
-        if (!next.delete(value)) next.add(value);
-        return next;
-      });
+  const toggle = (setHidden: (fn: (prev: ReadonlySet<string>) => ReadonlySet<string>) => void) => (value: string) =>
+    setHidden((prev) => {
+      const next = new Set(prev);
+      if (!next.delete(value)) next.add(value);
+      return next;
+    });
 
   const xLabel = axisLabel(xPc, pve);
   const yLabel = axisLabel(yPc, pve);
@@ -192,12 +164,7 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
         position should suggest otherwise. The empty third column is what centres
         it - there is no content for it to hold.
       */}
-      <Box
-        display="grid"
-        gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }}
-        alignItems="center"
-        gap={1}
-      >
+      <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }} alignItems="center" gap={1}>
         <Typography variant="h5">Ancestry PCA</Typography>
         <Stack
           direction="row"

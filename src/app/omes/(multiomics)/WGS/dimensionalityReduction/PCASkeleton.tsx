@@ -12,12 +12,7 @@ import { AXIS_CLUSTER_SIZE, CARD_SX, PLOT_HEIGHT } from "./dimensions";
  */
 const PCASkeleton = () => (
   <Stack gap={2}>
-    <Box
-      display="grid"
-      gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }}
-      alignItems="center"
-      gap={1}
-    >
+    <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }} alignItems="center" gap={1}>
       <Skeleton variant="text" width={170} height={32} />
       <Skeleton
         variant="rounded"

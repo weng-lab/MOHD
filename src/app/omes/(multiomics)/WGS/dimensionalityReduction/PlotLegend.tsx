@@ -78,7 +78,7 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLege
           title={
             <>
               <Typography variant="caption" component="p">
-               Combined to protect participant privacy:
+                Combined to protect participant privacy:
               </Typography>
               <Box component="ul" sx={{ m: 0, mt: 0.5, pl: 2 }}>
                 {members.map((member) => (

@@ -14,8 +14,16 @@ import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";
 
 /** Fallback qualitative palette for values no field palette covers. */
 const QUALITATIVE = [
-  "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00",
-  "#A65628", "#F781BF", "#17BECF", "#BCBD22", "#999999",
+  "#E41A1C",
+  "#377EB8",
+  "#4DAF4A",
+  "#984EA3",
+  "#FF7F00",
+  "#A65628",
+  "#F781BF",
+  "#17BECF",
+  "#BCBD22",
+  "#999999",
 ];
 
 const UNKNOWN_COLOR = "#C7C7C7";
@@ -87,7 +95,7 @@ export const displayValue = (key: ColorField, raw: unknown): string => {
  * Builds the ordered group list for a field, with a color for each.
  * Rows whose value is null are collected under "Unknown".
  */
-export const buildGroups = <T,>(
+export const buildGroups = <T>(
   rows: T[],
   key: keyof T & ColorField,
   /**
@@ -96,7 +104,7 @@ export const buildGroups = <T,>(
    * that have no use for them. Ignored for every field but the binned one, which
    * is the only one a PRIVACY_BIN group can appear in.
    */
-  binMembers: string[] = [],
+  binMembers: string[] = []
 ): GroupInfo[] => {
   const counts = new Map<string, number>();
   for (const row of rows) {
@@ -118,9 +126,7 @@ export const buildGroups = <T,>(
   // sorts by descending count, "Unknown" included.
   const ordered = sequential
     ? [...bands.sort((a, b) => parseInt(a, 10) - parseInt(b, 10)), ...(counts.has("Unknown") ? ["Unknown"] : [])]
-    : values.sort(
-        (a, b) => rank(a) - rank(b) || (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || a.localeCompare(b),
-      );
+    : values.sort((a, b) => rank(a) - rank(b) || (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || a.localeCompare(b));
 
   const palette: Palette = FIELD_PALETTES[key] ?? {};
 
