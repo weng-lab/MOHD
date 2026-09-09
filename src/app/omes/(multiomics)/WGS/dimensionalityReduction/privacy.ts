@@ -33,8 +33,12 @@ export const PRIVACY_BIN = "Binned for Privacy";
 /** A category with fewer participants than this is folded into the bin. */
 const MIN_GROUP_SIZE = 10;
 
-/** Slate. Distinct from the qualitative palette and from "Unknown"'s light grey. */
-export const PRIVACY_BIN_COLOR = "#5F6B7A";
+/**
+ * Slate. Distinct from the MOHD fallback pool and from "Unknown"'s light grey,
+ * and kept clear of the reference plot's Africa teal, which the older, bluer
+ * slate sat close enough to (~13 ΔE2000) to pair the two by eye.
+ */
+export const PRIVACY_BIN_COLOR = "#6B7280";
 
 /**
  * Rewrites small categories to PRIVACY_BIN, and reports which ones it folded in.

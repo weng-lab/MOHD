@@ -12,7 +12,7 @@
  */
 
 import { sex_color_map, site_color_map, status_color_map } from "@/common/colors";
-import { GNOMAD_POP_LABELS, SUPERPOP_COLORS, SUPERPOP_LABELS } from "./populations";
+import { GNOMAD_POP_COLORS, GNOMAD_POP_LABELS, SUPERPOP_COLORS, SUPERPOP_LABELS } from "./populations";
 import type { MohdRow, ReferenceRow } from "./types";
 
 /** A field a plot can be colored by, and the label shown in its select. */
@@ -54,12 +54,17 @@ export type Palette = Record<string, string | undefined>;
 
 /**
  * The palette for each field's values. Anything not listed here, and any value a
- * listed palette has no entry for, takes the qualitative fallback in groups.ts.
+ * listed palette has no entry for, takes its cohort's fallback pool below.
  *
  * MOHD fields reuse the maps in src/common/colors.ts, so a site or a case status
  * is the same color here as anywhere else in the app. Reference `sex` shares
  * sex_color_map with MOHD `sex_at_birth` on purpose: the two plots sit side by
  * side, so male and female have to agree across them.
+ *
+ * Both population fields are named here rather than left to a pool. Their values
+ * are a fixed published vocabulary, so a code keeps its color no matter which
+ * groups a release happens to contain - a pool hands colors out in count order,
+ * which would let AFR change color as the cohort grows.
  */
 export const FIELD_PALETTES: Partial<Record<ColorField, Palette>> = {
   case_status: status_color_map,
@@ -67,6 +72,7 @@ export const FIELD_PALETTES: Partial<Record<ColorField, Palette>> = {
   sex_at_birth: sex_color_map,
   sex: sex_color_map,
   superpop: SUPERPOP_COLORS,
+  gnomad_pop: GNOMAD_POP_COLORS,
 };
 
 /**
@@ -92,48 +98,45 @@ export const FIELD_LABELS: Partial<Record<ColorField, Record<string, string>>> =
  * one we make, and the plots should not be able to imply it.
  *
  * Nothing enforces the split at compile time. If you add to either list, keep
- * every new color at least ~15 ΔE2000 from every color in the other one and from
- * UNKNOWN_COLOR and PRIVACY_BIN_COLOR, which share the MOHD legend.
+ * every new color at least ~15 ΔE2000 from every color in the other one, from
+ * SUPERPOP_COLORS and GNOMAD_POP_COLORS, and from UNKNOWN_COLOR and
+ * PRIVACY_BIN_COLOR, which share the MOHD legend.
  */
 
 /**
- * Reference panel fallback (ColorBrewer Set1), for gnomAD population and project.
+ * Reference panel fallback: the super population colors themselves.
  *
- * Set1 on purpose: it is the family SUPERPOP_COLORS is drawn from, and gnomAD
- * populations describe the same samples the super populations do, so the two
- * reference fields reading as one system is accurate rather than misleading.
+ * The only field that reaches this is `project`, which has one value per source
+ * cohort. It is not a population vocabulary - nobody reads an ancestry claim out
+ * of "1000 Genomes" versus "HGDP" - so it can sit in the reference plot's own
+ * family rather than spending scarce colors on a pool of its own. That is what
+ * leaves the whole rest of the space to the MOHD pool below.
  */
-export const REFERENCE_FALLBACK_COLORS: readonly string[] = [
-  "#E41A1C",
-  "#377EB8",
-  "#4DAF4A",
-  "#984EA3",
-  "#FF7F00",
-  "#A65628",
-  "#F781BF",
-  "#17BECF",
-  "#BCBD22",
-  "#999999",
-];
+export const REFERENCE_FALLBACK_COLORS: readonly string[] = Object.values(SUPERPOP_COLORS);
 
 /**
  * MOHD fallback, for reported race/ethnicity and recruited condition.
  *
- * Deep jewel tones against Set1's bright primaries: the aim is not just that no
- * hex repeats but that the two plots read as two color systems, so a reader has
- * no reason to pair a chip on one with a chip on the other. Shorter than the
- * reference pool because the fields it serves have fewer categories, and because
- * every added color has to clear both lists above.
+ * Set1's brights lead, because the reference plot no longer uses them: once the
+ * populations moved to Figure 3's deep jewel tones, most of Set1 came free, and
+ * these are the four that clear it. The rest of Set1 does not - its purple lands
+ * on Middle East/North Africa, its cyan on Central/South Asia, its olive on
+ * Oceania, its orange on the Americas and its blue on Africa - so the pool is
+ * topped up with deeper colors chosen to clear both plots instead.
+ *
+ * Order matters: the cursor in groups.ts hands these out in sequence, so the
+ * largest groups on the plot get the four Set1 colors and the deeper ones fall to
+ * the tail, where a field has enough categories to need them.
  */
 export const MOHD_FALLBACK_COLORS: readonly string[] = [
-  "#17827B", // teal
-  "#C0396B", // rose
-  "#A27F20", // ochre
-  "#33208C", // indigo
-  "#566416", // olive
-  "#45C4A6", // mint
-  "#681229", // wine
-  "#B87E7A", // dusty rose
+  "#E41A1C", // Set1 red
+  "#4DAF4A", // Set1 green
+  "#A65628", // Set1 brown
+  "#F781BF", // Set1 pink
+  "#256B34", // forest
+  "#97862A", // dark gold
+  "#7A1F1F", // oxblood
+  "#1F3A6E", // navy
 ];
 
 /**
