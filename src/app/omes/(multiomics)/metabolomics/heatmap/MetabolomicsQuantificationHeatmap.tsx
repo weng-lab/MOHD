@@ -68,22 +68,25 @@ const MetabolomicsQuantificationHeatmap = ({
       downloadFileName="metabolomics_quantification_heatmap"
       colorDomain={colorDomain}
       ref={ref}
-      tooltipBody={(bin) => (
-        <>
-          <Typography>
-            <b>Dataset:</b> {bin.datum.columnName}
-          </Typography>
-          <Typography>
-            <b>Compound:</b> {bin.bin.metadata?.fullName ?? bin.bin.rowName}
-          </Typography>
-          <Typography>
-            <b>Mode:</b> {bin.bin.metadata?.mode}
-          </Typography>
-          <Typography>
-            <b>Value:</b> {bin.bin.metadata?.rawValue ?? "No data"}
-          </Typography>
-        </>
-      )}
+      tooltipBody={(bin) => {
+        const rowMeta = bin.bin.metadata as CompoundRowMeta | undefined;
+        return (
+          <>
+            <Typography>
+              <b>Dataset:</b> {bin.datum.columnName}
+            </Typography>
+            <Typography>
+              <b>Compound:</b> {rowMeta?.fullName ?? bin.bin.rowName}
+            </Typography>
+            <Typography>
+              <b>Mode:</b> {rowMeta?.mode}
+            </Typography>
+            <Typography>
+              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
+            </Typography>
+          </>
+        );
+      }}
     />
   );
 };

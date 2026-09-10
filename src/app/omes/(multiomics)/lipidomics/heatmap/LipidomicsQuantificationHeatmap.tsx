@@ -64,19 +64,22 @@ const LipidomicsQuantificationHeatmap = ({
       downloadFileName="lipidomics_quantification_heatmap"
       colorDomain={colorDomain}
       ref={ref}
-      tooltipBody={(bin) => (
-        <>
-          <Typography>
-            <b>Dataset:</b> {bin.datum.columnName}
-          </Typography>
-          <Typography>
-            <b>Molecule:</b> {bin.bin.metadata?.fullName ?? bin.bin.rowName}
-          </Typography>
-          <Typography>
-            <b>Value:</b> {bin.bin.metadata?.rawValue ?? "No data"}
-          </Typography>
-        </>
-      )}
+      tooltipBody={(bin) => {
+        const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
+        return (
+          <>
+            <Typography>
+              <b>Dataset:</b> {bin.datum.columnName}
+            </Typography>
+            <Typography>
+              <b>Molecule:</b> {rowMeta?.fullName ?? bin.bin.rowName}
+            </Typography>
+            <Typography>
+              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
+            </Typography>
+          </>
+        );
+      }}
     />
   );
 };
