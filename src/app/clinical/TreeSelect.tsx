@@ -1,16 +1,6 @@
 "use client";
 import { useState, useRef, useId } from "react";
-import {
-  Box,
-  Divider,
-  FormControl,
-  InputAdornment,
-  InputLabel,
-  ListSubheader,
-  MenuItem,
-  OutlinedInput,
-  Popover,
-} from "@mui/material";
+import { Box, FormControl, InputAdornment, InputLabel, ListSubheader, OutlinedInput, Popover } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
@@ -29,20 +19,10 @@ interface TreeSelectProps {
   value: string;
   onChange: (value: string) => void;
   label: string;
-  disabledValue?: string;
   disabled?: boolean;
-  allowNone?: boolean;
 }
 
-export default function TreeSelect({
-  variables,
-  value,
-  onChange,
-  label,
-  disabledValue,
-  disabled,
-  allowNone,
-}: TreeSelectProps) {
+export default function TreeSelect({ variables, value, onChange, label, disabled }: TreeSelectProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const [popoverWidth, setPopoverWidth] = useState<number | undefined>(undefined);
   const [expandedItems, setExpandedItems] = useState<Record<string, string[]>>({});
@@ -56,12 +36,12 @@ export default function TreeSelect({
   });
   const open = Boolean(anchorEl);
 
-  const displayValue = value === "none" ? "-none-" : value ? formatVariableName(value) : "";
+  const displayValue = value ? formatVariableName(value) : "";
 
   function handleOpen() {
     if (!disabled && anchorRef.current) {
       setPopoverWidth(anchorRef.current.offsetWidth);
-      const ancestors = value && value !== "none" ? ancestorsOf(value) : [];
+      const ancestors = value ? ancestorsOf(value) : [];
       setExpandedItems(Object.fromEntries(categoryTrees.map(({ category }) => [category, ancestors])));
       setAnchorEl(anchorRef.current);
     }
@@ -78,7 +58,6 @@ export default function TreeSelect({
 
   function renderNodes(node: TreeNode): React.ReactNode {
     return Array.from(node.children.values()).map((child) => {
-      const isDisabled = child.fullPath === disabledValue;
       const isSelectableLeaf = child.isLeaf && child.children.size === 0;
 
       return (
@@ -86,8 +65,7 @@ export default function TreeSelect({
           key={child.fullPath}
           itemId={child.fullPath}
           label={formatSegment(child.label)}
-          disabled={isDisabled}
-          onClick={isSelectableLeaf && !isDisabled ? () => handleSelect(child.fullPath) : undefined}
+          onClick={isSelectableLeaf ? () => handleSelect(child.fullPath) : undefined}
           sx={isSelectableLeaf ? { "& > .MuiTreeItem-content .MuiTreeItem-label": { cursor: "pointer" } } : undefined}
         >
           {renderNodes(child)}
@@ -137,21 +115,13 @@ export default function TreeSelect({
           paper: { sx: { width: popoverWidth, maxHeight: { xs: "55vh", sm: 400 }, overflow: "auto", mt: 0.5 } },
         }}
       >
-        {allowNone && (
-          <>
-            <MenuItem onClick={() => handleSelect("none")} selected={value === "none"}>
-              -none-
-            </MenuItem>
-            <Divider />
-          </>
-        )}
         {categoryTrees.map(({ category, tree }) => (
           <Box key={category}>
             <ListSubheader sx={{ fontSize: 14, color: "black", fontWeight: 600, lineHeight: "36px" }}>
               {category}
             </ListSubheader>
             <SimpleTreeView
-              selectedItems={value && value !== "none" ? value : null}
+              selectedItems={value || null}
               expandedItems={expandedItems[category] ?? []}
               onExpandedItemsChange={(_, items) => setExpandedItems((prev) => ({ ...prev, [category]: items }))}
               sx={{ pb: 1, px: 1 }}
