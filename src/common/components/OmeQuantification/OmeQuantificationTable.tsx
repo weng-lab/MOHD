@@ -1,6 +1,5 @@
-import { Table, TableColDef, useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
+import { SyncedTableProps, Table, TableColDef, useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
-import { useEffect } from "react";
 import { Typography } from "@mui/material";
 
 export type QuantificationSample = {
@@ -10,23 +9,15 @@ export type QuantificationSample = {
   sex: string;
 };
 
-export type OmeQuantificationTableProps<TSample extends QuantificationSample> = {
-  label: string;
-  rows: TSample[];
-  loading: boolean;
-  error: unknown;
-  tableProps: ReturnType<typeof useTablePlotSync<TSample>>["tableProps"];
-  setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
-};
+const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
 
-const OmeQuantificationTable = <TSample extends QuantificationSample>({
-  label,
+export const useOmeQuantificationTable = <TSample extends QuantificationSample>({
   rows,
-  loading,
-  error,
   tableProps,
-  setAutoSort,
-}: OmeQuantificationTableProps<TSample>) => {
+}: {
+  rows: TSample[];
+  tableProps: ReturnType<typeof useTablePlotSync<TSample>>["tableProps"];
+}) => {
   const columns: TableColDef<TSample>[] = [
     {
       field: "sample_id",
@@ -67,27 +58,37 @@ const OmeQuantificationTable = <TSample extends QuantificationSample>({
       })),
     },
   ];
-  const initialSort: GridSortModel = [{ field: "sample_id", sort: "asc" }];
-  const { syncedTableProps, autoSort } = useSyncedTable({
+
+  return useSyncedTable({
     tableProps,
     columns,
-    initialSort,
+    initialSort: INITIAL_SORT,
     isPresorted: false,
   });
-
-  useEffect(() => {
-    setAutoSort(autoSort);
-  }, [autoSort, setAutoSort]);
-
-  return (
-    <Table
-      {...syncedTableProps}
-      label={<Typography noWrap>{label}</Typography>}
-      rows={rows}
-      loading={loading}
-      error={!!error}
-    />
-  );
 };
+
+export type OmeQuantificationTableProps<TSample extends QuantificationSample> = {
+  label: string;
+  rows: TSample[];
+  loading: boolean;
+  error: unknown;
+  syncedTableProps: SyncedTableProps<TSample>;
+};
+
+const OmeQuantificationTable = <TSample extends QuantificationSample>({
+  label,
+  rows,
+  loading,
+  error,
+  syncedTableProps,
+}: OmeQuantificationTableProps<TSample>) => (
+  <Table
+    {...syncedTableProps}
+    label={<Typography noWrap>{label}</Typography>}
+    rows={rows}
+    loading={loading}
+    error={!!error}
+  />
+);
 
 export default OmeQuantificationTable;

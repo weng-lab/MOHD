@@ -6,12 +6,12 @@ import { ColumnDatum } from "@weng-lab/visualization";
  * outside the domain entirely.
  */
 export const symmetricColorDomain = (
-    heatmapData: ColumnDatum<Record<string, unknown>, Record<string, unknown>>[]
+  heatmapData: ColumnDatum<Record<string, unknown>, Record<string, unknown>>[]
 ): [number, number] => {
-    const maxAbsValue = heatmapData.reduce(
-        (max, column) =>
-            column.rows.reduce((rowMax, row) => (row.count === null ? rowMax : Math.max(rowMax, Math.abs(row.count))), max),
-        0
-    );
-    return [-maxAbsValue, maxAbsValue];
+  const maxAbsValue = heatmapData.reduce(
+    (max, column) =>
+      column.rows.reduce((rowMax, row) => (row.count === null ? rowMax : Math.max(rowMax, Math.abs(row.count))), max),
+    0
+  );
+  return [-maxAbsValue, maxAbsValue];
 };

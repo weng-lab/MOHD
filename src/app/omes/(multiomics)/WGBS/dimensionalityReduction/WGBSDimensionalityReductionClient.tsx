@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
-import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
+import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import WGBSDimensionalityTable from "./WGBSDimensionalityTable";
 import { ScatterPlot } from "@mui/icons-material";
 import WGBSDimensionalityScatterPlot from "./WGBSUMAP";
 import WGBSDimensionalityPCAPlot from "./WGBSPCA";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
+import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 import type { WGBSRow } from "./types";
 
@@ -14,8 +14,7 @@ export type SharedWGBSDimenionalityProps = {
   selected: WGBSRow[];
   setSelected: React.Dispatch<React.SetStateAction<WGBSRow[]>>;
   sortedFilteredData: WGBSRow[];
-  tableProps: ReturnType<typeof useTablePlotSync<WGBSRow>>["tableProps"];
-  setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
+  syncedTableProps: SyncedTableProps<WGBSRow>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -31,15 +30,14 @@ const WGBSDimensionalityReductionClient = ({ rows }: WGBSDimensionalityReduction
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const [, setAutoSort] = useState(false);
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedWGBSDimenionalityProps: SharedWGBSDimenionalityProps = {
     rows,
     selected,
     setSelected,
     sortedFilteredData,
-    tableProps,
-    setAutoSort,
+    syncedTableProps,
   };
 
   return (

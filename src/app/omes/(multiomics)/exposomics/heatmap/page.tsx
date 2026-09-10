@@ -1,15 +1,15 @@
 "use client";
-import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
+import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import ExposomicsQuantificationTable from "./ExposomicsQuantificationTable";
 import { GridOn } from "@mui/icons-material";
 import ExposomicsQuantificationHeatmap from "./ExposomicsQuantificationHeatmap";
-import { useState } from "react";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
 import {
   useExposomicsData,
   UseExposomicsDataReturn,
   ExposomicsSample,
 } from "@/common/hooks/omeHooks/useExposomicsData";
+import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type ExposomicsMetadata = ExposomicsSample[];
@@ -20,9 +20,8 @@ export type SharedExposomicsProps = {
   selected: ExposomicsMetadata;
   setSelected: React.Dispatch<React.SetStateAction<ExposomicsMetadata>>;
   sortedFilteredData: ExposomicsMetadata;
-  tableProps: ReturnType<typeof useTablePlotSync<ExposomicsSample>>["tableProps"];
+  syncedTableProps: SyncedTableProps<ExposomicsSample>;
   autoSort: boolean;
-  setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -36,7 +35,7 @@ const ExposomicsHeatmap = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const [autoSort, setAutoSort] = useState(false);
+  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedExposomicsProps: SharedExposomicsProps = {
     rows,
@@ -44,9 +43,8 @@ const ExposomicsHeatmap = () => {
     selected,
     setSelected,
     sortedFilteredData,
-    tableProps,
+    syncedTableProps,
     autoSort,
-    setAutoSort,
   };
 
   return (

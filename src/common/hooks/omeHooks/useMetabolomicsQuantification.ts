@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { gql } from "@/common/types/generated/gql";
 import { FetchMetabolomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
@@ -45,6 +44,31 @@ export type UseMetabolomicsQuantificationReturn = {
   error: ErrorLike | undefined;
 };
 
+const toMetabolomicsSamples = (
+  data: FetchMetabolomicsQuantificationQuery | undefined
+): MetabolomicsSample[] | undefined => {
+  const compounds = [...(data?.metabolomics_compounds ?? [])].sort((a, b) => a.position - b.position);
+
+  if (!data?.metabolomics_quantification) return undefined;
+
+  return data.metabolomics_quantification
+    .filter(
+      (row): row is NonNullable<FetchMetabolomicsQuantificationQuery["metabolomics_quantification"][number]> =>
+        row !== null
+    )
+    .map((row) => ({
+      sample_id: row.sample_id,
+      site: row.site ?? "",
+      status: row.status ?? "",
+      sex: row.sex ?? "",
+      quantification: compounds.map((compound, index) => ({
+        compound: compound.compound,
+        mode: compound.mode,
+        value: row.quant_values?.[index] ?? null,
+      })),
+    }));
+};
+
 export const useMetabolomicsQuantification = ({
   skip,
 }: UseMetabolomicsQuantificationParams): UseMetabolomicsQuantificationReturn => {
@@ -52,31 +76,8 @@ export const useMetabolomicsQuantification = ({
     skip: skip,
   });
 
-  const samples = useMemo<MetabolomicsSample[] | undefined>(() => {
-    const compounds = [...(data?.metabolomics_compounds ?? [])].sort((a, b) => a.position - b.position);
-
-    if (!data?.metabolomics_quantification) return undefined;
-
-    return data.metabolomics_quantification
-      .filter(
-        (row): row is NonNullable<FetchMetabolomicsQuantificationQuery["metabolomics_quantification"][number]> =>
-          row !== null
-      )
-      .map((row) => ({
-        sample_id: row.sample_id,
-        site: row.site ?? "",
-        status: row.status ?? "",
-        sex: row.sex ?? "",
-        quantification: compounds.map((compound, index) => ({
-          compound: compound.compound,
-          mode: compound.mode,
-          value: row.quant_values?.[index] ?? null,
-        })),
-      }));
-  }, [data]);
-
   return {
-    data: samples,
+    data: toMetabolomicsSamples(data),
     loading,
     error,
   };

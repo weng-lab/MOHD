@@ -133,7 +133,11 @@ const DimensionalityScatterPlot = <
       });
 
   const handlePointsSelected = (selectedPoints: Point<T>[]) => {
-    setSelected([...selected, ...(selectedPoints.map((point) => point.metaData).filter(Boolean) as T[])]);
+    const newlySelected: T[] = [];
+    for (const point of selectedPoints) {
+      if (point.metaData) newlySelected.push(point.metaData);
+    }
+    setSelected([...selected, ...newlySelected]);
   };
 
   const handlePointSelected = (selectedPoint: Point<T>) => {

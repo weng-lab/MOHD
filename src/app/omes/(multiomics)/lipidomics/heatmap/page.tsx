@@ -1,15 +1,15 @@
 "use client";
-import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
+import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import LipidomicsQuantificationTable from "./LipidomicsQuantificationTable";
 import { GridOn } from "@mui/icons-material";
 import LipidomicsQuantificationHeatmap from "./LipidomicsQuantificationHeatmap";
-import { useState } from "react";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
 import {
   useLipidomicsQuantification,
   UseLipidomicsQuantificationReturn,
   LipidomicsSample,
 } from "@/common/hooks/omeHooks/useLipidomicsQuantification";
+import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type LipidomicsMetadata = LipidomicsSample[];
@@ -20,9 +20,8 @@ export type SharedLipidomicsProps = {
   selected: LipidomicsMetadata;
   setSelected: React.Dispatch<React.SetStateAction<LipidomicsMetadata>>;
   sortedFilteredData: LipidomicsMetadata;
-  tableProps: ReturnType<typeof useTablePlotSync<LipidomicsSample>>["tableProps"];
+  syncedTableProps: SyncedTableProps<LipidomicsSample>;
   autoSort: boolean;
-  setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -36,7 +35,7 @@ const LipidomicsHeatmap = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const [autoSort, setAutoSort] = useState(false);
+  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedLipidomicsProps: SharedLipidomicsProps = {
     rows,
@@ -44,9 +43,8 @@ const LipidomicsHeatmap = () => {
     selected,
     setSelected,
     sortedFilteredData,
-    tableProps,
+    syncedTableProps,
     autoSort,
-    setAutoSort,
   };
 
   return (

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { gql } from "@/common/types/generated/gql";
 import { FetchLipidomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
@@ -43,6 +42,27 @@ export type UseLipidomicsQuantificationReturn = {
   error: ErrorLike | undefined;
 };
 
+const toLipidomicsSamples = (data: FetchLipidomicsQuantificationQuery | undefined): LipidomicsSample[] | undefined => {
+  const molecules = [...(data?.lipidomics_molecules ?? [])].sort((a, b) => a.position - b.position);
+
+  if (!data?.lipidomics_quantification) return undefined;
+
+  return data.lipidomics_quantification
+    .filter(
+      (row): row is NonNullable<FetchLipidomicsQuantificationQuery["lipidomics_quantification"][number]> => row !== null
+    )
+    .map((row) => ({
+      sample_id: row.sample_id,
+      site: row.site ?? "",
+      status: row.status ?? "",
+      sex: row.sex ?? "",
+      quantification: molecules.map((molecule, index) => ({
+        molecule_name: molecule.molecule_name,
+        value: row.quant_values?.[index] ?? null,
+      })),
+    }));
+};
+
 export const useLipidomicsQuantification = ({
   skip,
 }: UseLipidomicsQuantificationParams): UseLipidomicsQuantificationReturn => {
@@ -50,30 +70,8 @@ export const useLipidomicsQuantification = ({
     skip: skip,
   });
 
-  const samples = useMemo<LipidomicsSample[] | undefined>(() => {
-    const molecules = [...(data?.lipidomics_molecules ?? [])].sort((a, b) => a.position - b.position);
-
-    if (!data?.lipidomics_quantification) return undefined;
-
-    return data.lipidomics_quantification
-      .filter(
-        (row): row is NonNullable<FetchLipidomicsQuantificationQuery["lipidomics_quantification"][number]> =>
-          row !== null
-      )
-      .map((row) => ({
-        sample_id: row.sample_id,
-        site: row.site ?? "",
-        status: row.status ?? "",
-        sex: row.sex ?? "",
-        quantification: molecules.map((molecule, index) => ({
-          molecule_name: molecule.molecule_name,
-          value: row.quant_values?.[index] ?? null,
-        })),
-      }));
-  }, [data]);
-
   return {
-    data: samples,
+    data: toLipidomicsSamples(data),
     loading,
     error,
   };

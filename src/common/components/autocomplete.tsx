@@ -82,8 +82,7 @@ function makeResultLink(result: Result) {
       url = `https://screen.wenglab.org/search?q=${result.title}&assembly=GRCh38`;
       break;
     case "Ome":
-      url = getOmeInfoHref(result.id as OmesDataType)
-
+      url = getOmeInfoHref(result.id as OmesDataType);
   }
   return url;
 }

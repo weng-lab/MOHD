@@ -4,16 +4,14 @@ import { SharedMetabolomicsDimenionalityProps } from "./page";
 const MetabolomicsDimensionalityTable = ({
   rows,
   metabolomicsMetadata,
-  tableProps,
-  setAutoSort,
+  syncedTableProps,
 }: SharedMetabolomicsDimenionalityProps) => (
   <OmeQuantificationTable
     label="Metabolomics Dimensionality Reduction"
     rows={rows}
     loading={metabolomicsMetadata.loading}
     error={metabolomicsMetadata.error}
-    tableProps={tableProps}
-    setAutoSort={setAutoSort}
+    syncedTableProps={syncedTableProps}
   />
 );
 

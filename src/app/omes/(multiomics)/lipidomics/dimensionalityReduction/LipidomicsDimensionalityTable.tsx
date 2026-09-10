@@ -4,16 +4,14 @@ import { SharedLipidomicsDimenionalityProps } from "./page";
 const LipidomicsDimensionalityTable = ({
   rows,
   lipidomicsMetadata,
-  tableProps,
-  setAutoSort,
+  syncedTableProps,
 }: SharedLipidomicsDimenionalityProps) => (
   <OmeQuantificationTable
     label="Lipidomics Dimensionality Reduction"
     rows={rows}
     loading={lipidomicsMetadata.loading}
     error={lipidomicsMetadata.error}
-    tableProps={tableProps}
-    setAutoSort={setAutoSort}
+    syncedTableProps={syncedTableProps}
   />
 );
 

@@ -22,13 +22,8 @@ export const ColorBySelect = ({ colorScheme, handleColorSchemeChange, protocol, 
       <MenuItem value={"site"}>Site</MenuItem>
       <MenuItem value={"status"}>Status</MenuItem>
       <MenuItem value={"sex"}>Sex</MenuItem>
-      {protocol && (
-        <MenuItem value={"protocol"}>Protocol</MenuItem>
-      )}
-      {age && (
-        <MenuItem value={"age"}>Age</MenuItem>
-      )}
-
+      {protocol && <MenuItem value={"protocol"}>Protocol</MenuItem>}
+      {age && <MenuItem value={"age"}>Age</MenuItem>}
     </Select>
   </FormControl>
 );

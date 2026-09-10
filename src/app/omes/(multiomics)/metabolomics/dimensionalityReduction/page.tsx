@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
+import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import MetabolomicsDimensionalityTable from "./MetabolomicsDimensionalityTable";
 import { ScatterPlot } from "@mui/icons-material";
 import MetabolomicsPCA from "./MetabolomicsPCA";
@@ -10,6 +9,7 @@ import {
   useMetabolomicsDimensionalityReduction,
   UseMetabolomicsDimensionalityReductionReturn,
 } from "@/common/hooks/omeHooks/useMetabolomicsDimensionalityReduction";
+import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type MetabolomicsDimenionalityMetadata = NonNullable<UseMetabolomicsDimensionalityReductionReturn["data"]>;
@@ -20,8 +20,7 @@ export type SharedMetabolomicsDimenionalityProps = {
   selected: MetabolomicsDimenionalityMetadata;
   setSelected: React.Dispatch<React.SetStateAction<MetabolomicsDimenionalityMetadata>>;
   sortedFilteredData: MetabolomicsDimenionalityMetadata;
-  tableProps: ReturnType<typeof useTablePlotSync<MetabolomicsDimenionalityMetadata[number]>>["tableProps"];
-  setAutoSort: React.Dispatch<React.SetStateAction<boolean>>;
+  syncedTableProps: SyncedTableProps<MetabolomicsDimenionalityMetadata[number]>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -35,7 +34,7 @@ const MetabolomicsDimensionalityReduction = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const [, setAutoSort] = useState(false);
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedMetabolomicsDimenionalityProps: SharedMetabolomicsDimenionalityProps = {
     rows,
@@ -43,8 +42,7 @@ const MetabolomicsDimensionalityReduction = () => {
     selected,
     setSelected,
     sortedFilteredData,
-    tableProps,
-    setAutoSort,
+    syncedTableProps,
   };
 
   return (
