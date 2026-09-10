@@ -31,6 +31,8 @@ export const site_color_map = {
   MOM: "#CDA0E8",
   "MOM-Health": "#CDA0E8",
 
+  'LEO': '#F5AB54',
+
   UIC: "#31487D",
   "UIC-DKD": "#31487D",
 
@@ -47,18 +49,24 @@ export const protocol_color_map = {
   "CPT method": "#edae49",
 };
 
-// Samples with no site/status/sex/protocol on record (e.g. QC blanks) are grouped as "Control" and rendered grey.
-export const CONTROL_LABEL = "Control";
+// Samples with no site/sex/protocol on record (e.g. QC blanks) are labeled "Missing" and rendered grey.
+// Samples with no status on record are experimental controls, so they get their own label.
+export const MISSING_LABEL = "Missing";
+export const EXPERIMENTAL_CONTROL_LABEL = "Experimental Control";
 export const CONTROL_COLOR = "#CCCCCC";
 
 export type CategoricalColorScheme = "sex" | "status" | "site" | "protocol";
 
-export function getCategoricalLabel(value: string | null | undefined): string {
-  return value ? value : CONTROL_LABEL;
+export function getCategoricalLabel(
+  colorScheme: CategoricalColorScheme,
+  value: string | null | undefined
+): string {
+  if (value) return value;
+  return colorScheme === "status" ? EXPERIMENTAL_CONTROL_LABEL : MISSING_LABEL;
 }
 
 export function getCategoricalColor(colorScheme: CategoricalColorScheme, label: string): string | undefined {
-  if (label === CONTROL_LABEL) return CONTROL_COLOR;
+  if (label === MISSING_LABEL || label === EXPERIMENTAL_CONTROL_LABEL) return CONTROL_COLOR;
   switch (colorScheme) {
     case "sex":
       return sex_color_map[label as keyof typeof sex_color_map];
