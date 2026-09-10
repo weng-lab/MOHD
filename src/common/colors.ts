@@ -37,7 +37,7 @@ export const site_color_map = {
   LEON: "#D0944E",
 };
 
-export const BAR_PLOT_COLORS = [ "#4193d4", "#38938a", "#73338f", "#c9803f", "#cd6156"];
+export const BAR_PLOT_COLORS = ["#4193d4", "#38938a", "#73338f", "#c9803f", "#cd6156"];
 
 export const sex_color_map = { female: "#9d5ca3", male: "#62A35C", "prefer no answer": "lightsteelblue" };
 
