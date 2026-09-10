@@ -5,7 +5,8 @@ import HighlightIcon from "@mui/icons-material/Highlight";
 import { Button } from "@mui/material";
 import { Stack, useMediaQuery } from "@mui/system";
 import { ScreenApolloWrapper } from "@/common/apollo/apollo-wrapper";
-import { GenomeBrowser, createBrowserStore, createTrackStore } from "@weng-lab/genomebrowser";
+import { GenomeBrowser, createBrowserStore, createSettingsStore, createTrackStore } from "@weng-lab/genomebrowser";
+import { TrackBaseSettings } from "@weng-lab/genomebrowser-tracks/shared";
 import { BrowserSelectionControls, HighlightDialog, TrackSelect } from "@weng-lab/genomebrowser-ui";
 import BrowserSearch from "./_components/BrowserSearch";
 import ControlButtons from "./_components/ControlButtons";
@@ -44,6 +45,11 @@ export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKe
       pinnedTrackIds: [RULER_TRACK_ID],
     })
   );
+
+  // Core is MUI-independent, so its stock base settings are unstyled HTML inputs.
+  // TrackBaseSettings renders the same title/display/colour/height fields as MUI,
+  // matching each module's own settings panel below it.
+  const [useSettingsStore] = useState(() => createSettingsStore({ baseSettingsComponent: TrackBaseSettings }));
 
   const [restoredTrackIds, setRestoredTrackIds] = useState<readonly string[] | undefined>(undefined);
 
@@ -129,7 +135,7 @@ export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKe
             <ControlButtons useBrowserStore={useBrowserStore} />
           </Stack>
         </Stack>
-        <GenomeBrowser browserStore={useBrowserStore} trackStore={useTrackStore} />
+        <GenomeBrowser browserStore={useBrowserStore} trackStore={useTrackStore} settingsStore={useSettingsStore} />
       </Stack>
       <HighlightDialog browserStore={useBrowserStore} open={highlightOpen} onClose={() => setHighlightOpen(false)} />
       <TrackSelect

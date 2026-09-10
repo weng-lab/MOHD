@@ -1,23 +1,49 @@
-import { defaultScreenGraphQlEndpoint } from "@weng-lab/genomebrowser";
+import { hg38 } from "@weng-lab/genomebrowser";
+import { getGeneDatasetTitle, getGeneDatasetsForAssembly } from "@weng-lab/genomebrowser-tracks/gene";
 import type { TrackSelectCollection } from "@weng-lab/genomebrowser-ui";
 
 /**
  * Gene annotation catalog.
  *
- * Ported from the `human-genes` folder that `@weng-lab/genomebrowser-ui` v1
- * shipped. The transcript track reads from the SCREEN GraphQL API through this
- * app's `/api/screen-graphql` proxy, which attaches the API key.
+ * Uses the `gene` track module, which reads GENCODE straight from a
+ * BigGenePred file over byte-range requests. (The older `transcript` module
+ * went through the SCREEN GraphQL API and is capped at older releases.)
  */
 
 export const GENES_COLLECTION_ID = "human-genes";
 
-const GENCODE_VERSIONS = [29, 40];
+/**
+ * GENCODE release shown by default. The Gene settings panel exposes dataset and
+ * version selectors for host-owned tracks, so users can switch releases without
+ * a code change; this only sets the starting point.
+ */
+const GENCODE_VERSION = 49;
+const GENCODE_VARIANT = "basic";
+
+function getGencodeDataset() {
+  const dataset = getGeneDatasetsForAssembly(hg38.id).find(
+    (candidate) => candidate.version === GENCODE_VERSION && candidate.variant === GENCODE_VARIANT
+  );
+
+  if (!dataset) {
+    throw new Error(
+      `No GENCODE ${GENCODE_VERSION} ${GENCODE_VARIANT} annotation is available for ${hg38.id}. ` +
+        `Check the catalog in @weng-lab/genomebrowser-tracks/gene.`
+    );
+  }
+
+  return dataset;
+}
+
+const gencodeDataset = getGencodeDataset();
 
 /** Qualified ID that TrackSelect and the track store use. */
 export function qualifyGeneTrackId(trackId: string) {
   return `${GENES_COLLECTION_ID}::${trackId}`;
 }
 
+// Deliberately not the dataset ID: keeping it release-independent means a saved
+// track selection survives changing GENCODE_VERSION.
 export const GENCODE_BASIC_TRACK_ID = qualifyGeneTrackId("gencode-basic");
 
 export const genesCollection: TrackSelectCollection = {
@@ -30,7 +56,7 @@ export const genesCollection: TrackSelectCollection = {
       label: "Genes",
       columns: [
         { field: "displayName", label: "Name", width: 200 },
-        { field: "versions", label: "Versions", width: 150 },
+        { field: "release", label: "Release", width: 120 },
       ],
       grouping: [],
       leaf: "displayName",
@@ -38,22 +64,23 @@ export const genesCollection: TrackSelectCollection = {
   ],
   tracks: [
     {
-      type: "transcript",
+      type: "gene",
       id: "gencode-basic",
-      title: "GENCODE Genes",
-      display: "squish",
-      height: 100,
+      // Matching the catalog title lets the title follow the dataset when a user
+      // switches releases in the settings panel.
+      title: getGeneDatasetTitle(gencodeDataset),
+      display: "full",
       color: "#0c184a",
       config: {
-        endpoint: defaultScreenGraphQlEndpoint,
-        assembly: "GRCh38",
-        version: GENCODE_VERSIONS[GENCODE_VERSIONS.length - 1],
-        canonicalColor: "#100e98",
+        url: gencodeDataset.url,
+        // The v1 transcript track coloured MANE Select transcripts separately;
+        // the gene module expresses that as a tag colour.
+        tagColors: [{ tag: "MANE_Select", color: "#100e98" }],
         highlightColor: "#3c69e8",
       },
       metadata: {
-        displayName: "GENCODE Basic Genes",
-        versions: GENCODE_VERSIONS.map((version) => `v${version}`).join(", "),
+        displayName: getGeneDatasetTitle(gencodeDataset),
+        release: gencodeDataset.release,
       },
     },
   ],

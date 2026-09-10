@@ -1,8 +1,8 @@
 import { bigBedModule } from "@weng-lab/genomebrowser-tracks/bigbed";
 import { bigWigModule } from "@weng-lab/genomebrowser-tracks/bigwig";
+import { geneModule } from "@weng-lab/genomebrowser-tracks/gene";
 import { methylCModule } from "@weng-lab/genomebrowser-tracks/methylc";
 import { rulerModule } from "@weng-lab/genomebrowser-tracks/ruler";
-import { transcriptModule } from "@weng-lab/genomebrowser-tracks/transcript";
 import { genesCollection } from "./genes";
 import { createMohdCatalog, type MohdOme } from "./mohd";
 
@@ -10,13 +10,26 @@ import { createMohdCatalog, type MohdOme } from "./mohd";
  * Track modules the browser can render. v2 core ships no track types of its
  * own, so every type used by a collection must be registered here.
  */
-export const TRACK_MODULES = [bigWigModule, bigBedModule, methylCModule, transcriptModule, rulerModule];
+export const TRACK_MODULES = [bigWigModule, bigBedModule, methylCModule, geneModule, rulerModule];
 
 export const RULER_TRACK_ID = "ruler";
 
-/** v1 drew the coordinate ruler implicitly; v2 makes it an ordinary track. */
+/** UCSC hg38 reference genome, served with byte-range and CORS support. */
+const HG38_2BIT_URL = "https://hgdownload.soe.ucsc.edu/goldenpath/hg38/bigZips/hg38.2bit";
+
+/**
+ * v1 drew the coordinate ruler implicitly; v2 makes it an ordinary track.
+ *
+ * With a 2bit source the ruler also draws reference bases once the view is
+ * zoomed in far enough — by default 15 SVG pixels per base, so roughly 90bp at
+ * our widest track width. Broader views make no sequence request at all.
+ */
 export function createRulerTrack() {
-  return rulerModule.create({ id: RULER_TRACK_ID, title: "Coordinates", config: {} });
+  return rulerModule.create({
+    id: RULER_TRACK_ID,
+    title: "Coordinates",
+    config: { sequenceUrl: HG38_2BIT_URL },
+  });
 }
 
 /** Collections offered in the Select Tracks dialog, optionally scoped to one ome. */
