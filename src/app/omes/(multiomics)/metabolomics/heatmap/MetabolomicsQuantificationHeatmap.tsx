@@ -1,0 +1,94 @@
+import { ColumnDatum } from "@weng-lab/visualization";
+import { Typography } from "@mui/material";
+import { SharedMetabolomicsProps } from "./page";
+import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
+import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
+import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
+import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
+
+const compoundKey = (compound: string, mode: string) => `${compound}::${mode}`;
+const truncateCompoundName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
+
+type CompoundRowMeta = { fullName: string; mode: string; rawValue: number };
+
+const MetabolomicsQuantificationHeatmap = ({
+  metabolomicsData,
+  sortedFilteredData,
+  selected,
+  setSelected,
+  autoSort,
+  ref,
+}: SharedMetabolomicsProps) => {
+  const { loading } = metabolomicsData;
+
+  const samples: MetabolomicsSample[] = sortedFilteredData;
+
+  const compounds = Array.from(
+    new Map(
+      samples.flatMap((sample) => sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q] as const))
+    ).values()
+  ).sort((a, b) => a.compound.localeCompare(b.compound) || a.mode.localeCompare(b.mode));
+
+  const valueByCompoundPerSample = samples.map(
+    (sample) => new Map(sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q.value]))
+  );
+
+  const zScoreByCompound = new Map(
+    compounds.map((compound) => {
+      const key = compoundKey(compound.compound, compound.mode);
+      return [key, zScoreByRow(valueByCompoundPerSample.map((valueByCompound) => valueByCompound.get(key) ?? null))];
+    })
+  );
+
+  const heatmapData: ColumnDatum<MetabolomicsSample, CompoundRowMeta>[] = samples.map((sample, sampleIndex) => ({
+    columnName: sample.sample_id,
+    metadata: sample,
+    rows: compounds.map((compound) => {
+      const key = compoundKey(compound.compound, compound.mode);
+      const rawValue = valueByCompoundPerSample[sampleIndex].get(key) ?? null;
+      return {
+        rowName: truncateCompoundName(compound.compound),
+        count: rawValue === null ? null : zScoreByCompound.get(key)!(rawValue),
+        metadata: rawValue === null ? undefined : { fullName: compound.compound, mode: compound.mode, rawValue },
+      };
+    }),
+  }));
+
+  const colorDomain = symmetricColorDomain(heatmapData);
+
+  return (
+    <OmeHeatmapShell
+      loading={loading}
+      samples={samples}
+      heatmapData={heatmapData}
+      selected={selected}
+      setSelected={setSelected}
+      autoSort={autoSort}
+      yLabel="Compound"
+      downloadFileName="metabolomics_quantification_heatmap"
+      colorDomain={colorDomain}
+      ref={ref}
+      tooltipBody={(bin) => {
+        const rowMeta = bin.bin.metadata as CompoundRowMeta | undefined;
+        return (
+          <>
+            <Typography>
+              <b>Dataset:</b> {bin.datum.columnName}
+            </Typography>
+            <Typography>
+              <b>Compound:</b> {rowMeta?.fullName ?? bin.bin.rowName}
+            </Typography>
+            <Typography>
+              <b>Mode:</b> {rowMeta?.mode}
+            </Typography>
+            <Typography>
+              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
+            </Typography>
+          </>
+        );
+      }}
+    />
+  );
+};
+
+export default MetabolomicsQuantificationHeatmap;

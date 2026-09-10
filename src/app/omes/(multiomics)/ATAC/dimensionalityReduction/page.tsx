@@ -3,7 +3,9 @@ import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
 import ATACDimensionalityTable from "./ATACDimensionalityTable";
 import { ScatterPlot } from "@mui/icons-material";
 import ATACDimensionalityScatterPlot from "./ATACUMAP";
+import ATACDimensionalityPCAPlot from "./ATACPCA";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
+
 import { useATACData, UseATACDataReturn } from "@/common/hooks/omeHooks/useATACData";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
@@ -21,6 +23,7 @@ export type SharedATACDimenionalityProps = {
 
 const ATACDimensionalityReduction = () => {
   const { ref: umapRef, ...umapDownload } = usePlotDownload();
+  const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
   const ATACData = useATACData({ skip: false });
 
   const rows: ATACMetadata = ATACData.data ?? [];
@@ -50,6 +53,12 @@ const ATACDimensionalityReduction = () => {
           icon: <ScatterPlot />,
           plotComponent: <ATACDimensionalityScatterPlot ref={umapRef} {...SharedATACDimenionalityProps} />,
           ...umapDownload,
+        },
+        {
+          tabTitle: "PCA",
+          icon: <ScatterPlot />,
+          plotComponent: <ATACDimensionalityPCAPlot ref={pcaRef} {...SharedATACDimenionalityProps} />,
+          ...pcaDownload,
         },
       ]}
     />
