@@ -10,6 +10,6 @@ export const DEFAULT_REGION: GenomicRegion = {
 export const DEFAULT_BROWSER_STATE: BrowserStoreInput = {
   assembly: hg38,
   region: DEFAULT_REGION,
-  marginWidth: 100,
+  marginWidth: 50,
   trackWidth: 1400,
 };
