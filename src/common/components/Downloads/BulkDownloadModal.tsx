@@ -8,6 +8,7 @@ import {
   Fade,
   FormControlLabel,
   IconButton,
+  Link,
   Modal,
   Radio,
   RadioGroup,
@@ -38,7 +39,27 @@ const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
   zip: "ZIP (.zip)",
   tarball: "Tarball (.tar.gz)",
   script: "Shell Script (.sh)",
+  aria2: "aria2 Manifest",
 };
+
+/**
+ * Formats the service builds by listing URLs for the client to fetch itself,
+ * rather than by reading every source byte into an archive. They cost nothing
+ * to build, so CreateJob exempts them from MAX_JOB_SIZE — this mirrors that
+ * exemption so the UI never steers someone into a job that would 413, and
+ * never disables one that would have worked.
+ */
+const DIRECT_FORMATS: BulkDownloadFormat[] = ["script", "aria2"];
+
+const CODE_SX = {
+  fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+  fontSize: "0.9em",
+  bgcolor: "action.hover",
+  borderRadius: 0.5,
+  px: 0.5,
+} as const;
+
+const isDirectFormat = (format: BulkDownloadFormat) => DIRECT_FORMATS.includes(format);
 
 const BulkDownloadModal = ({
   open,
@@ -63,8 +84,10 @@ const BulkDownloadModal = ({
   const isOverArchiveLimit = totalSize > ARCHIVE_SIZE_LIMIT_BYTES;
 
   // Forced rather than stored, so removing files back under the limit restores
-  // whatever the user had picked.
-  const effectiveFormat = isOverArchiveLimit ? "script" : format;
+  // whatever the user had picked. Over the limit every direct-fetch format is
+  // still valid, so someone who chose aria2 keeps it instead of being snapped
+  // onto the script.
+  const effectiveFormat = isOverArchiveLimit && !isDirectFormat(format) ? "script" : format;
 
   // Every dismissal path lands here — Cancel, the X, Esc and the backdrop — so
   // this is where a stale "failed" alert gets cleared before the next open.
@@ -158,7 +181,8 @@ const BulkDownloadModal = ({
             {isOverArchiveLimit && (
               <Alert severity="warning">
                 This selection is {formatBytes(totalSize)}, over the {formatBytes(ARCHIVE_SIZE_LIMIT_BYTES)} limit for
-                .zip and .tar.gz archives. Download with the shell script, or remove files to get under the limit.
+                .zip and .tar.gz archives. Download with the shell script or aria2, or remove files to get under the
+                limit.
               </Alert>
             )}
             <RadioGroup
@@ -173,11 +197,46 @@ const BulkDownloadModal = ({
                   value={key}
                   control={<Radio />}
                   label={FORMAT_LABELS[key]}
-                  disabled={isOverArchiveLimit && key !== "script"}
+                  disabled={isOverArchiveLimit && !isDirectFormat(key)}
                   sx={{ mr: 0 }}
                 />
               ))}
             </RadioGroup>
+            {/*
+              Shown against the selection rather than after the job finishes:
+              aria2 is the one option that needs something installed, so the
+              decision it informs is this one. The others need no explaining.
+            */}
+            {effectiveFormat === "aria2" && (
+              <Box
+                sx={{
+                  p: 1.5,
+                  borderRadius: 2,
+                  bgcolor: "surface.light",
+                  border: 1,
+                  borderColor: "divider",
+                }}
+              >
+                <Typography variant="caption" color="text.secondary" component="div">
+                  <strong>aria2</strong> is a download manager you install yourself. It fetches several files at once
+                  and opens multiple connections per file, so large selections finish faster, and an interrupted
+                  transfer picks up where it stopped instead of starting over. Install it with{" "}
+                  <Box component="code" sx={CODE_SX}>
+                    brew install aria2
+                  </Box>{" "}
+                  (macOS),{" "}
+                  <Box component="code" sx={CODE_SX}>
+                    apt install aria2
+                  </Box>{" "}
+                  (Debian/Ubuntu), or from{" "}
+                  <Link href="https://aria2.github.io/" target="_blank" rel="noopener noreferrer">
+                    aria2.github.io
+                  </Link>{" "}
+                  on Windows. Pick the shell script instead if you would rather not install anything — it needs only
+                  curl and bash.
+                </Typography>
+              </Box>
+            )}
             {status === "failed" && (
               <Alert severity="error" sx={{ mt: 2 }}>
                 Couldn&apos;t start download. Check your connection and try again.
