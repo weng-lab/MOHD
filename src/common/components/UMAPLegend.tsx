@@ -2,105 +2,117 @@ import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Point } from "@weng-lab/visualization";
-import { ATACMetadata } from "@/app/omes/(multiomics)/ATAC/dimensionalityReduction/page";
-import { sex_color_map, status_color_map, site_color_map, protocol_color_map } from "@/common/colors";
-import { RNAMetadata } from "@/app/omes/(multiomics)/RNA/dimensionalityReduction/page";
-
-type ColorScheme = "sex" | "status" | "site" | "protocol";
-
-type UMAPLegendProps<T extends ATACMetadata[number] | RNAMetadata[number]> = {
-  colorScheme: ColorScheme;
+import { getCategoricalLabel, getCategoricalColor } from "@/common/colors";
+import { getAgeBin, age_bin_color_map, AGE_BIN_LABELS, AGE_BIN_RAMP, AGE_UNKNOWN_LABEL } from "@/common/ageBins";
+import { DimensionalityReductionMeta } from "@/common/components/DimensionalityScatterPlot";
+type UMAPLegendProps<T extends DimensionalityReductionMeta> = {
+  colorScheme: "sex" | "status" | "site" | "protocol" | "age";
   scatterData: Point<T>[];
 };
 
-type LegendEntry = {
-  /** The raw metadata value, kept as the list key — `label` is display-only. */
-  id: string;
-  label: string;
-  value: number;
-  color: string | undefined;
+const legendContainerSx = {
+  cursor: "default",
+  px: 1,
+  py: 0.25,
+  borderRadius: 1,
+  bgcolor: "action.hover",
+  flexWrap: "wrap" as const,
+  rowGap: 0.5,
 };
 
-function schemeValue(meta: ATACMetadata[number] | RNAMetadata[number], colorScheme: ColorScheme): string {
-  switch (colorScheme) {
-    case "sex":
-      return meta.sex;
-    case "status":
-      return meta.status;
-    case "site":
-      return meta.site;
-    case "protocol":
-      return "protocol" in meta ? meta.protocol : meta.kit;
-    default:
-      return "missing";
-  }
-}
-
-function schemeColor(label: string, colorScheme: ColorScheme) {
-  switch (colorScheme) {
-    case "sex":
-      return sex_color_map[label as keyof typeof sex_color_map];
-    case "status":
-      return status_color_map[label as keyof typeof status_color_map];
-    case "site":
-      return site_color_map[label as keyof typeof site_color_map];
-    case "protocol":
-      return protocol_color_map[label as keyof typeof protocol_color_map];
-  }
-}
-
-/** Counts of each value under the active scheme, most common first. */
-function buildLegendEntries<T extends ATACMetadata[number] | RNAMetadata[number]>(
-  scatterData: Point<T>[],
-  colorScheme: ColorScheme
-): LegendEntry[] {
-  if (!scatterData.length) return [];
-
-  const counts = new Map<string, number>();
-  for (const point of scatterData) {
-    const meta = point.metaData;
-    if (!meta) continue;
-    const key = schemeValue(meta, colorScheme);
-    counts.set(key, (counts.get(key) || 0) + 1);
-  }
-
-  return Array.from(counts.entries())
-    .map(([label, value]) => ({
-      id: label,
-      label: label.replaceAll(" method", ""),
-      value,
-      color: schemeColor(label, colorScheme),
-    }))
-    .sort((a, b) => b.value - a.value);
-}
-
-export default function UMAPLegend<T extends ATACMetadata[number] | RNAMetadata[number]>({
+export default function UMAPLegend<T extends DimensionalityReductionMeta>({
   colorScheme,
   scatterData,
 }: UMAPLegendProps<T>) {
-  const legendEntries = buildLegendEntries(scatterData, colorScheme);
+  if (colorScheme === "age") {
+    const hasUnknown = scatterData.some((point) => {
+      const meta = point.metaData;
+      if (!meta) return false;
+      return (meta.age_bin ?? getAgeBin(meta.age_at_enrollment)) === AGE_UNKNOWN_LABEL;
+    });
+
+    return (
+      <Stack direction="row" spacing={1} alignItems="center" mr={1} sx={legendContainerSx}>
+        <InfoOutlinedIcon fontSize="small" color="action" />
+        <Typography color="text.secondary" fontWeight="bold">
+          Legend:
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {AGE_BIN_LABELS[0]}
+        </Typography>
+        <Box
+          sx={{
+            width: 90,
+            height: 10,
+            borderRadius: 5,
+            background: `linear-gradient(to right, ${AGE_BIN_RAMP.join(", ")})`,
+          }}
+        />
+        <Typography variant="body2" color="text.secondary">
+          {AGE_BIN_LABELS[AGE_BIN_LABELS.length - 1]}
+        </Typography>
+        {hasUnknown && (
+          <Stack direction="row" alignItems="center" spacing={0.5} ml={1}>
+            <Box
+              sx={{
+                width: 12,
+                height: 12,
+                bgcolor: age_bin_color_map[AGE_UNKNOWN_LABEL],
+                borderRadius: "50%",
+              }}
+            />
+            <Typography variant="body2" color="text.secondary">
+              Unknown
+            </Typography>
+          </Stack>
+        )}
+      </Stack>
+    );
+  }
+
+  const counts = new Map<string, number>();
+
+  scatterData.forEach((point) => {
+    const meta = point.metaData;
+    if (!meta) return;
+
+    let key: string;
+
+    switch (colorScheme) {
+      case "sex":
+        key = getCategoricalLabel(meta.sex);
+        break;
+      case "status":
+        key = getCategoricalLabel(meta.status);
+        break;
+      case "site":
+        key = getCategoricalLabel(meta.site);
+        break;
+      case "protocol":
+        key = getCategoricalLabel(meta.protocol);
+        break;
+    }
+
+    counts.set(key, (counts.get(key) || 0) + 1);
+  });
+
+  const legendEntries = Array.from(counts.entries())
+    .map(([label, value]) => ({
+      label: label.replaceAll(" method", ""),
+      value,
+      color: getCategoricalColor(colorScheme, label),
+    }))
+    .sort((a, b) => b.value - a.value);
 
   return (
-    <Stack
-      direction={"row"}
-      spacing={1}
-      alignItems="center"
-      mr={1}
-      sx={{
-        cursor: "default",
-        px: 1,
-        py: 0.25,
-        borderRadius: 1,
-        bgcolor: "action.hover",
-      }}
-    >
+    <Stack direction={"row"} spacing={1} alignItems="center" mr={1} sx={legendContainerSx}>
       <InfoOutlinedIcon fontSize="small" color="action" />
       <Typography color="text.secondary" fontWeight="bold">
         Legend:
       </Typography>
       {legendEntries.map((entry) => (
         <Box
-          key={entry.id}
+          key={entry.label}
           sx={{
             display: "flex",
             alignItems: "center",

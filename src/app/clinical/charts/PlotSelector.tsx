@@ -1,10 +1,7 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { type PhenotypicalDataPoint } from "@/common/hooks/usePhenotypicalData";
 import CategoricalBarPlot from "./CategoricalBarPlot";
-import CategoricalCategoricalChart from "./CategoricalCategoricalChart";
-import CategoricalQuantitativePlot from "./CategoricalQuantitativePlot";
 import QuantitativeHistogram from "./QuantitativeHistogram";
-import QuantitativeQuantitativeScatterPlot from "./QuantitativeQuantitativeScatterPlot";
 
 type Props = {
   var1Name: string;
@@ -46,15 +43,15 @@ export default function PlotSelector({ var1Name, var2Name, var1Category, var2Cat
       return <QuantitativeHistogram rawData={rawData} var1Name={var1Name} />;
 
     case "cat-cat":
-      return <CategoricalCategoricalChart rawData={rawData} var1Name={var1Name} var2Name={var2Name} />;
-
     case "quant-quant":
-      return <QuantitativeQuantitativeScatterPlot rawData={rawData} var1Name={var1Name} var2Name={var2Name} />;
-
-    case "cat-quant": {
-      const catVar = var1Category === "Categorical" ? var1Name : var2Name;
-      const quantVar = var1Category === "Quantitative" ? var1Name : var2Name;
-      return <CategoricalQuantitativePlot rawData={rawData} catVarName={catVar} quantVarName={quantVar} />;
-    }
+    case "cat-quant":
+      return (
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", px: 4 }}>
+          <Typography color="text.secondary" textAlign="center">
+            Comparing two variables is temporarily unavailable while the phenotypical data API is missing a
+            per-participant identifier.
+          </Typography>
+        </Box>
+      );
   }
 }
