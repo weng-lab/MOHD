@@ -218,22 +218,32 @@ const BulkDownloadModal = ({
                 }}
               >
                 <Typography variant="caption" color="text.secondary" component="div">
-                  <strong>aria2</strong> is a download manager you install yourself. It fetches several files at once
-                  and opens multiple connections per file, so large selections finish faster, and an interrupted
-                  transfer picks up where it stopped instead of starting over. Install it with{" "}
-                  <Box component="code" sx={CODE_SX}>
-                    brew install aria2
-                  </Box>{" "}
-                  (macOS),{" "}
-                  <Box component="code" sx={CODE_SX}>
-                    apt install aria2
-                  </Box>{" "}
-                  (Debian/Ubuntu), or from{" "}
-                  <Link href="https://aria2.github.io/" target="_blank" rel="noopener noreferrer">
-                    aria2.github.io
-                  </Link>{" "}
-                  on Windows. Pick the shell script instead if you would rather not install anything — it needs only
-                  curl and bash.
+                  <strong>aria2</strong> is a download manager you install separately. The shell script already
+                  downloads files in parallel and resumes where it left off; what aria2 adds is several connections per
+                  file, which can increase speed and help on long-distance or unreliable networks.
+                  <Box component="span" sx={{ display: "block", mt: 0.75 }}>
+                    Most package managers carry it:{" "}
+                    <Box component="code" sx={CODE_SX}>
+                      apt install aria2
+                    </Box>
+                    ,{" "}
+                    <Box component="code" sx={CODE_SX}>
+                      brew install aria2
+                    </Box>
+                    ,{" "}
+                    <Box component="code" sx={CODE_SX}>
+                      dnf install aria2
+                    </Box>
+                    , or{" "}
+                    <Box component="code" sx={CODE_SX}>
+                      conda install -c conda-forge aria2
+                    </Box>
+                    . Windows builds, macOS options and full instructions are at{" "}
+                    <Link href="https://aria2.github.io/" target="_blank" rel="noopener noreferrer">
+                      aria2.github.io
+                    </Link>
+                    .
+                  </Box>
                 </Typography>
               </Box>
             )}
