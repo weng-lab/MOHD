@@ -9,15 +9,45 @@ type OmeHeaderStat = {
 };
 
 const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
+  WGS: [
+    { label: "Experiments", value: "915" },
+    { label: "Participants", value: "915" },
+    { label: "Snapshot", value: "1" },
+  ],
+  WGBS: [
+    { label: "Experiments", value: "915" },
+    { label: "Participants", value: "915" },
+    { label: "Snapshot", value: "1" },
+  ],
   ATAC: [
-    { label: "Experiments", value: "33" },
-    { label: "Participants", value: "15" },
-    { label: "Timepoints", value: "1" },
+    { label: "Experiments", value: "492" },
+    { label: "Participants", value: "473" },
+    { label: "Snapshot", value: "1" },
   ],
   RNA: [
-    { label: "Experiments", value: "15" },
-    { label: "Participants", value: "15" },
-    { label: "Timepoints", value: "1" },
+    { label: "Experiments", value: "922" },
+    { label: "Participants", value: "922" },
+    { label: "Snapshot", value: "1" },
+  ],
+  metabolomics: [
+    { label: "Experiments", value: "1,210" },
+    { label: "Participants", value: "931" },
+    { label: "Snapshot", value: "1" },
+  ],
+  lipidomics: [
+    { label: "Experiments", value: "1,211" },
+    { label: "Participants", value: "931" },
+    { label: "Snapshot", value: "1" },
+  ],
+  exposomics: [
+    { label: "Experiments", value: "690" },
+    { label: "Participants", value: "601" },
+    { label: "Snapshot", value: "1" },
+  ],
+  metallomics: [
+    { label: "Experiments", value: "612" },
+    { label: "Participants", value: "612" },
+    { label: "Snapshot", value: "1" },
   ],
 };
 
