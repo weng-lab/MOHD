@@ -67,7 +67,18 @@ type DatasetSectionProps = {
  * `memo` is what keeps a removal cheap: `buildBulkDownloadItems` hands back the
  * same `dataset` object for every dataset the removal didn't touch, so only the
  * changed section re-renders.
+ *
+ * React Compiler does not make this `memo` redundant, so don't let a linter talk
+ * you into dropping it. The compiler caches the parent's `items.map(...)` as a
+ * single unit keyed on the `items` array identity — there is no per-element
+ * cache in its output — and `buildBulkDownloadItems` returns a freshly sorted
+ * array on every selection change. So the map always re-runs and hands every
+ * section a new element; `memo` is the only thing that shallow-compares props
+ * and skips the untouched rows. Without it the `itemCache` WeakMap in
+ * `selectionSummary.ts`, which exists solely to keep those `dataset` objects
+ * identity-stable, becomes dead weight.
  */
+// react-doctor-disable-next-line react-doctor/react-compiler-no-manual-memoization -- verified false positive: the compiler caches the parent map by array identity, not per row, so this memo is what makes the identity-stable dataset objects pay off
 const DatasetSection = memo(function DatasetSection({ dataset, onRemoveFile, onRemoveDataset }: DatasetSectionProps) {
   const [expanded, setExpanded] = useState(false);
 
