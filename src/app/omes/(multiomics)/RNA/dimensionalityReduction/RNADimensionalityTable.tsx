@@ -25,7 +25,6 @@ const RNADimensionalityTable = ({ rows, RNAData, tableProps }: SharedRNADimenion
     {
       field: "sex",
       headerName: "Sex",
-      renderCell: (params) => (params.value === "female" ? "F" : "M"),
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.sex))),
     },

@@ -1,4 +1,4 @@
-import { Box, Popover, Typography } from "@mui/material";
+import { Box, Popover, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { OmesList, OmesDataType } from "@/common/types/globalTypes";
@@ -48,49 +48,56 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
         >
           {OmesList.map((omeOption) => {
             const isCurrent = omeOption === currentOme;
+            const isDisabled = omeOption === "proteomics";
             const omeLabel = getOmeLabel(omeOption);
             const omeImage = `/OmeIcons/NoBgrnd/${omeOption.toLowerCase().split("-")[0]}.png`;
 
             return (
-              <Box
-                key={omeOption}
-                component={Link}
-                href={getOmeInfoHref(omeOption)}
-                onClick={onClose}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 1,
-                  minHeight: 92,
-                  p: 1.25,
-                  borderRadius: 3,
-                  textDecoration: "none",
-                  color: "text.primary",
-                  border: "1px solid",
-                  borderColor: isCurrent ? "primary.main" : "grey.300",
-                  backgroundColor: isCurrent ? "#e8fffd" : "transparent",
-                  transition: "background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease",
-                  "&:hover": {
-                    backgroundColor: "grey.200",
-                    transform: "translateY(-1px)",
-                  },
-                }}
-              >
-                <Image src={omeImage} alt={`${omeLabel} icon`} width={42} height={42} />
-                <Typography
-                  variant="caption"
+              <Tooltip key={omeOption} title={isDisabled ? "Not available in snapshot 1" : ""}>
+                <Box
+                  {...(isDisabled ? {} : { component: Link, href: getOmeInfoHref(omeOption), onClick: onClose })}
                   sx={{
-                    fontWeight: isCurrent ? 700 : 500,
-                    textAlign: "center",
-                    lineHeight: 1.2,
-                    color: "inherit",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 1,
+                    minHeight: 92,
+                    p: 1.25,
+                    borderRadius: 3,
+                    textDecoration: "none",
+                    color: "text.primary",
+                    border: "1px solid",
+                    borderColor: isCurrent ? "primary.main" : "grey.300",
+                    backgroundColor: isCurrent ? "#e8fffd" : "transparent",
+                    transition: "background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease",
+                    ...(isDisabled
+                      ? {
+                          opacity: 0.5,
+                          cursor: "not-allowed",
+                        }
+                      : {
+                          "&:hover": {
+                            backgroundColor: "grey.200",
+                            transform: "translateY(-1px)",
+                          },
+                        }),
                   }}
                 >
-                  {omeLabel}
-                </Typography>
-              </Box>
+                  <Image src={omeImage} alt={`${omeLabel} icon`} width={42} height={42} />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: isCurrent ? 700 : 500,
+                      textAlign: "center",
+                      lineHeight: 1.2,
+                      color: "inherit",
+                    }}
+                  >
+                    {omeLabel}
+                  </Typography>
+                </Box>
+              </Tooltip>
             );
           })}
         </Box>

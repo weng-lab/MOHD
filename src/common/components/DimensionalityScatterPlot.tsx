@@ -1,6 +1,6 @@
 import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { useState } from "react";
-import { CONTROL_LABEL, getCategoricalLabel, getCategoricalColor } from "@/common/colors";
+import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor } from "@/common/colors";
 import { getAgeBin, age_bin_color_map } from "@/common/ageBins";
 import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -53,18 +53,18 @@ const TooltipBody = ({ point, hasProtocol }: { point: Point<DimensionalityReduct
         <b>Dataset:</b> {point.metaData?.sample_id}
       </Typography>
       <Typography>
-        <b>Status:</b> {getCategoricalLabel(point.metaData?.status)}
+        <b>Status:</b> {getCategoricalLabel("status", point.metaData?.status)}
       </Typography>
       <Typography>
-        <b>Site:</b> {getCategoricalLabel(point.metaData?.site)}
+        <b>Site:</b> {getCategoricalLabel("site", point.metaData?.site)}
       </Typography>
       <Typography>
         <b>Sex:</b>{" "}
-        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : CONTROL_LABEL}
+        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : MISSING_LABEL}
       </Typography>
       {hasProtocol && (
         <Typography>
-          <b>Protocol:</b> {getCategoricalLabel(point.metaData?.protocol).replaceAll(" method", "")}
+          <b>Protocol:</b> {getCategoricalLabel("protocol", point.metaData?.protocol).replaceAll(" method", "")}
         </Typography>
       )}
     </>
@@ -110,13 +110,13 @@ const DimensionalityScatterPlot = <
         const getColor = () => {
           if (highlighted || selected.length === 0) {
             if (colorScheme === "sex") {
-              return getCategoricalColor("sex", getCategoricalLabel(x.sex));
+              return getCategoricalColor("sex", getCategoricalLabel("sex", x.sex));
             } else if (colorScheme === "status") {
-              return getCategoricalColor("status", getCategoricalLabel(x.status));
+              return getCategoricalColor("status", getCategoricalLabel("status", x.status));
             } else if (colorScheme === "site") {
-              return getCategoricalColor("site", getCategoricalLabel(x.site));
+              return getCategoricalColor("site", getCategoricalLabel("site", x.site));
             } else if (colorScheme === "protocol") {
-              return getCategoricalColor("protocol", getCategoricalLabel(x.protocol));
+              return getCategoricalColor("protocol", getCategoricalLabel("protocol", x.protocol));
             } else if (colorScheme === "age") {
               return age_bin_color_map[x.age_bin ?? getAgeBin(x.age_at_enrollment)];
             }
@@ -160,7 +160,7 @@ const DimensionalityScatterPlot = <
             direction={{ xs: "column", md: "row" }}
             justifyContent={{ xs: "center", md: "space-between" }}
             alignItems="center"
-            gap={{ xs: 1, md: 0 }}
+            columnGap={{ xs: 1, md: 0 }}
             rowGap={1}
             flexWrap="wrap"
             mb={1}
