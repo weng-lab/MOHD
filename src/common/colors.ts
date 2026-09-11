@@ -31,7 +31,7 @@ export const site_color_map = {
   MOM: "#CDA0E8",
   "MOM-Health": "#CDA0E8",
 
-  'LEO': '#F5AB54',
+  LEO: "#F5AB54",
 
   UIC: "#31487D",
   "UIC-DKD": "#31487D",
@@ -57,10 +57,7 @@ export const CONTROL_COLOR = "#CCCCCC";
 
 export type CategoricalColorScheme = "sex" | "status" | "site" | "protocol";
 
-export function getCategoricalLabel(
-  colorScheme: CategoricalColorScheme,
-  value: string | null | undefined
-): string {
+export function getCategoricalLabel(colorScheme: CategoricalColorScheme, value: string | null | undefined): string {
   if (value) return value;
   return colorScheme === "status" ? EXPERIMENTAL_CONTROL_LABEL : MISSING_LABEL;
 }
