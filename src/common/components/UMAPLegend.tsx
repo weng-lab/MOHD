@@ -80,16 +80,16 @@ export default function UMAPLegend<T extends DimensionalityReductionMeta>({
 
     switch (colorScheme) {
       case "sex":
-        key = getCategoricalLabel(meta.sex);
+        key = getCategoricalLabel("sex", meta.sex);
         break;
       case "status":
-        key = getCategoricalLabel(meta.status);
+        key = getCategoricalLabel("status", meta.status);
         break;
       case "site":
-        key = getCategoricalLabel(meta.site);
+        key = getCategoricalLabel("site", meta.site);
         break;
       case "protocol":
-        key = getCategoricalLabel(meta.protocol);
+        key = getCategoricalLabel("protocol", meta.protocol);
         break;
     }
 

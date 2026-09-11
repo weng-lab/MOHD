@@ -3,8 +3,8 @@ import { AnimatedNumber } from "./AnimatedNumber";
 import Link from "next/link";
 
 const stats = [
-  { value: "13", label: "Sites", link: "https://www.mohdconsortium.org/projects-sites" },
-  { value: "1.8K", label: "Participants", link: "https://www.mohdconsortium.org/data" },
+  { value: "6", label: "Sites", link: "https://www.mohdconsortium.org/projects-sites" },
+  { value: "956", label: "Participants", link: "https://www.mohdconsortium.org/data" },
   { value: "9", label: "Omes", link: "/omes" },
 ];
 

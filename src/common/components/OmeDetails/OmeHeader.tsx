@@ -63,7 +63,7 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
               )}
               <Image src={image} alt={`${ome} icon`} width={50} height={50} />
               <Box sx={{ display: { xs: "none", md: "block" } }}>
-                <OmeHeaderInfoCards ome={ome} />
+                <OmeHeaderInfoCards key={ome} ome={ome} />
               </Box>
             </Stack>
             <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
@@ -82,7 +82,7 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
             </Box>
           </Stack>
           <Box sx={{ display: { xs: "block", md: "none" } }}>
-            <OmeHeaderInfoCards ome={ome} />
+            <OmeHeaderInfoCards key={ome} ome={ome} />
           </Box>
         </Stack>
       </Paper>
