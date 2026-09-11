@@ -26,35 +26,29 @@ export const useOmeQuantificationTable = <TSample extends QuantificationSample>(
     {
       field: "site",
       headerName: "Site",
-      renderCell: (params) => params.value || "Control",
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.site))).map((site) => ({
         value: site,
-        label: site || "Control",
+        label: site,
       })),
     },
     {
       field: "status",
       headerName: "Status",
-      renderCell: (params) => params.value || "Control",
+      renderCell: (params) => params.value || "Experimental Control",
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.status))).map((status) => ({
         value: status,
-        label: status || "Control",
+        label: status || "Experimental Control",
       })),
     },
     {
       field: "sex",
       headerName: "Sex",
-      renderCell: (params) => {
-        if (params.value === "female") return "F";
-        if (params.value === "male") return "M";
-        return "Control";
-      },
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.sex))).map((sex) => ({
         value: sex,
-        label: sex === "female" ? "F" : sex === "male" ? "M" : "Control",
+        label: sex,
       })),
     },
   ];

@@ -5,7 +5,7 @@ import { usePhenotypicalVariables } from "@/common/hooks/usePhenotypicalVariable
 import { usePhenotypicalData } from "@/common/hooks/usePhenotypicalData";
 import PlotSelector from "./charts/PlotSelector";
 import TreeSelect from "./TreeSelect";
-import { plotHeading } from "./helpers";
+import { EXCLUDED_VARIABLE_NAMES, plotHeading } from "./helpers";
 
 /** The variable's category, defaulting to Categorical when the data omits one. */
 function CategoryChip({ category }: { category?: string | null }) {
@@ -21,18 +21,15 @@ function CategoryChip({ category }: { category?: string | null }) {
 
 export default function DataExplorer() {
   const { data, loading: varsLoading } = usePhenotypicalVariables();
-  const variables = data ?? [];
+  const variables = (data ?? []).filter((v) => !EXCLUDED_VARIABLE_NAMES.has(v.variable_name));
 
   const [var1Name, setVar1Name] = useState("");
-  const [var2Id, setVar2Id] = useState("none");
 
-  const hasVar2 = var2Id !== "none";
   const effectiveVar1 = var1Name || variables[0]?.variable_name || "";
 
   const selectedVar = variables.find((v) => v.variable_name === effectiveVar1);
-  const selectedVar2 = hasVar2 ? variables.find((v) => v.variable_name === var2Id) : null;
 
-  const varNames = [effectiveVar1, hasVar2 ? var2Id : null].filter(Boolean) as string[];
+  const varNames = effectiveVar1 ? [effectiveVar1] : [];
   const { data: rawData, loading: dataLoading } = usePhenotypicalData(varNames, !effectiveVar1);
 
   return (
@@ -53,30 +50,15 @@ export default function DataExplorer() {
         }}
       >
         <Typography sx={{ color: "text.secondary" }}>SELECT</Typography>
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2} mt={2}>
-          <Stack sx={{ flex: 1 }} spacing={1}>
-            <TreeSelect
-              variables={variables}
-              value={effectiveVar1}
-              onChange={setVar1Name}
-              label="Variable 1"
-              disabledValue={hasVar2 ? var2Id : undefined}
-              disabled={varsLoading}
-            />
-            <CategoryChip category={selectedVar?.variable_category} />
-          </Stack>
-          <Stack sx={{ flex: 1 }} spacing={1}>
-            <TreeSelect
-              variables={variables}
-              value={var2Id}
-              onChange={setVar2Id}
-              label="Variable 2 (optional)"
-              disabledValue={effectiveVar1}
-              disabled={varsLoading}
-              allowNone
-            />
-            {selectedVar2 && <CategoryChip category={selectedVar2.variable_category} />}
-          </Stack>
+        <Stack spacing={1} mt={2} sx={{ maxWidth: { md: "50%" } }}>
+          <TreeSelect
+            variables={variables}
+            value={effectiveVar1}
+            onChange={setVar1Name}
+            label="Variable"
+            disabled={varsLoading}
+          />
+          <CategoryChip category={selectedVar?.variable_category} />
         </Stack>
       </Box>
       <Box
@@ -91,7 +73,7 @@ export default function DataExplorer() {
         }}
       >
         <Typography variant="subtitle1" fontWeight={500} textAlign="center" mb={2}>
-          {plotHeading(effectiveVar1, var2Id)}
+          {plotHeading(effectiveVar1)}
         </Typography>
         <Box
           sx={{
@@ -104,9 +86,7 @@ export default function DataExplorer() {
         >
           <PlotSelector
             var1Name={effectiveVar1}
-            var2Name={var2Id}
             var1Category={selectedVar?.variable_category ?? null}
-            var2Category={selectedVar2?.variable_category ?? null}
             rawData={rawData ?? []}
             loading={dataLoading}
           />

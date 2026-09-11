@@ -110,19 +110,29 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             {OME_DESCRIPTIONS[selectedOme] ?? "Description coming soon."}
           </Typography>
         </Stack>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          // Without the browser button the page button keeps its usual bottom-right anchor
-          // instead of sliding left.
-          justifyContent={{ xs: "flex-start", sm: genomeBrowserHref ? "space-between" : "flex-end" }}
-          gap={{ xs: 1, sm: 0 }}
-          mt={2}
-        >
-          {genomeBrowserHref ? (
+        {selectedOme === "proteomics" ? (
+          <Typography
+            variant="body2"
+            sx={{
+              color: "rgba(33, 53, 51, 0.7)",
+              fontStyle: "italic",
+              mt: 2,
+            }}
+          >
+            Not available in snapshot 1
+          </Typography>
+        ) : (
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent={{ xs: "flex-start", sm: "space-between" }}
+            gap={{ xs: 1, sm: 0 }}
+            mt={2}
+          >
             <Button
-              component={Link}
-              href={genomeBrowserHref}
+              // component={genomeBrowserHref ? Link : "button"}
+              // href={genomeBrowserHref ?? undefined}
               variant="contained"
+              // disabled={!genomeBrowserHref}
               sx={{
                 minWidth: 170,
                 backgroundColor: "secondary.main",
@@ -130,18 +140,18 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             >
               Genome Browser
             </Button>
-          ) : null}
-          <Button
-            component={Link}
-            href={getOmeInfoHref(selectedOme)}
-            variant="outlined"
-            sx={{
-              minWidth: 170,
-            }}
-          >
-            Go to {getOmeLabel(selectedOme)} page
-          </Button>
-        </Stack>
+            <Button
+              component={Link}
+              href={getOmeInfoHref(selectedOme)}
+              variant="outlined"
+              sx={{
+                minWidth: 170,
+              }}
+            >
+              Go to {getOmeLabel(selectedOme)} page
+            </Button>
+          </Stack>
+        )}
       </Stack>
     </Box>
   );

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const stats = [
   { value: "6", label: "Sites", link: "https://www.mohdconsortium.org/projects-sites" },
-  { value: "1.8K", label: "Participants", link: "https://www.mohdconsortium.org/data" },
+  { value: "956", label: "Participants", link: "https://www.mohdconsortium.org/data" },
   { value: "9", label: "Omes", link: "/omes" },
 ];
 
