@@ -8,48 +8,19 @@ const OME_ORDER = new Map([
   ["RNA", 1],
   ["WGBS", 2],
 ]);
-const ATAC_TRACK_ORDER = new Map([
-  ["FDR 0.05 peaks", 0],
-  ["Pseudorep peaks", 1],
-  ["Fold change signal", 2],
-  ["p-value signal", 3],
-]);
-const RNA_TRACK_ORDER = new Map([
-  ["All Signal Plus", 0],
-  ["Unique Signal Plus", 1],
-  ["All Signal Minus", 2],
-  ["Unique Signal Minus", 3],
-]);
 
-type MohdSortMode = "kitId" | "fileType";
+type MohdSortMode = "sampleId" | "fileType";
 
 function getOmeRank(ome: string) {
   return OME_ORDER.get(ome) ?? Number.MAX_SAFE_INTEGER;
 }
 
-function getTrackRank(row: MohdTrackInfo) {
-  if (row.ome === "ATAC") {
-    return ATAC_TRACK_ORDER.get(row.description) ?? Number.MAX_SAFE_INTEGER;
-  }
-
-  if (row.ome === "RNA") {
-    return RNA_TRACK_ORDER.get(row.description) ?? Number.MAX_SAFE_INTEGER;
-  }
-
-  return Number.MAX_SAFE_INTEGER;
-}
-
-function compareByKitId(a: MohdTrackInfo, b: MohdTrackInfo) {
-  const aKitId = a.kitId?.trim();
-  const bKitId = b.kitId?.trim();
-
-  if (aKitId && bKitId) {
-    return aKitId.localeCompare(bKitId);
-  } else if (aKitId || bKitId) {
-    return aKitId ? -1 : 1;
-  }
-
-  return 0;
+/**
+ * File types are ome-specific, so ordering by them means ordering by ome first
+ * and then by the file's position within that ome's display order.
+ */
+function compareByFileType(a: MohdTrackInfo, b: MohdTrackInfo) {
+  return getOmeRank(a.ome) - getOmeRank(b.ome) || a.fileRank - b.fileRank;
 }
 
 function compareBySampleId(a: MohdTrackInfo, b: MohdTrackInfo) {
@@ -57,48 +28,14 @@ function compareBySampleId(a: MohdTrackInfo, b: MohdTrackInfo) {
 }
 
 function compareKnownRows(a: MohdTrackInfo, b: MohdTrackInfo, mode: MohdSortMode, fallbackIndexDiff: number) {
-  const byKitId = compareByKitId(a, b);
-  const byOme = getOmeRank(a.ome) - getOmeRank(b.ome);
-  const byTrackType = getTrackRank(a) - getTrackRank(b);
-  const bySampleId = compareBySampleId(a, b);
+  // The two modes use the same keys with swapped precedence: grouping every
+  // sample's files together, or gathering the same file type across samples.
+  const ordered =
+    mode === "sampleId"
+      ? [compareBySampleId(a, b), compareByFileType(a, b)]
+      : [compareByFileType(a, b), compareBySampleId(a, b)];
 
-  if (mode === "kitId") {
-    if (byKitId !== 0) {
-      return byKitId;
-    }
-
-    if (byOme !== 0) {
-      return byOme;
-    }
-
-    if (byTrackType !== 0) {
-      return byTrackType;
-    }
-
-    if (bySampleId !== 0) {
-      return bySampleId;
-    }
-
-    return fallbackIndexDiff;
-  }
-
-  if (byOme !== 0) {
-    return byOme;
-  }
-
-  if (byTrackType !== 0) {
-    return byTrackType;
-  }
-
-  if (byKitId !== 0) {
-    return byKitId;
-  }
-
-  if (bySampleId !== 0) {
-    return bySampleId;
-  }
-
-  return fallbackIndexDiff;
+  return ordered.find((comparison) => comparison !== 0) ?? fallbackIndexDiff;
 }
 
 export default function MohdSortControls({
@@ -157,7 +94,7 @@ export default function MohdSortControls({
 
   return (
     <ButtonGroup variant="outlined" size="small" aria-label="Sort MOHD tracks" sx={{ minHeight: 44 }}>
-      <Button onClick={() => sortMohdTracks("kitId")}>Sort by Kit ID</Button>
+      <Button onClick={() => sortMohdTracks("sampleId")}>Sort by Sample ID</Button>
       <Button onClick={() => sortMohdTracks("fileType")}>Sort by File Type</Button>
     </ButtonGroup>
   );

@@ -129,10 +129,10 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             mt={2}
           >
             <Button
-              // component={genomeBrowserHref ? Link : "button"}
-              // href={genomeBrowserHref ?? undefined}
+              component={genomeBrowserHref ? Link : "button"}
+              href={genomeBrowserHref ?? undefined}
               variant="contained"
-              // disabled={!genomeBrowserHref}
+              disabled={!genomeBrowserHref}
               sx={{
                 minWidth: 170,
                 backgroundColor: "secondary.main",

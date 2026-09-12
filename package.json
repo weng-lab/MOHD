@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
+    "build-mohd-catalog": "node scripts/buildMohdCatalog.mjs",
     "doctor": "npx react-doctor@latest",
     "gen-types": "dotenv -e .env.local -- graphql-codegen",
     "gen-types -w": "dotenv -e .env.local -- graphql-codegen -w"
