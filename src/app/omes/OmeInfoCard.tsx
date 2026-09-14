@@ -124,7 +124,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
               mt: 2,
             }}
           >
-            Not available in snapshot 1
+            Available March 2027
           </Typography>
         ) : (
           <Stack
