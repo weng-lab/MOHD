@@ -1,9 +1,8 @@
 import type { TabItem } from "@weng-lab/ui-components";
 import type { OmesDataType } from "@/common/types/globalTypes";
 
-const logo = "/logo.png";
 const dimensionalityReductionIcon = "/TabIcons/DimensionReduction.png";
-const cellTypeDecompositionIcon = "/TabIcons/CellTypeDeconvolution.png";
+// const cellTypeDecompositionIcon = "/TabIcons/CellTypeDeconvolution.png";
 const downloadIcon = "/TabIcons/DataDownload.png";
 const heatmapIcon = "/TabIcons/Heatmap.png";
 const gbIcon = "/TabIcons/genomeBrowser.png";
@@ -16,12 +15,6 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
       icon: dimensionalityReductionIcon,
       href: "/omes/WGS/dimensionalityReduction",
     },
-    {
-      value: "ancestryComposition",
-      label: "Genetic Ancestry Composition",
-      icon: logo,
-      href: "/omes/WGS/ancestryComposition",
-    },
     { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/WGS/downloads" },
   ],
   WGBS: [
@@ -30,12 +23,6 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
       label: "Dimensionality Reduction",
       icon: dimensionalityReductionIcon,
       href: "/omes/WGBS/dimensionalityReduction",
-    },
-    {
-      value: "cellTypeDecomposition",
-      label: "Cell Type Decomposition",
-      icon: cellTypeDecompositionIcon,
-      href: "/omes/WGBS/cellTypeDecomposition",
     },
     { value: "genomeBrowser", label: "Genome Browser", icon: gbIcon, href: "/omes/WGBS/genomeBrowser" },
     { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/WGBS/downloads" },
@@ -47,12 +34,6 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
       icon: dimensionalityReductionIcon,
       href: "/omes/ATAC/dimensionalityReduction",
     },
-    {
-      value: "cellTypeDecomposition",
-      label: "Cell Type Decomposition",
-      icon: cellTypeDecompositionIcon,
-      href: "/omes/ATAC/cellTypeDecomposition",
-    },
     { value: "genomeBrowser", label: "Genome Browser", icon: gbIcon, href: "/omes/ATAC/genomeBrowser" },
     { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/ATAC/downloads" },
   ],
@@ -62,12 +43,6 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
       label: "Dimensionality Reduction",
       icon: dimensionalityReductionIcon,
       href: "/omes/RNA/dimensionalityReduction",
-    },
-    {
-      value: "cellTypeDecomposition",
-      label: "Cell Type Decomposition",
-      icon: cellTypeDecompositionIcon,
-      href: "/omes/RNA/cellTypeDecomposition",
     },
     { value: "genomeBrowser", label: "Genome Browser", icon: gbIcon, href: "/omes/RNA/genomeBrowser" },
     { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/RNA/downloads" },
@@ -107,6 +82,12 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
     { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/exposomics/downloads" },
   ],
   metallomics: [
+    {
+      value: "dimensionalityReduction",
+      label: "Dimensionality Reduction",
+      icon: dimensionalityReductionIcon,
+      href: "/omes/metallomics/dimensionalityReduction",
+    },
     { value: "heatmap", label: "Heatmap", icon: heatmapIcon, href: "/omes/metallomics/heatmap" },
     { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/metallomics/downloads" },
   ],
