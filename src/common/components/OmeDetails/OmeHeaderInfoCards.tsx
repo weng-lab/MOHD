@@ -31,17 +31,17 @@ const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
   ],
   metabolomics: [
     { label: "Experiments", value: "1,210" },
-    { label: "Participants", value: "931" },
+    { label: "Participants", value: "930" },
     { label: "Snapshot", value: "1" },
   ],
   lipidomics: [
     { label: "Experiments", value: "1,211" },
-    { label: "Participants", value: "931" },
+    { label: "Participants", value: "930" },
     { label: "Snapshot", value: "1" },
   ],
   exposomics: [
     { label: "Experiments", value: "690" },
-    { label: "Participants", value: "601" },
+    { label: "Participants", value: "600" },
     { label: "Snapshot", value: "1" },
   ],
   metallomics: [

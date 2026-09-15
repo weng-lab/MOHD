@@ -45,7 +45,7 @@ export default function Home() {
             </Typography>
           </Stack>
           <Typography variant="body1" textAlign={"center"} color="rgba(255,255,255,0.60)">
-            Explore our extensive omics data 6,968 samples across 956 participants.
+            Explore our extensive omics data 6,967 samples across 956 participants.
           </Typography>
         </Box>
       </Box>
