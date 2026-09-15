@@ -8,10 +8,10 @@ const config: OmeDownloadsConfig<ATACRow> = {
   omeKey: "atac",
   displayName: "ATAC-seq",
   datasetFilters: [
+    { field: "site", label: "Site" },
+    { field: "status", label: "Status" },
     { field: "sex", label: "Sex" },
     { field: "protocol", label: "Protocol" },
-    { field: "status", label: "Status" },
-    { field: "site", label: "Site" },
   ],
 };
 

@@ -8,9 +8,9 @@ const config: OmeDownloadsConfig<MetallomicsRow> = {
   omeKey: "metallomics",
   displayName: "Metallomics",
   datasetFilters: [
-    { field: "sex", label: "Sex" },
-    { field: "status", label: "Status" },
     { field: "site", label: "Site" },
+    { field: "status", label: "Status" },
+    { field: "sex", label: "Sex" },
   ],
 };
 

@@ -8,9 +8,9 @@ const config: OmeDownloadsConfig<WGBSRow> = {
   omeKey: "wgbs",
   displayName: "WGBS",
   datasetFilters: [
-    { field: "sex", label: "Sex" },
-    { field: "status", label: "Status" },
     { field: "site", label: "Site" },
+    { field: "status", label: "Status" },
+    { field: "sex", label: "Sex" },
   ],
 };
 
