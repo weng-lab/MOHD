@@ -38,12 +38,17 @@ export const FORMAT_DESCRIPTIONS: Record<BulkDownloadFormat, string> = {
   zip: "ZIP archive",
   tarball: "tar.gz archive",
   script: "shell script",
+  aria2: "aria2 manifest",
 };
 
 const EXTENSIONS: Record<BulkDownloadFormat, string> = {
   zip: ".zip",
   tarball: ".tar.gz",
   script: ".sh",
+  // Deliberately not a bare ".txt" — the service refuses to treat one as an
+  // artifact, so that a stray text file in its archive dir is swept as junk
+  // rather than rehydrated into a job.
+  aria2: ".aria2.txt",
 };
 
 /** Matches on "Windows" rather than "win" — "Darwin" contains the latter. */
@@ -172,6 +177,67 @@ export function buildCommandPlan(args: {
     }
 
     return { steps: bashSteps };
+  }
+
+  if (format === "aria2") {
+    // aria2 reads its manifest from a file, so unlike the script there is no
+    // pipe-straight-in form to steer away from — fetching then running is
+    // inherent. The two stay on one line for the reason the script's do: `;`
+    // rather than `&&` means a re-run still runs the manifest already on disk
+    // once the artifact has expired and the fetch starts 404ing.
+    //
+    // The flags, and why each is here rather than left at its default:
+    //   -c                          resume a partial file instead of restarting it
+    //   --auto-file-renaming=false  the default renames a download whose name is
+    //                               already taken to <name>.1.<ext>, so a re-run
+    //                               would fetch everything a second time
+    //                               alongside the first rather than skip it
+    //   -x 4                        connections per file; the default is 1, and
+    //                               this is the flag the whole option exists for
+    //   --max-tries/--retry-wait    aria2 waits 0s between tries by default, so
+    //                               a transient 503 would burn all ten at once
+    //   --lowest-speed-limit        the stall guard, matching the script's
+    //                               MIN_SPEED: a connection that stays open but
+    //                               stops moving never raises an error by itself
+    //   --save-session              writes whatever did not finish as a manifest
+    //                               of its own — carrying dir= and out= through,
+    //                               so `aria2c -i <that file>` retries exactly
+    //                               those files into the right places. It sits
+    //                               beside the manifest rather than inside the
+    //                               download directory, because aria2 creates
+    //                               that directory lazily: if every file fails,
+    //                               it never exists, and aria2 gives up with
+    //                               "Failed to serialize session" precisely when
+    //                               the record matters most.
+    //   --check-integrity=true      a no-op today — it verifies the per-file
+    //                               checksums the manifest does not carry yet.
+    //                               Included so the command someone saves now
+    //                               does not have to change on the day it does.
+    const flags = [
+      "-c",
+      "--auto-file-renaming=false",
+      "-x 4",
+      "--max-tries=10",
+      "--retry-wait=5",
+      "--lowest-speed-limit=1K",
+      `--save-session=${quote(`${dir}-failed.txt`)}`,
+      "--check-integrity=true",
+    ].join(" ");
+
+    // No WSL leg and no Git Bash alternative, unlike the script: aria2c is a
+    // native Windows binary and takes its destination as a flag rather than an
+    // environment assignment, so PowerShell runs the same command with only
+    // curl.exe standing in for curl.
+    const fetch = platform === "windows" ? "curl.exe" : "curl";
+
+    return {
+      steps: [
+        {
+          command: `${fetch} -fsSL ${quote(url)} -o ${quote(filename)}; aria2c -i ${quote(filename)} -d ${quote(dir)} ${flags}`,
+          caption: `Download the manifest and fetch the files with aria2; they land in ./${dir}. Re-run the same command to resume.`,
+        },
+      ],
+    };
   }
 
   // The archive is deleted once extracted, so a multi-gigabyte selection does

@@ -30,6 +30,19 @@ const FORMAT_LABELS: Record<BulkDownloadFormat, string> = {
   zip: "zip",
   tarball: "tar.gz",
   script: "sh",
+  aria2: "aria2",
+};
+
+/**
+ * What the artifact behind a finished job actually is, for the download
+ * tooltip. A Record rather than a conditional so a format added later cannot
+ * quietly inherit whichever label the fallback happened to be.
+ */
+const ARTIFACT_NOUN: Record<BulkDownloadFormat, string> = {
+  zip: "archive",
+  tarball: "archive",
+  script: "script",
+  aria2: "manifest",
 };
 
 const STATUS_LABEL: Record<DownloadJob["status"], string> = {
@@ -130,7 +143,7 @@ function JobRowActions({
     <Stack direction="row" alignItems="center" spacing={0.5}>
       {canDownload && (
         <>
-          <Tooltip title={job.format === "script" ? "Download script" : "Download archive"} arrow placement="bottom">
+          <Tooltip title={`Download ${ARTIFACT_NOUN[job.format]}`} arrow placement="bottom">
             <IconButton size="small" component="a" href={job.downloadUrl} download>
               <DownloadIcon fontSize="small" />
             </IconButton>

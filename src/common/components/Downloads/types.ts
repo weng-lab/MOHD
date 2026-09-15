@@ -44,6 +44,23 @@ export type DatasetBundle = {
 };
 
 /**
+ * A file spanning the whole ome rather than one dataset — e.g. every dataset's
+ * quantification file joined into one TSV. Served as a sibling of `datasets` in
+ * the catalog response.
+ *
+ * Like a bundle, it has no `bulk_path`: its contents duplicate files already
+ * offered per dataset, so it is never a `POST /jobs` input. Direct download via
+ * `url` is all it is for.
+ */
+export type OmeFile = {
+  filename: string;
+  /** Human-readable label; the downloads UI uses it as the button text. */
+  file_type: string;
+  size: number;
+  url: string;
+};
+
+/**
  * One participant/dataset row with its metadata flattened on and its files
  * nested. This is the per-item shape of the catalog's `datasets` array.
  * `bundle` is absent for a dataset with no open-access files.
