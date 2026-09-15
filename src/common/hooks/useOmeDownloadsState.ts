@@ -18,6 +18,7 @@ import type {
   CatalogDataset,
   CatalogFile,
   DatasetBundle,
+  OmeFile,
 } from "@/common/components/Downloads/types";
 import type { OmeDownloadsConfig } from "@/common/components/Downloads/OmeDualPaneDownloads";
 import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
@@ -31,6 +32,8 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   noOpenAccess: boolean;
 
   datasets: CatalogDataset<T>[];
+  /** Files spanning the whole ome rather than one dataset; direct downloads only. */
+  omeFiles: OmeFile[];
   activeDataset: string | null;
   setActiveDataset: (id: string | null) => void;
   activeFiles: CatalogFile[];
@@ -90,7 +93,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   const { omeKey, displayName, datasetFilters, noOpenAccess = false } = config;
 
   // Single fetch: datasets with metadata flattened on and files nested.
-  const { datasets, loading, error } = useOmeCatalog<T>(omeKey);
+  const { datasets, omeFiles, loading, error } = useOmeCatalog<T>(omeKey);
 
   // Group files by dataset straight off the nested response — no client merge.
   const filesByDataset = new Map<string, CatalogFile[]>();
@@ -172,6 +175,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     error,
     noOpenAccess,
     datasets,
+    omeFiles,
     activeDataset,
     setActiveDataset,
     activeFiles,
