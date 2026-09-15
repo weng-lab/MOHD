@@ -53,6 +53,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({ config }: Ome
     error,
     noOpenAccess,
     datasets,
+    omeFiles,
     activeDataset,
     setActiveDataset,
     activeFiles,
@@ -131,6 +132,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({ config }: Ome
         first={
           <DatasetsPane
             datasets={datasets}
+            omeFiles={omeFiles}
             columns={datasetColumnsWithSelect}
             loading={loading}
             error={error}
