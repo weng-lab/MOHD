@@ -2,7 +2,7 @@ import { Search } from "@mui/icons-material";
 import { IconButton, useTheme } from "@mui/material";
 import type { ButtonProps } from "@mui/material";
 import { Box } from "@mui/system";
-import { Chromosome, type BrowserStoreInstance } from "@weng-lab/genomebrowser";
+import type { BrowserStoreInstance } from "@weng-lab/genomebrowser";
 import { GenomeSearch, Result } from "@weng-lab/ui-components";
 
 const ASSEMBLY = "GRCh38";
@@ -19,14 +19,15 @@ function SearchButton(props: ButtonProps) {
 export default function BrowserSearch({ useBrowserStore }: { useBrowserStore: BrowserStoreInstance }) {
   const theme = useTheme();
   // The store hook is passed in as a prop, so the compiler can't prove it's the same
-  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
+  // function every render. These controls render outside <GenomeBrowser>, so the
+  // store context hooks aren't available here.
   // react-doctor-disable-next-line react-hooks-js/hooks
-  const setDomain = useBrowserStore((state) => state.setDomain);
+  const setRegion = useBrowserStore((state) => state.setRegion);
 
   const handleSearchSubmit = (result: Result) => {
     if (!result.domain) return;
-    setDomain({
-      chromosome: result.domain.chromosome as Chromosome,
+    setRegion({
+      chromosome: result.domain.chromosome,
       start: result.domain.start,
       end: result.domain.end,
     });
