@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDownloadJobs } from "@/common/context/DownloadJobsContext";
 
-export type BulkDownloadFormat = "zip" | "tarball" | "script";
+export type BulkDownloadFormat = "zip" | "tarball" | "script" | "aria2";
 export type ModalJobStatus = "idle" | "submitting" | "failed";
 
 type JobResponse = {
