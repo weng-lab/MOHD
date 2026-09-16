@@ -7,14 +7,14 @@ const pages = [
   {
     title: "Molecular Data",
     description:
-      "Access comprehensive omics datasets including genomic sequences, transcriptomics, proteomics, and metabolomics across 8 different molecular layers.",
+      "Access comprehensive omics datasets including genomic sequences, transcriptomics, proteomics, and metabolomics across 9 different molecular layers.",
     link: "/omes",
     image: "/molecularTest.png",
   },
   {
     title: "Clinical & Phenotypic Data",
     description:
-      "Access comprehensive omics datasets including genomic sequences, transcriptomics, proteomics, and metabolomics across 8 different molecular layers.",
+      "Access comprehensive omics datasets including genomic sequences, transcriptomics, proteomics, and metabolomics across 9 different molecular layers.",
     link: "/clinical",
     image: "/phenotypic-illustration.png",
   },
