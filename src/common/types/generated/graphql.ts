@@ -33,6 +33,7 @@ export type AtacSample = {
 export type AtacSampleMetadata = {
   __typename?: 'AtacSampleMetadata';
   age_at_enrollment: Scalars['Int']['output'];
+  age_bin?: Maybe<Scalars['String']['output']>;
   condition: Scalars['String']['output'];
   entity_id: Scalars['String']['output'];
   frip_score?: Maybe<Scalars['Float']['output']>;
@@ -110,6 +111,7 @@ export type LipidomicsQuantifications = {
 export type LipidomicsSampleMetadata = {
   __typename?: 'LipidomicsSampleMetadata';
   age_at_enrollment?: Maybe<Scalars['Int']['output']>;
+  age_bin?: Maybe<Scalars['String']['output']>;
   condition?: Maybe<Scalars['String']['output']>;
   entity_id?: Maybe<Scalars['String']['output']>;
   kit?: Maybe<Scalars['String']['output']>;
@@ -145,6 +147,7 @@ export type MetabolomicsQuantifications = {
 export type MetabolomicsSampleMetadata = {
   __typename?: 'MetabolomicsSampleMetadata';
   age_at_enrollment?: Maybe<Scalars['Int']['output']>;
+  age_bin?: Maybe<Scalars['String']['output']>;
   condition?: Maybe<Scalars['String']['output']>;
   entity_id?: Maybe<Scalars['String']['output']>;
   kit?: Maybe<Scalars['String']['output']>;
@@ -186,6 +189,7 @@ export type MetallomicsQuantifications = {
 export type MetallomicsSampleMetadata = {
   __typename?: 'MetallomicsSampleMetadata';
   age_at_enrollment?: Maybe<Scalars['Int']['output']>;
+  age_bin?: Maybe<Scalars['String']['output']>;
   condition?: Maybe<Scalars['String']['output']>;
   entity_id?: Maybe<Scalars['String']['output']>;
   kit?: Maybe<Scalars['String']['output']>;
@@ -213,6 +217,23 @@ export type MoleculeDescription = {
   __typename?: 'MoleculeDescription';
   molecule_name: Scalars['String']['output'];
   position: Scalars['Int']['output'];
+};
+
+export enum PcaOme {
+  Atac = 'ATAC',
+  Exposomics = 'Exposomics',
+  Lipidomics = 'Lipidomics',
+  Metabolomics = 'Metabolomics',
+  Metallomics = 'Metallomics',
+  Rna = 'RNA',
+  Wgbs = 'WGBS'
+}
+
+export type PcaVariance = {
+  __typename?: 'PcaVariance';
+  ome: PcaOme;
+  pc?: Maybe<Scalars['Int']['output']>;
+  pve?: Maybe<Scalars['Float']['output']>;
 };
 
 export type PhenotypicalData = {
@@ -246,6 +267,7 @@ export type Query = {
   metallomics_metadata: Array<MetallomicsSampleMetadata>;
   metallomics_metals: Array<MetalDescription>;
   metallomics_quantification: Array<Maybe<MetallomicsQuantifications>>;
+  pca_variance: Array<PcaVariance>;
   phenotypical_data: Array<PhenotypicalData>;
   phenotypical_variables: Array<PhenotypicalDataVariables>;
   rna_metadata: Array<RnaSampleMetadata>;
@@ -277,6 +299,11 @@ export type QueryMetabolomics_QuantificationArgs = {
 };
 
 
+export type QueryPca_VarianceArgs = {
+  ome: PcaOme;
+};
+
+
 export type QueryPhenotypical_DataArgs = {
   variable_name: Array<Scalars['String']['input']>;
 };
@@ -303,6 +330,7 @@ export type RnaSample = {
 export type RnaSampleMetadata = {
   __typename?: 'RnaSampleMetadata';
   age_at_enrollment: Scalars['Int']['output'];
+  age_bin?: Maybe<Scalars['String']['output']>;
   condition: Scalars['String']['output'];
   entity_id: Scalars['String']['output'];
   kit: Scalars['String']['output'];
@@ -331,6 +359,7 @@ export type RnaSampleMetadata = {
 export type WgbsSampleMetadata = {
   __typename?: 'WgbsSampleMetadata';
   age_at_enrollment: Scalars['Int']['output'];
+  age_bin?: Maybe<Scalars['String']['output']>;
   condition: Scalars['String']['output'];
   entity_id: Scalars['String']['output'];
   frip_score?: Maybe<Scalars['Float']['output']>;
@@ -362,6 +391,7 @@ export type WgbsSampleMetadata = {
 export type WgsPca = {
   __typename?: 'WgsPca';
   age?: Maybe<Scalars['Int']['output']>;
+  age_bin?: Maybe<Scalars['String']['output']>;
   case_status?: Maybe<Scalars['String']['output']>;
   cohort: Scalars['String']['output'];
   gnomad_pop?: Maybe<Scalars['String']['output']>;
@@ -400,6 +430,11 @@ export type WgsSampleMetadata = {
   site: Scalars['String']['output'];
   status: Scalars['String']['output'];
 };
+
+export type FetchDimensionalityReductionExplorerQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchDimensionalityReductionExplorerQuery = { __typename?: 'Query', atac_metadata: Array<{ __typename?: 'AtacSampleMetadata', sample_id: string, kit: string, participant_id: string, visit: string, condition: string, protocol: string, site: string, status: string, sex: string, age_bin?: string | null, pc1?: number | null, pc2?: number | null, pc3?: number | null, pc4?: number | null, pc5?: number | null, pc6?: number | null, pc7?: number | null, pc8?: number | null, pc9?: number | null, pc10?: number | null, umap_x?: number | null, umap_y?: number | null }>, rna_metadata: Array<{ __typename?: 'RnaSampleMetadata', sample_id: string, kit: string, participant_id: string, visit: string, condition: string, protocol: string, site: string, status: string, sex: string, age_bin?: string | null, pc1?: number | null, pc2?: number | null, pc3?: number | null, pc4?: number | null, pc5?: number | null, pc6?: number | null, pc7?: number | null, pc8?: number | null, pc9?: number | null, pc10?: number | null, umap_x?: number | null, umap_y?: number | null }>, wgbs_metadata: Array<{ __typename?: 'WgbsSampleMetadata', sample_id: string, kit: string, participant_id: string, visit: string, condition: string, protocol: string, site: string, status: string, sex: string, age_bin?: string | null, pc1?: number | null, pc2?: number | null, pc3?: number | null, pc4?: number | null, pc5?: number | null, pc6?: number | null, pc7?: number | null, pc8?: number | null, pc9?: number | null, pc10?: number | null, umap_x?: number | null, umap_y?: number | null }>, lipidomics_metadata: Array<{ __typename?: 'LipidomicsSampleMetadata', sample_id: string, kit?: string | null, participant_id?: string | null, visit?: string | null, condition?: string | null, protocol?: string | null, site?: string | null, status?: string | null, sex?: string | null, age_bin?: string | null, pc1?: number | null, pc2?: number | null, pc3?: number | null, pc4?: number | null, pc5?: number | null, pc6?: number | null, pc7?: number | null, pc8?: number | null, pc9?: number | null, pc10?: number | null }>, metabolomics_metadata: Array<{ __typename?: 'MetabolomicsSampleMetadata', sample_id: string, kit?: string | null, participant_id?: string | null, visit?: string | null, condition?: string | null, protocol?: string | null, site?: string | null, status?: string | null, sex?: string | null, age_bin?: string | null, pc1?: number | null, pc2?: number | null, pc3?: number | null, pc4?: number | null, pc5?: number | null, pc6?: number | null, pc7?: number | null, pc8?: number | null, pc9?: number | null, pc10?: number | null }>, metallomics_metadata: Array<{ __typename?: 'MetallomicsSampleMetadata', sample_id: string, kit?: string | null, participant_id?: string | null, visit?: string | null, condition?: string | null, protocol?: string | null, site?: string | null, status?: string | null, sex?: string | null, age_bin?: string | null, pc1?: number | null, pc2?: number | null, pc3?: number | null, pc4?: number | null, pc5?: number | null, pc6?: number | null, pc7?: number | null, pc8?: number | null, pc9?: number | null, pc10?: number | null }>, atac_variance: Array<{ __typename?: 'PcaVariance', pc?: number | null, pve?: number | null }>, rna_variance: Array<{ __typename?: 'PcaVariance', pc?: number | null, pve?: number | null }>, wgbs_variance: Array<{ __typename?: 'PcaVariance', pc?: number | null, pve?: number | null }>, lipidomics_variance: Array<{ __typename?: 'PcaVariance', pc?: number | null, pve?: number | null }>, metabolomics_variance: Array<{ __typename?: 'PcaVariance', pc?: number | null, pve?: number | null }>, metallomics_variance: Array<{ __typename?: 'PcaVariance', pc?: number | null, pve?: number | null }> };
 
 export type FetchWgbsMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -469,6 +504,7 @@ export type Fetch_Phenotypical_VariableQueryVariables = Exact<{ [key: string]: n
 export type Fetch_Phenotypical_VariableQuery = { __typename?: 'Query', phenotypical_variables: Array<{ __typename?: 'PhenotypicalDataVariables', unit?: string | null, variable_category?: string | null, variable_name: string }> };
 
 
+export const FetchDimensionalityReductionExplorerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchDimensionalityReductionExplorer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"atac_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"participant_id"}},{"kind":"Field","name":{"kind":"Name","value":"visit"}},{"kind":"Field","name":{"kind":"Name","value":"condition"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"age_bin"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rna_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"participant_id"}},{"kind":"Field","name":{"kind":"Name","value":"visit"}},{"kind":"Field","name":{"kind":"Name","value":"condition"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"age_bin"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}},{"kind":"Field","name":{"kind":"Name","value":"wgbs_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"participant_id"}},{"kind":"Field","name":{"kind":"Name","value":"visit"}},{"kind":"Field","name":{"kind":"Name","value":"condition"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"age_bin"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lipidomics_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"participant_id"}},{"kind":"Field","name":{"kind":"Name","value":"visit"}},{"kind":"Field","name":{"kind":"Name","value":"condition"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"age_bin"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metabolomics_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"participant_id"}},{"kind":"Field","name":{"kind":"Name","value":"visit"}},{"kind":"Field","name":{"kind":"Name","value":"condition"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"age_bin"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metallomics_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"participant_id"}},{"kind":"Field","name":{"kind":"Name","value":"visit"}},{"kind":"Field","name":{"kind":"Name","value":"condition"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"age_bin"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"atac_variance"},"name":{"kind":"Name","value":"pca_variance"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ome"},"value":{"kind":"EnumValue","value":"ATAC"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pc"}},{"kind":"Field","name":{"kind":"Name","value":"pve"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"rna_variance"},"name":{"kind":"Name","value":"pca_variance"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ome"},"value":{"kind":"EnumValue","value":"RNA"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pc"}},{"kind":"Field","name":{"kind":"Name","value":"pve"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"wgbs_variance"},"name":{"kind":"Name","value":"pca_variance"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ome"},"value":{"kind":"EnumValue","value":"WGBS"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pc"}},{"kind":"Field","name":{"kind":"Name","value":"pve"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"lipidomics_variance"},"name":{"kind":"Name","value":"pca_variance"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ome"},"value":{"kind":"EnumValue","value":"Lipidomics"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pc"}},{"kind":"Field","name":{"kind":"Name","value":"pve"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"metabolomics_variance"},"name":{"kind":"Name","value":"pca_variance"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ome"},"value":{"kind":"EnumValue","value":"Metabolomics"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pc"}},{"kind":"Field","name":{"kind":"Name","value":"pve"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"metallomics_variance"},"name":{"kind":"Name","value":"pca_variance"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ome"},"value":{"kind":"EnumValue","value":"Metallomics"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pc"}},{"kind":"Field","name":{"kind":"Name","value":"pve"}}]}}]}}]} as unknown as DocumentNode<FetchDimensionalityReductionExplorerQuery, FetchDimensionalityReductionExplorerQueryVariables>;
 export const FetchWgbsMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGBSMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgbs_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"age_at_enrollment"}}]}}]}}]} as unknown as DocumentNode<FetchWgbsMetadataQuery, FetchWgbsMetadataQueryVariables>;
 export const FetchWgspcaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchWGSPCA"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"wgs_pca"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"cohort"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}},{"kind":"Field","name":{"kind":"Name","value":"superpop"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"project"}},{"kind":"Field","name":{"kind":"Name","value":"age"}},{"kind":"Field","name":{"kind":"Name","value":"case_status"}},{"kind":"Field","name":{"kind":"Name","value":"sex_at_birth"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"recruited_condition"}},{"kind":"Field","name":{"kind":"Name","value":"reported_race_ethnicity"}},{"kind":"Field","name":{"kind":"Name","value":"gnomad_pop"}}]}},{"kind":"Field","name":{"kind":"Name","value":"wgs_pca_variance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pc"}},{"kind":"Field","name":{"kind":"Name","value":"pve"}}]}}]}}]} as unknown as DocumentNode<FetchWgspcaQuery, FetchWgspcaQueryVariables>;
 export const FetchAtacMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"fetchATACMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"atac_metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"kit"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"sample_id"}},{"kind":"Field","name":{"kind":"Name","value":"sex"}},{"kind":"Field","name":{"kind":"Name","value":"site"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"pc1"}},{"kind":"Field","name":{"kind":"Name","value":"pc2"}},{"kind":"Field","name":{"kind":"Name","value":"pc3"}},{"kind":"Field","name":{"kind":"Name","value":"pc4"}},{"kind":"Field","name":{"kind":"Name","value":"pc5"}},{"kind":"Field","name":{"kind":"Name","value":"pc6"}},{"kind":"Field","name":{"kind":"Name","value":"pc7"}},{"kind":"Field","name":{"kind":"Name","value":"pc8"}},{"kind":"Field","name":{"kind":"Name","value":"pc9"}},{"kind":"Field","name":{"kind":"Name","value":"pc10"}},{"kind":"Field","name":{"kind":"Name","value":"umap_x"}},{"kind":"Field","name":{"kind":"Name","value":"umap_y"}}]}}]}}]} as unknown as DocumentNode<FetchAtacMetadataQuery, FetchAtacMetadataQueryVariables>;

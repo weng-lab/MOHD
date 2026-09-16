@@ -1,10 +1,27 @@
 "use client";
 
 import { Box, Chip, Stack, Tooltip, Typography } from "@mui/material";
-import type { GroupInfo } from "./groups";
+
+/** One chip: a group of points the plot draws in one color. */
+export type LegendGroup = {
+  /**
+   * The group's identity. `hidden`, `highlighted` and both callbacks key on this, never on
+   * `label`.
+   */
+  value: string;
+  /** What the chip shows. */
+  label: string;
+  color: string;
+  count: number;
+  /**
+   * For a group that folds small categories together to protect participant privacy, the
+   * categories folded in - named on hover, never counted. Undefined on every other group.
+   */
+  members?: string[];
+};
 
 export type PlotLegendProps = {
-  groups: GroupInfo[];
+  groups: LegendGroup[];
   /** Group values currently hidden from the plot. */
   hidden: ReadonlySet<string>;
   onToggle: (value: string) => void;
@@ -15,14 +32,13 @@ export type PlotLegendProps = {
 };
 
 /**
- * Clickable legend - ScatterPlot has no categorical legend of its own, so groups
- * are toggled here and filtered out of pointData before it reaches the plot.
+ * Clickable legend - ScatterPlot has no categorical legend of its own, so groups are toggled here
+ * and filtered out of pointData before it reaches the plot.
  */
 const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLegendProps) => (
-  // Natural height, no cap: the widest option is 9 groups (age bands) and the
-  // longest labels are the reported race/ethnicity values, so this wraps to a few
-  // rows at most. A maxHeight clipped the last row rather than scrolling visibly,
-  // and flexShrink: 0 stops the plot below it from squeezing the rows instead.
+  // Natural height, no cap: the widest legend in use is nine groups (the age bands), so this wraps
+  // to a few rows at most. A maxHeight clipped the last row rather than scrolling visibly, and
+  // flexShrink: 0 stops the plot below it from squeezing the rows instead.
   <Stack direction="row" flexWrap="wrap" gap={0.5} flexShrink={0}>
     {groups.map(({ value, label, color, count, members }) => {
       const off = hidden.has(value);
@@ -66,7 +82,7 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLege
         />
       );
 
-      // The bin's chip names what went into it. Which responses the survey
+      // A folded group's chip names what went into it. Which responses the survey
       // offers is worth showing even where a category is too small to plot on
       // its own - without counts, which is the whole point of having folded
       // them. MUI composes the chip's own hover handlers with the tooltip's, so

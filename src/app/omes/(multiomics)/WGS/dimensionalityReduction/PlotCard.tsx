@@ -2,10 +2,10 @@
 
 import { Box, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
 import type { ReactNode, RefObject } from "react";
+import PlotLegend from "@/common/components/PlotLegend";
 import { CARD_SX } from "./dimensions";
 import type { ColorField, ColorOption } from "./fields";
 import type { GroupInfo } from "./groups";
-import PlotLegend from "./PlotLegend";
 
 /**
  * Generic over the color-by field rather than the row type: the row never

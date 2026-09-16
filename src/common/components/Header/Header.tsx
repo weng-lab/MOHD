@@ -20,6 +20,10 @@ const pageLinks: PageInfo[] = [
     link: "/genomeBrowser",
   },
   {
+    pageName: "Dimensionality Reduction",
+    link: "/dimensionalityReduction",
+  },
+  {
     pageName: "About",
     link: "https://www.mohdconsortium.org/home",
   },
@@ -180,14 +184,16 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
             borderBottomLeftRadius: "50px",
             backgroundColor: "primary.main",
             height: "100%",
-            width: "450px",
+            // Absolutely positioned, so nothing stops it sliding over the nav links on its left.
+            // Below ~1050px it narrows to leave them the 600px they need.
+            width: "min(450px, calc(100vw - 600px))",
             position: "absolute",
             right: 0,
             p: 2,
           }}
         >
           <AutoComplete
-            style={{ width: 415 }}
+            style={{ width: 415, maxWidth: "100%" }}
             id="desktop-search-component"
             slots={{
               button: IconButton,
