@@ -125,11 +125,6 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
 
   const Omes: StaticListOption[] = [
     {
-      label: "Proteomics",
-      value: "proteomics",
-      keywords: ["protein", "mass spec"],
-    },
-    {
       label: "WGS",
       value: "WGS",
       keywords: ["whole genome sequencing", "genome sequencing", "genomics"],
