@@ -77,7 +77,7 @@ export default function DataExplorer() {
         </Typography>
         <Box
           sx={{
-            height: 600,
+            height: { xs: 320, sm: 420, md: 600 },
             overflow: "hidden",
             width: "100%",
             minWidth: 0,

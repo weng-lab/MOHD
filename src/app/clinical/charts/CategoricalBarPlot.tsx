@@ -1,4 +1,5 @@
 "use client";
+import { useMediaQuery, useTheme } from "@mui/material";
 import { BarPlot, type BarData } from "@weng-lab/visualization";
 import { type PhenotypicalDataPoint } from "@/common/hooks/usePhenotypicalData";
 import { BAR_PLOT_COLORS } from "@/common/colors";
@@ -9,6 +10,9 @@ type Props = {
 };
 
 export default function CategoricalBarPlot({ rawData, var1Name }: Props) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const counts = new Map<string, number>();
   for (const p of rawData) {
     if (p.variable_name !== var1Name || p.value_text == null) continue;
@@ -35,8 +39,8 @@ export default function CategoricalBarPlot({ rawData, var1Name }: Props) {
       downloadFileName={`${var1Name}_distribution`}
       animation="slideRight"
       animationBuffer={0.01}
-      barSpacing={5}
-      barSize={40}
+      barSpacing={isMobile ? 3 : 5}
+      barSize={isMobile ? 24 : 40}
     />
   );
 }

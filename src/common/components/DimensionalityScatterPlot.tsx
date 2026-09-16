@@ -164,7 +164,7 @@ const DimensionalityScatterPlot = <
             flexWrap="wrap"
             mb={1}
           >
-            <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" gap={1} flexWrap="wrap">
+            <Stack direction={"row"} alignItems="center" gap={1} flexWrap="wrap">
               <ColorBySelect
                 colorScheme={colorScheme}
                 handleColorSchemeChange={handleColorSchemeChange}
