@@ -5,13 +5,7 @@ import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { OmesDataType } from "@/common/types/globalTypes";
 import { OME_COLORS } from "@/common/colors";
-import {
-  OME_DESCRIPTIONS,
-  // getGenomeBrowserHref,
-  getOmeIconName,
-  getOmeInfoHref,
-  getOmeLabel,
-} from "./omeContent";
+import { OME_DESCRIPTIONS, getGenomeBrowserHref, getOmeIconName, getOmeInfoHref, getOmeLabel } from "./omeContent";
 
 type OmeInfoCardProps = {
   selectedOme: OmesDataType;
@@ -21,7 +15,8 @@ type OmeInfoCardProps = {
 
 export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfoCardProps) {
   const selectedColor = OME_COLORS[selectedOme.toLowerCase()] ?? "#3f7f79";
-  // const genomeBrowserHref = getGenomeBrowserHref(selectedOme);
+  // null for the omes with no genome-browser-displayable data, which hides the button entirely.
+  const genomeBrowserHref = getGenomeBrowserHref(selectedOme);
 
   return (
     <Box
@@ -134,10 +129,10 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             mt={2}
           >
             <Button
-              // component={genomeBrowserHref ? Link : "button"}
-              // href={genomeBrowserHref ?? undefined}
+              component={genomeBrowserHref ? Link : "button"}
+              href={genomeBrowserHref ?? undefined}
               variant="contained"
-              // disabled={!genomeBrowserHref}
+              disabled={!genomeBrowserHref}
               sx={{
                 minWidth: 170,
                 backgroundColor: "secondary.main",

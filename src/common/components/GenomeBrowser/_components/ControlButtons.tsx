@@ -1,27 +1,61 @@
-import { Box, Button, ButtonGroup as MuiButtonGroup, Divider, Stack, Typography } from "@mui/material";
+import { Box, ButtonGroup, Divider, Stack, Typography } from "@mui/material";
 import type { BrowserStoreInstance } from "@weng-lab/genomebrowser";
+import { BrowserNavigationButton, type BrowserNavigationAction } from "@weng-lab/genomebrowser-ui";
 
-type ButtonConfig = {
+type NavButtonConfig = {
   label: string;
-  onClick: (value: number) => void;
-  value: number;
+  ariaLabel: string;
+  action: BrowserNavigationAction;
 };
 
-function ButtonGroup({ buttons }: { buttons: ButtonConfig[] }) {
+/** Pan fractions are signed and relative to the viewport span; zoom factors below 1 zoom in. */
+const MOVE_LEFT: NavButtonConfig[] = [
+  { label: "◄◄◄", ariaLabel: "Pan left one viewport", action: { type: "pan", fraction: -1 } },
+  { label: "◄◄", ariaLabel: "Pan left half a viewport", action: { type: "pan", fraction: -0.5 } },
+  { label: "◄", ariaLabel: "Pan left a quarter viewport", action: { type: "pan", fraction: -0.25 } },
+];
+
+const MOVE_RIGHT: NavButtonConfig[] = [
+  { label: "►", ariaLabel: "Pan right a quarter viewport", action: { type: "pan", fraction: 0.25 } },
+  { label: "►►", ariaLabel: "Pan right half a viewport", action: { type: "pan", fraction: 0.5 } },
+  { label: "►►►", ariaLabel: "Pan right one viewport", action: { type: "pan", fraction: 1 } },
+];
+
+const ZOOM_IN: NavButtonConfig[] = [
+  { label: "1.5x", ariaLabel: "Zoom in 1.5x", action: { type: "zoom", factor: 1 / 1.5 } },
+  { label: "3x", ariaLabel: "Zoom in 3x", action: { type: "zoom", factor: 1 / 3 } },
+  { label: "10x", ariaLabel: "Zoom in 10x", action: { type: "zoom", factor: 1 / 10 } },
+];
+
+const ZOOM_OUT: NavButtonConfig[] = [
+  { label: "10x", ariaLabel: "Zoom out 10x", action: { type: "zoom", factor: 10 } },
+  { label: "3x", ariaLabel: "Zoom out 3x", action: { type: "zoom", factor: 3 } },
+  { label: "1.5x", ariaLabel: "Zoom out 1.5x", action: { type: "zoom", factor: 1.5 } },
+];
+
+function NavButtonGroup({
+  buttons,
+  useBrowserStore,
+}: {
+  buttons: NavButtonConfig[];
+  useBrowserStore: BrowserStoreInstance;
+}) {
   return (
-    <MuiButtonGroup>
+    <ButtonGroup>
       {buttons.map((button) => (
-        <Button
-          key={`${button.label}-${button.value}`}
+        <BrowserNavigationButton
+          key={button.ariaLabel}
+          action={button.action}
+          browserStore={useBrowserStore}
+          aria-label={button.ariaLabel}
           variant="outlined"
           size="small"
-          onClick={() => button.onClick(button.value)}
           sx={{ padding: "2px 8px", minWidth: 30, fontSize: "0.8rem" }}
         >
           {button.label}
-        </Button>
+        </BrowserNavigationButton>
       ))}
-    </MuiButtonGroup>
+    </ButtonGroup>
   );
 }
 
@@ -31,12 +65,14 @@ function TwoSidedControl({
   label,
   leftLabel,
   rightLabel,
+  useBrowserStore,
 }: {
-  leftButtons: ButtonConfig[];
-  rightButtons: ButtonConfig[];
+  leftButtons: NavButtonConfig[];
+  rightButtons: NavButtonConfig[];
   label?: string;
   leftLabel?: string;
   rightLabel?: string;
+  useBrowserStore: BrowserStoreInstance;
 }) {
   return (
     <Stack alignItems="center">
@@ -44,97 +80,38 @@ function TwoSidedControl({
       <Stack direction="row" spacing={0.5} alignItems="center">
         <Stack direction="column" alignItems="center">
           {leftLabel ? <Typography variant="body2">{leftLabel}</Typography> : null}
-          <ButtonGroup buttons={leftButtons} />
+          <NavButtonGroup buttons={leftButtons} useBrowserStore={useBrowserStore} />
         </Stack>
         <Divider orientation="vertical" flexItem />
         <Stack direction="column" alignItems="center">
           {rightLabel ? <Typography variant="body2">{rightLabel}</Typography> : null}
-          <ButtonGroup buttons={rightButtons} />
+          <NavButtonGroup buttons={rightButtons} useBrowserStore={useBrowserStore} />
         </Stack>
       </Stack>
     </Stack>
   );
 }
 
+/**
+ * Pan and zoom controls. Each button is store-bound, so it reads the current
+ * region on activation and disables itself at the chromosome edges and zoom
+ * limits — no region subscription or hand-rolled coordinate math here.
+ */
 export default function ControlButtons({ useBrowserStore }: { useBrowserStore: BrowserStoreInstance }) {
-  // The store hook is passed in as a prop, so the compiler can't prove it's the same
-  // function every render. Suppressed while @weng-lab/genomebrowser reworks its public API.
-  // react-doctor-disable-next-line react-hooks-js/hooks
-  const domain = useBrowserStore((state) => state.domain);
-  // react-doctor-disable-next-line react-hooks-js/hooks
-  const setDomain = useBrowserStore((state) => state.setDomain);
-
-  const domainKey = `${domain.chromosome}:${domain.start}-${domain.end}`;
-
-  const zoom = (factor: number) => {
-    const width = domain.end - domain.start;
-    const newWidth = Math.round(width * factor);
-    const center = Math.round((domain.start + domain.end) / 2);
-
-    const newStart = Math.max(0, Math.round(center - newWidth / 2));
-    const newEnd = Math.round(center + newWidth / 2);
-    const nextDomain = {
-      ...domain,
-      start: newStart,
-      end: newEnd,
-    };
-
-    setDomain(nextDomain);
-  };
-
-  const shift = (delta: number) => {
-    const roundedDelta = Math.round(delta);
-    const width = domain.end - domain.start;
-
-    const newStart = Math.max(0, Math.round(domain.start + roundedDelta));
-    const newEnd = Math.round(newStart + width);
-    const nextDomain = {
-      ...domain,
-      start: newStart,
-      end: newEnd,
-    };
-
-    setDomain(nextDomain);
-  };
-
-  const width = domain.end - domain.start;
-  const buttonGroups = {
-    moveLeft: [
-      { label: "◄◄◄", onClick: shift, value: -width },
-      { label: "◄◄", onClick: shift, value: -Math.round(width / 2) },
-      { label: "◄", onClick: shift, value: -Math.round(width / 4) },
-    ],
-    moveRight: [
-      { label: "►", onClick: shift, value: Math.round(width / 4) },
-      { label: "►►", onClick: shift, value: Math.round(width / 2) },
-      { label: "►►►", onClick: shift, value: width },
-    ],
-    zoomIn: [
-      { label: "1.5x", onClick: zoom, value: 1 / 1.5 },
-      { label: "3x", onClick: zoom, value: 1 / 3 },
-      { label: "10x", onClick: zoom, value: 1 / 10 },
-    ],
-    zoomOut: [
-      { label: "10x", onClick: zoom, value: 10 },
-      { label: "3x", onClick: zoom, value: 3 },
-      { label: "1.5x", onClick: zoom, value: 1.5 },
-    ],
-  };
-
   return (
     <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center" gap={2}>
       <TwoSidedControl
-        key={`${domainKey}-move`}
-        leftButtons={buttonGroups.moveLeft}
-        rightButtons={buttonGroups.moveRight}
+        leftButtons={MOVE_LEFT}
+        rightButtons={MOVE_RIGHT}
         label="Move"
+        useBrowserStore={useBrowserStore}
       />
       <TwoSidedControl
-        key={`${domainKey}-zoom`}
-        leftButtons={buttonGroups.zoomIn}
-        rightButtons={buttonGroups.zoomOut}
+        leftButtons={ZOOM_IN}
+        rightButtons={ZOOM_OUT}
         leftLabel="Zoom In"
         rightLabel="Zoom Out"
+        useBrowserStore={useBrowserStore}
       />
     </Box>
   );
