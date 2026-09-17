@@ -58,7 +58,7 @@ export const OmeHeader = ({ children }: { children?: React.ReactNode }) => {
               </Typography>
               {(ome === "WGS" || ome === "WGBS") && (
                 <Typography variant="body1" color="white">
-                  {ome === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
+                  {ome === "WGBS" ? "(Whole Genome Bisulfite Sequencing)" : "(Whole Genome Sequencing)"}
                 </Typography>
               )}
               <Image src={image} alt={`${ome} icon`} width={50} height={50} />

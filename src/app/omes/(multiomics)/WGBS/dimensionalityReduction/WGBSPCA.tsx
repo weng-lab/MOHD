@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Stack } from "@mui/material";
-import { SharedWGBSDimenionalityProps } from "./WGBSDimensionalityReductionClient";
-import type { WGBSRow } from "./types";
+import { WGBSMetadata, SharedWGBSDimenionalityProps } from "./page";
 import { ChartProps } from "@weng-lab/visualization";
 import DimensionalityScatterPlot from "@/common/components/DimensionalityScatterPlot";
 import { PcAxisSelect } from "@/common/components/PcAxisSelect";
@@ -12,15 +11,17 @@ import { PcaOme } from "@/common/types/generated/graphql";
 export type WGBSDimensionalityPcaProps<
   S extends boolean | undefined,
   Z extends boolean | undefined,
-> = SharedWGBSDimenionalityProps & Partial<ChartProps<WGBSRow, S, Z>>;
+> = SharedWGBSDimenionalityProps & Partial<ChartProps<WGBSMetadata[number], S, Z>>;
 
 const WGBSPCA = <S extends true, Z extends boolean | undefined>({
   rows,
+  WGBSData,
   selected,
   setSelected,
   ref,
   ...rest
 }: WGBSDimensionalityPcaProps<S, Z>) => {
+  const { loading } = WGBSData;
   const [xField, setXField] = useState<PcField>("pc1");
   const [yField, setYField] = useState<PcField>("pc2");
   const { pve } = usePcaVariance(PcaOme.Wgbs);
@@ -30,7 +31,7 @@ const WGBSPCA = <S extends true, Z extends boolean | undefined>({
       {...rest}
       ref={ref}
       data={rows}
-      loading={false}
+      loading={loading}
       selected={selected}
       setSelected={setSelected}
       getX={(row) => row[xField]}

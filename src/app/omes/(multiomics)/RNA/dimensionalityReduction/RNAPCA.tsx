@@ -38,6 +38,7 @@ const RNAPCA = <S extends true, Z extends boolean | undefined>({
       leftAxisLabel={formatPcLabel(yField, pve)}
       bottomAxisLabel={formatPcLabel(xField, pve)}
       downloadFileName="RNA_dimesionality_reduction_PCA"
+      hasAge
       axisSelectors={
         <Stack direction="row" gap={1}>
           <PcAxisSelect label="X Axis" value={xField} onChange={setXField} disabledValue={yField} />

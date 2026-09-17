@@ -2,6 +2,7 @@ import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { RNAMetadata, SharedRNADimenionalityProps } from "./page";
 import { Typography } from "@mui/material";
+import { MISSING_LABEL } from "@/common/colors";
 
 const RNADimensionalityTable = ({ rows, RNAData, tableProps }: SharedRNADimenionalityProps) => {
   const { loading, error } = RNAData;
@@ -27,6 +28,16 @@ const RNADimensionalityTable = ({ rows, RNAData, tableProps }: SharedRNADimenion
       headerName: "Sex",
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.sex))),
+    },
+    {
+      field: "age_bin",
+      headerName: "Age",
+      renderCell: (params) => params.value ?? "",
+      type: "singleSelect",
+      valueOptions: Array.from(new Set(rows.map((row) => row.age_bin))).map((age_bin) => ({
+        value: age_bin,
+        label: age_bin ?? MISSING_LABEL,
+      })),
     },
   ];
   const initialSort: GridSortModel = [{ field: "sample_id", sort: "asc" }];

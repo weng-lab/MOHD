@@ -12,6 +12,7 @@ query fetchATACMetadata {
     sex
     site
     status
+    age_bin
     pc1
     pc2
     pc3

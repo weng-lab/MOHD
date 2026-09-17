@@ -1,64 +1,70 @@
-import { cacheLife, cacheTag } from "next/cache";
-import { Suspense } from "react";
-import { query } from "@/common/apollo/client";
-import { getAgeBin } from "@/common/ageBins";
-import WGBSSkeleton from "./WGBSSkeleton";
-import { GET_WGBS_DATA } from "./queries";
-import type { WGBSRow } from "./types";
-import WGBSDimensionalityReductionClient from "./WGBSDimensionalityReductionClient";
+"use client";
+import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
+import WGBSDimensionalityTable from "./WGBSDimensionalityTable";
+import { ScatterPlot } from "@mui/icons-material";
+import WGBSDimensionalityScatterPlot from "./WGBSUMAP";
+import WGBSDimensionalityPCAPlot from "./WGBSPCA";
+import { DownloadPlotHandle } from "@weng-lab/visualization";
 
-/**
- * Fetches and reshapes the WGBS metadata.
- *
- * Cached: wgbs_metadata is identical for every visitor and only changes on a
- * data release, so one upstream query serves everyone. Bust it with
- * revalidateTag("wgbs-metadata") when new data lands.
- */
-const getWGBSData = async (): Promise<WGBSRow[]> => {
-  "use cache";
-  cacheLife("days");
-  cacheTag("wgbs-metadata");
+import { useWGBSData, UseWGBSDataReturn } from "@/common/hooks/omeHooks/useWGBSData";
+import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
+import usePlotDownload from "@/common/hooks/usePlotDownload";
 
-  const { data, error } = await query({ query: GET_WGBS_DATA });
-  if (error) throw error;
+export type WGBSMetadata = NonNullable<UseWGBSDataReturn["data"]>;
 
-  const rows = data?.wgbs_metadata ?? [];
-
-  return rows.map((row) => ({
-    sample_id: row.sample_id,
-    kit: row.kit,
-    pc1: row.pc1 ?? null,
-    pc2: row.pc2 ?? null,
-    pc3: row.pc3 ?? null,
-    pc4: row.pc4 ?? null,
-    pc5: row.pc5 ?? null,
-    pc6: row.pc6 ?? null,
-    pc7: row.pc7 ?? null,
-    pc8: row.pc8 ?? null,
-    pc9: row.pc9 ?? null,
-    pc10: row.pc10 ?? null,
-    umap_x: row.umap_x ?? null,
-    umap_y: row.umap_y ?? null,
-    sex: row.sex,
-    site: row.site,
-    status: row.status,
-    // Binned here so raw age never enters the cache or the RSC payload.
-    age_bin: getAgeBin(row.age_at_enrollment),
-  }));
+export type SharedWGBSDimenionalityProps = {
+  rows: WGBSMetadata;
+  WGBSData: UseWGBSDataReturn;
+  selected: WGBSMetadata;
+  setSelected: React.Dispatch<React.SetStateAction<WGBSMetadata>>;
+  sortedFilteredData: WGBSMetadata;
+  syncedTableProps: SyncedTableProps<WGBSMetadata[number]>;
+  ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
 const WGBSDimensionalityReduction = () => {
-  return (
-    <Suspense fallback={<WGBSSkeleton />}>
-      <WGBSSection />
-    </Suspense>
-  );
-};
+  const { ref: umapRef, ...umapDownload } = usePlotDownload();
+  const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
+  const WGBSData = useWGBSData({ skip: false });
 
-/** The await lives here so only this subtree sits behind the Suspense boundary. */
-const WGBSSection = async () => {
-  const rows = await getWGBSData();
-  return <WGBSDimensionalityReductionClient rows={rows} />;
+  const rows: WGBSMetadata = WGBSData.data ?? [];
+
+  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
+    rows,
+    getRowId: (row) => row.sample_id,
+  });
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps, hasAge: true });
+
+  const SharedWGBSDimenionalityProps: SharedWGBSDimenionalityProps = {
+    rows,
+    WGBSData,
+    selected,
+    setSelected,
+    sortedFilteredData,
+    syncedTableProps,
+  };
+
+  return (
+    <TwoPaneLayout
+      direction={{ xs: "column", lg: "row" }}
+      rowHeight="max(60vh, 700px)"
+      TableComponent={<WGBSDimensionalityTable {...SharedWGBSDimenionalityProps} />}
+      plots={[
+        {
+          tabTitle: "UMAP",
+          icon: <ScatterPlot />,
+          plotComponent: <WGBSDimensionalityScatterPlot ref={umapRef} {...SharedWGBSDimenionalityProps} />,
+          ...umapDownload,
+        },
+        {
+          tabTitle: "PCA",
+          icon: <ScatterPlot />,
+          plotComponent: <WGBSDimensionalityPCAPlot ref={pcaRef} {...SharedWGBSDimenionalityProps} />,
+          ...pcaDownload,
+        },
+      ]}
+    />
+  );
 };
 
 export default WGBSDimensionalityReduction;
