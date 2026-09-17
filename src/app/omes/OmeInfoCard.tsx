@@ -82,7 +82,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
                 </Box>
                 {(selectedOme === "WGS" || selectedOme === "WGBS") && (
                   <Typography variant="h5">
-                    {selectedOme === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
+                    {selectedOme === "WGBS" ? "(Whole Genome Bisulfite Sequencing)" : "(Whole Genome Sequencing)"}
                   </Typography>
                 )}
               </Stack>
