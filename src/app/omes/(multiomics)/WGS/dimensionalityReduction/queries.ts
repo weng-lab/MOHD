@@ -18,7 +18,7 @@ query fetchWGSPCA {
     superpop
     sex
     project
-    age
+    age_bin
     case_status
     sex_at_birth
     site
