@@ -1,15 +1,15 @@
 /**
  * age_at_enrollment is sensitive. Raw values must never be rendered in the UI -
- * always resolve through getAgeBin() first, which collapses age into wide,
- * fixed-width ranges (top-coded at 90+, matching the HIPAA Safe Harbor
- * de-identification standard for ages) so no individual age is ever displayed.
+ * always resolve through getAgeBin() first, which collapses age into 10-year
+ * bands, top-coded at 80+. Matches the binning WGS ancestry PCA uses, so age
+ * reads the same way on every dimensionality reduction plot.
  */
 
-const AGE_BIN_EDGES = [20, 30, 40, 50, 60, 70, 80, 90];
+const AGE_BIN_EDGES = [10, 20, 30, 40, 50, 60, 70, 80];
 
 export const AGE_BIN_LABELS = [
-  `<${AGE_BIN_EDGES[0]}`,
-  ...AGE_BIN_EDGES.slice(0, -1).map((edge, i) => `${edge}–${AGE_BIN_EDGES[i + 1] - 1}`),
+  `0-${AGE_BIN_EDGES[0] - 1}`,
+  ...AGE_BIN_EDGES.slice(0, -1).map((edge, i) => `${edge}-${AGE_BIN_EDGES[i + 1] - 1}`),
   `${AGE_BIN_EDGES[AGE_BIN_EDGES.length - 1]}+`,
 ];
 

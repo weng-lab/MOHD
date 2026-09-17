@@ -24,6 +24,7 @@ type Documents = {
     "\nquery fetchMetabolomicsQuantification {\n  metabolomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  metabolomics_compounds {\n    position\n    compound\n    mode\n  }\n}\n ": typeof types.FetchMetabolomicsQuantificationDocument,
     "\nquery fetchMetallomicsData {\n  metallomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  metallomics_metals {\n    metal\n    position\n  }\n}\n ": typeof types.FetchMetallomicsDataDocument,
     "\nquery fetchMetallomicsDimensionalityReduction {\n  metallomics_metadata {\n    sample_id\n    kit\n    sex\n    site\n    status\n    age_at_enrollment\n    tube\n    visit\n    condition\n    protocol\n    pc1\n    pc2\n    pc3\n    pc4\n    pc5\n    pc6\n    pc7\n    pc8\n    pc9\n    pc10\n  }\n}\n ": typeof types.FetchMetallomicsDimensionalityReductionDocument,
+    "\nquery fetchPcaVariance($ome: PcaOme!) {\n  pca_variance(ome: $ome) {\n    pc\n    pve\n  }\n}\n ": typeof types.FetchPcaVarianceDocument,
     "\nquery fetchRNAMetadata {\n  rna_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n    umap_x\n    umap_y\n    pc1\n    pc2\n    pc3\n    pc4\n    pc5\n    pc6\n    pc7\n    pc8\n    pc9\n    pc10\n  }\n}\n ": typeof types.FetchRnaMetadataDocument,
     "\n  query fetch_phenotypical_data($variable_name: [String!]!) {\n    phenotypical_data(variable_name: $variable_name) {\n      value_numeric\n      value_text\n      variable_name\n      variable_status\n    }\n  }\n": typeof types.Fetch_Phenotypical_DataDocument,
     "\n  query fetch_phenotypical_variable {\n    phenotypical_variables {\n      unit\n      variable_category\n      variable_name\n    }\n  }\n": typeof types.Fetch_Phenotypical_VariableDocument,
@@ -39,6 +40,7 @@ const documents: Documents = {
     "\nquery fetchMetabolomicsQuantification {\n  metabolomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  metabolomics_compounds {\n    position\n    compound\n    mode\n  }\n}\n ": types.FetchMetabolomicsQuantificationDocument,
     "\nquery fetchMetallomicsData {\n  metallomics_quantification {\n    sample_id\n    site\n    status\n    sex\n    quant_values\n  }\n  metallomics_metals {\n    metal\n    position\n  }\n}\n ": types.FetchMetallomicsDataDocument,
     "\nquery fetchMetallomicsDimensionalityReduction {\n  metallomics_metadata {\n    sample_id\n    kit\n    sex\n    site\n    status\n    age_at_enrollment\n    tube\n    visit\n    condition\n    protocol\n    pc1\n    pc2\n    pc3\n    pc4\n    pc5\n    pc6\n    pc7\n    pc8\n    pc9\n    pc10\n  }\n}\n ": types.FetchMetallomicsDimensionalityReductionDocument,
+    "\nquery fetchPcaVariance($ome: PcaOme!) {\n  pca_variance(ome: $ome) {\n    pc\n    pve\n  }\n}\n ": types.FetchPcaVarianceDocument,
     "\nquery fetchRNAMetadata {\n  rna_metadata {\n    kit\n    sample_id\n    sex\n    site\n    status\n    umap_x\n    umap_y\n    pc1\n    pc2\n    pc3\n    pc4\n    pc5\n    pc6\n    pc7\n    pc8\n    pc9\n    pc10\n  }\n}\n ": types.FetchRnaMetadataDocument,
     "\n  query fetch_phenotypical_data($variable_name: [String!]!) {\n    phenotypical_data(variable_name: $variable_name) {\n      value_numeric\n      value_text\n      variable_name\n      variable_status\n    }\n  }\n": types.Fetch_Phenotypical_DataDocument,
     "\n  query fetch_phenotypical_variable {\n    phenotypical_variables {\n      unit\n      variable_category\n      variable_name\n    }\n  }\n": types.Fetch_Phenotypical_VariableDocument,
@@ -98,6 +100,10 @@ export function gql(source: "\nquery fetchMetallomicsData {\n  metallomics_quant
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nquery fetchMetallomicsDimensionalityReduction {\n  metallomics_metadata {\n    sample_id\n    kit\n    sex\n    site\n    status\n    age_at_enrollment\n    tube\n    visit\n    condition\n    protocol\n    pc1\n    pc2\n    pc3\n    pc4\n    pc5\n    pc6\n    pc7\n    pc8\n    pc9\n    pc10\n  }\n}\n "): (typeof documents)["\nquery fetchMetallomicsDimensionalityReduction {\n  metallomics_metadata {\n    sample_id\n    kit\n    sex\n    site\n    status\n    age_at_enrollment\n    tube\n    visit\n    condition\n    protocol\n    pc1\n    pc2\n    pc3\n    pc4\n    pc5\n    pc6\n    pc7\n    pc8\n    pc9\n    pc10\n  }\n}\n "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery fetchPcaVariance($ome: PcaOme!) {\n  pca_variance(ome: $ome) {\n    pc\n    pve\n  }\n}\n "): (typeof documents)["\nquery fetchPcaVariance($ome: PcaOme!) {\n  pca_variance(ome: $ome) {\n    pc\n    pve\n  }\n}\n "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -2,7 +2,7 @@ import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/vi
 import { useState } from "react";
 import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor } from "@/common/colors";
 import { getAgeBin, age_bin_color_map } from "@/common/ageBins";
-import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
+import { Typography, Stack, SelectChangeEvent, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
 import UMAPLegend from "@/common/components/UMAPLegend";
@@ -93,7 +93,6 @@ const DimensionalityScatterPlot = <
 }: DimensionalityScatterPlotProps<T, S, Z>) => {
   const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol" | "age">("site");
   const theme = useTheme();
-  const isXs = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleColorSchemeChange = (event: SelectChangeEvent) => {
     setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol" | "age");
@@ -165,7 +164,7 @@ const DimensionalityScatterPlot = <
             flexWrap="wrap"
             mb={1}
           >
-            <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" gap={1} flexWrap="wrap">
+            <Stack direction={"row"} alignItems="center" gap={1} flexWrap="wrap">
               <ColorBySelect
                 colorScheme={colorScheme}
                 handleColorSchemeChange={handleColorSchemeChange}
@@ -182,7 +181,7 @@ const DimensionalityScatterPlot = <
               onSelectionChange={handlePointsSelected}
               onPointClicked={handlePointSelected}
               controlsHighlight={theme.palette.primary.main}
-              controlsPosition={isXs ? "right" : "left"}
+              controlsPosition={"right"}
               pointData={scatterData}
               selectable
               loading={loading}

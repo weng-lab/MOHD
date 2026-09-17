@@ -8,9 +8,9 @@ const config: OmeDownloadsConfig<RnaRow> = {
   omeKey: "rna",
   displayName: "RNA-seq",
   datasetFilters: [
-    { field: "sex", label: "Sex" },
-    { field: "status", label: "Status" },
     { field: "site", label: "Site" },
+    { field: "status", label: "Status" },
+    { field: "sex", label: "Sex" },
   ],
 };
 

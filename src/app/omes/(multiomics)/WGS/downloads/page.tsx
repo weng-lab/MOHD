@@ -9,9 +9,9 @@ const config: OmeDownloadsConfig<WGSRow> = {
   displayName: "WGS",
   noOpenAccess: true,
   datasetFilters: [
-    { field: "sex", label: "Sex" },
-    { field: "status", label: "Status" },
     { field: "site", label: "Site" },
+    { field: "status", label: "Status" },
+    { field: "sex", label: "Sex" },
   ],
 };
 
