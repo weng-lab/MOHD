@@ -34,7 +34,7 @@ const MetabolomicsDimensionalityReduction = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps, hasAge: true });
 
   const SharedMetabolomicsDimenionalityProps: SharedMetabolomicsDimenionalityProps = {
     rows,

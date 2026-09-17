@@ -2,6 +2,7 @@ import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { ATACMetadata, SharedATACDimenionalityProps } from "./page";
 import { Typography } from "@mui/material";
+import { MISSING_LABEL } from "@/common/colors";
 
 const ATACDimensionalityTable = ({ rows, ATACData, tableProps }: SharedATACDimenionalityProps) => {
   const { loading, error } = ATACData;
@@ -34,6 +35,16 @@ const ATACDimensionalityTable = ({ rows, ATACData, tableProps }: SharedATACDimen
       renderCell: (params) => params.value.replaceAll(" method", ""),
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.protocol))),
+    },
+    {
+      field: "age_bin",
+      headerName: "Age",
+      renderCell: (params) => params.value ?? "",
+      type: "singleSelect",
+      valueOptions: Array.from(new Set(rows.map((row) => row.age_bin))).map((age_bin) => ({
+        value: age_bin,
+        label: age_bin ?? MISSING_LABEL,
+      })),
     },
   ];
   const initialSort: GridSortModel = [{ field: "sample_id", sort: "asc" }];

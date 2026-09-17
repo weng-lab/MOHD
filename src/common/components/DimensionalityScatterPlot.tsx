@@ -44,7 +44,15 @@ const map = {
   },
 };
 
-const TooltipBody = ({ point, hasProtocol }: { point: Point<DimensionalityReductionMeta>; hasProtocol: boolean }) => {
+const TooltipBody = ({
+  point,
+  hasProtocol,
+  hasAge,
+}: {
+  point: Point<DimensionalityReductionMeta>;
+  hasProtocol: boolean;
+  hasAge: boolean;
+}) => {
   return (
     <>
       <Typography>
@@ -63,6 +71,11 @@ const TooltipBody = ({ point, hasProtocol }: { point: Point<DimensionalityReduct
       {hasProtocol && (
         <Typography>
           <b>Protocol:</b> {getCategoricalLabel("protocol", point.metaData?.protocol).replaceAll(" method", "")}
+        </Typography>
+      )}
+      {hasAge && (
+        <Typography>
+          <b>Age:</b> {point.metaData?.age_bin ?? MISSING_LABEL}
         </Typography>
       )}
     </>
@@ -184,7 +197,7 @@ const DimensionalityScatterPlot = <
               selectable
               loading={loading}
               miniMap={map}
-              tooltipBody={(point) => <TooltipBody point={point} hasProtocol={hasProtocol} />}
+              tooltipBody={(point) => <TooltipBody point={point} hasProtocol={hasProtocol} hasAge={hasAge} />}
               leftAxisLabel={leftAxisLabel}
               bottomAxisLabel={bottomAxisLabel}
               ref={ref}
