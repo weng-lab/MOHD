@@ -1,3 +1,4 @@
+import type { Metric } from "./metrics";
 import type { ExplorerOme } from "./omes";
 
 /**
@@ -28,6 +29,11 @@ export type ExplorerRow = {
   kit: string | null;
   participant_id: string | null;
   visit: string | null;
+  /**
+   * Library quality metrics, on the omes that have them (ATAC). Left off every other ome's rows
+   * rather than set to null, which would add a null per metric per sample to the page payload.
+   */
+  metrics?: Record<Metric, number | null>;
 };
 
 export type OmeData = {

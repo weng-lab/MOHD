@@ -4,6 +4,7 @@
  */
 
 import { CONTROL_COLOR, protocol_color_map, sex_color_map, site_color_map, status_color_map } from "@/common/colors";
+import { METRICS, isMetric, type Metric } from "./metrics";
 import { OME_CAPABILITIES, type ExplorerOme } from "./omes";
 import type { ExplorerRow } from "./types";
 
@@ -28,6 +29,28 @@ export const isField = (value: string | null): value is Field => FIELDS.some(({ 
 /** The fields an ome offers: all of them, less protocol wherever it does not vary. */
 export const fieldsFor = (ome: ExplorerOme): FieldDefinition[] =>
   FIELDS.filter(({ key }) => key !== "protocol" || OME_CAPABILITIES[ome].protocol);
+
+/** Anything the plot can be colored by: a field, or on ATAC one of its library metrics. */
+export type ColorBy = Field | Metric;
+
+export const isColorBy = (value: string | null): value is ColorBy => isField(value) || isMetric(value);
+
+export type ColorOptions = {
+  fields: FieldDefinition[];
+  /** Empty on an ome with no metrics. */
+  metrics: readonly (typeof METRICS)[number][];
+};
+
+export const colorOptionsFor = (ome: ExplorerOme): ColorOptions => ({
+  fields: fieldsFor(ome),
+  metrics: OME_CAPABILITIES[ome].metrics ? METRICS : [],
+});
+
+/** "Site", "TSS enrichment" - the name of whatever the plot is colored by. */
+export const colorLabel = (ome: ExplorerOme, color: ColorBy) => {
+  const { fields, metrics } = colorOptionsFor(ome);
+  return [...fields, ...metrics].find(({ key }) => key === color)?.label ?? color;
+};
 
 const ROW_KEYS = {
   site: "site",

@@ -8,12 +8,12 @@
  *   ome     ATAC | RNA | WGBS | lipidomics | metabolomics | metallomics   (case-insensitive)
  *   method  PCA | UMAP
  *   x, y    principal component on each axis, 1-10
- *   color   site | status | sex | age | protocol
+ *   color   site | status | sex | age | protocol, and on ATAC tss | frip | reads
  *   hide    repeated; "field:value" hides one value, "qc" hides QC samples
  *           e.g. ?hide=site:LEO&hide=age:80%2B&hide=qc
  */
 
-import { fieldsFor, isField, type Field } from "./fields";
+import { colorOptionsFor, isColorBy, isField, type ColorBy, type Field } from "./fields";
 import { OME_CAPABILITIES, PC_COUNT, findOme, type ExplorerOme, type Method } from "./omes";
 
 export type ExplorerState = {
@@ -22,7 +22,7 @@ export type ExplorerState = {
   /** PC on each axis, 1-based as it is labelled. Kept through a switch to UMAP and back. */
   x: number;
   y: number;
-  color: Field;
+  color: ColorBy;
   /**
    * Values hidden, per field. Kept across a change of ome, so a filter applies wherever its
    * value exists - hide a site and it stays hidden as you move between omes.
@@ -47,15 +47,18 @@ const QC_HIDE_VALUE = "qc";
 /**
  * Brings a state back inside what its ome supports. Runs on every read and every write, so a
  * hand-edited link and a click that switches ome end up in the same valid place: UMAP falls back
- * to PCA where there is none, a field the ome lacks falls back to site, and a PC on both axes
- * moves off the y axis.
+ * to PCA where there is none, a field or metric the ome lacks falls back to site, and a PC on
+ * both axes moves off the y axis.
  */
-export const normalize = (state: ExplorerState): ExplorerState => ({
-  ...state,
-  method: state.method === "UMAP" && !OME_CAPABILITIES[state.ome].umap ? "PCA" : state.method,
-  color: fieldsFor(state.ome).some(({ key }) => key === state.color) ? state.color : DEFAULT_STATE.color,
-  y: state.y === state.x ? (state.x === 1 ? 2 : 1) : state.y,
-});
+export const normalize = (state: ExplorerState): ExplorerState => {
+  const { fields, metrics } = colorOptionsFor(state.ome);
+  return {
+    ...state,
+    method: state.method === "UMAP" && !OME_CAPABILITIES[state.ome].umap ? "PCA" : state.method,
+    color: [...fields, ...metrics].some(({ key }) => key === state.color) ? state.color : DEFAULT_STATE.color,
+    y: state.y === state.x ? (state.x === 1 ? 2 : 1) : state.y,
+  };
+};
 
 type ReadableParams = {
   get(name: string): string | null;
@@ -90,7 +93,7 @@ export const parseState = (params: ReadableParams): ExplorerState => {
     method: params.get("method")?.toUpperCase() === "UMAP" ? "UMAP" : "PCA",
     x: parsePc(params.get("x"), DEFAULT_STATE.x),
     y: parsePc(params.get("y"), DEFAULT_STATE.y),
-    color: isField(color) ? color : DEFAULT_STATE.color,
+    color: isColorBy(color) ? color : DEFAULT_STATE.color,
     hidden,
     hideQc,
   });

@@ -2,15 +2,19 @@
 
 import { Box, Chip, Paper, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { ScatterPlot, type Point } from "@weng-lab/visualization";
-import PlotLegend, { type LegendGroup } from "@/common/components/PlotLegend";
+import { useState, type ReactNode } from "react";
 import { CARD_SX } from "./ExplorerLayout";
 import { FIELDS, groupOf, labelOf } from "./fields";
+import { METRICS } from "./metrics";
 import type { ExplorerRow } from "./types";
 
 export type PointMeta = {
   row: ExplorerRow;
-  /** The row's group for the field the plot is colored by. The legend and both hovers key on it. */
-  group: string;
+  /**
+   * The row's group for the field the plot is colored by - what the legend and both hovers key on.
+   * Null while a metric colors the plot, which has no groups.
+   */
+  group: string | null;
 };
 
 const MINIMAP = { position: { right: 50, bottom: 50 } };
@@ -25,6 +29,13 @@ const TOOLTIP_DETAILS: { label: string; value: (row: ExplorerRow) => string | nu
   { label: "Kit", value: (row) => row.kit },
   { label: "Participant", value: (row) => row.participant_id },
   { label: "Visit", value: (row) => row.visit },
+  ...METRICS.map(({ key, label, format }) => ({
+    label,
+    value: (row: ExplorerRow) => {
+      const metric = row.metrics?.[key];
+      return metric === null || metric === undefined ? null : format(metric);
+    },
+  })),
 ];
 
 const TooltipBody = ({ row }: { row: ExplorerRow }) => (
@@ -72,15 +83,29 @@ export type ExplorerPlotProps = {
   domains?: { xDomain: [number, number]; yDomain: [number, number] };
   xLabel: string;
   yLabel: string;
-  groups: LegendGroup[];
-  hidden: ReadonlySet<string>;
-  onToggle: (value: string) => void;
-  /** Group to ring in the legend, from either the plot's hover or a chip's. */
-  highlighted: string | null;
-  onLegendHover: (value: string | null) => void;
-  /** Points to swell, for the chip under the cursor. */
-  hoveredPoints?: Point<PointMeta>[];
-  onPlotHover: (group: string | null) => void;
+  /**
+   * Chips for a field, or a colorbar for a metric, built for the hover the plot is reporting:
+   * `hovered` is the sample under the cursor, from which the legend takes what it needs - a group
+   * to ring among the chips, or a value to mark on the colorbar - and `legendHover` is the chip
+   * under the cursor, which the caller renders as it likes.
+   *
+   * Taken as a function, and the hover state kept here rather than above, because a hover must not
+   * re-render whatever computes `points` and `domains`: React Compiler puts every value in a scope
+   * together with the hover state it sits beside, so a hover there rebuilds those arrays, and
+   * ScatterPlot cancels its 120ms hover growth when they change identity. The hover then draws at
+   * zero growth, ringed at a tenth of its opacity, while the same hover from a chip animates in
+   * full.
+   */
+  renderLegend: (hover: {
+    hovered: ExplorerRow | null;
+    legendHover: string | null;
+    onLegendHover: (value: string | null) => void;
+  }) => ReactNode;
+  /**
+   * Whether points belong to groups, so that hovering one swells its whole group. Off for a
+   * metric, where every point would otherwise be in the one null group.
+   */
+  grouped: boolean;
   downloadFileName: string;
 };
 
@@ -93,18 +118,24 @@ const ExplorerPlot = ({
   domains,
   xLabel,
   yLabel,
-  groups,
-  hidden,
-  onToggle,
-  highlighted,
-  onLegendHover,
-  hoveredPoints,
-  onPlotHover,
+  renderLegend,
+  grouped,
   downloadFileName,
 }: ExplorerPlotProps) => {
   const theme = useTheme();
   // Below md the plot is too narrow for controls on the left not to cover the y axis label.
   const narrow = useMediaQuery(theme.breakpoints.down("md"));
+  // The highlight runs both ways, as on the WGS page. plotHover is the sample under the cursor,
+  // which rings its group's chip or marks its value on the colorbar; legendHover is the chip under
+  // the cursor, handed back to the plot so its group swells. Kept apart so neither can feed the
+  // other back into itself.
+  const [plotHover, setPlotHover] = useState<ExplorerRow | null>(null);
+  const [legendHover, setLegendHover] = useState<string | null>(null);
+
+  // From the points on the plot, which are the visible ones, so hovering the chip of a hidden
+  // group highlights nothing.
+  const hoveredPoints =
+    legendHover && grouped ? points.filter((point) => point.metaData!.group === legendHover) : undefined;
 
   return (
     <Paper
@@ -136,13 +167,7 @@ const ExplorerPlot = ({
       </Stack>
 
       <Stack gap={1} sx={{ px: 1.5, pt: 1.25, pb: 1.5, flex: 1, minHeight: 0 }}>
-        <PlotLegend
-          groups={groups}
-          hidden={hidden}
-          onToggle={onToggle}
-          highlighted={highlighted}
-          onHover={onLegendHover}
-        />
+        {renderLegend({ hovered: plotHover, legendHover, onLegendHover: setLegendHover })}
         <Box flex={1} minHeight={0} position="relative">
           <ScatterPlot
             key={viewKey}
@@ -153,8 +178,8 @@ const ExplorerPlot = ({
             leftAxisLabel={yLabel}
             tooltipBody={(point) => <TooltipBody row={point.metaData!.row} />}
             hoveredPoints={hoveredPoints}
-            onHoveredPointChange={(point) => onPlotHover(point?.metaData?.group ?? null)}
-            groupPointsAnchor="group"
+            onHoveredPointChange={(point) => setPlotHover(point?.metaData?.row ?? null)}
+            groupPointsAnchor={grouped ? "group" : undefined}
             controlsPosition={narrow ? "right" : "left"}
             miniMap={MINIMAP}
             downloadButton

@@ -15,6 +15,9 @@ query fetchDimensionalityReductionExplorer {
     visit
     condition
     protocol
+    tss_enrichment_score
+    frip_score
+    reads_mapped
     site
     status
     sex

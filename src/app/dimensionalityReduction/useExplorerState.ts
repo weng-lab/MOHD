@@ -1,4 +1,5 @@
 import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import { normalize, parseState, serializeState, type ExplorerState } from "./params";
 
 /**
@@ -9,7 +10,11 @@ import { normalize, parseState, serializeState, type ExplorerState } from "./par
  */
 export const useExplorerState = () => {
   const searchParams = useSearchParams();
-  const state = parseState(searchParams);
+  const search = searchParams.toString();
+  // Parsed once per URL rather than on every render. Everything the explorer derives - the points,
+  // the domains - sits in a memo keyed on this object among others, so a fresh one each render
+  // would rebuild all of it for nothing.
+  const state = useMemo(() => parseState(new URLSearchParams(search)), [search]);
 
   const setState = (next: ExplorerState) => {
     const search = serializeState(normalize(next));

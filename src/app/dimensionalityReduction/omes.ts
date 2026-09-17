@@ -24,15 +24,20 @@ export type OmeCapabilities = {
   umap: boolean;
   /** Whether protocol varies across the ome's samples. Everywhere else it is one value, not worth a color. */
   protocol: boolean;
+  /**
+   * Whether the ome has library quality metrics to color by - see metrics.ts. WGBS's metadata type
+   * has the same three fields, but every one of them is null.
+   */
+  metrics: boolean;
 };
 
 export const OME_CAPABILITIES: Record<ExplorerOme, OmeCapabilities> = {
-  ATAC: { umap: true, protocol: true },
-  RNA: { umap: true, protocol: false },
-  WGBS: { umap: true, protocol: false },
-  lipidomics: { umap: false, protocol: false },
-  metabolomics: { umap: false, protocol: false },
-  metallomics: { umap: false, protocol: false },
+  ATAC: { umap: true, protocol: true, metrics: true },
+  RNA: { umap: true, protocol: false, metrics: false },
+  WGBS: { umap: true, protocol: false, metrics: false },
+  lipidomics: { umap: false, protocol: false, metrics: false },
+  metabolomics: { umap: false, protocol: false, metrics: false },
+  metallomics: { umap: false, protocol: false, metrics: false },
 };
 
 /** Case-insensitive, so a hand-typed ?ome=rna still finds RNA. */

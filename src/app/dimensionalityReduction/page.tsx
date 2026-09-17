@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { query } from "@/common/apollo/client";
 import DimensionalityReductionExplorer from "./DimensionalityReductionExplorer";
 import ExplorerSkeleton from "./ExplorerSkeleton";
-import { PC_COUNT } from "./omes";
+import { OME_CAPABILITIES, PC_COUNT, type ExplorerOme } from "./omes";
 import { GET_DIMENSIONALITY_REDUCTION } from "./queries";
 import type { ExplorerData, ExplorerRow, OmeData } from "./types";
 
@@ -21,6 +21,9 @@ type MetadataRow = {
   status?: string | null;
   sex?: string | null;
   age_bin?: string | null;
+  tss_enrichment_score?: number | null;
+  frip_score?: number | null;
+  reads_mapped?: number | null;
   umap_x?: number | null;
   umap_y?: number | null;
 } & Partial<Record<(typeof PC_KEYS)[number], number | null>>;
@@ -42,7 +45,12 @@ const COORDINATE_DECIMALS = 5;
 
 const round = (value: number) => Number(value.toFixed(COORDINATE_DECIMALS));
 
-const toOmeData = (rows: readonly MetadataRow[] = [], variance: readonly VarianceRow[] = []): OmeData => {
+const toOmeData = (
+  ome: ExplorerOme,
+  rows: readonly MetadataRow[] = [],
+  variance: readonly VarianceRow[] = []
+): OmeData => {
+  const { metrics } = OME_CAPABILITIES[ome];
   // Keyed by pc rather than taken in order, so the array stays indexed by PC number - a reordered
   // or missing row from the API can't shift the rest.
   const pveByPc = new Map(variance.map(({ pc, pve }) => [pc, pve]));
@@ -70,6 +78,15 @@ const toOmeData = (rows: readonly MetadataRow[] = [], variance: readonly Varianc
       kit: row.kit ?? null,
       participant_id: row.participant_id ?? null,
       visit: row.visit ?? null,
+      // Spread in rather than set to undefined, which would still be written into the page payload
+      // for every sample on every other ome.
+      ...(metrics && {
+        metrics: {
+          tss: row.tss_enrichment_score ?? null,
+          frip: row.frip_score ?? null,
+          reads: row.reads_mapped ?? null,
+        },
+      }),
     });
   }
 
@@ -92,12 +109,12 @@ const getExplorerData = async (): Promise<ExplorerData> => {
   if (error) throw error;
 
   return {
-    ATAC: toOmeData(data?.atac_metadata, data?.atac_variance),
-    RNA: toOmeData(data?.rna_metadata, data?.rna_variance),
-    WGBS: toOmeData(data?.wgbs_metadata, data?.wgbs_variance),
-    lipidomics: toOmeData(data?.lipidomics_metadata, data?.lipidomics_variance),
-    metabolomics: toOmeData(data?.metabolomics_metadata, data?.metabolomics_variance),
-    metallomics: toOmeData(data?.metallomics_metadata, data?.metallomics_variance),
+    ATAC: toOmeData("ATAC", data?.atac_metadata, data?.atac_variance),
+    RNA: toOmeData("RNA", data?.rna_metadata, data?.rna_variance),
+    WGBS: toOmeData("WGBS", data?.wgbs_metadata, data?.wgbs_variance),
+    lipidomics: toOmeData("lipidomics", data?.lipidomics_metadata, data?.lipidomics_variance),
+    metabolomics: toOmeData("metabolomics", data?.metabolomics_metadata, data?.metabolomics_variance),
+    metallomics: toOmeData("metallomics", data?.metallomics_metadata, data?.metallomics_variance),
   };
 };
 

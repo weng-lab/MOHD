@@ -7,6 +7,7 @@ import {
   Divider,
   FormControlLabel,
   FormLabel,
+  ListSubheader,
   MenuItem,
   Paper,
   Stack,
@@ -21,7 +22,7 @@ import {
 import type { ReactNode } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
 import { PANEL_SX } from "./ExplorerLayout";
-import { fieldsFor, labelOf, type Field } from "./fields";
+import { colorOptionsFor, labelOf, type ColorBy, type Field } from "./fields";
 import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "./omes";
 import { toggleHidden, type ExplorerState } from "./params";
 
@@ -60,6 +61,16 @@ const filterButtonSx: SxProps<Theme> = {
     textDecoration: "none",
   },
 };
+
+/**
+ * A heading inside a select's menu. Select stamps role="option" and aria-selected onto every child
+ * it is given, which would announce a ListSubheader as one more choice; taking only `children`
+ * drops those, and aria-hidden keeps the heading out of the options a screen reader counts - the
+ * choices beneath it name themselves. The static flag is what MenuList reads to step past it with
+ * the arrow keys.
+ */
+const MenuHeading = ({ children }: { children: ReactNode }) => <ListSubheader aria-hidden>{children}</ListSubheader>;
+MenuHeading.muiSkipListHighlight = true;
 
 const Section = ({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) => (
   <Stack gap={1}>
@@ -118,7 +129,7 @@ export type ControlPanelProps = {
 const ControlPanel = ({ state, onChange, pve, options, hasQc }: ControlPanelProps) => {
   const { ome, method, x, y, color, hideQc } = state;
   const { umap } = OME_CAPABILITIES[ome];
-  const fields = fieldsFor(ome);
+  const { fields, metrics } = colorOptionsFor(ome);
   const filtered = hideQc || Object.values(state.hidden).some((values) => values.length > 0);
 
   const update = (patch: Partial<ExplorerState>) => onChange({ ...state, ...patch });
@@ -188,10 +199,17 @@ const ControlPanel = ({ state, onChange, pve, options, hasQc }: ControlPanelProp
             fullWidth
             label="Color by"
             value={color}
-            onChange={(event) => update({ color: event.target.value as Field })}
+            onChange={(event) => update({ color: event.target.value as ColorBy })}
             slotProps={SELECT_SLOT_PROPS}
           >
             {fields.map(({ key, label }) => (
+              <MenuItem key={key} value={key}>
+                {label}
+              </MenuItem>
+            ))}
+            {/* Headed apart from the fields: these color along a ramp, and have no filters below. */}
+            {metrics.length > 0 && <MenuHeading>{getOmeLabel(ome)} quality</MenuHeading>}
+            {metrics.map(({ key, label }) => (
               <MenuItem key={key} value={key}>
                 {label}
               </MenuItem>
