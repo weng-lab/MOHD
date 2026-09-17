@@ -1,7 +1,7 @@
 import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { useState } from "react";
 import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor } from "@/common/colors";
-import { getAgeBin, age_bin_color_map } from "@/common/ageBins";
+import { age_bin_color_map, AGE_UNKNOWN_LABEL } from "@/common/ageBins";
 import { Typography, Stack, SelectChangeEvent, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
@@ -13,9 +13,7 @@ export type DimensionalityReductionMeta = {
   status: string;
   site: string;
   protocol?: string;
-  /** Sensitive - only ever surface this as a bin via getAgeBin(), never the raw value. */
-  age_at_enrollment?: number | null;
-  /** Precomputed on the server via getAgeBin(); preferred over age_at_enrollment when present. */
+  /** Binned by the API - raw age is never returned to the client. */
   age_bin?: string | null;
 };
 
@@ -117,7 +115,7 @@ const DimensionalityScatterPlot = <
             } else if (colorScheme === "protocol") {
               return getCategoricalColor("protocol", getCategoricalLabel("protocol", x.protocol));
             } else if (colorScheme === "age") {
-              return age_bin_color_map[x.age_bin ?? getAgeBin(x.age_at_enrollment)];
+              return age_bin_color_map[x.age_bin ?? AGE_UNKNOWN_LABEL];
             }
           } else return "#CCCCCC";
         };

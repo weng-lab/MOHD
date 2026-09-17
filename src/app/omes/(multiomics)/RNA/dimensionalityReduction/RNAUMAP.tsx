@@ -29,6 +29,7 @@ const RNAUMAP = <S extends true, Z extends boolean | undefined>({
       leftAxisLabel="UMAP-2"
       bottomAxisLabel="UMAP-1"
       downloadFileName="RNA_dimesionality_reduction_UMAP"
+      hasAge
     />
   );
 };

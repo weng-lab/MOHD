@@ -39,6 +39,7 @@ const ATACPCA = <S extends true, Z extends boolean | undefined>({
       bottomAxisLabel={formatPcLabel(xField, pve)}
       downloadFileName="ATAC_dimesionality_reduction_PCA"
       hasProtocol
+      hasAge
       axisSelectors={
         <Stack direction="row" gap={1}>
           <PcAxisSelect label="X Axis" value={xField} onChange={setXField} disabledValue={yField} />

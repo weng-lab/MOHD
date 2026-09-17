@@ -10,7 +10,7 @@ query fetchLipidomicsDimensionalityReduction {
     sex
     site
     status
-    age_at_enrollment
+    age_bin
     tube
     visit
     participant_id
@@ -35,7 +35,7 @@ export type LipidomicsDimensionalityReductionSample = {
   sex: string;
   site: string;
   status: string;
-  age_at_enrollment?: number | null;
+  age_bin?: string | null;
   tube: string;
   visit: string;
   participant_id: string;
@@ -75,7 +75,7 @@ export const useLipidomicsDimensionalityReduction = ({
     sex: row.sex ?? "",
     site: row.site ?? "",
     status: row.status ?? "",
-    age_at_enrollment: row.age_at_enrollment,
+    age_bin: row.age_bin,
     tube: row.tube ?? "",
     visit: row.visit ?? "",
     participant_id: row.participant_id ?? "",

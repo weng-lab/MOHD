@@ -30,6 +30,7 @@ const ATACUMAP = <S extends true, Z extends boolean | undefined>({
       bottomAxisLabel="UMAP-1"
       downloadFileName="ATAC_dimesionality_reduction_UMAP"
       hasProtocol
+      hasAge
     />
   );
 };

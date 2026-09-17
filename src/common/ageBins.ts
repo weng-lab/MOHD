@@ -1,10 +1,3 @@
-/**
- * age_at_enrollment is sensitive. Raw values must never be rendered in the UI -
- * always resolve through getAgeBin() first, which collapses age into 10-year
- * bands, top-coded at 80+. Matches the binning WGS ancestry PCA uses, so age
- * reads the same way on every dimensionality reduction plot.
- */
-
 const AGE_BIN_EDGES = [10, 20, 30, 40, 50, 60, 70, 80];
 
 export const AGE_BIN_LABELS = [
@@ -14,12 +7,6 @@ export const AGE_BIN_LABELS = [
 ];
 
 export const AGE_UNKNOWN_LABEL = "unknown";
-
-export function getAgeBin(age: number | null | undefined): string {
-  if (age === null || age === undefined || Number.isNaN(age)) return AGE_UNKNOWN_LABEL;
-  const index = AGE_BIN_EDGES.findIndex((edge) => age < edge);
-  return index === -1 ? AGE_BIN_LABELS[AGE_BIN_LABELS.length - 1] : AGE_BIN_LABELS[index];
-}
 
 // Classic rainbow/jet-style spectral ramp (young -> old): blue -> teal -> green -> yellow -> orange -> red.
 const AGE_GRADIENT_STOPS: [number, number, number][] = [
