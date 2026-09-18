@@ -21,10 +21,13 @@ import {
 } from "@mui/material";
 import type { ReactNode } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
+import { EXPRESSION_COLOR } from "./expression";
 import { PANEL_SX } from "./ExplorerLayout";
-import { colorOptionsFor, labelOf, type ColorBy, type Field } from "./fields";
+import { colorOptionsFor, labelOf, type ColorBy, type Field, type FieldDefinition } from "./fields";
+import GeneSearch from "./GeneSearch";
 import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "./omes";
 import { toggleHidden, type ExplorerState } from "./params";
+import { NO_SHAPE, type ShapeBy } from "./shapes";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
 
@@ -122,14 +125,22 @@ export type ControlPanelProps = {
   pve: readonly (number | null)[];
   /** Each offered field's values on the current ome, in display order. */
   options: Partial<Record<Field, string[]>>;
+  /** The fields this ome's data can be shaped by - fewer than it can be colored by, see shapes.ts. */
+  shapeOptions: FieldDefinition[];
+  /**
+   * The gene currently colouring the plot, named as the API names it once that is known. The search
+   * below owns its own input and clears it on every submission, so without this a link opened with
+   * a gene already set would leave the panel looking as though none was.
+   */
+  geneLabel: string | null;
   /** Whether the current ome has QC samples, and so whether their switch is shown. */
   hasQc: boolean;
 };
 
-const ControlPanel = ({ state, onChange, pve, options, hasQc }: ControlPanelProps) => {
-  const { ome, method, x, y, color, hideQc } = state;
+const ControlPanel = ({ state, onChange, pve, options, shapeOptions, geneLabel, hasQc }: ControlPanelProps) => {
+  const { ome, method, x, y, color, shape, hideQc } = state;
   const { umap } = OME_CAPABILITIES[ome];
-  const { fields, metrics } = colorOptionsFor(ome);
+  const { fields, metrics, expression } = colorOptionsFor(ome);
   const filtered = hideQc || Object.values(state.hidden).some((values) => values.length > 0);
 
   const update = (patch: Partial<ExplorerState>) => onChange({ ...state, ...patch });
@@ -192,7 +203,7 @@ const ControlPanel = ({ state, onChange, pve, options, hasQc }: ControlPanelProp
           )}
         </Section>
 
-        <Section title="Color">
+        <Section title="Encoding">
           <TextField
             select
             size="small"
@@ -207,6 +218,11 @@ const ControlPanel = ({ state, onChange, pve, options, hasQc }: ControlPanelProp
                 {label}
               </MenuItem>
             ))}
+            {/*
+              Unheaded, unlike the metrics below: a heading earns its row by grouping several
+              choices, and this is one. What it names itself is enough to say it is not a field.
+            */}
+            {expression && <MenuItem value={EXPRESSION_COLOR}>Gene expression</MenuItem>}
             {/* Headed apart from the fields: these color along a ramp, and have no filters below. */}
             {metrics.length > 0 && <MenuHeading>{getOmeLabel(ome)} quality</MenuHeading>}
             {metrics.map(({ key, label }) => (
@@ -214,6 +230,41 @@ const ControlPanel = ({ state, onChange, pve, options, hasQc }: ControlPanelProp
                 {label}
               </MenuItem>
             ))}
+          </TextField>
+          {color === EXPRESSION_COLOR && (
+            <Box>
+              <GeneSearch onSelect={(gene) => update({ gene })} />
+              {geneLabel && (
+                <Typography variant="caption" color="text.secondary" display="block" mt={0.5}>
+                  Selected: {geneLabel}
+                </Typography>
+              )}
+            </Box>
+          )}
+          <TextField
+            select
+            size="small"
+            fullWidth
+            label="Shape by"
+            value={shape}
+            onChange={(event) => update({ shape: event.target.value as ShapeBy })}
+            slotProps={SELECT_SLOT_PROPS}
+          >
+            <MenuItem value={NO_SHAPE}>None</MenuItem>
+            {/*
+              A field this ome cannot shape by is listed and disabled rather than left out, with
+              the reason on it. The absence would otherwise be the reader's to explain - age is
+              the conspicuous one - and this answers it where the question gets asked rather than
+              in helper text that is noise on every other visit.
+            */}
+            {fields.map(({ key, label }) => {
+              const shapeable = shapeOptions.some((option) => option.key === key);
+              return (
+                <MenuItem key={key} value={key} disabled={!shapeable}>
+                  {shapeable ? label : `${label} — too many values to shape by`}
+                </MenuItem>
+              );
+            })}
           </TextField>
         </Section>
 

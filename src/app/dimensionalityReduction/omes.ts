@@ -29,15 +29,21 @@ export type OmeCapabilities = {
    * has the same three fields, but every one of them is null.
    */
   metrics: boolean;
+  /**
+   * Whether a sample's quantification of one molecule can color the plot - see expression.ts. RNA
+   * alone for now: the mass-spec omes quantify their own molecules, and coloring by those is the
+   * same idea against a different query.
+   */
+  expression: boolean;
 };
 
 export const OME_CAPABILITIES: Record<ExplorerOme, OmeCapabilities> = {
-  ATAC: { umap: true, protocol: true, metrics: true },
-  RNA: { umap: true, protocol: false, metrics: false },
-  WGBS: { umap: true, protocol: false, metrics: false },
-  lipidomics: { umap: false, protocol: false, metrics: false },
-  metabolomics: { umap: false, protocol: false, metrics: false },
-  metallomics: { umap: false, protocol: false, metrics: false },
+  ATAC: { umap: true, protocol: true, metrics: true, expression: false },
+  RNA: { umap: true, protocol: false, metrics: false, expression: true },
+  WGBS: { umap: true, protocol: false, metrics: false, expression: false },
+  lipidomics: { umap: false, protocol: false, metrics: false, expression: false },
+  metabolomics: { umap: false, protocol: false, metrics: false, expression: false },
+  metallomics: { umap: false, protocol: false, metrics: false, expression: false },
 };
 
 /** Case-insensitive, so a hand-typed ?ome=rna still finds RNA. */

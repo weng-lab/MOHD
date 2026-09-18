@@ -1,6 +1,8 @@
 "use client";
 
 import { Box, Chip, Stack, Tooltip, Typography } from "@mui/material";
+import type { PointShape } from "@weng-lab/visualization";
+import ShapeGlyph from "./ShapeGlyph";
 
 /** One chip: a group of points the plot draws in one color. */
 export type LegendGroup = {
@@ -13,6 +15,11 @@ export type LegendGroup = {
   label: string;
   color: string;
   count: number;
+  /**
+   * The shape the plot draws this group as, where it is also shaped by the field it is colored by.
+   * Undefined on a plot that encodes nothing in shape, whose chips keep their plain dot.
+   */
+  shape?: PointShape;
   /**
    * For a group that folds small categories together to protect participant privacy, the
    * categories folded in - named on hover, never counted. Undefined on every other group.
@@ -33,18 +40,29 @@ export type PlotLegendProps = {
   highlighted?: string | null;
   /** Fired as the cursor enters and leaves a chip, so the plot can highlight that group. */
   onHover?: (value: string | null) => void;
+  /**
+   * The field these chips stand for. Worth showing only where a plot carries more than one of
+   * these rows, since two rows of identical chips otherwise leave the reader to work out which
+   * encoding each one explains.
+   */
+  label?: string;
 };
 
 /**
  * Clickable legend - ScatterPlot has no categorical legend of its own, so groups are toggled here
  * and the caller decides what a toggle does to its points.
  */
-const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLegendProps) => (
+const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover, label: rowLabel }: PlotLegendProps) => (
   // Natural height, no cap: the widest legend in use is nine groups (the age bands), so this wraps
   // to a few rows at most. A maxHeight clipped the last row rather than scrolling visibly, and
   // flexShrink: 0 stops the plot below it from squeezing the rows instead.
-  <Stack direction="row" flexWrap="wrap" gap={0.5} flexShrink={0}>
-    {groups.map(({ value, label, color, count, members }) => {
+  <Stack direction="row" flexWrap="wrap" alignItems="center" gap={0.5} flexShrink={0}>
+    {rowLabel && (
+      <Typography variant="caption" color="text.secondary" mr={0.25}>
+        {rowLabel}
+      </Typography>
+    )}
+    {groups.map(({ value, label, color, count, members, shape }) => {
       const off = hidden.has(value);
       const on = value === highlighted;
       const chip = (
@@ -57,16 +75,20 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLege
           variant={off ? "outlined" : "filled"}
           label={
             <Stack direction="row" alignItems="center" gap={0.75}>
-              <Box
-                sx={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: "50%",
-                  bgcolor: off ? "transparent" : color,
-                  border: `2px solid ${color}`,
-                  flexShrink: 0,
-                }}
-              />
+              {shape ? (
+                <ShapeGlyph shape={shape} color={color} hollow={off} size={13} />
+              ) : (
+                <Box
+                  sx={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    bgcolor: off ? "transparent" : color,
+                    border: `2px solid ${color}`,
+                    flexShrink: 0,
+                  }}
+                />
+              )}
               <Typography variant="caption" sx={{ textDecoration: off ? "line-through" : "none" }}>
                 {label}
               </Typography>

@@ -4,9 +4,19 @@ import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { ScatterPlot, type Point } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
 import { CARD_SX } from "./ExplorerLayout";
-import { FIELDS, groupOf, labelOf } from "./fields";
+import { formatTpm } from "./expression";
+import { FIELDS, groupOf, labelOf, type Field } from "./fields";
 import { METRICS } from "./metrics";
 import type { ExplorerRow } from "./types";
+
+/**
+ * A chip under the cursor, in whichever of the plot's legends it sits.
+ *
+ * The field travels with the value because the plot can carry two legends at once - a field it is
+ * colored by and another it is shaped by - and "LEO" means nothing without knowing it came from the
+ * site row.
+ */
+export type LegendHover = { field: Field; value: string };
 
 export type PointMeta = {
   row: ExplorerRow;
@@ -20,6 +30,12 @@ export type PointMeta = {
    * plot, dimmed and drawn beneath the rest - see dimHidden.
    */
   shown: boolean;
+  /**
+   * The sample's TPM for the gene the plot is colored by, in the API's own units. Carried per point
+   * because it is the one thing on the hover that is not on the row: expression is fetched a gene
+   * at a time, so a row cannot hold it. Undefined whenever a gene is not what colors the plot.
+   */
+  expression?: number | null;
 };
 
 const MINIMAP = { position: { right: 50, bottom: 50 } };
@@ -43,7 +59,14 @@ const TOOLTIP_DETAILS: { label: string; value: (row: ExplorerRow) => string | nu
   })),
 ];
 
-const TooltipBody = ({ row, dimmed }: { row: ExplorerRow; dimmed: boolean }) => (
+type TooltipBodyProps = {
+  row: ExplorerRow;
+  dimmed: boolean;
+  /** The gene colouring the plot and this sample's value for it, or null when none is. */
+  expression: { gene: string; tpm: number | null } | null;
+};
+
+const TooltipBody = ({ row, dimmed, expression }: TooltipBodyProps) => (
   <Box sx={{ p: 1 }}>
     <Typography variant="body2">
       <strong>{row.sample_id}</strong>
@@ -80,6 +103,16 @@ const TooltipBody = ({ row, dimmed }: { row: ExplorerRow; dimmed: boolean }) => 
         )
       );
     })}
+    {/*
+      Last, and unlike the lines above it is shown even when there is no value: the reader put this
+      gene on the plot, so "no value" is an answer about it, where a blank line would leave the grey
+      point unexplained.
+    */}
+    {expression && (
+      <Typography variant="caption" display="block">
+        {expression.gene}: {expression.tpm === null ? "no value" : formatTpm(expression.tpm)}
+      </Typography>
+    )}
   </Box>
 );
 
@@ -113,14 +146,16 @@ export type ExplorerPlotProps = {
    */
   renderLegend: (hover: {
     hovered: ExplorerRow | null;
-    legendHover: string | null;
-    onLegendHover: (value: string | null) => void;
+    legendHover: LegendHover | null;
+    onLegendHover: (hover: LegendHover | null) => void;
   }) => ReactNode;
   /**
    * Whether points belong to groups, so that hovering one swells its whole group. Off for a
    * metric, where every point would otherwise be in the one null group.
    */
   grouped: boolean;
+  /** The gene each point's `expression` belongs to, where one colors the plot. */
+  expressionGene?: string | null;
   downloadFileName: string;
 };
 
@@ -135,6 +170,7 @@ const ExplorerPlot = ({
   yLabel,
   renderLegend,
   grouped,
+  expressionGene,
   downloadFileName,
 }: ExplorerPlotProps) => {
   // The highlight runs both ways, as on the WGS page. plotHover is the sample under the cursor,
@@ -142,12 +178,18 @@ const ExplorerPlot = ({
   // the cursor, handed back to the plot so its group swells. Kept apart so neither can feed the
   // other back into itself.
   const [plotHover, setPlotHover] = useState<ExplorerRow | null>(null);
-  const [legendHover, setLegendHover] = useState<string | null>(null);
+  const [legendHover, setLegendHover] = useState<LegendHover | null>(null);
 
   // From the points in focus rather than every point, so hovering the chip of a group that is
   // filtered out highlights nothing: its samples are on the plot, but as background.
-  const hoveredPoints =
-    legendHover && grouped ? shown.filter((point) => point.metaData!.group === legendHover) : undefined;
+  //
+  // Read off the row rather than off metaData.group, which only ever holds the group for the field
+  // the plot is colored by - a chip in the shape legend names a different field's value, and this
+  // is the same lookup for either. Not gated on `grouped`: a shape legend stands on its own, so its
+  // chips highlight even while a metric or a gene colors the points.
+  const hoveredPoints = legendHover
+    ? shown.filter((point) => groupOf(legendHover.field, point.metaData!.row) === legendHover.value)
+    : undefined;
 
   return (
     <Paper
@@ -188,7 +230,13 @@ const ExplorerPlot = ({
             {...domains}
             bottomAxisLabel={xLabel}
             leftAxisLabel={yLabel}
-            tooltipBody={(point) => <TooltipBody row={point.metaData!.row} dimmed={!point.metaData!.shown} />}
+            tooltipBody={(point) => (
+              <TooltipBody
+                row={point.metaData!.row}
+                dimmed={!point.metaData!.shown}
+                expression={expressionGene ? { gene: expressionGene, tpm: point.metaData!.expression ?? null } : null}
+              />
+            )}
             hoveredPoints={hoveredPoints}
             onHoveredPointChange={(point) => setPlotHover(point?.metaData?.row ?? null)}
             groupPointsAnchor={grouped ? "group" : undefined}

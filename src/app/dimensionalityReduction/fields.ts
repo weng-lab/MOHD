@@ -5,6 +5,7 @@
 
 import { protocol_color_map, sex_color_map, site_color_map, status_color_map } from "@/common/colors";
 import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/components/plotDimming";
+import { EXPRESSION_COLOR, type ExpressionColor } from "./expression";
 import { METRICS, isMetric, type Metric } from "./metrics";
 import { OME_CAPABILITIES, type ExplorerOme } from "./omes";
 import type { ExplorerRow } from "./types";
@@ -12,13 +13,19 @@ import type { ExplorerRow } from "./types";
 /**
  * In the order the controls list them. `key` is what a link carries (?color=age), so it names the
  * field rather than the row property behind it - see ROW_KEYS.
+ *
+ * `shapeable` is whether the field can also be encoded as point shape. Shape is an unordered
+ * encoding of few categories, which age is neither: its nine bins are more than the shape scale
+ * holds, and they are a ranked scale that only reads as categorical because we bin it for privacy.
+ * Shaping by it would throw that order away and ask the reader to tell nine glyphs apart at four
+ * pixels. Color keeps age, where a ramp carries the order.
  */
 export const FIELDS = [
-  { key: "site", label: "Site" },
-  { key: "status", label: "Status" },
-  { key: "sex", label: "Sex" },
-  { key: "age", label: "Age" },
-  { key: "protocol", label: "Protocol" },
+  { key: "site", label: "Site", shapeable: true },
+  { key: "status", label: "Status", shapeable: true },
+  { key: "sex", label: "Sex", shapeable: true },
+  { key: "age", label: "Age", shapeable: false },
+  { key: "protocol", label: "Protocol", shapeable: true },
 ] as const;
 
 export type FieldDefinition = (typeof FIELDS)[number];
@@ -31,24 +38,47 @@ export const isField = (value: string | null): value is Field => FIELDS.some(({ 
 export const fieldsFor = (ome: ExplorerOme): FieldDefinition[] =>
   FIELDS.filter(({ key }) => key !== "protocol" || OME_CAPABILITIES[ome].protocol);
 
-/** Anything the plot can be colored by: a field, or on ATAC one of its library metrics. */
-export type ColorBy = Field | Metric;
+/**
+ * Anything the plot can be colored by: a field, on ATAC one of its library metrics, and on RNA the
+ * expression of one gene.
+ */
+export type ColorBy = Field | Metric | ExpressionColor;
 
-export const isColorBy = (value: string | null): value is ColorBy => isField(value) || isMetric(value);
+export const isColorBy = (value: string | null): value is ColorBy =>
+  isField(value) || isMetric(value) || value === EXPRESSION_COLOR;
+
+/**
+ * The colorings that carry a ramp and a colorbar rather than groups and chips. What separates them
+ * from the fields is not the data type but the legend and the filters: neither has values to toggle.
+ */
+export const isContinuous = (color: ColorBy) => isMetric(color) || color === EXPRESSION_COLOR;
 
 export type ColorOptions = {
   fields: FieldDefinition[];
   /** Empty on an ome with no metrics. */
   metrics: readonly (typeof METRICS)[number][];
+  /** Whether a gene's expression is on offer. The gene itself is state, not an option - see params.ts. */
+  expression: boolean;
 };
 
 export const colorOptionsFor = (ome: ExplorerOme): ColorOptions => ({
   fields: fieldsFor(ome),
   metrics: OME_CAPABILITIES[ome].metrics ? METRICS : [],
+  expression: OME_CAPABILITIES[ome].expression,
 });
 
-/** "Site", "TSS enrichment" - the name of whatever the plot is colored by. */
+/** Whether an ome offers a coloring at all, which is what a hand-edited ?color= is held to. */
+export const offersColor = (ome: ExplorerOme, color: ColorBy) => {
+  const { fields, metrics, expression } = colorOptionsFor(ome);
+  return color === EXPRESSION_COLOR ? expression : [...fields, ...metrics].some(({ key }) => key === color);
+};
+
+/**
+ * "Site", "TSS enrichment" - the name of whatever the plot is colored by. Gene expression is named
+ * by its gene wherever one is in hand, which is the explorer's to say and not this file's.
+ */
 export const colorLabel = (ome: ExplorerOme, color: ColorBy) => {
+  if (color === EXPRESSION_COLOR) return "Gene expression";
   const { fields, metrics } = colorOptionsFor(ome);
   return [...fields, ...metrics].find(({ key }) => key === color)?.label ?? color;
 };
