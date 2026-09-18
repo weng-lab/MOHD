@@ -5,7 +5,7 @@ import { usePhenotypicalVariables } from "@/common/hooks/usePhenotypicalVariable
 import { usePhenotypicalData } from "@/common/hooks/usePhenotypicalData";
 import PlotSelector from "./charts/PlotSelector";
 import TreeSelect from "./TreeSelect";
-import { EXCLUDED_VARIABLE_NAMES, plotHeading } from "./helpers";
+import { EXCLUDED_VARIABLE_NAMES, FORCE_QUANTITATIVE_VARIABLE_NAMES, plotHeading } from "./helpers";
 
 /** The variable's category, defaulting to Categorical when the data omits one. */
 function CategoryChip({ category }: { category?: string | null }) {
@@ -21,7 +21,11 @@ function CategoryChip({ category }: { category?: string | null }) {
 
 export default function DataExplorer() {
   const { data, loading: varsLoading } = usePhenotypicalVariables();
-  const variables = (data ?? []).filter((v) => !EXCLUDED_VARIABLE_NAMES.has(v.variable_name));
+  const variables = (data ?? [])
+    .filter((v) => !EXCLUDED_VARIABLE_NAMES.has(v.variable_name))
+    .map((v) =>
+      FORCE_QUANTITATIVE_VARIABLE_NAMES.has(v.variable_name) ? { ...v, variable_category: "Quantitative" } : v
+    );
 
   const [var1Name, setVar1Name] = useState("");
 

@@ -14,7 +14,7 @@ const pages = [
   {
     title: "Clinical & Phenotypic Data",
     description:
-      "Access comprehensive omics datasets including genomic sequences, transcriptomics, proteomics, and metabolomics across 9 different molecular layers.",
+      "Visualize and explore clinical and phenotypic data — demographic, medical, lifestyle, and social factors collected via surveys, clinical assessments, and EHRs — providing context to interpret the Consortium's multi-omic measurements.",
     link: "/clinical",
     image: "/phenotypic-illustration.png",
   },
