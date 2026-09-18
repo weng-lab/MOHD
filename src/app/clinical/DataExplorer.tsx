@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Box, Chip, Stack, Typography } from "@mui/material";
 import { usePhenotypicalVariables } from "@/common/hooks/usePhenotypicalVariables";
 import { usePhenotypicalData } from "@/common/hooks/usePhenotypicalData";
+import usePlotDownload from "@/common/hooks/usePlotDownload";
+import PlotDownloadButton from "@/common/components/PlotDownloadButton";
 import PlotSelector from "./charts/PlotSelector";
 import TreeSelect from "./TreeSelect";
 import { EXCLUDED_VARIABLE_NAMES, FORCE_QUANTITATIVE_VARIABLE_NAMES, plotHeading } from "./helpers";
@@ -36,6 +38,9 @@ export default function DataExplorer() {
   const varNames = effectiveVar1 ? [effectiveVar1] : [];
   const { data: rawData, loading: dataLoading } = usePhenotypicalData(varNames, !effectiveVar1);
 
+  const { ref: plotRef, onDownloadPNG, onDownloadSVG } = usePlotDownload();
+  const showDownload = !dataLoading && (rawData?.length ?? 0) > 0;
+
   return (
     <Box sx={{ px: { xs: 3, sm: 4, md: 8, lg: 10 }, py: 4, width: "100%", overflow: "hidden" }}>
       <Typography variant="h5" fontWeight={600} mb={3}>
@@ -67,6 +72,7 @@ export default function DataExplorer() {
       </Box>
       <Box
         sx={{
+          position: "relative",
           border: "1px solid",
           borderColor: "primary.light",
           backgroundColor: "surface.light",
@@ -76,6 +82,7 @@ export default function DataExplorer() {
           width: "100%",
         }}
       >
+        {showDownload && <PlotDownloadButton onDownloadPNG={onDownloadPNG} onDownloadSVG={onDownloadSVG} />}
         <Typography variant="subtitle1" fontWeight={500} textAlign="center" mb={2}>
           {plotHeading(effectiveVar1)}
         </Typography>
@@ -89,6 +96,7 @@ export default function DataExplorer() {
           }}
         >
           <PlotSelector
+            ref={plotRef}
             var1Name={effectiveVar1}
             var1Category={selectedVar?.variable_category ?? null}
             rawData={rawData ?? []}

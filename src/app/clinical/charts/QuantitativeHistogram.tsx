@@ -1,10 +1,11 @@
 "use client";
-import { Histogram } from "@weng-lab/visualization";
+import { Histogram, type DownloadPlotHandle } from "@weng-lab/visualization";
 import { type PhenotypicalDataPoint } from "@/common/hooks/usePhenotypicalData";
 
 type Props = {
   rawData: PhenotypicalDataPoint[];
   var1Name: string;
+  ref?: React.Ref<DownloadPlotHandle>;
 };
 
 /**
@@ -19,7 +20,7 @@ function parseNumericText(text: string): number | null {
   return match ? Number(match[1]) : null;
 }
 
-export default function QuantitativeHistogram({ rawData, var1Name }: Props) {
+export default function QuantitativeHistogram({ rawData, var1Name, ref }: Props) {
   const values = rawData.flatMap((p) => {
     if (p.variable_name !== var1Name) return [];
     if (p.value_numeric != null) return [p.value_numeric];
@@ -31,10 +32,11 @@ export default function QuantitativeHistogram({ rawData, var1Name }: Props) {
 
   return (
     <Histogram
+      ref={ref}
       data={values}
       xLabel={var1Name.split(".").pop()?.replace(/_/g, " ")}
       yLabel="Count"
-      downloadFileName={`${var1Name}_histogram`}
+      downloadFileName={`${var1Name.replace(/\./g, "_")}_histogram`}
       densityLine
       animationType="slideUp"
       color="#e67e22"
