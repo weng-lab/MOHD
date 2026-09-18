@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import DataExplorer from "./DataExplorer";
+import DataExplorerSkeleton from "./DataExplorerSkeleton";
 
 export default function ClinicalDataLanding() {
   return (
@@ -68,7 +70,9 @@ export default function ClinicalDataLanding() {
           </Box>
         </Stack>
       </Box>
-      <DataExplorer />
+      <Suspense fallback={<DataExplorerSkeleton />}>
+        <DataExplorer />
+      </Suspense>
     </Box>
   );
 }
