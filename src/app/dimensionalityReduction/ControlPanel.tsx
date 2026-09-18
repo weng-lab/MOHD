@@ -41,9 +41,9 @@ const omeButtonSx: SxProps<Theme> = {
 
 /**
  * Styled like the download page's filters - outlined, dimmed when off - but inverted: every value
- * starts on and a click hides it, rather than starting off and a click narrowing to it. That makes
- * a value switched off here the same state as its chip struck through in the legend, so it is
- * struck through here too.
+ * starts on and a click fades its samples, rather than starting off and a click narrowing to it.
+ * That makes a value switched off here the same state as its chip struck through in the legend, so
+ * it is struck through here too.
  */
 const filterButtonSx: SxProps<Theme> = {
   textTransform: "none",
@@ -233,7 +233,7 @@ const ControlPanel = ({ state, onChange, pve, options, hasQc }: ControlPanelProp
           }
         >
           <Typography variant="caption" color="text.secondary">
-            Click a value to hide or show its samples. Filters carry over as you switch omes.
+            Click a value to fade its samples into the background. Filters carry over as you switch omes.
           </Typography>
           {fields.map(({ key, label }) => {
             const hidden = new Set(state.hidden[key] ?? []);
@@ -266,7 +266,7 @@ const ControlPanel = ({ state, onChange, pve, options, hasQc }: ControlPanelProp
                   onChange={(event) => update({ hideQc: !event.target.checked })}
                 />
               }
-              label={<Typography variant="body2">Show QC / reference samples</Typography>}
+              label={<Typography variant="body2">Color QC / reference samples</Typography>}
             />
           )}
         </Section>

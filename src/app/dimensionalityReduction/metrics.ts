@@ -5,7 +5,7 @@
  * rather than by group, and has no chips to toggle or values to filter by.
  */
 
-import { CONTROL_COLOR } from "@/common/colors";
+import { NEUTRAL_MID } from "@/common/components/plotDimming";
 
 /** In the order the color select lists them. `key` is what a link carries (?color=frip). */
 export const METRICS = [
@@ -91,9 +91,9 @@ export const metricPosition = (scale: MetricScale, value: number) => {
   return span > 0 ? Math.min(Math.max((value - scale.low) / span, 0), 1) : 0.5;
 };
 
-/** A value's color on the ramp. Samples with no value are grey, like every other missing group. */
+/** A value's color on the ramp. Samples with no value take the missing neutral, as they do on any other coloring. */
 export const metricColor = (scale: MetricScale | null, value: number | null): string => {
-  if (scale === null || value === null) return CONTROL_COLOR;
+  if (scale === null || value === null) return NEUTRAL_MID;
   const t = metricPosition(scale, value);
   // The stops are unevenly placed, so find the pair t falls between rather than indexing by step.
   const upper = Math.max(

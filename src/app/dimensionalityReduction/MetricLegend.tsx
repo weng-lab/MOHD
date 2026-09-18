@@ -1,13 +1,13 @@
 "use client";
 
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
-import { CONTROL_COLOR } from "@/common/colors";
+import { NEUTRAL_MID } from "@/common/components/plotDimming";
 import { CLIP_PERCENTILE, METRIC_GRADIENT, metricPosition, type MetricDefinition, type MetricScale } from "./metrics";
 
 export type MetricLegendProps = {
   metric: MetricDefinition;
   scale: MetricScale | null;
-  /** Visible samples with no value for the metric, which are drawn grey. */
+  /** Samples in focus with no value for the metric, which take the missing neutral. */
   missing: number;
   /**
    * The hovered point's value, marked on the bar - the colorbar's counterpart to the ring a chip
@@ -66,7 +66,7 @@ const MetricLegend = ({ metric: { label, format }, scale, missing, hovered }: Me
     )}
     {missing > 0 && (
       <Stack direction="row" alignItems="center" gap={0.75}>
-        <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: CONTROL_COLOR, flexShrink: 0 }} />
+        <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: NEUTRAL_MID, flexShrink: 0 }} />
         <Typography variant="caption">No value</Typography>
         <Typography variant="caption" color="text.secondary">
           {missing}

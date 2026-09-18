@@ -3,11 +3,12 @@
 import { getSharedDomains, type Point } from "@weng-lab/visualization";
 import { getOmeLabel } from "@/app/omes/omeContent";
 import PlotLegend from "@/common/components/PlotLegend";
+import { dimHidden } from "@/common/components/plotDimming";
 import ControlPanel from "./ControlPanel";
 import ExplorerLayout from "./ExplorerLayout";
 import ExplorerPlot, { type PointMeta } from "./ExplorerPlot";
 import MetricLegend from "./MetricLegend";
-import { QC_GROUP, colorLabel, colorOf, fieldsFor, groupOf, isGreyGroup } from "./fields";
+import { QC_GROUP, colorLabel, colorOf, fieldsFor, groupOf, isNeutralGroup } from "./fields";
 import { legendGroups, passesFilters, toHiddenSets, valuesOf, type Filters } from "./groups";
 import { isMetric, metricColor, metricDefinition, metricScale } from "./metrics";
 import { pcLabel } from "./omes";
@@ -50,27 +51,30 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   const paint = (row: ExplorerRow) => {
     if (isMetric(color)) {
       const value = row.metrics?.[color] ?? null;
-      return { group: null, fill: metricColor(scale, value), grey: value === null };
+      return { group: null, fill: metricColor(scale, value), neutral: value === null };
     }
     const group = groupOf(color, row);
-    return { group, fill: colorOf(color, group), grey: isGreyGroup(group) };
+    return { group, fill: colorOf(color, group), neutral: isNeutralGroup(group) };
   };
 
   const painted = rows.map((row) => ({ row, ...paint(row) }));
 
-  // Grey first, so QC samples and missing values are drawn beneath the samples they would otherwise
-  // cover; each layer keeps the API's order.
-  const points = [...painted.filter(({ grey }) => grey), ...painted.filter(({ grey }) => !grey)].map(
+  // The neutral groups first, so QC samples and missing values are drawn beneath the samples they
+  // would otherwise cover; each layer keeps the API's order.
+  const plotted = [...painted.filter(({ neutral }) => neutral), ...painted.filter(({ neutral }) => !neutral)].map(
     ({ row, group, fill }): Point<PointMeta> => {
       const [px, py] = method === "UMAP" && row.umap ? row.umap : [row.pcs[x - 1], row.pcs[y - 1]];
-      return { x: px, y: py, r: 4, color: fill, metaData: { row, group } };
+      return { x: px, y: py, r: 4, color: fill, metaData: { row, group, shown: passesFilters(row, filters) } };
     }
   );
 
-  // From every point rather than the visible ones, so filtering never rescales the axes under
-  // the points that remain.
-  const domains = points.length > 0 ? getSharedDomains(points) : undefined;
-  const visible = points.filter((point) => passesFilters(point.metaData!.row, filters));
+  // From every point rather than the ones in focus, so filtering never rescales the axes under
+  // the points that keep their color.
+  const domains = plotted.length > 0 ? getSharedDomains(plotted) : undefined;
+
+  // Filtered samples stay on the plot, pale and underneath, rather than being dropped: where a
+  // sample sits in a reduction only means anything beside the samples it was reduced with.
+  const { points, shown } = dimHidden(plotted, (point) => point.metaData!.shown);
 
   const pca = method === "PCA";
 
@@ -90,8 +94,8 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
           title={`${getOmeLabel(ome)} · ${method}`}
           subtitle={`Colored by ${colorLabel(ome, color)}${pca ? ` · PC${x} vs PC${y}` : ""}`}
           viewKey={`${ome}-${method}-${x}-${y}`}
-          points={visible}
-          total={points.length}
+          points={points}
+          shown={shown}
           domains={domains}
           xLabel={pca ? pcLabel(x, pve) : "UMAP-1"}
           yLabel={pca ? pcLabel(y, pve) : "UMAP-2"}
@@ -101,7 +105,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
               <MetricLegend
                 metric={metricDefinition(color)}
                 scale={scale}
-                missing={visible.filter(({ metaData }) => (metaData!.row.metrics?.[color] ?? null) === null).length}
+                missing={shown.filter(({ metaData }) => (metaData!.row.metrics?.[color] ?? null) === null).length}
                 hovered={hovered?.metrics?.[color] ?? null}
               />
             ) : (

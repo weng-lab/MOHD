@@ -16,7 +16,7 @@ export type ExplorerRow = {
   umap: [number, number] | null;
   /**
    * QC or reference material rather than a participant's sample. These carry no site, status,
-   * sex or age, and are plotted as one grey group - see QC_GROUP.
+   * sex or age, and are plotted as one neutral group - see QC_GROUP.
    */
   qc: boolean;
   site: string | null;

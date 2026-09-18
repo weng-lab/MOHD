@@ -9,10 +9,19 @@
  * exists it reads off the color.
  */
 
+import { NEUTRAL_DARK } from "@/common/components/plotDimming";
 import { FIELD_LABELS, FIELD_PALETTES, fallbackPalette, type ColorField, type Palette } from "./fields";
 import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";
 
-const UNKNOWN_COLOR = "#C7C7C7";
+/**
+ * The dark end of the shared neutral scale, not the light grey this used to be: filtered-out points
+ * are now drawn pale grey, and a stack of them landed on the old #C7C7C7 exactly (0.0 ΔE2000).
+ *
+ * The dark end rather than the middle one because the privacy bin's slate is already there, 7
+ * ΔE2000 away, and the two share the reported race/ethnicity legend. Moving the bin instead would
+ * walk back the reason it is slate at all - see PRIVACY_BIN_COLOR.
+ */
+const UNKNOWN_COLOR = NEUTRAL_DARK;
 
 /** Sequential ramp (YlOrBr-like), interpolated for however many bands exist. */
 const RAMP: [number, number, number][] = [

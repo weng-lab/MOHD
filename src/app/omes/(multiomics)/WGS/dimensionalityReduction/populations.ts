@@ -10,6 +10,8 @@
  * cannot be colored by them.
  */
 
+import { NEUTRAL_MID } from "@/common/components/plotDimming";
+
 /** 1000G+HGDP super populations. */
 export const SUPERPOP_LABELS: Record<string, string> = {
   AFR: "African",
@@ -90,6 +92,11 @@ export const SUPERPOP_COLORS: Record<string, string> = {
  * family as the MOHD legend's "Unknown" and its privacy bin, because all three
  * mean "no named group here" and nothing is implied by reading them alike. They
  * never share a legend, so only the cross-plot resemblance is in question.
+ *
+ * It takes the middle step of the shared neutral scale rather than a grey of its
+ * own, which its old #9AA0A6 had stopped being: filtered-out points are drawn
+ * pale grey now, and a stack of them came within 12 ΔE2000 of it. From the
+ * middle step the nearest reference color is Africa's teal, 20 away.
  */
 export const GNOMAD_POP_COLORS: Record<string, string> = {
   afr: SUPERPOP_COLORS.AFR,
@@ -98,6 +105,6 @@ export const GNOMAD_POP_COLORS: Record<string, string> = {
   fin: "#0E8F7A",
   mid: SUPERPOP_COLORS.MID,
   nfe: SUPERPOP_COLORS.EUR,
-  oth: "#9AA0A6",
+  oth: NEUTRAL_MID,
   sas: SUPERPOP_COLORS.CSA,
 };

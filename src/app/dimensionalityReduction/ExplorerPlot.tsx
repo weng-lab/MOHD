@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Chip, Paper, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { ScatterPlot, type Point } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
 import { CARD_SX } from "./ExplorerLayout";
@@ -15,6 +15,11 @@ export type PointMeta = {
    * Null while a metric colors the plot, which has no groups.
    */
   group: string | null;
+  /**
+   * Whether the sample passes the filters, and so keeps its color. A filtered one is still on the
+   * plot, dimmed and drawn beneath the rest - see dimHidden.
+   */
+  shown: boolean;
 };
 
 const MINIMAP = { position: { right: 50, bottom: 50 } };
@@ -38,11 +43,21 @@ const TOOLTIP_DETAILS: { label: string; value: (row: ExplorerRow) => string | nu
   })),
 ];
 
-const TooltipBody = ({ row }: { row: ExplorerRow }) => (
+const TooltipBody = ({ row, dimmed }: { row: ExplorerRow; dimmed: boolean }) => (
   <Box sx={{ p: 1 }}>
     <Typography variant="body2">
       <strong>{row.sample_id}</strong>
     </Typography>
+    {/*
+      A dimmed sample says so. The plot hit-tests in draw order, so a dimmed point within a few
+      pixels of one in focus is the one the cursor finds, and without this line the reader is left
+      wondering why the colored point they aimed at named a sample they had filtered out.
+    */}
+    {dimmed && (
+      <Typography variant="caption" display="block" color="text.secondary" fontStyle="italic">
+        Hidden by the current filters
+      </Typography>
+    )}
     {/* A QC sample would read "QC / Reference" four times over. */}
     {row.qc ? (
       <Typography variant="caption" display="block">
@@ -76,10 +91,10 @@ export type ExplorerPlotProps = {
    * a different plot, not a new view of the old one.
    */
   viewKey: string;
-  /** The points that pass the filters. */
+  /** Every point on the plot, the dimmed ones first - what dimHidden returns. */
   points: Point<PointMeta>[];
-  /** Samples on the plot before filtering. */
-  total: number;
+  /** The subset that passes the filters and keeps its color, in the order it came in. */
+  shown: Point<PointMeta>[];
   domains?: { xDomain: [number, number]; yDomain: [number, number] };
   xLabel: string;
   yLabel: string;
@@ -114,7 +129,7 @@ const ExplorerPlot = ({
   subtitle,
   viewKey,
   points,
-  total,
+  shown,
   domains,
   xLabel,
   yLabel,
@@ -122,9 +137,6 @@ const ExplorerPlot = ({
   grouped,
   downloadFileName,
 }: ExplorerPlotProps) => {
-  const theme = useTheme();
-  // Below md the plot is too narrow for controls on the left not to cover the y axis label.
-  const narrow = useMediaQuery(theme.breakpoints.down("md"));
   // The highlight runs both ways, as on the WGS page. plotHover is the sample under the cursor,
   // which rings its group's chip or marks its value on the colorbar; legendHover is the chip under
   // the cursor, handed back to the plot so its group swells. Kept apart so neither can feed the
@@ -132,10 +144,10 @@ const ExplorerPlot = ({
   const [plotHover, setPlotHover] = useState<ExplorerRow | null>(null);
   const [legendHover, setLegendHover] = useState<string | null>(null);
 
-  // From the points on the plot, which are the visible ones, so hovering the chip of a hidden
-  // group highlights nothing.
+  // From the points in focus rather than every point, so hovering the chip of a group that is
+  // filtered out highlights nothing: its samples are on the plot, but as background.
   const hoveredPoints =
-    legendHover && grouped ? points.filter((point) => point.metaData!.group === legendHover) : undefined;
+    legendHover && grouped ? shown.filter((point) => point.metaData!.group === legendHover) : undefined;
 
   return (
     <Paper
@@ -161,7 +173,7 @@ const ExplorerPlot = ({
           size="small"
           // Fixed locale: this renders on the server too, and the browser's own locale would
           // separate the thousands differently and fail hydration.
-          label={`${points.length.toLocaleString("en-US")} / ${total.toLocaleString("en-US")} samples`}
+          label={`${shown.length.toLocaleString("en-US")} / ${points.length.toLocaleString("en-US")} samples`}
           sx={{ flexShrink: 0 }}
         />
       </Stack>
@@ -176,23 +188,29 @@ const ExplorerPlot = ({
             {...domains}
             bottomAxisLabel={xLabel}
             leftAxisLabel={yLabel}
-            tooltipBody={(point) => <TooltipBody row={point.metaData!.row} />}
+            tooltipBody={(point) => <TooltipBody row={point.metaData!.row} dimmed={!point.metaData!.shown} />}
             hoveredPoints={hoveredPoints}
             onHoveredPointChange={(point) => setPlotHover(point?.metaData?.row ?? null)}
             groupPointsAnchor={grouped ? "group" : undefined}
-            controlsPosition={narrow ? "right" : "left"}
+            controlsPosition={"right"}
             miniMap={MINIMAP}
             downloadButton
             downloadFileName={downloadFileName}
           />
-          {points.length === 0 && (
+          {shown.length === 0 && (
             <Stack
               position="absolute"
               alignItems="center"
               justifyContent="center"
               sx={{ inset: 0, pointerEvents: "none" }}
             >
-              <Typography color="text.secondary">No samples match the current filters</Typography>
+              {/* Backed, because the dimmed samples are still drawn underneath this message. */}
+              <Typography
+                color="text.secondary"
+                sx={{ px: 2, py: 1, borderRadius: 1, bgcolor: "background.paper", boxShadow: 1 }}
+              >
+                {points.length === 0 ? "No samples to plot" : "No samples match the current filters"}
+              </Typography>
             </Stack>
           )}
         </Box>

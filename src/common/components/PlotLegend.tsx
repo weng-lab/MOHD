@@ -22,7 +22,11 @@ export type LegendGroup = {
 
 export type PlotLegendProps = {
   groups: LegendGroup[];
-  /** Group values currently hidden from the plot. */
+  /**
+   * Group values currently filtered out. What that does to the points is the caller's to decide:
+   * an embedding fades them into the background rather than dropping them, since a point's place
+   * only means anything beside the rest - see dimHidden in plotDimming.
+   */
   hidden: ReadonlySet<string>;
   onToggle: (value: string) => void;
   /** Group to ring, whichever side it came from: the plot's cursor or a chip's own hover. */
@@ -33,7 +37,7 @@ export type PlotLegendProps = {
 
 /**
  * Clickable legend - ScatterPlot has no categorical legend of its own, so groups are toggled here
- * and filtered out of pointData before it reaches the plot.
+ * and the caller decides what a toggle does to its points.
  */
 const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover }: PlotLegendProps) => (
   // Natural height, no cap: the widest legend in use is nine groups (the age bands), so this wraps

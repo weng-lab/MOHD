@@ -3,7 +3,8 @@
  * named, ordered and colored.
  */
 
-import { CONTROL_COLOR, protocol_color_map, sex_color_map, site_color_map, status_color_map } from "@/common/colors";
+import { protocol_color_map, sex_color_map, site_color_map, status_color_map } from "@/common/colors";
+import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/components/plotDimming";
 import { METRICS, isMetric, type Metric } from "./metrics";
 import { OME_CAPABILITIES, type ExplorerOme } from "./omes";
 import type { ExplorerRow } from "./types";
@@ -66,19 +67,24 @@ const ROW_KEYS = {
  * They are not a participant's samples, so they have no site, status, sex or age to be grouped
  * by. Spreading them across a "Missing" on one legend and an "Experimental Control" on another -
  * which also reads too much like the real "control" status - would make the same samples look
- * like different ones as the coloring changes. One grey group means the same thing everywhere,
- * and whether it shows is one switch rather than a filter on every field.
+ * like different ones as the coloring changes. One neutral group means the same thing everywhere,
+ * and whether it is faded is one switch rather than a filter on every field.
  */
 export const QC_GROUP = "QC / Reference";
 
 /** The group for a participant's sample with no value recorded for a field. */
 export const UNKNOWN_GROUP = "Unknown";
 
-/** Groups that are drawn grey, beneath the rest, and listed after them. */
-export const isGreyGroup = (value: string) => value === QC_GROUP || value === UNKNOWN_GROUP;
+/** Groups that take a neutral rather than a palette color, are drawn beneath the rest, and are listed after them. */
+export const isNeutralGroup = (value: string) => value === QC_GROUP || value === UNKNOWN_GROUP;
 
-export const groupOf = (field: Field, row: ExplorerRow): string =>
-  row.qc ? QC_GROUP : (row[ROW_KEYS[field]] ?? UNKNOWN_GROUP);
+export const groupOf = (field: Field, row: ExplorerRow): string => {
+  if (row.qc) return QC_GROUP;
+  const value = row[ROW_KEYS[field]];
+  // A recorded "unknown" says what no value at all says, and the app's status palette paints it a
+  // light grey that now reads as a faded-out point. Both go to the one group.
+  return !value || value.toLowerCase() === UNKNOWN_GROUP.toLowerCase() ? UNKNOWN_GROUP : value;
+};
 
 /** The bins the API's age_bin takes, youngest first. */
 export const AGE_BINS = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"];
@@ -114,17 +120,30 @@ const PALETTES: Record<Field, Record<string, string>> = {
   protocol: protocol_color_map,
 };
 
-/** For a value no palette knows yet, a site added in a later release say. Dark, so it cannot pass for grey. */
+/**
+ * For a value no palette knows yet, a site added in a later release say. Blue-grey rather than grey,
+ * so it cannot pass for a faded point - though at ~14 ΔE2000 from the neutral below it is the one
+ * color on the page that does not quite clear the ~15 kept everywhere else. Nothing reaches it
+ * today; move it off the dark end rather than widen it if a value ever does.
+ */
 const UNMAPPED_COLOR = "#37474F";
 
-export const colorOf = (field: Field, value: string): string =>
-  isGreyGroup(value) ? CONTROL_COLOR : (PALETTES[field][value] ?? UNMAPPED_COLOR);
+/**
+ * The two neutral groups take the two steps of the shared grey scale - a missing value the lighter,
+ * a sample that is not a participant's the darker - so that neither can be mistaken for the other
+ * or for a point the filters have faded out.
+ */
+export const colorOf = (field: Field, value: string): string => {
+  if (value === QC_GROUP) return NEUTRAL_DARK;
+  if (value === UNKNOWN_GROUP) return NEUTRAL_MID;
+  return PALETTES[field][value] ?? UNMAPPED_COLOR;
+};
 
 const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 /** A value as the controls and legend show it. Display only: the raw value stays the group's identity. */
 export const labelOf = (field: Field, value: string): string => {
-  if (isGreyGroup(value)) return value;
+  if (isNeutralGroup(value)) return value;
   switch (field) {
     case "status":
     case "sex":
@@ -137,7 +156,7 @@ export const labelOf = (field: Field, value: string): string => {
 };
 
 /**
- * Distinct values in display order: age by band, everything else alphabetically, the grey groups
+ * Distinct values in display order: age by band, everything else alphabetically, the neutral groups
  * last. Never by count - a value then holds its place as you move between omes.
  */
 export const sortValues = (field: Field, values: Iterable<string>): string[] => {
@@ -146,6 +165,6 @@ export const sortValues = (field: Field, values: Iterable<string>): string[] => 
     return field === "age" && index !== -1 ? index : AGE_BINS.length;
   };
   return [...new Set(values)].sort(
-    (a, b) => Number(isGreyGroup(a)) - Number(isGreyGroup(b)) || band(a) - band(b) || a.localeCompare(b)
+    (a, b) => Number(isNeutralGroup(a)) - Number(isNeutralGroup(b)) || band(a) - band(b) || a.localeCompare(b)
   );
 };

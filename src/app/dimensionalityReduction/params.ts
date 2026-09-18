@@ -9,7 +9,7 @@
  *   method  PCA | UMAP
  *   x, y    principal component on each axis, 1-10
  *   color   site | status | sex | age | protocol, and on ATAC tss | frip | reads
- *   hide    repeated; "field:value" hides one value, "qc" hides QC samples
+ *   hide    repeated; "field:value" fades one value's samples, "qc" fades the QC ones
  *           e.g. ?hide=site:LEO&hide=age:80%2B&hide=qc
  */
 
@@ -28,7 +28,7 @@ export type ExplorerState = {
    * value exists - hide a site and it stays hidden as you move between omes.
    */
   hidden: Partial<Record<Field, string[]>>;
-  /** QC and reference samples show by default, greyed. */
+  /** QC and reference samples keep their own color by default, rather than being faded out. */
   hideQc: boolean;
 };
 
