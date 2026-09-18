@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Button, Menu, MenuItem } from "@mui/material";
+import { Button, Menu, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 
 type Props = {
@@ -8,22 +8,29 @@ type Props = {
   onDownloadSVG: () => void | Promise<void>;
 };
 
-/** Download button for the top-right corner of a plot box, offering PNG/SVG export. */
+/**
+ * Download button for the plot box: top-right and full-size on larger screens, shrunk down to
+ * the bottom-left on mobile so it doesn't overlap the plot heading above.
+ */
 export default function PlotDownloadButton({ onDownloadPNG, onDownloadSVG }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <>
       <Button
-        size="medium"
+        size={isMobile ? "small" : "medium"}
         variant="outlined"
         endIcon={<DownloadIcon />}
         onClick={(e) => setAnchorEl(e.currentTarget)}
         sx={{
           position: "absolute",
-          top: 8,
-          right: 8,
           zIndex: 1,
+          top: { xs: "auto", sm: 8 },
+          bottom: { xs: 8, sm: "auto" },
+          left: { xs: 8, sm: "auto" },
+          right: { xs: "auto", sm: 8 },
         }}
       >
         Download
