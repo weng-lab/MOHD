@@ -84,7 +84,7 @@ export default function DataExplorer() {
         }}
       >
         <Typography sx={{ color: "text.secondary" }}>SELECT</Typography>
-        <Stack spacing={1} mt={2} sx={{ maxWidth: { md: "50%" } }}>
+        <Stack spacing={1} mt={2} sx={{ maxWidth: "100%" }}>
           <TreeSelect
             variables={variables}
             value={effectiveVar1}
