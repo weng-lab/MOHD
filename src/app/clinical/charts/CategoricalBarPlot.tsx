@@ -22,14 +22,17 @@ export default function CategoricalBarPlot({ rawData, var1Name, ref }: Props) {
 
   const barData: BarData<{ count: number }>[] = Array.from(counts.entries())
     .sort(([, a], [, b]) => b - a)
-    .map(([label, count], i) => ({
-      id: i.toString(),
-      value: count,
-      label: count.toString(),
-      category: label.replace(/_/g, " "),
-      color: BAR_PLOT_COLORS[i % BAR_PLOT_COLORS.length],
-      metadata: { count },
-    }));
+    .map(([label, count], i) => {
+      const category = label.replace(/_/g, " ");
+      return {
+        id: i.toString(),
+        value: count,
+        label: count.toString(),
+        category: isMobile && category.length > 8 ? `${category.slice(0, 8)}…` : category,
+        color: BAR_PLOT_COLORS[i % BAR_PLOT_COLORS.length],
+        metadata: { count },
+      };
+    });
 
   if (barData.length === 0) return null;
 
