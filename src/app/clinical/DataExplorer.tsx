@@ -102,7 +102,9 @@ export default function DataExplorer() {
           borderColor: "primary.light",
           backgroundColor: "surface.light",
           borderRadius: 1,
-          p: 3,
+          pt: 3,
+          px: 3,
+          pb: { xs: 6, sm: 7 },
           overflow: "hidden",
           width: "100%",
         }}

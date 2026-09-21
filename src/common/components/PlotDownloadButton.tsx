@@ -27,10 +27,8 @@ export default function PlotDownloadButton({ onDownloadPNG, onDownloadSVG }: Pro
         sx={{
           position: "absolute",
           zIndex: 1,
-          top: { xs: "auto", sm: 8 },
-          bottom: { xs: 8, sm: "auto" },
-          left: { xs: 8, sm: "auto" },
-          right: { xs: "auto", sm: 8 },
+          bottom: 8,
+          left: 8,
         }}
       >
         Download
