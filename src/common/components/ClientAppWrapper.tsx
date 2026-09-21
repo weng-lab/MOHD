@@ -60,7 +60,13 @@ export default function ClientAppWrapper({ children }: { children: React.ReactNo
     <DownloadJobsProvider>
       <Box display={"flex"} flexDirection={"column"}>
         {/* Header + content alone fill at least the viewport, so the footer starts below the fold and stays hidden until the user scrolls */}
-        <Box id="app-wrapper" display={"grid"} gridTemplateRows={"auto minmax(0, 1fr)"} minHeight={"100vh"}>
+        <Box
+          id="app-wrapper"
+          display={"grid"}
+          gridTemplateRows={"auto minmax(0, 1fr)"}
+          gridTemplateColumns={"minmax(0, 1fr)"}
+          minHeight={"100vh"}
+        >
           <Header maintenance={maintenance} />
           {/* Wrap children to enure they will all be slotted together into the 1fr row if child is a fragment */}
           <div id="main-content-wrapper">{children}</div>

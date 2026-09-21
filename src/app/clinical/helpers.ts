@@ -42,6 +42,16 @@ export const EXCLUDED_VARIABLE_NAMES = new Set([
   "social_structural_determinants.housing.other_type",
 ]);
 
+/**
+ * Variables the API reports as Categorical only because of a top-coded value (e.g. "3 or more")
+ * among otherwise-numeric responses. Forced to Quantitative on the client until the backend's
+ * classification is fixed at the source.
+ */
+export const FORCE_QUANTITATIVE_VARIABLE_NAMES = new Set([
+  "lifestyle_health_behaviors.substance_use.tobacco_nicotine_products.household_exposure.number_household_smokers",
+  "lifestyle_health_behaviors.substance_use.tobacco_nicotine_products.household_exposure.number_household_smokers_indoors",
+]);
+
 export function buildTree(variables: PhenotypicalVariable[]): TreeNode {
   const root: TreeNode = { label: "", fullPath: "", children: new Map(), isLeaf: false };
   for (const v of variables) {
