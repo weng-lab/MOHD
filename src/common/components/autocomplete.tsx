@@ -173,7 +173,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
         geneVersion={geneVersion}
         graphqlUrl="/api/screen-graphql"
         showiCREFlag={false}
-        queries={["Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
+        queries={["Ome", "Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
         staticLists={{ Ome: Omes }}
         onSearchSubmit={handleSearchSubmit}
         //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton

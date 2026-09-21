@@ -35,7 +35,7 @@
     "@weng-lab/genomebrowser": "2.0.0-beta.3",
     "@weng-lab/genomebrowser-tracks": "2.0.0-beta.3",
     "@weng-lab/genomebrowser-ui": "2.0.0-beta.2",
-    "@weng-lab/ui-components": "^3.2.4",
+    "@weng-lab/ui-components": "^3.3.1",
     "@weng-lab/visualization": "^2.4.3",
     "next": "16.2.6",
     "react": "19.2.4",
