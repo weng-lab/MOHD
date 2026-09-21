@@ -72,6 +72,10 @@ const PlotCard = <K extends ColorField>({
   // the matching chip; legendHover is the chip under the cursor, handed back to the plot so its
   // group swells. Only one can be set at a time - reaching a chip means leaving the plot - but they
   // are kept apart so neither can feed the other back into itself.
+  //
+  // Only a chip swells a group. A hovered point grows alone and names its group by ringing the
+  // chip, as on the dimensionality reduction explorer, where a point sits in a group in both a color
+  // and a shape legend and swelling either one on the plot would favour it over the other.
   const [plotHover, setPlotHover] = useState<string | null>(null);
   const [legendHover, setLegendHover] = useState<string | null>(null);
 

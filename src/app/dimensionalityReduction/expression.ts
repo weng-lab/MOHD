@@ -73,4 +73,4 @@ export const expressionDefinition = (gene: GeneExpression): ContinuousDefinition
   format: (log) => formatTpmBound(fromLogTpm(log)),
 });
 
-export const EXPRESSION_NOTE = `log10(TPM + 1), so a gene's whole range fits one ramp. Spans the middle ${100 - 2 * CLIP_PERCENTILE}% of samples, so a few extreme values don't wash out the rest`;
+export const EXPRESSION_NOTE = `log10(TPM + 1). Spans the middle ${100 - 2 * CLIP_PERCENTILE}% of samples, so a few extreme values don't wash out the rest`;

@@ -75,14 +75,14 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   // Across every sample the ome has, whatever the method or filters, so neither can repaint a point.
   const scale = isContinuous(color) ? metricScale(data[ome].rows.flatMap((row) => continuousValue(row) ?? [])) : null;
 
-  /** A row's group and color: by group for a field, along the ramp for a metric or a gene. */
+  /** A row's color: by group for a field, along the ramp for a metric or a gene. */
   const paint = (row: ExplorerRow) => {
     if (isContinuous(color)) {
       const value = continuousValue(row);
-      return { group: null, fill: metricColor(scale, value), neutral: value === null };
+      return { fill: metricColor(scale, value), neutral: value === null };
     }
     const group = groupOf(color, row);
-    return { group, fill: colorOf(color, group), neutral: isNeutralGroup(group) };
+    return { fill: colorOf(color, group), neutral: isNeutralGroup(group) };
   };
 
   const painted = rows.map((row) => ({
@@ -98,7 +98,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   // The neutral groups first, so QC samples and missing values are drawn beneath the samples they
   // would otherwise cover; each layer keeps the API's order.
   const plotted = [...painted.filter(({ neutral }) => neutral), ...painted.filter(({ neutral }) => !neutral)].map(
-    ({ row, group, fill, shape, expression }): Point<PointMeta> => {
+    ({ row, fill, shape, expression }): Point<PointMeta> => {
       const [px, py] = method === "UMAP" && row.umap ? row.umap : [row.pcs[x - 1], row.pcs[y - 1]];
       return {
         x: px,
@@ -106,7 +106,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
         r: 4,
         color: fill,
         shape,
-        metaData: { row, group, shown: passesFilters(row, filters), expression },
+        metaData: { row, shown: passesFilters(row, filters), expression },
       };
     }
   );
@@ -151,7 +151,6 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
           domains={domains}
           xLabel={pca ? pcLabel(x, pve) : "UMAP-1"}
           yLabel={pca ? pcLabel(y, pve) : "UMAP-2"}
-          grouped={!isContinuous(color)}
           expressionGene={gene.name}
           renderLegend={({ hovered, legendHover, onLegendHover }) => {
             // Where the hovered sample sits on the ramp, in the ramp's units - undefined rather

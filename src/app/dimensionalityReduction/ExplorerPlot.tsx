@@ -21,11 +21,6 @@ export type LegendHover = { field: Field; value: string };
 export type PointMeta = {
   row: ExplorerRow;
   /**
-   * The row's group for the field the plot is colored by - what the legend and both hovers key on.
-   * Null while a metric colors the plot, which has no groups.
-   */
-  group: string | null;
-  /**
    * Whether the sample passes the filters, and so keeps its color. A filtered one is still on the
    * plot, dimmed and drawn beneath the rest - see dimHidden.
    */
@@ -149,11 +144,6 @@ export type ExplorerPlotProps = {
     legendHover: LegendHover | null;
     onLegendHover: (hover: LegendHover | null) => void;
   }) => ReactNode;
-  /**
-   * Whether points belong to groups, so that hovering one swells its whole group. Off for a
-   * metric, where every point would otherwise be in the one null group.
-   */
-  grouped: boolean;
   /** The gene each point's `expression` belongs to, where one colors the plot. */
   expressionGene?: string | null;
   downloadFileName: string;
@@ -169,7 +159,6 @@ const ExplorerPlot = ({
   xLabel,
   yLabel,
   renderLegend,
-  grouped,
   expressionGene,
   downloadFileName,
 }: ExplorerPlotProps) => {
@@ -183,10 +172,9 @@ const ExplorerPlot = ({
   // From the points in focus rather than every point, so hovering the chip of a group that is
   // filtered out highlights nothing: its samples are on the plot, but as background.
   //
-  // Read off the row rather than off metaData.group, which only ever holds the group for the field
-  // the plot is colored by - a chip in the shape legend names a different field's value, and this
-  // is the same lookup for either. Not gated on `grouped`: a shape legend stands on its own, so its
-  // chips highlight even while a metric or a gene colors the points.
+  // Read off the row by the chip's own field, so a chip in the shape legend and one in the color
+  // legend are the same lookup - and a shape chip highlights even while a metric or a gene colors
+  // the points.
   const hoveredPoints = legendHover
     ? shown.filter((point) => groupOf(legendHover.field, point.metaData!.row) === legendHover.value)
     : undefined;
@@ -239,7 +227,10 @@ const ExplorerPlot = ({
             )}
             hoveredPoints={hoveredPoints}
             onHoveredPointChange={(point) => setPlotHover(point?.metaData?.row ?? null)}
-            groupPointsAnchor={grouped ? "group" : undefined}
+            // No groupPointsAnchor. A hovered point names its groups by ringing their chips, in the
+            // shape row and the color row alike; swelling its group on the plot as well could only
+            // follow one of the two fields, and would favour color over shape. Showing a whole group
+            // is left to its chip.
             controlsPosition={"right"}
             miniMap={MINIMAP}
             downloadButton

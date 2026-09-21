@@ -254,7 +254,6 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
                   hoveredPoints={legendHover ? mohdShown.filter((p) => p.metaData!.group === legendHover) : undefined}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData?.group ?? null)}
                   miniMap={MINIMAP_POSITION}
-                  groupPointsAnchor="group"
                   {...sync}
                 />
               )}
@@ -294,7 +293,6 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
                   hoveredPoints={legendHover ? refShown.filter((p) => p.metaData!.group === legendHover) : undefined}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData?.group ?? null)}
                   miniMap={MINIMAP_POSITION}
-                  groupPointsAnchor="group"
                   {...sync}
                 />
               )}
