@@ -1,8 +1,8 @@
 import { ColumnDatum } from "@weng-lab/visualization";
-import { Typography } from "@mui/material";
 import { SharedMetabolomicsProps } from "./page";
 import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
+import PlotTooltip from "@/common/components/PlotTooltip";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
 
@@ -71,20 +71,14 @@ const MetabolomicsQuantificationHeatmap = ({
       tooltipBody={(bin) => {
         const rowMeta = bin.bin.metadata as CompoundRowMeta | undefined;
         return (
-          <>
-            <Typography>
-              <b>Dataset:</b> {bin.datum.columnName}
-            </Typography>
-            <Typography>
-              <b>Compound:</b> {rowMeta?.fullName ?? bin.bin.rowName}
-            </Typography>
-            <Typography>
-              <b>Mode:</b> {rowMeta?.mode}
-            </Typography>
-            <Typography>
-              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
-            </Typography>
-          </>
+          <PlotTooltip
+            title={bin.datum.columnName}
+            rows={[
+              { label: "Compound", value: rowMeta?.fullName ?? bin.bin.rowName },
+              { label: "Mode", value: rowMeta?.mode },
+              { label: "Value", value: rowMeta?.rawValue ?? "No data" },
+            ]}
+          />
         );
       }}
     />

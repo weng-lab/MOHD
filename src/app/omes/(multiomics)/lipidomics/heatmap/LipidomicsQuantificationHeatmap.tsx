@@ -1,8 +1,8 @@
 import { ColumnDatum } from "@weng-lab/visualization";
-import { Typography } from "@mui/material";
 import { SharedLipidomicsProps } from "./page";
 import { LipidomicsSample } from "@/common/hooks/omeHooks/useLipidomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
+import PlotTooltip from "@/common/components/PlotTooltip";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
 
@@ -67,17 +67,13 @@ const LipidomicsQuantificationHeatmap = ({
       tooltipBody={(bin) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
         return (
-          <>
-            <Typography>
-              <b>Dataset:</b> {bin.datum.columnName}
-            </Typography>
-            <Typography>
-              <b>Molecule:</b> {rowMeta?.fullName ?? bin.bin.rowName}
-            </Typography>
-            <Typography>
-              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
-            </Typography>
-          </>
+          <PlotTooltip
+            title={bin.datum.columnName}
+            rows={[
+              { label: "Molecule", value: rowMeta?.fullName ?? bin.bin.rowName },
+              { label: "Value", value: rowMeta?.rawValue ?? "No data" },
+            ]}
+          />
         );
       }}
     />

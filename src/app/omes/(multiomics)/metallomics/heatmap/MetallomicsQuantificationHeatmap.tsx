@@ -1,7 +1,7 @@
 import { ColumnDatum } from "@weng-lab/visualization";
-import { Typography } from "@mui/material";
 import { MetallomicsSample, SharedMetallomicsProps } from "./page";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
+import PlotTooltip from "@/common/components/PlotTooltip";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
 
@@ -89,17 +89,13 @@ const MetallomicsQuantificationHeatmap = ({
       colorDomain={colorDomain}
       ref={ref}
       tooltipBody={(bin) => (
-        <>
-          <Typography>
-            <b>Dataset:</b> {bin.datum.columnName}
-          </Typography>
-          <Typography>
-            <b>Metal:</b> {bin.bin.rowName}
-          </Typography>
-          <Typography>
-            <b>Value:</b> {(bin.bin.metadata as MetalRowMeta | undefined)?.rawValue ?? "No data"}
-          </Typography>
-        </>
+        <PlotTooltip
+          title={bin.datum.columnName}
+          rows={[
+            { label: "Metal", value: bin.bin.rowName },
+            { label: "Value", value: (bin.bin.metadata as MetalRowMeta | undefined)?.rawValue ?? "No data" },
+          ]}
+        />
       )}
     />
   );
