@@ -57,6 +57,23 @@ const defaultHumanResults: Result[] = [
     id: "36810956-GCST90296476-astrocytoma",
     type: "Study",
   },
+  {
+    title: "RNA",
+    description: "RNA-seq",
+    id: "RNA",
+    type: "Ome",
+  },
+  {
+    title: "WGBS",
+    description: "Whole Genome Bisulfite Sequencing",
+    id: "WGBS",
+    type: "Ome",
+  },
+  {
+    title: "Metabolomics",
+    id: "metabolomics",
+    type: "Ome",
+  },
 ];
 
 function makeResultLink(result: Result) {
