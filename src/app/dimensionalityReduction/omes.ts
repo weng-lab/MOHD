@@ -1,4 +1,5 @@
 import type { OmesDataType } from "@/common/types/globalTypes";
+import type { FeatureKind } from "./features";
 
 /**
  * The omes the explorer offers, in the order its switcher lists them.
@@ -30,20 +31,19 @@ export type OmeCapabilities = {
    */
   metrics: boolean;
   /**
-   * Whether a sample's quantification of one molecule can color the plot - see expression.ts. RNA
-   * alone for now: the mass-spec omes quantify their own molecules, and coloring by those is the
-   * same idea against a different query.
+   * What one feature is, where a sample's quantification of one can color the plot - see
+   * features.ts. Null on ATAC and WGBS, which have no such quantification to offer here.
    */
-  expression: boolean;
+  feature: FeatureKind | null;
 };
 
 export const OME_CAPABILITIES: Record<ExplorerOme, OmeCapabilities> = {
-  ATAC: { umap: true, protocol: true, metrics: true, expression: false },
-  RNA: { umap: true, protocol: false, metrics: false, expression: true },
-  WGBS: { umap: true, protocol: false, metrics: false, expression: false },
-  lipidomics: { umap: false, protocol: false, metrics: false, expression: false },
-  metabolomics: { umap: false, protocol: false, metrics: false, expression: false },
-  metallomics: { umap: false, protocol: false, metrics: false, expression: false },
+  ATAC: { umap: true, protocol: true, metrics: true, feature: null },
+  RNA: { umap: true, protocol: false, metrics: false, feature: "gene" },
+  WGBS: { umap: true, protocol: false, metrics: false, feature: null },
+  lipidomics: { umap: false, protocol: false, metrics: false, feature: "lipid" },
+  metabolomics: { umap: false, protocol: false, metrics: false, feature: "metabolite" },
+  metallomics: { umap: false, protocol: false, metrics: false, feature: "metal" },
 };
 
 /** Case-insensitive, so a hand-typed ?ome=rna still finds RNA. */

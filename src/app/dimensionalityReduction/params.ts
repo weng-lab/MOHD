@@ -8,14 +8,16 @@
  *   ome     ATAC | RNA | WGBS | lipidomics | metabolomics | metallomics   (case-insensitive)
  *   method  PCA | UMAP
  *   x, y    principal component on each axis, 1-10
- *   color   site | status | sex | age | protocol, on ATAC tss | frip | reads, on RNA expression
- *   gene    Ensembl id without its version (ENSG00000000971); kept on RNA whatever colors the plot
+ *   color   site | status | sex | age | protocol, on ATAC tss | frip | reads, and feature on RNA,
+ *           lipidomics, metabolomics and metallomics
+ *   feature on RNA an Ensembl id without its version (ENSG00000000971), on the mass-spec omes a
+ *           name as the data spells it (Metformin, TG(52:2) [SIM]); kept whatever colors the plot
  *   shape   none | site | status | sex | protocol - not age, which has too many bins to shape by
  *   hide    repeated; "field:value" fades one value's samples, "qc" fades the QC ones
  *           e.g. ?hide=site:LEO&hide=age:80%2B&hide=qc
  */
 
-import { isGeneId } from "./expression";
+import { isFeatureId } from "./features";
 import { isColorBy, isField, offersColor, type ColorBy, type Field } from "./fields";
 import { OME_CAPABILITIES, PC_COUNT, findOme, type ExplorerOme, type Method } from "./omes";
 import { NO_SHAPE, isShapeBy, shapeFieldsFor, type ShapeBy } from "./shapes";
@@ -28,12 +30,12 @@ export type ExplorerState = {
   y: number;
   color: ColorBy;
   /**
-   * The gene whose expression colors the plot, as an unversioned Ensembl id. Kept through a change
-   * of coloring and back, the way x and y are kept through a switch to UMAP - looking at the sites
-   * for a moment should not cost the reader the gene they searched for. Dropped only on an ome with
-   * no expression to show, where there is nothing for it to mean.
+   * The feature whose quantification colors the plot: an unversioned Ensembl id on RNA, a name on
+   * the mass-spec omes. Kept through a change of coloring and back, the way x and y are kept through
+   * a switch to UMAP - looking at the sites for a moment should not cost the reader the gene they
+   * searched for. Dropped with a change of ome - see switchOme.
    */
-  gene: string | null;
+  feature: string | null;
   /** The field points are shaped by, or NO_SHAPE while they are all circles. */
   shape: ShapeBy;
   /**
@@ -51,13 +53,23 @@ export const DEFAULT_STATE: ExplorerState = {
   x: 1,
   y: 2,
   color: "site",
-  gene: null,
+  feature: null,
   shape: NO_SHAPE,
   hidden: {},
   hideQc: false,
 };
 
 const QC_HIDE_VALUE = "qc";
+
+/**
+ * The feature a state keeps: the one it has, where the ome has features and it is shaped like one of
+ * them. Against the ome rather than the coloring, so a feature survives a look at another field and
+ * is there on the way back.
+ */
+const featureFor = (ome: ExplorerOme, feature: string | null): string | null => {
+  const kind = OME_CAPABILITIES[ome].feature;
+  return kind !== null && isFeatureId(kind, feature) ? feature : null;
+};
 
 /**
  * Brings a state back inside what its ome supports. Runs on every read and every write, so a
@@ -71,9 +83,7 @@ export const normalize = (state: ExplorerState): ExplorerState => {
     ...state,
     method: state.method === "UMAP" && !OME_CAPABILITIES[state.ome].umap ? "PCA" : state.method,
     color,
-    // Against the ome rather than the coloring, so a gene survives a look at another field and is
-    // there on the way back. An ome that cannot show expression has nothing to hold it for.
-    gene: OME_CAPABILITIES[state.ome].expression ? state.gene : null,
+    feature: featureFor(state.ome, state.feature),
     shape: shapeFieldsFor(state.ome).some(({ key }) => key === state.shape) ? state.shape : NO_SHAPE,
     y: state.y === state.x ? (state.x === 1 ? 2 : 1) : state.y,
   };
@@ -92,7 +102,6 @@ const parsePc = (raw: string | null, fallback: number) => {
 /** Reads a state out of search params. Anything unrecognised falls back to its default rather than failing. */
 export const parseState = (params: ReadableParams): ExplorerState => {
   const color = params.get("color");
-  const gene = params.get("gene");
   const shape = params.get("shape");
   const hidden: Partial<Record<Field, string[]>> = {};
   let hideQc = false;
@@ -115,9 +124,10 @@ export const parseState = (params: ReadableParams): ExplorerState => {
     x: parsePc(params.get("x"), DEFAULT_STATE.x),
     y: parsePc(params.get("y"), DEFAULT_STATE.y),
     color: isColorBy(color) ? color : DEFAULT_STATE.color,
-    // Shaped like an id, not known to exist: what the API makes of it is the query's answer, and a
-    // gene that turns out not to be quantified is reported on the plot rather than silently dropped.
-    gene: isGeneId(gene) ? gene : DEFAULT_STATE.gene,
+    // Shaped like a feature, not known to exist: what the data makes of it is the fetch's answer,
+    // and a feature that turns out not to be quantified is reported on the plot rather than
+    // silently dropped. Checked against the ome by normalize, below.
+    feature: params.get("feature"),
     shape: isShapeBy(shape) ? shape : DEFAULT_STATE.shape,
     hidden,
     hideQc,
@@ -133,7 +143,7 @@ export const serializeState = (state: ExplorerState): string => {
   if (state.x !== DEFAULT_STATE.x) params.set("x", String(state.x));
   if (state.y !== DEFAULT_STATE.y) params.set("y", String(state.y));
   if (state.color !== DEFAULT_STATE.color) params.set("color", state.color);
-  if (state.gene !== null) params.set("gene", state.gene);
+  if (state.feature !== null) params.set("feature", state.feature);
   if (state.shape !== DEFAULT_STATE.shape) params.set("shape", state.shape);
 
   for (const [field, values] of Object.entries(state.hidden).sort(([a], [b]) => a.localeCompare(b))) {
@@ -155,3 +165,11 @@ export const toggleHidden = (state: ExplorerState, field: Field, value: string):
     },
   };
 };
+
+/**
+ * Moves to another ome. The feature goes with the ome it was picked on: a gene's id means nothing to
+ * lipidomics, nor one lipid's name to metabolomics, and a reader arriving on an ome is better asked
+ * for a feature than told the last one is not quantified there.
+ */
+export const switchOme = (state: ExplorerState, ome: ExplorerOme): ExplorerState =>
+  ome === state.ome ? state : { ...state, ome, feature: null };

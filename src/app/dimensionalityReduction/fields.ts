@@ -5,7 +5,7 @@
 
 import { protocol_color_map, sex_color_map, site_color_map, status_color_map } from "@/common/colors";
 import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/components/plotDimming";
-import { EXPRESSION_COLOR, type ExpressionColor } from "./expression";
+import { FEATURE_COLOR, FEATURE_KINDS, type FeatureColor, type FeatureKind } from "./features";
 import { METRICS, isMetric, type Metric } from "./metrics";
 import { OME_CAPABILITIES, type ExplorerOme } from "./omes";
 import type { ExplorerRow } from "./types";
@@ -39,47 +39,51 @@ export const fieldsFor = (ome: ExplorerOme): FieldDefinition[] =>
   FIELDS.filter(({ key }) => key !== "protocol" || OME_CAPABILITIES[ome].protocol);
 
 /**
- * Anything the plot can be colored by: a field, on ATAC one of its library metrics, and on RNA the
- * expression of one gene.
+ * Anything the plot can be colored by: a field, on ATAC one of its library metrics, and on RNA and
+ * the mass-spec omes the quantification of one feature.
  */
-export type ColorBy = Field | Metric | ExpressionColor;
+export type ColorBy = Field | Metric | FeatureColor;
 
 export const isColorBy = (value: string | null): value is ColorBy =>
-  isField(value) || isMetric(value) || value === EXPRESSION_COLOR;
+  isField(value) || isMetric(value) || value === FEATURE_COLOR;
 
 /**
  * The colorings that carry a ramp and a colorbar rather than groups and chips. What separates them
  * from the fields is not the data type but the legend and the filters: neither has values to toggle.
  */
-export const isContinuous = (color: ColorBy) => isMetric(color) || color === EXPRESSION_COLOR;
+export const isContinuous = (color: ColorBy) => isMetric(color) || color === FEATURE_COLOR;
 
 export type ColorOptions = {
   fields: FieldDefinition[];
   /** Empty on an ome with no metrics. */
   metrics: readonly (typeof METRICS)[number][];
-  /** Whether a gene's expression is on offer. The gene itself is state, not an option - see params.ts. */
-  expression: boolean;
+  /**
+   * What one feature is on this ome, where one can color it. Which feature is state, not an option
+   * - see params.ts.
+   */
+  feature: FeatureKind | null;
 };
 
 export const colorOptionsFor = (ome: ExplorerOme): ColorOptions => ({
   fields: fieldsFor(ome),
   metrics: OME_CAPABILITIES[ome].metrics ? METRICS : [],
-  expression: OME_CAPABILITIES[ome].expression,
+  feature: OME_CAPABILITIES[ome].feature,
 });
 
 /** Whether an ome offers a coloring at all, which is what a hand-edited ?color= is held to. */
 export const offersColor = (ome: ExplorerOme, color: ColorBy) => {
-  const { fields, metrics, expression } = colorOptionsFor(ome);
-  return color === EXPRESSION_COLOR ? expression : [...fields, ...metrics].some(({ key }) => key === color);
+  const { fields, metrics, feature } = colorOptionsFor(ome);
+  return color === FEATURE_COLOR ? feature !== null : [...fields, ...metrics].some(({ key }) => key === color);
 };
 
 /**
- * "Site", "TSS enrichment" - the name of whatever the plot is colored by. Gene expression is named
- * by its gene wherever one is in hand, which is the explorer's to say and not this file's.
+ * "Site", "TSS enrichment", "Lipid abundance" - the name of whatever the plot is colored by. A
+ * feature is named by itself wherever one is in hand, which is the explorer's to say and not this
+ * file's.
  */
 export const colorLabel = (ome: ExplorerOme, color: ColorBy) => {
-  if (color === EXPRESSION_COLOR) return "Gene expression";
-  const { fields, metrics } = colorOptionsFor(ome);
+  const { fields, metrics, feature } = colorOptionsFor(ome);
+  if (color === FEATURE_COLOR) return feature ? FEATURE_KINDS[feature].option : "Feature";
   return [...fields, ...metrics].find(({ key }) => key === color)?.label ?? color;
 };
 

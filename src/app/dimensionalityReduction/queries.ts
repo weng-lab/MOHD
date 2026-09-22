@@ -5,6 +5,9 @@ import { gql } from "@/common/types/generated/gql";
  *
  * Selects age_bin and never age_at_enrollment: the API bins age itself, so raw
  * age has no reason to reach this server, let alone the cache or the page.
+ *
+ * Also the names of the features each mass-spec ome quantifies, for the picker - about 4KB gzipped
+ * across all three, where their values would be megabytes.
  */
 export const GET_DIMENSIONALITY_REDUCTION = gql(`
 query fetchDimensionalityReductionExplorer {
@@ -172,6 +175,16 @@ query fetchDimensionalityReductionExplorer {
   metallomics_variance: pca_variance(ome: Metallomics) {
     pc
     pve
+  }
+  lipidomics_molecules {
+    molecule_name
+  }
+  metabolomics_compounds {
+    compound
+    mode
+  }
+  metallomics_metals {
+    metal
   }
 }
 `);

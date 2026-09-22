@@ -21,12 +21,13 @@ import {
 } from "@mui/material";
 import type { ReactNode } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
-import { EXPRESSION_COLOR } from "./expression";
 import { PANEL_SX } from "./ExplorerLayout";
+import { FEATURE_COLOR, FEATURE_KINDS, type FeatureOption } from "./features";
 import { colorOptionsFor, labelOf, type ColorBy, type Field, type FieldDefinition } from "./fields";
 import GeneSearch from "./GeneSearch";
 import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "./omes";
-import { toggleHidden, type ExplorerState } from "./params";
+import { switchOme, toggleHidden, type ExplorerState } from "./params";
+import QuantificationSearch from "./QuantificationSearch";
 import { NO_SHAPE, type ShapeBy } from "./shapes";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
@@ -133,14 +134,25 @@ export type ControlPanelProps = {
    * a gene already set would leave the panel looking as though none was.
    */
   geneLabel: string | null;
+  /** What a mass-spec ome's picker lists - see OmeData.features. Empty elsewhere. */
+  features: FeatureOption[];
   /** Whether the current ome has QC samples, and so whether their switch is shown. */
   hasQc: boolean;
 };
 
-const ControlPanel = ({ state, onChange, pve, options, shapeOptions, geneLabel, hasQc }: ControlPanelProps) => {
+const ControlPanel = ({
+  state,
+  onChange,
+  pve,
+  options,
+  shapeOptions,
+  geneLabel,
+  features,
+  hasQc,
+}: ControlPanelProps) => {
   const { ome, method, x, y, color, shape, hideQc } = state;
   const { umap } = OME_CAPABILITIES[ome];
-  const { fields, metrics, expression } = colorOptionsFor(ome);
+  const { fields, metrics, feature } = colorOptionsFor(ome);
   const filtered = hideQc || Object.values(state.hidden).some((values) => values.length > 0);
 
   const update = (patch: Partial<ExplorerState>) => onChange({ ...state, ...patch });
@@ -165,7 +177,7 @@ const ControlPanel = ({ state, onChange, pve, options, shapeOptions, geneLabel, 
                 value={option}
                 size="small"
                 selected={option === ome}
-                onChange={() => update({ ome: option })}
+                onChange={() => onChange(switchOme(state, option))}
                 sx={omeButtonSx}
               >
                 {getOmeLabel(option)}
@@ -222,7 +234,7 @@ const ControlPanel = ({ state, onChange, pve, options, shapeOptions, geneLabel, 
               Unheaded, unlike the metrics below: a heading earns its row by grouping several
               choices, and this is one. What it names itself is enough to say it is not a field.
             */}
-            {expression && <MenuItem value={EXPRESSION_COLOR}>Gene expression</MenuItem>}
+            {feature && <MenuItem value={FEATURE_COLOR}>{FEATURE_KINDS[feature].option}</MenuItem>}
             {/* Headed apart from the fields: these color along a ramp, and have no filters below. */}
             {metrics.length > 0 && <MenuHeading>{getOmeLabel(ome)} quality</MenuHeading>}
             {metrics.map(({ key, label }) => (
@@ -231,15 +243,25 @@ const ControlPanel = ({ state, onChange, pve, options, shapeOptions, geneLabel, 
               </MenuItem>
             ))}
           </TextField>
-          {color === EXPRESSION_COLOR && (
+          {color === FEATURE_COLOR && feature === "gene" && (
             <Box>
-              <GeneSearch onSelect={(gene) => update({ gene })} />
+              <GeneSearch onSelect={(gene) => update({ feature: gene })} />
               {geneLabel && (
                 <Typography variant="caption" color="text.secondary" display="block" mt={0.5}>
                   Selected: {geneLabel}
                 </Typography>
               )}
             </Box>
+          )}
+          {color === FEATURE_COLOR && feature && feature !== "gene" && (
+            <QuantificationSearch
+              // Afresh on each ome: it holds its own value, and one ome's feature is not in the next one's list.
+              key={ome}
+              kind={feature}
+              options={features}
+              initial={state.feature}
+              onSelect={(name) => update({ feature: name })}
+            />
           )}
           <TextField
             select

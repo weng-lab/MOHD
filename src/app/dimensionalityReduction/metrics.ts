@@ -22,8 +22,8 @@ export type Metric = MetricDefinition["key"];
 /**
  * All a colorbar needs of whatever it stands for: a name, and how to write a value on its scale.
  *
- * A metric satisfies it as it is. Gene expression, which is continuous in the same way without
- * being a library metric, builds one - see expression.ts.
+ * A metric satisfies it as it is. A feature's quantification, which is continuous in the same way
+ * without being a library metric, builds one - see features.ts.
  */
 export type ContinuousDefinition = { label: string; format: (value: number) => string };
 

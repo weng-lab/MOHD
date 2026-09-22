@@ -16,6 +16,8 @@ export type OmeHeatmapShellProps<TSample extends CellSelectionSample> = {
   ref?: React.RefObject<DownloadPlotHandle | null>;
   emptyMessage?: string;
   colorDomain?: HeatmapProps["colorDomain"];
+  /** Overrides the theme ramp below. */
+  colors?: HeatmapProps["colors"];
 };
 
 const OmeHeatmapShell = <TSample extends CellSelectionSample>({
@@ -31,6 +33,7 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
   ref,
   emptyMessage = "No samples match the current table filters.",
   colorDomain,
+  colors,
 }: OmeHeatmapShellProps<TSample>) => {
   const theme = useTheme();
   const heatmapColors: [string, string, string, string] = [
@@ -61,7 +64,7 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
           <Heatmap
             ref={ref}
             data={heatmapData}
-            colors={heatmapColors}
+            colors={colors ?? heatmapColors}
             colorDomain={colorDomain}
             xLabel="Dataset"
             yLabel={yLabel}

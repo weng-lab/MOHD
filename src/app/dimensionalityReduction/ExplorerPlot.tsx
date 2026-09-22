@@ -4,19 +4,22 @@ import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { ScatterPlot, type Point } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
 import { CARD_SX } from "./ExplorerLayout";
-import { formatTpm } from "./expression";
 import { FIELDS, groupOf, labelOf, type Field } from "./fields";
 import { METRICS } from "./metrics";
 import type { ExplorerRow } from "./types";
 
 /**
- * A chip under the cursor, in whichever of the plot's legends it sits.
+ * The part of a legend under the cursor: a chip, or a stretch of the colorbar.
  *
- * The field travels with the value because the plot can carry two legends at once - a field it is
- * colored by and another it is shaped by - and "LEO" means nothing without knowing it came from the
- * site row.
+ * A chip's field travels with its value because the plot can carry two legends at once - a field it
+ * is colored by and another it is shaped by - and "LEO" means nothing without knowing it came from
+ * the site row. A stretch is a window along the ramp, from 0 at its low end to 1 at its high end -
+ * the same units as each point's `rampPosition`.
  */
-export type LegendHover = { field: Field; value: string };
+export type LegendHover = { kind: "group"; field: Field; value: string } | { kind: "range"; from: number; to: number };
+
+/** A feature coloring the plot, as the hover names it and writes its values. */
+export type PlotFeature = { name: string; format: (value: number) => string };
 
 export type PointMeta = {
   row: ExplorerRow;
@@ -26,11 +29,19 @@ export type PointMeta = {
    */
   shown: boolean;
   /**
-   * The sample's TPM for the gene the plot is colored by, in the API's own units. Carried per point
-   * because it is the one thing on the hover that is not on the row: expression is fetched a gene
-   * at a time, so a row cannot hold it. Undefined whenever a gene is not what colors the plot.
+   * The sample's value for the feature the plot is colored by, in the data's own units - TPM for a
+   * gene. Carried per point because it is the one thing on the hover that is not on the row: a
+   * feature is fetched on its own, so a row cannot hold it. Null where a feature colors the plot and
+   * the sample has no value for it, and on every point while one does not.
    */
-  expression?: number | null;
+  featureValue: number | null;
+  /**
+   * Where the sample's color comes from on the ramp, 0 at its low end to 1 at its high end - a value
+   * beyond either end held at that end, as its color is. What a colorbar window matches against, so
+   * the points it lights are exactly those whose colors fall inside it. Null while a field colors the
+   * plot, and wherever the sample has no value.
+   */
+  rampPosition: number | null;
 };
 
 const MINIMAP = { position: { right: 50, bottom: 50 } };
@@ -57,11 +68,11 @@ const TOOLTIP_DETAILS: { label: string; value: (row: ExplorerRow) => string | nu
 type TooltipBodyProps = {
   row: ExplorerRow;
   dimmed: boolean;
-  /** The gene colouring the plot and this sample's value for it, or null when none is. */
-  expression: { gene: string; tpm: number | null } | null;
+  /** The feature colouring the plot and this sample's value for it, or null when none is. */
+  feature: (PlotFeature & { value: number | null }) | null;
 };
 
-const TooltipBody = ({ row, dimmed, expression }: TooltipBodyProps) => (
+const TooltipBody = ({ row, dimmed, feature }: TooltipBodyProps) => (
   <Box sx={{ p: 1 }}>
     <Typography variant="body2">
       <strong>{row.sample_id}</strong>
@@ -100,12 +111,12 @@ const TooltipBody = ({ row, dimmed, expression }: TooltipBodyProps) => (
     })}
     {/*
       Last, and unlike the lines above it is shown even when there is no value: the reader put this
-      gene on the plot, so "no value" is an answer about it, where a blank line would leave the grey
-      point unexplained.
+      feature on the plot, so "no value" is an answer about it, where a blank line would leave the
+      grey point unexplained.
     */}
-    {expression && (
+    {feature && (
       <Typography variant="caption" display="block">
-        {expression.gene}: {expression.tpm === null ? "no value" : formatTpm(expression.tpm)}
+        {feature.name}: {feature.value === null ? "no value" : feature.format(feature.value)}
       </Typography>
     )}
   </Box>
@@ -129,8 +140,8 @@ export type ExplorerPlotProps = {
   /**
    * Chips for a field, or a colorbar for a metric, built for the hover the plot is reporting:
    * `hovered` is the sample under the cursor, from which the legend takes what it needs - a group
-   * to ring among the chips, or a value to mark on the colorbar - and `legendHover` is the chip
-   * under the cursor, which the caller renders as it likes.
+   * to ring among the chips, or a value to mark on the colorbar - and `legendHover` is the chip or
+   * stretch of colorbar under the cursor, which the caller renders as it likes.
    *
    * Taken as a function, and the hover state kept here rather than above, because a hover must not
    * re-render whatever computes `points` and `domains`: React Compiler puts every value in a scope
@@ -144,8 +155,8 @@ export type ExplorerPlotProps = {
     legendHover: LegendHover | null;
     onLegendHover: (hover: LegendHover | null) => void;
   }) => ReactNode;
-  /** The gene each point's `expression` belongs to, where one colors the plot. */
-  expressionGene?: string | null;
+  /** What each point's `featureValue` is a value of, where a feature colors the plot. */
+  feature: PlotFeature | null;
   downloadFileName: string;
 };
 
@@ -159,25 +170,31 @@ const ExplorerPlot = ({
   xLabel,
   yLabel,
   renderLegend,
-  expressionGene,
+  feature,
   downloadFileName,
 }: ExplorerPlotProps) => {
   // The highlight runs both ways, as on the WGS page. plotHover is the sample under the cursor,
-  // which rings its group's chip or marks its value on the colorbar; legendHover is the chip under
-  // the cursor, handed back to the plot so its group swells. Kept apart so neither can feed the
-  // other back into itself.
+  // which rings its group's chip or marks its value on the colorbar; legendHover is the chip or the
+  // stretch of colorbar under the cursor, handed back to the plot so its samples swell. Kept apart so
+  // neither can feed the other back into itself.
   const [plotHover, setPlotHover] = useState<ExplorerRow | null>(null);
   const [legendHover, setLegendHover] = useState<LegendHover | null>(null);
 
   // From the points in focus rather than every point, so hovering the chip of a group that is
   // filtered out highlights nothing: its samples are on the plot, but as background.
   //
-  // Read off the row by the chip's own field, so a chip in the shape legend and one in the color
+  // A chip is read off the row by its own field, so a chip in the shape legend and one in the color
   // legend are the same lookup - and a shape chip highlights even while a metric or a gene colors
   // the points.
-  const hoveredPoints = legendHover
-    ? shown.filter((point) => groupOf(legendHover.field, point.metaData!.row) === legendHover.value)
-    : undefined;
+  const hoveredPoints =
+    legendHover === null
+      ? undefined
+      : legendHover.kind === "group"
+        ? shown.filter((point) => groupOf(legendHover.field, point.metaData!.row) === legendHover.value)
+        : shown.filter(({ metaData }) => {
+            const position = metaData!.rampPosition;
+            return position !== null && position >= legendHover.from && position <= legendHover.to;
+          });
 
   return (
     <Paper
@@ -222,7 +239,7 @@ const ExplorerPlot = ({
               <TooltipBody
                 row={point.metaData!.row}
                 dimmed={!point.metaData!.shown}
-                expression={expressionGene ? { gene: expressionGene, tpm: point.metaData!.expression ?? null } : null}
+                feature={feature && { ...feature, value: point.metaData!.featureValue }}
               />
             )}
             hoveredPoints={hoveredPoints}

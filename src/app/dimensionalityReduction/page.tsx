@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { query } from "@/common/apollo/client";
 import DimensionalityReductionExplorer from "./DimensionalityReductionExplorer";
 import ExplorerSkeleton from "./ExplorerSkeleton";
+import { sortFeatures } from "./features";
 import { OME_CAPABILITIES, PC_COUNT, type ExplorerOme } from "./omes";
 import { GET_DIMENSIONALITY_REDUCTION } from "./queries";
 import type { ExplorerData, ExplorerRow, OmeData } from "./types";
@@ -112,9 +113,27 @@ const getExplorerData = async (): Promise<ExplorerData> => {
     ATAC: toOmeData("ATAC", data?.atac_metadata, data?.atac_variance),
     RNA: toOmeData("RNA", data?.rna_metadata, data?.rna_variance),
     WGBS: toOmeData("WGBS", data?.wgbs_metadata, data?.wgbs_variance),
-    lipidomics: toOmeData("lipidomics", data?.lipidomics_metadata, data?.lipidomics_variance),
-    metabolomics: toOmeData("metabolomics", data?.metabolomics_metadata, data?.metabolomics_variance),
-    metallomics: toOmeData("metallomics", data?.metallomics_metadata, data?.metallomics_variance),
+    lipidomics: {
+      ...toOmeData("lipidomics", data?.lipidomics_metadata, data?.lipidomics_variance),
+      features: sortFeatures(
+        "lipid",
+        (data?.lipidomics_molecules ?? []).map(({ molecule_name }) => ({ name: molecule_name }))
+      ),
+    },
+    metabolomics: {
+      ...toOmeData("metabolomics", data?.metabolomics_metadata, data?.metabolomics_variance),
+      features: sortFeatures(
+        "metabolite",
+        (data?.metabolomics_compounds ?? []).map(({ compound, mode }) => ({ name: compound, detail: mode }))
+      ),
+    },
+    metallomics: {
+      ...toOmeData("metallomics", data?.metallomics_metadata, data?.metallomics_variance),
+      features: sortFeatures(
+        "metal",
+        (data?.metallomics_metals ?? []).map(({ metal }) => ({ name: metal }))
+      ),
+    },
   };
 };
 

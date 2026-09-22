@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client/react";
 import { gql } from "@/common/types/generated/gql";
-import type { ExpressionStatus, GeneExpression } from "./expression";
+import type { FeatureStatus, FeatureValues } from "./features";
 
 /**
  * One gene's expression across every RNA sample.
@@ -27,7 +27,7 @@ query fetchGeneExpression($gene: String!) {
  * Fetched in the browser rather than with the page: which gene is the reader's choice to make, and
  * the answer is ~900 numbers against a matrix of tens of thousands of genes.
  */
-export const useGeneExpression = (id: string | null): GeneExpression => {
+export const useGeneExpression = (id: string | null): FeatureValues => {
   const { data, loading, error } = useQuery(GET_GENE_EXPRESSION, {
     variables: { gene: id ?? "" },
     skip: id === null,
@@ -38,14 +38,12 @@ export const useGeneExpression = (id: string | null): GeneExpression => {
   // pick the wrong one, never throw on a reader mid-search.
   const match = data?.gene_values[0];
 
-  const status: ExpressionStatus =
+  const status: FeatureStatus =
     id === null ? "idle" : loading ? "loading" : error ? "error" : match ? "ready" : "missing";
 
   return {
     id,
     name: match?.gene_name ?? null,
-    // A sample with no value is left out of the map rather than held as null, so "not in the map"
-    // is the single way a sample has no expression, however it came to have none.
     values: match
       ? new Map(
           match.samples.flatMap(({ sample_id, value }) =>

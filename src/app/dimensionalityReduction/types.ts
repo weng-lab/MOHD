@@ -1,3 +1,4 @@
+import type { FeatureOption } from "./features";
 import type { Metric } from "./metrics";
 import type { ExplorerOme } from "./omes";
 
@@ -40,6 +41,12 @@ export type OmeData = {
   rows: ExplorerRow[];
   /** Percent of variance explained, zero-indexed to match `pcs`: pve[0] is PC1's. */
   pve: (number | null)[];
+  /**
+   * What the picker offers, in the order it lists them - on the mass-spec omes only. RNA's genes
+   * are searched for rather than listed, there being tens of thousands. Names alone: the values
+   * are fetched a feature at a time, see /api/quantification.
+   */
+  features?: FeatureOption[];
 };
 
 export type ExplorerData = Record<ExplorerOme, OmeData>;
