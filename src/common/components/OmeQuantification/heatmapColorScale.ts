@@ -12,14 +12,20 @@ import { zScoreByRow } from "./zScoreByRow";
  *   scale with a neutral midpoint.
  * - "log": log10(value + 1) itself, on one scale for the whole heatmap, clipped to the middle 96% of
  *   cells - the explorer's feature coloring, applied to every row at once.
+ * - "raw": what exposomics shipped with instead of "original" - the raw value, from 0 to the largest shown.
  */
-export type HeatmapScaleMode = "zscore" | "log" | "original";
+export type HeatmapScaleMode = "zscore" | "log" | "original" | "raw";
 
-export const HEATMAP_SCALE_MODES: { mode: HeatmapScaleMode; label: string }[] = [
-  { mode: "zscore", label: "Z-score (log, ±3)" },
-  { mode: "log", label: "Log value" },
-  { mode: "original", label: "Original z-score" },
-];
+export const HEATMAP_SCALE_LABELS: Record<HeatmapScaleMode, string> = {
+  zscore: "Z-score (log, ±3)",
+  log: "Log value",
+  original: "Original z-score",
+  raw: "Original raw value",
+};
+
+/** The toggle's options on a page whose heatmap shipped z-scored, and on exposomics, which shipped raw. */
+export const Z_SCORED_MODES: HeatmapScaleMode[] = ["zscore", "log", "original"];
+export const RAW_MODES: HeatmapScaleMode[] = ["zscore", "log", "raw"];
 
 type Colors = [string, string, ...string[]];
 
@@ -45,6 +51,10 @@ const clamp = (value: number, [low, high]: [number, number]) => Math.min(Math.ma
 const formatBound = (value: number) =>
   value.toLocaleString("en-US", { notation: "compact", maximumSignificantDigits: 2 });
 
+/** Each row's values across the given samples, in their order - the shape buildHeatmapColorScale takes. */
+export const valuesByRow = (rowKeys: string[], valueBySample: ReadonlyMap<string, number | null>[]) =>
+  new Map(rowKeys.map((key) => [key, valueBySample.map((valueByRow) => valueByRow.get(key) ?? null)]));
+
 export type HeatmapColorScale = {
   /** Undefined keeps the shell's default ramp. */
   colors?: Colors;
@@ -61,7 +71,7 @@ export type HeatmapColorScale = {
  * @param reference each row's values across every sample the ome has, which the new modes scale
  *   against so that filtering the table can't repaint the columns it leaves.
  * @param shown each row's values across the samples on screen, which the original mode scaled against.
- * @param rowNoun what a row is, for the caption: "compound".
+ * @param rowNoun what a row is, for the caption: "compound", "metal".
  */
 export const buildHeatmapColorScale = (
   mode: HeatmapScaleMode,
@@ -70,6 +80,8 @@ export const buildHeatmapColorScale = (
   rowNoun: string
 ): HeatmapColorScale => {
   const sampleCount = [...reference.values()][0]?.length ?? 0;
+  // Exposomics detects most molecules in a minority of samples; a row's statistics come from those alone.
+  const hasMissing = [...reference.values()].some((values) => values.includes(null));
 
   switch (mode) {
     case "original": {
@@ -108,7 +120,8 @@ export const buildHeatmapColorScale = (
           return `z = ${zScore.toFixed(2)}${Math.abs(zScore) > Z_LIMIT ? ` (colored as ${zScore > 0 ? "+" : "−"}${Z_LIMIT})` : ""}`;
         },
         caption:
-          `Each ${rowNoun}'s log10(value + 1) as a z-score across all ${sampleCount} samples. ` +
+          `Each ${rowNoun}'s log10(value + 1) as a z-score across all ${sampleCount} samples` +
+          `${hasMissing ? " (those with a value)" : ""}. ` +
           `Colors stop at ±${Z_LIMIT}; ${((beyond / Math.max(shownCells.length, 1)) * 100).toFixed(1)}% of shown cells lie beyond.`,
       };
     }
@@ -126,6 +139,19 @@ export const buildHeatmapColorScale = (
         caption:
           `log10(value + 1), one scale for every ${rowNoun}. Spans the middle ${100 - 2 * CLIP_PERCENTILE}% of all cells ` +
           `(${formatBound(10 ** domain[0] - 1)} – ${formatBound(10 ** domain[1] - 1)}); cells beyond take the end color.`,
+      };
+    }
+
+    case "raw": {
+      const max = [...shown.values()].reduce<number>(
+        (rowsMax, values) => values.reduce<number>((rowMax, v) => (v === null ? rowMax : Math.max(rowMax, v)), rowsMax),
+        0
+      );
+      return {
+        colorDomain: [0, max],
+        toCount: (_, value) => value,
+        describe: (_, value) => `${value}`,
+        caption: `The raw value, from 0 to the largest shown (${formatBound(max)}).`,
       };
     }
   }

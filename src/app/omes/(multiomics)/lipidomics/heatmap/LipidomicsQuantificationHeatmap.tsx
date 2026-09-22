@@ -1,16 +1,26 @@
+import { useState } from "react";
 import { ColumnDatum } from "@weng-lab/visualization";
 import { Typography } from "@mui/material";
 import { SharedLipidomicsProps } from "./page";
 import { LipidomicsSample } from "@/common/hooks/omeHooks/useLipidomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
-import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
-import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
+import HeatmapScaleToggle from "@/common/components/OmeQuantification/HeatmapScaleToggle";
+import {
+  buildHeatmapColorScale,
+  HeatmapScaleMode,
+  valuesByRow,
+  Z_SCORED_MODES,
+} from "@/common/components/OmeQuantification/heatmapColorScale";
 
 const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
 
 type MoleculeRowMeta = { fullName: string; rawValue: number };
 
+const valueByMolecule = (sample: LipidomicsSample) =>
+  new Map(sample.quantification.map((q) => [q.molecule_name, q.value]));
+
 const LipidomicsQuantificationHeatmap = ({
+  rows,
   lipidomicsData,
   sortedFilteredData,
   selected,
@@ -19,6 +29,7 @@ const LipidomicsQuantificationHeatmap = ({
   ref,
 }: SharedLipidomicsProps) => {
   const { loading } = lipidomicsData;
+  const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const samples: LipidomicsSample[] = sortedFilteredData;
 
@@ -26,15 +37,13 @@ const LipidomicsQuantificationHeatmap = ({
     new Set(samples.flatMap((sample) => sample.quantification.map((q) => q.molecule_name)))
   ).sort();
 
-  const valueByMoleculePerSample = samples.map(
-    (sample) => new Map(sample.quantification.map((q) => [q.molecule_name, q.value]))
-  );
+  const valueByMoleculePerSample = samples.map(valueByMolecule);
 
-  const zScoreByMolecule = new Map(
-    molecules.map((molecule) => [
-      molecule,
-      zScoreByRow(valueByMoleculePerSample.map((valueByMolecule) => valueByMolecule.get(molecule) ?? null)),
-    ])
+  const scale = buildHeatmapColorScale(
+    scaleMode,
+    valuesByRow(molecules, rows.map(valueByMolecule)),
+    valuesByRow(molecules, valueByMoleculePerSample),
+    "lipid"
   );
 
   const heatmapData: ColumnDatum<LipidomicsSample, MoleculeRowMeta>[] = samples.map((sample, sampleIndex) => ({
@@ -44,13 +53,11 @@ const LipidomicsQuantificationHeatmap = ({
       const rawValue = valueByMoleculePerSample[sampleIndex].get(molecule) ?? null;
       return {
         rowName: truncateMoleculeName(molecule),
-        count: rawValue === null ? null : zScoreByMolecule.get(molecule)!(rawValue),
+        count: rawValue === null ? null : scale.toCount(molecule, rawValue),
         metadata: rawValue === null ? undefined : { fullName: molecule, rawValue },
       };
     }),
   }));
-
-  const colorDomain = symmetricColorDomain(heatmapData);
 
   return (
     <OmeHeatmapShell
@@ -62,7 +69,11 @@ const LipidomicsQuantificationHeatmap = ({
       autoSort={autoSort}
       yLabel="Molecule"
       downloadFileName="lipidomics_quantification_heatmap"
-      colorDomain={colorDomain}
+      colors={scale.colors}
+      colorDomain={scale.colorDomain}
+      header={
+        <HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} caption={scale.caption} />
+      }
       ref={ref}
       tooltipBody={(bin) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
@@ -77,6 +88,11 @@ const LipidomicsQuantificationHeatmap = ({
             <Typography>
               <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
             </Typography>
+            {rowMeta && (
+              <Typography>
+                <b>Color:</b> {scale.describe(rowMeta.fullName, rowMeta.rawValue)}
+              </Typography>
+            )}
           </>
         );
       }}

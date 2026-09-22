@@ -1,9 +1,15 @@
+import { useState } from "react";
 import { ColumnDatum } from "@weng-lab/visualization";
 import { Typography } from "@mui/material";
 import { MetallomicsSample, SharedMetallomicsProps } from "./page";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
-import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
-import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
+import HeatmapScaleToggle from "@/common/components/OmeQuantification/HeatmapScaleToggle";
+import {
+  buildHeatmapColorScale,
+  HeatmapScaleMode,
+  valuesByRow,
+  Z_SCORED_MODES,
+} from "@/common/components/OmeQuantification/heatmapColorScale";
 
 export type MetalGroup = "base" | "ucr";
 
@@ -22,6 +28,7 @@ type MetallomicsQuantificationHeatmapProps = SharedMetallomicsProps & {
 };
 
 const MetallomicsQuantificationHeatmap = ({
+  rows,
   metallomicsData,
   sortedFilteredData,
   selected,
@@ -32,6 +39,7 @@ const MetallomicsQuantificationHeatmap = ({
   ref,
 }: MetallomicsQuantificationHeatmapProps) => {
   const { loading } = metallomicsData;
+  const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const samples: MetallomicsSample[] = sortedFilteredData;
 
@@ -45,20 +53,20 @@ const MetallomicsQuantificationHeatmap = ({
     )
   ).sort();
 
-  const valueByMetalPerSample = samples.map(
-    (sample) =>
-      new Map(
-        sample.quantification
-          .filter((q): q is NonNullable<typeof q> => q !== null && isInGroup(q.metal, metalGroup))
-          .map((q) => [q.metal, q.value])
-      )
-  );
+  const valueByMetal = (sample: MetallomicsSample) =>
+    new Map(
+      sample.quantification
+        .filter((q): q is NonNullable<typeof q> => q !== null && isInGroup(q.metal, metalGroup))
+        .map((q) => [q.metal, q.value])
+    );
 
-  const zScoreByMetal = new Map(
-    metals.map((metal) => [
-      metal,
-      zScoreByRow(valueByMetalPerSample.map((valueByMetal) => valueByMetal.get(metal) ?? null)),
-    ])
+  const valueByMetalPerSample = samples.map(valueByMetal);
+
+  const scale = buildHeatmapColorScale(
+    scaleMode,
+    valuesByRow(metals, rows.map(valueByMetal)),
+    valuesByRow(metals, valueByMetalPerSample),
+    "metal"
   );
 
   const heatmapData: ColumnDatum<MetallomicsSample, MetalRowMeta>[] = samples.map((sample, sampleIndex) => ({
@@ -68,13 +76,11 @@ const MetallomicsQuantificationHeatmap = ({
       const rawValue = valueByMetalPerSample[sampleIndex].get(metal) ?? null;
       return {
         rowName: metal,
-        count: rawValue === null ? null : zScoreByMetal.get(metal)!(rawValue),
+        count: rawValue === null ? null : scale.toCount(metal, rawValue),
         metadata: rawValue === null ? undefined : { rawValue },
       };
     }),
   }));
-
-  const colorDomain = symmetricColorDomain(heatmapData);
 
   return (
     <OmeHeatmapShell
@@ -86,21 +92,33 @@ const MetallomicsQuantificationHeatmap = ({
       autoSort={autoSort}
       yLabel="Metal"
       downloadFileName={downloadFileName}
-      colorDomain={colorDomain}
+      colors={scale.colors}
+      colorDomain={scale.colorDomain}
+      header={
+        <HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} caption={scale.caption} />
+      }
       ref={ref}
-      tooltipBody={(bin) => (
-        <>
-          <Typography>
-            <b>Dataset:</b> {bin.datum.columnName}
-          </Typography>
-          <Typography>
-            <b>Metal:</b> {bin.bin.rowName}
-          </Typography>
-          <Typography>
-            <b>Value:</b> {(bin.bin.metadata as MetalRowMeta | undefined)?.rawValue ?? "No data"}
-          </Typography>
-        </>
-      )}
+      tooltipBody={(bin) => {
+        const rowMeta = bin.bin.metadata as MetalRowMeta | undefined;
+        return (
+          <>
+            <Typography>
+              <b>Dataset:</b> {bin.datum.columnName}
+            </Typography>
+            <Typography>
+              <b>Metal:</b> {bin.bin.rowName}
+            </Typography>
+            <Typography>
+              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
+            </Typography>
+            {rowMeta && (
+              <Typography>
+                <b>Color:</b> {scale.describe(bin.bin.rowName, rowMeta.rawValue)}
+              </Typography>
+            )}
+          </>
+        );
+      }}
     />
   );
 };
