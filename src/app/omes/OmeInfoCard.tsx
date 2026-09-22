@@ -119,7 +119,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
               mt: 2,
             }}
           >
-            Available March 2027
+            Available May 2027
           </Typography>
         ) : (
           <Stack
