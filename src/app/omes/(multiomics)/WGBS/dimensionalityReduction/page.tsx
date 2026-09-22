@@ -51,16 +51,16 @@ const WGBSDimensionalityReduction = () => {
       TableComponent={<WGBSDimensionalityTable {...SharedWGBSDimenionalityProps} />}
       plots={[
         {
-          tabTitle: "UMAP",
-          icon: <ScatterPlot />,
-          plotComponent: <WGBSDimensionalityScatterPlot ref={umapRef} {...SharedWGBSDimenionalityProps} />,
-          ...umapDownload,
-        },
-        {
           tabTitle: "PCA",
           icon: <ScatterPlot />,
           plotComponent: <WGBSDimensionalityPCAPlot ref={pcaRef} {...SharedWGBSDimenionalityProps} />,
           ...pcaDownload,
+        },
+        {
+          tabTitle: "UMAP",
+          icon: <ScatterPlot />,
+          plotComponent: <WGBSDimensionalityScatterPlot ref={umapRef} {...SharedWGBSDimenionalityProps} />,
+          ...umapDownload,
         },
       ]}
     />

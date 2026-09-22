@@ -49,16 +49,16 @@ const ATACDimensionalityReduction = () => {
       TableComponent={<ATACDimensionalityTable {...SharedATACDimenionalityProps} />}
       plots={[
         {
-          tabTitle: "UMAP",
-          icon: <ScatterPlot />,
-          plotComponent: <ATACDimensionalityScatterPlot ref={umapRef} {...SharedATACDimenionalityProps} />,
-          ...umapDownload,
-        },
-        {
           tabTitle: "PCA",
           icon: <ScatterPlot />,
           plotComponent: <ATACDimensionalityPCAPlot ref={pcaRef} {...SharedATACDimenionalityProps} />,
           ...pcaDownload,
+        },
+        {
+          tabTitle: "UMAP",
+          icon: <ScatterPlot />,
+          plotComponent: <ATACDimensionalityScatterPlot ref={umapRef} {...SharedATACDimenionalityProps} />,
+          ...umapDownload,
         },
       ]}
     />

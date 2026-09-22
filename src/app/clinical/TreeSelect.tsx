@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useId } from "react";
-import { Box, FormControl, InputAdornment, InputLabel, ListSubheader, OutlinedInput, Popover } from "@mui/material";
+import { Box, FormControl, InputAdornment, InputLabel, OutlinedInput, Popover } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
@@ -25,15 +25,11 @@ interface TreeSelectProps {
 export default function TreeSelect({ variables, value, onChange, label, disabled }: TreeSelectProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const [popoverWidth, setPopoverWidth] = useState<number | undefined>(undefined);
-  const [expandedItems, setExpandedItems] = useState<Record<string, string[]>>({});
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const anchorRef = useRef<HTMLDivElement>(null);
   const id = useId();
 
-  const categoryTrees = (["Categorical", "Quantitative"] as const).flatMap((cat) => {
-    const group = variables.filter((v) => v.variable_category === cat);
-    if (group.length === 0) return [];
-    return [{ category: cat, tree: buildTree(group) }];
-  });
+  const tree = buildTree(variables);
   const open = Boolean(anchorEl);
 
   const displayValue = value ? formatVariableName(value) : "";
@@ -41,8 +37,7 @@ export default function TreeSelect({ variables, value, onChange, label, disabled
   function handleOpen() {
     if (!disabled && anchorRef.current) {
       setPopoverWidth(anchorRef.current.offsetWidth);
-      const ancestors = value ? ancestorsOf(value) : [];
-      setExpandedItems(Object.fromEntries(categoryTrees.map(({ category }) => [category, ancestors])));
+      setExpandedItems(value ? ancestorsOf(value) : []);
       setAnchorEl(anchorRef.current);
     }
   }
@@ -115,21 +110,14 @@ export default function TreeSelect({ variables, value, onChange, label, disabled
           paper: { sx: { width: popoverWidth, maxHeight: { xs: "55vh", sm: 400 }, overflow: "auto", mt: 0.5 } },
         }}
       >
-        {categoryTrees.map(({ category, tree }) => (
-          <Box key={category}>
-            <ListSubheader sx={{ fontSize: 14, color: "black", fontWeight: 600, lineHeight: "36px" }}>
-              {category}
-            </ListSubheader>
-            <SimpleTreeView
-              selectedItems={value || null}
-              expandedItems={expandedItems[category] ?? []}
-              onExpandedItemsChange={(_, items) => setExpandedItems((prev) => ({ ...prev, [category]: items }))}
-              sx={{ pb: 1, px: 1 }}
-            >
-              {renderNodes(tree)}
-            </SimpleTreeView>
-          </Box>
-        ))}
+        <SimpleTreeView
+          selectedItems={value || null}
+          expandedItems={expandedItems}
+          onExpandedItemsChange={(_, items) => setExpandedItems(items)}
+          sx={{ pb: 1, px: 1 }}
+        >
+          {renderNodes(tree)}
+        </SimpleTreeView>
       </Popover>
     </>
   );

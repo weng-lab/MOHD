@@ -1,11 +1,12 @@
 import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { useState } from "react";
-import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor } from "@/common/colors";
+import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor, VALUE_LABEL_OVERRIDES } from "@/common/colors";
 import { age_bin_color_map, AGE_UNKNOWN_LABEL } from "@/common/ageBins";
-import { Typography, Stack, SelectChangeEvent, Box } from "@mui/material";
+import { Stack, SelectChangeEvent, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
 import UMAPLegend from "@/common/components/UMAPLegend";
+import PlotTooltip, { PlotTooltipRow } from "@/common/components/PlotTooltip";
 
 export type DimensionalityReductionMeta = {
   sample_id: string;
@@ -53,33 +54,28 @@ const TooltipBody = ({
   hasProtocol: boolean;
   hasAge: boolean;
 }) => {
-  return (
-    <>
-      <Typography>
-        <b>Dataset:</b> {point.metaData?.sample_id}
-      </Typography>
-      <Typography>
-        <b>Status:</b> {getCategoricalLabel("status", point.metaData?.status)}
-      </Typography>
-      <Typography>
-        <b>Site:</b> {getCategoricalLabel("site", point.metaData?.site)}
-      </Typography>
-      <Typography>
-        <b>Sex:</b>{" "}
-        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : MISSING_LABEL}
-      </Typography>
-      {hasProtocol && (
-        <Typography>
-          <b>Protocol:</b> {getCategoricalLabel("protocol", point.metaData?.protocol).replaceAll(" method", "")}
-        </Typography>
-      )}
-      {hasAge && (
-        <Typography>
-          <b>Age:</b> {point.metaData?.age_bin ?? MISSING_LABEL}
-        </Typography>
-      )}
-    </>
-  );
+  const rows: PlotTooltipRow[] = [
+    { label: "Status", value: getCategoricalLabel("status", point.metaData?.status) },
+    { label: "Site", value: getCategoricalLabel("site", point.metaData?.site) },
+    {
+      label: "Sex",
+      value: point.metaData?.sex
+        ? (VALUE_LABEL_OVERRIDES[point.metaData.sex] ??
+          point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1))
+        : MISSING_LABEL,
+    },
+  ];
+  if (hasProtocol) {
+    rows.push({
+      label: "Protocol",
+      value: getCategoricalLabel("protocol", point.metaData?.protocol).replaceAll(" method", ""),
+    });
+  }
+  if (hasAge) {
+    rows.push({ label: "Age", value: point.metaData?.age_bin ?? MISSING_LABEL });
+  }
+
+  return <PlotTooltip title={point.metaData?.sample_id} rows={rows} />;
 };
 
 const DimensionalityScatterPlot = <

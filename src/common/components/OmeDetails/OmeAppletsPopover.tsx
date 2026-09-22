@@ -53,7 +53,7 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
             const omeImage = `/OmeIcons/NoBgrnd/${omeOption.toLowerCase().split("-")[0]}.png`;
 
             return (
-              <Tooltip key={omeOption} title={isDisabled ? "Available March 2027" : ""}>
+              <Tooltip key={omeOption} title={isDisabled ? "Available May 2027" : ""}>
                 <Box
                   {...(isDisabled ? {} : { component: Link, href: getOmeInfoHref(omeOption), onClick: onClose })}
                   sx={{

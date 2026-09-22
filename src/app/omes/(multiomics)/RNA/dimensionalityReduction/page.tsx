@@ -49,16 +49,16 @@ const RNADimensionalityReduction = () => {
       TableComponent={<RNADimensionalityTable {...SharedRNADimenionalityProps} />}
       plots={[
         {
-          tabTitle: "UMAP",
-          icon: <ScatterPlot />,
-          plotComponent: <RNADimensionalityScatterPlot ref={umapRef} {...SharedRNADimenionalityProps} />,
-          ...umapDownload,
-        },
-        {
           tabTitle: "PCA",
           icon: <ScatterPlot />,
           plotComponent: <RNADimensionalityPCAPlot ref={pcaRef} {...SharedRNADimenionalityProps} />,
           ...pcaDownload,
+        },
+        {
+          tabTitle: "UMAP",
+          icon: <ScatterPlot />,
+          plotComponent: <RNADimensionalityScatterPlot ref={umapRef} {...SharedRNADimenionalityProps} />,
+          ...umapDownload,
         },
       ]}
     />

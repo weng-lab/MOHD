@@ -6,6 +6,7 @@ import { useDatasetFilters } from "@/common/hooks/downloads/useDatasetFilters";
 import { useFileFilters } from "@/common/hooks/downloads/useFileFilters";
 import { useDownloadSelection, type CheckState } from "@/common/hooks/downloads/useDownloadSelection";
 import { formatBytes, isFileBulkSelectable } from "@/common/downloads";
+import { VALUE_LABEL_OVERRIDES } from "@/common/colors";
 import { customSingleSelectOperators } from "@/common/components/Downloads/filterModel";
 import {
   buildBulkDownloadItems,
@@ -140,7 +141,10 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
       field: f.field,
       headerName: f.label,
       type: "singleSelect" as const,
-      valueOptions: datasetFiltersState.datasetOptionsMap[f.field],
+      valueOptions: datasetFiltersState.datasetOptionsMap[f.field].map((value) => ({
+        value,
+        label: VALUE_LABEL_OVERRIDES[value] ?? value,
+      })),
       filterOperators: customSingleSelectOperators,
     })),
   ];

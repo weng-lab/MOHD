@@ -1,8 +1,8 @@
 import { ColumnDatum } from "@weng-lab/visualization";
-import { Typography } from "@mui/material";
 import { SharedExposomicsProps } from "./page";
 import { ExposomicsSample } from "@/common/hooks/omeHooks/useExposomicsData";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
+import PlotTooltip, { PlotTooltipRow } from "@/common/components/PlotTooltip";
 
 const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
 
@@ -56,34 +56,13 @@ const ExposomicsQuantificationHeatmap = ({
       ref={ref}
       tooltipBody={(bin) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
-        return (
-          <>
-            <Typography>
-              <b>Dataset:</b> {bin.datum.columnName}
-            </Typography>
-            <Typography>
-              <b>Molecule:</b> {rowMeta?.fullName ?? bin.bin.rowName}
-            </Typography>
-            {rowMeta?.formula ? (
-              <Typography>
-                <b>Formula:</b> {rowMeta.formula}
-              </Typography>
-            ) : null}
-            {rowMeta?.ionType ? (
-              <Typography>
-                <b>Ion Type:</b> {rowMeta.ionType}
-              </Typography>
-            ) : null}
-            {rowMeta?.precursorMz != null ? (
-              <Typography>
-                <b>Precursor m/z:</b> {rowMeta.precursorMz}
-              </Typography>
-            ) : null}
-            <Typography>
-              <b>Value:</b> {bin.bin.count ?? "No data"}
-            </Typography>
-          </>
-        );
+        const rows: PlotTooltipRow[] = [{ label: "Molecule", value: rowMeta?.fullName ?? bin.bin.rowName }];
+        if (rowMeta?.formula) rows.push({ label: "Formula", value: rowMeta.formula });
+        if (rowMeta?.ionType) rows.push({ label: "Ion Type", value: rowMeta.ionType });
+        if (rowMeta?.precursorMz != null) rows.push({ label: "Precursor m/z", value: rowMeta.precursorMz });
+        rows.push({ label: "Value", value: bin.bin.count ?? "No data" });
+
+        return <PlotTooltip title={bin.datum.columnName} rows={rows} />;
       }}
     />
   );

@@ -1,6 +1,7 @@
 "use client";
 import { Histogram, type DownloadPlotHandle, type HistogramBin } from "@weng-lab/visualization";
 import { type PhenotypicalDataPoint } from "@/common/hooks/usePhenotypicalData";
+import PlotTooltip from "@/common/components/PlotTooltip";
 
 type Props = {
   rawData: PhenotypicalDataPoint[];
@@ -47,16 +48,8 @@ export default function QuantitativeHistogram({ rawData, var1Name, ref }: Props)
     topCodedLabels.size > 0
       ? (bin: HistogramBin) => {
           const topCoded = [...topCodedLabels.entries()].find(([value]) => value >= bin.x0 && value < bin.x1);
-          return (
-            <div style={{ fontSize: 12 }}>
-              <div>
-                <strong>Range:</strong> {topCoded ? topCoded[1] : `${bin.x0.toFixed(2)}, ${bin.x1.toFixed(2)}`}
-              </div>
-              <div>
-                <strong>Count:</strong> {bin.count}
-              </div>
-            </div>
-          );
+          const range = topCoded ? topCoded[1] : `${bin.x0.toFixed(2)}, ${bin.x1.toFixed(2)}`;
+          return <PlotTooltip title={range} rows={[{ label: "Count", value: bin.count }]} />;
         }
       : undefined;
 

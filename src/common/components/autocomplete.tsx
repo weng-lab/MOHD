@@ -57,6 +57,23 @@ const defaultHumanResults: Result[] = [
     id: "36810956-GCST90296476-astrocytoma",
     type: "Study",
   },
+  {
+    title: "RNA",
+    description: "RNA-seq",
+    id: "RNA",
+    type: "Ome",
+  },
+  {
+    title: "WGBS",
+    description: "Whole Genome Bisulfite Sequencing",
+    id: "WGBS",
+    type: "Ome",
+  },
+  {
+    title: "Metabolomics",
+    id: "metabolomics",
+    type: "Ome",
+  },
 ];
 
 function makeResultLink(result: Result) {
@@ -173,7 +190,7 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
         geneVersion={geneVersion}
         graphqlUrl="/api/screen-graphql"
         showiCREFlag={false}
-        queries={["Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
+        queries={["Ome", "Gene", "cCRE", "SNP", "Coordinate", "Study", "Legacy cCRE"]}
         staticLists={{ Ome: Omes }}
         onSearchSubmit={handleSearchSubmit}
         //This is needed to prevent the enter key press from triggering the onClick of the Menu IconButton
