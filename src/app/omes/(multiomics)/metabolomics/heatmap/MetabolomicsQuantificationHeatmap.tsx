@@ -12,6 +12,7 @@ const truncateCompoundName = (name: string) => (name.length > 10 ? `${name.slice
 type CompoundRowMeta = { fullName: string; mode: string; rawValue: number };
 
 const MetabolomicsQuantificationHeatmap = ({
+  rows,
   metabolomicsData,
   sortedFilteredData,
   selected,
@@ -25,36 +26,52 @@ const MetabolomicsQuantificationHeatmap = ({
 
   const compounds = Array.from(
     new Map(
-      samples.flatMap((sample) => sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q] as const))
+      rows.flatMap((sample) => sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q] as const))
     ).values()
   ).sort((a, b) => a.compound.localeCompare(b.compound) || a.mode.localeCompare(b.mode));
 
-  const valueByCompoundPerSample = samples.map(
+  // Scored against the full dataset, not the filtered/displayed columns, so filtering
+  // the table doesn't shift the color scale - or collapse it to 0 when down to one column.
+  const valueByCompoundPerRow = rows.map(
     (sample) => new Map(sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q.value]))
   );
 
   const zScoreByCompound = new Map(
     compounds.map((compound) => {
       const key = compoundKey(compound.compound, compound.mode);
-      return [key, zScoreByRow(valueByCompoundPerSample.map((valueByCompound) => valueByCompound.get(key) ?? null))];
+      return [key, zScoreByRow(valueByCompoundPerRow.map((valueByCompound) => valueByCompound.get(key) ?? null))];
     })
   );
 
-  const heatmapData: ColumnDatum<MetabolomicsSample, CompoundRowMeta>[] = samples.map((sample, sampleIndex) => ({
-    columnName: sample.sample_id,
-    metadata: sample,
-    rows: compounds.map((compound) => {
-      const key = compoundKey(compound.compound, compound.mode);
-      const rawValue = valueByCompoundPerSample[sampleIndex].get(key) ?? null;
-      return {
-        rowName: truncateCompoundName(compound.compound),
-        count: rawValue === null ? null : zScoreByCompound.get(key)!(rawValue),
-        metadata: rawValue === null ? undefined : { fullName: compound.compound, mode: compound.mode, rawValue },
-      };
-    }),
-  }));
+  const heatmapData: ColumnDatum<MetabolomicsSample, CompoundRowMeta>[] = samples.map((sample) => {
+    const valueByCompound = new Map(sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q.value]));
+    return {
+      columnName: sample.sample_id,
+      metadata: sample,
+      rows: compounds.map((compound) => {
+        const key = compoundKey(compound.compound, compound.mode);
+        const rawValue = valueByCompound.get(key) ?? null;
+        return {
+          rowName: truncateCompoundName(compound.compound),
+          count: rawValue === null ? null : zScoreByCompound.get(key)!(rawValue),
+          metadata: rawValue === null ? undefined : { fullName: compound.compound, mode: compound.mode, rawValue },
+        };
+      }),
+    };
+  });
 
-  const colorDomain = symmetricColorDomain(heatmapData);
+  // Domain also comes from the full dataset, not just the displayed columns, so the
+  // legend's scale doesn't shift as the table is filtered.
+  const colorDomain = symmetricColorDomain(
+    rows.map((sample, i) => ({
+      columnName: sample.sample_id,
+      rows: compounds.map((compound) => {
+        const key = compoundKey(compound.compound, compound.mode);
+        const rawValue = valueByCompoundPerRow[i].get(key) ?? null;
+        return { rowName: key, count: rawValue === null ? null : zScoreByCompound.get(key)!(rawValue) };
+      }),
+    }))
+  );
 
   return (
     <OmeHeatmapShell

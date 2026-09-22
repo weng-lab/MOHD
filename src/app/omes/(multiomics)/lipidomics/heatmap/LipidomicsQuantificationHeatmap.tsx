@@ -11,6 +11,7 @@ const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice
 type MoleculeRowMeta = { fullName: string; rawValue: number };
 
 const LipidomicsQuantificationHeatmap = ({
+  rows,
   lipidomicsData,
   sortedFilteredData,
   selected,
@@ -23,34 +24,49 @@ const LipidomicsQuantificationHeatmap = ({
   const samples: LipidomicsSample[] = sortedFilteredData;
 
   const molecules = Array.from(
-    new Set(samples.flatMap((sample) => sample.quantification.map((q) => q.molecule_name)))
+    new Set(rows.flatMap((sample) => sample.quantification.map((q) => q.molecule_name)))
   ).sort();
 
-  const valueByMoleculePerSample = samples.map(
+  // Scored against the full dataset, not the filtered/displayed columns, so filtering
+  // the table doesn't shift the color scale - or collapse it to 0 when down to one column.
+  const valueByMoleculePerRow = rows.map(
     (sample) => new Map(sample.quantification.map((q) => [q.molecule_name, q.value]))
   );
 
   const zScoreByMolecule = new Map(
     molecules.map((molecule) => [
       molecule,
-      zScoreByRow(valueByMoleculePerSample.map((valueByMolecule) => valueByMolecule.get(molecule) ?? null)),
+      zScoreByRow(valueByMoleculePerRow.map((valueByMolecule) => valueByMolecule.get(molecule) ?? null)),
     ])
   );
 
-  const heatmapData: ColumnDatum<LipidomicsSample, MoleculeRowMeta>[] = samples.map((sample, sampleIndex) => ({
-    columnName: sample.sample_id,
-    metadata: sample,
-    rows: molecules.map((molecule) => {
-      const rawValue = valueByMoleculePerSample[sampleIndex].get(molecule) ?? null;
-      return {
-        rowName: truncateMoleculeName(molecule),
-        count: rawValue === null ? null : zScoreByMolecule.get(molecule)!(rawValue),
-        metadata: rawValue === null ? undefined : { fullName: molecule, rawValue },
-      };
-    }),
-  }));
+  const heatmapData: ColumnDatum<LipidomicsSample, MoleculeRowMeta>[] = samples.map((sample) => {
+    const valueByMolecule = new Map(sample.quantification.map((q) => [q.molecule_name, q.value]));
+    return {
+      columnName: sample.sample_id,
+      metadata: sample,
+      rows: molecules.map((molecule) => {
+        const rawValue = valueByMolecule.get(molecule) ?? null;
+        return {
+          rowName: truncateMoleculeName(molecule),
+          count: rawValue === null ? null : zScoreByMolecule.get(molecule)!(rawValue),
+          metadata: rawValue === null ? undefined : { fullName: molecule, rawValue },
+        };
+      }),
+    };
+  });
 
-  const colorDomain = symmetricColorDomain(heatmapData);
+  // Domain also comes from the full dataset, not just the displayed columns, so the
+  // legend's scale doesn't shift as the table is filtered.
+  const colorDomain = symmetricColorDomain(
+    rows.map((sample, i) => ({
+      columnName: sample.sample_id,
+      rows: molecules.map((molecule) => {
+        const rawValue = valueByMoleculePerRow[i].get(molecule) ?? null;
+        return { rowName: molecule, count: rawValue === null ? null : zScoreByMolecule.get(molecule)!(rawValue) };
+      }),
+    }))
+  );
 
   return (
     <OmeHeatmapShell

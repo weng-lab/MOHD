@@ -22,6 +22,7 @@ type MetallomicsQuantificationHeatmapProps = SharedMetallomicsProps & {
 };
 
 const MetallomicsQuantificationHeatmap = ({
+  rows,
   metallomicsData,
   sortedFilteredData,
   selected,
@@ -37,7 +38,7 @@ const MetallomicsQuantificationHeatmap = ({
 
   const metals = Array.from(
     new Set(
-      samples.flatMap((sample) =>
+      rows.flatMap((sample) =>
         sample.quantification
           .filter((q): q is NonNullable<typeof q> => q !== null && isInGroup(q.metal, metalGroup))
           .map((q) => q.metal)
@@ -45,7 +46,9 @@ const MetallomicsQuantificationHeatmap = ({
     )
   ).sort();
 
-  const valueByMetalPerSample = samples.map(
+  // Scored against the full dataset, not the filtered/displayed columns, so filtering
+  // the table doesn't shift the color scale - or collapse it to 0 when down to one column.
+  const valueByMetalPerRow = rows.map(
     (sample) =>
       new Map(
         sample.quantification
@@ -57,24 +60,41 @@ const MetallomicsQuantificationHeatmap = ({
   const zScoreByMetal = new Map(
     metals.map((metal) => [
       metal,
-      zScoreByRow(valueByMetalPerSample.map((valueByMetal) => valueByMetal.get(metal) ?? null)),
+      zScoreByRow(valueByMetalPerRow.map((valueByMetal) => valueByMetal.get(metal) ?? null)),
     ])
   );
 
-  const heatmapData: ColumnDatum<MetallomicsSample, MetalRowMeta>[] = samples.map((sample, sampleIndex) => ({
-    columnName: sample.sample_id,
-    metadata: sample,
-    rows: metals.map((metal) => {
-      const rawValue = valueByMetalPerSample[sampleIndex].get(metal) ?? null;
-      return {
-        rowName: metal,
-        count: rawValue === null ? null : zScoreByMetal.get(metal)!(rawValue),
-        metadata: rawValue === null ? undefined : { rawValue },
-      };
-    }),
-  }));
+  const heatmapData: ColumnDatum<MetallomicsSample, MetalRowMeta>[] = samples.map((sample) => {
+    const valueByMetal = new Map(
+      sample.quantification
+        .filter((q): q is NonNullable<typeof q> => q !== null && isInGroup(q.metal, metalGroup))
+        .map((q) => [q.metal, q.value])
+    );
+    return {
+      columnName: sample.sample_id,
+      metadata: sample,
+      rows: metals.map((metal) => {
+        const rawValue = valueByMetal.get(metal) ?? null;
+        return {
+          rowName: metal,
+          count: rawValue === null ? null : zScoreByMetal.get(metal)!(rawValue),
+          metadata: rawValue === null ? undefined : { rawValue },
+        };
+      }),
+    };
+  });
 
-  const colorDomain = symmetricColorDomain(heatmapData);
+  // Domain also comes from the full dataset, not just the displayed columns, so the
+  // legend's scale doesn't shift as the table is filtered.
+  const colorDomain = symmetricColorDomain(
+    rows.map((sample, i) => ({
+      columnName: sample.sample_id,
+      rows: metals.map((metal) => {
+        const rawValue = valueByMetalPerRow[i].get(metal) ?? null;
+        return { rowName: metal, count: rawValue === null ? null : zScoreByMetal.get(metal)!(rawValue) };
+      }),
+    }))
+  );
 
   return (
     <OmeHeatmapShell
