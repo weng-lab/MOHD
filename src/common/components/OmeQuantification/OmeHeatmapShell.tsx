@@ -1,5 +1,6 @@
 import { Heatmap, ColumnDatum, HeatmapProps, DownloadPlotHandle } from "@weng-lab/visualization";
-import { Stack, Box, CircularProgress, Typography } from "@mui/material";
+import { Stack, Box, CircularProgress, Typography, Tooltip } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTheme } from "@mui/material/styles";
 import { useHeatmapCellSelection, CellSelectionSample } from "./useHeatmapCellSelection";
 
@@ -52,6 +53,11 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
 
   return (
     <Stack width="100%" height="100%">
+      <Stack direction="row" justifyContent="flex-end">
+        <Tooltip title="Colored by z-score" arrow placement="left">
+          <InfoOutlinedIcon fontSize="small" color="action" />
+        </Tooltip>
+      </Stack>
       <Box sx={{ flexGrow: 1, minHeight: 0 }}>
         {heatmapData.length === 0 ? (
           <Stack width="100%" height="100%" alignItems="center" justifyContent="center">
