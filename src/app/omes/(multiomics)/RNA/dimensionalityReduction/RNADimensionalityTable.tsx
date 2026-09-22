@@ -2,7 +2,7 @@ import { Table, TableColDef, useSyncedTable } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { RNAMetadata, SharedRNADimenionalityProps } from "./page";
 import { Typography } from "@mui/material";
-import { MISSING_LABEL } from "@/common/colors";
+import { MISSING_LABEL, VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
 const RNADimensionalityTable = ({ rows, RNAData, tableProps }: SharedRNADimenionalityProps) => {
   const { loading, error } = RNAData;
@@ -27,7 +27,10 @@ const RNADimensionalityTable = ({ rows, RNAData, tableProps }: SharedRNADimenion
       field: "sex",
       headerName: "Sex",
       type: "singleSelect",
-      valueOptions: Array.from(new Set(rows.map((row) => row.sex))),
+      valueOptions: Array.from(new Set(rows.map((row) => row.sex))).map((sex) => ({
+        value: sex,
+        label: VALUE_LABEL_OVERRIDES[sex] ?? sex,
+      })),
     },
     {
       field: "age_bin",

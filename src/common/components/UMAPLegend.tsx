@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Point } from "@weng-lab/visualization";
-import { getCategoricalLabel, getCategoricalColor } from "@/common/colors";
+import { getCategoricalLabel, getCategoricalColor, VALUE_LABEL_OVERRIDES } from "@/common/colors";
 import { age_bin_color_map, AGE_BIN_LABELS, AGE_BIN_RAMP, AGE_UNKNOWN_LABEL } from "@/common/ageBins";
 import { DimensionalityReductionMeta } from "@/common/components/DimensionalityScatterPlot";
 type UMAPLegendProps<T extends DimensionalityReductionMeta> = {
@@ -97,10 +97,10 @@ export default function UMAPLegend<T extends DimensionalityReductionMeta>({
   });
 
   const legendEntries = Array.from(counts.entries())
-    .map(([label, value]) => ({
-      label: label.replaceAll(" method", ""),
+    .map(([rawLabel, value]) => ({
+      label: (VALUE_LABEL_OVERRIDES[rawLabel] ?? rawLabel).replaceAll(" method", ""),
       value,
-      color: getCategoricalColor(colorScheme, label),
+      color: getCategoricalColor(colorScheme, rawLabel),
     }))
     .sort((a, b) => b.value - a.value);
 

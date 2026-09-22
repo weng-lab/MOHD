@@ -2,7 +2,7 @@
 import { useMediaQuery, useTheme } from "@mui/material";
 import { BarPlot, type BarData, type DownloadPlotHandle } from "@weng-lab/visualization";
 import { type PhenotypicalDataPoint } from "@/common/hooks/usePhenotypicalData";
-import { BAR_PLOT_COLORS } from "@/common/colors";
+import { BAR_PLOT_COLORS, VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
 type Props = {
   rawData: PhenotypicalDataPoint[];
@@ -23,7 +23,7 @@ export default function CategoricalBarPlot({ rawData, var1Name, ref }: Props) {
   const barData: BarData<{ count: number }>[] = Array.from(counts.entries())
     .sort(([, a], [, b]) => b - a)
     .map(([label, count], i) => {
-      const category = label.replace(/_/g, " ");
+      const category = VALUE_LABEL_OVERRIDES[label] ?? label.replace(/_/g, " ");
       return {
         id: i.toString(),
         value: count,

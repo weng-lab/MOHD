@@ -1,7 +1,7 @@
 import { SyncedTableProps, Table, TableColDef, useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { Typography } from "@mui/material";
-import { MISSING_LABEL } from "@/common/colors";
+import { MISSING_LABEL, VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
 export type QuantificationSample = {
   sample_id: string;
@@ -53,7 +53,7 @@ export const useOmeQuantificationTable = <TSample extends QuantificationSample>(
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.sex))).map((sex) => ({
         value: sex,
-        label: sex,
+        label: VALUE_LABEL_OVERRIDES[sex] ?? sex,
       })),
     },
   ];

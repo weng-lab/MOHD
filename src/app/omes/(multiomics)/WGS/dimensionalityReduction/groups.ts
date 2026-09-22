@@ -11,6 +11,7 @@
 
 import { FIELD_LABELS, FIELD_PALETTES, fallbackPalette, type ColorField, type Palette } from "./fields";
 import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";
+import { VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
 const UNKNOWN_COLOR = "#C7C7C7";
 
@@ -74,7 +75,7 @@ export const groupValue = (raw: unknown): string =>
  */
 export const displayValue = (key: ColorField, raw: unknown): string => {
   const value = groupValue(raw);
-  return FIELD_LABELS[key]?.[value] ?? value;
+  return FIELD_LABELS[key]?.[value] ?? VALUE_LABEL_OVERRIDES[value] ?? value;
 };
 
 /**

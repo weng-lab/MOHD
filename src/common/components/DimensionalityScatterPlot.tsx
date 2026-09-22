@@ -1,6 +1,6 @@
 import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { useState } from "react";
-import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor } from "@/common/colors";
+import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor, VALUE_LABEL_OVERRIDES } from "@/common/colors";
 import { age_bin_color_map, AGE_UNKNOWN_LABEL } from "@/common/ageBins";
 import { Stack, SelectChangeEvent, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -60,7 +60,8 @@ const TooltipBody = ({
     {
       label: "Sex",
       value: point.metaData?.sex
-        ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1)
+        ? (VALUE_LABEL_OVERRIDES[point.metaData.sex] ??
+          point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1))
         : MISSING_LABEL,
     },
   ];
