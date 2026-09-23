@@ -44,6 +44,7 @@ const ATACDimensionalityReduction = () => {
 
   return (
     <TwoPaneLayout
+      showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
       TableComponent={<ATACDimensionalityTable {...SharedATACDimenionalityProps} />}

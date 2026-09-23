@@ -3810,9 +3810,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/ui-components@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "@weng-lab/ui-components@npm:3.3.1"
+"@weng-lab/ui-components@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "@weng-lab/ui-components@npm:3.3.2"
   peerDependencies:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.0
@@ -3821,13 +3821,13 @@ __metadata:
     "@mui/x-data-grid-premium": ^8.18.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/987bcb84c7f5eee391824002567985cfdda420d4b68310a488a090dbcf1ad83e9b003a0ee1b1c6bf6585c080afe54fa4ba0f471f236455c9468c508ba6616b2b
+  checksum: 10c0/dfed82900149863f31684cc5e6beaa96f227c2e77063dcb98726ccb2ddd51f06ff85546f3313fcdbd5d40b8a78b0af778337af25e426b789b16ff3080ebcfd63
   languageName: node
   linkType: hard
 
-"@weng-lab/visualization@npm:^2.4.3":
-  version: 2.4.3
-  resolution: "@weng-lab/visualization@npm:2.4.3"
+"@weng-lab/visualization@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "@weng-lab/visualization@npm:2.5.1"
   dependencies:
     "@types/d3-hierarchy": "npm:^3.1.7"
     "@types/d3-shape": "npm:^3.1.8"
@@ -3850,7 +3850,7 @@ __metadata:
     "@visx/visx": ^4.0.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/bc0b4eb4a57366b1bd2d89dda232276e5518423e6774cec21643c8ed7e23a9b8b078c9e336aa3084b45ae372aed7c55421740c8224fb8b0a09078f06038567f2
+  checksum: 10c0/d1c94b33b802ab526b3336179ce759ec35a9ffc6c17ec3dd2589b3f41749d99b55c366faecf3712e7657286d93002fb4b27037093d83c9b2c587a5ee95f3eb28
   languageName: node
   linkType: hard
 
@@ -7767,8 +7767,8 @@ __metadata:
     "@weng-lab/genomebrowser": "npm:2.0.0-beta.3"
     "@weng-lab/genomebrowser-tracks": "npm:2.0.0-beta.3"
     "@weng-lab/genomebrowser-ui": "npm:2.0.0-beta.2"
-    "@weng-lab/ui-components": "npm:^3.3.1"
-    "@weng-lab/visualization": "npm:^2.4.3"
+    "@weng-lab/ui-components": "npm:^3.3.2"
+    "@weng-lab/visualization": "npm:^2.5.1"
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"
     eslint: "npm:^9.38.0"
