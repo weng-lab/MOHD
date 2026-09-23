@@ -4,6 +4,7 @@ import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShe
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
+import { MISSING_LABEL } from "@/common/colors";
 
 export type MetalGroup = "base" | "ucr";
 
@@ -112,6 +113,7 @@ const MetallomicsQuantificationHeatmap = ({
         <PlotTooltip
           title={bin.datum.columnName}
           rows={[
+            { label: "Age", value: (bin.datum.metadata as MetallomicsSample | undefined)?.age_bin ?? MISSING_LABEL },
             { label: "Metal", value: bin.bin.rowName },
             { label: "Value", value: (bin.bin.metadata as MetalRowMeta | undefined)?.rawValue ?? "No data" },
           ]}

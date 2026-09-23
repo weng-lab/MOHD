@@ -33,7 +33,7 @@ const WGBSDimensionalityReduction = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps, hasAge: true });
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedWGBSDimenionalityProps: SharedWGBSDimenionalityProps = {
     rows,

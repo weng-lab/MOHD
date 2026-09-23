@@ -34,7 +34,7 @@ const LipidomicsDimensionalityReduction = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps, hasAge: true });
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedLipidomicsDimenionalityProps: SharedLipidomicsDimenionalityProps = {
     rows,

@@ -10,6 +10,7 @@ query fetchLipidomicsQuantification {
     site
     status
     sex
+    age_bin
     quant_values
   }
   lipidomics_molecules {
@@ -29,6 +30,7 @@ export type LipidomicsSample = {
   site: string;
   status: string;
   sex: string;
+  age_bin?: string | null;
   quantification: LipidomicsMoleculeValue[];
 };
 
@@ -56,6 +58,7 @@ const toLipidomicsSamples = (data: FetchLipidomicsQuantificationQuery | undefine
       site: row.site ?? "",
       status: row.status ?? "",
       sex: row.sex ?? "",
+      age_bin: row.age_bin,
       quantification: molecules.map((molecule, index) => ({
         molecule_name: molecule.molecule_name,
         value: row.quant_values?.[index] ?? null,

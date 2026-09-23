@@ -16,12 +16,9 @@ const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
 export const useOmeQuantificationTable = <TSample extends QuantificationSample>({
   rows,
   tableProps,
-  hasAge = false,
 }: {
   rows: TSample[];
   tableProps: ReturnType<typeof useTablePlotSync<TSample>>["tableProps"];
-  /** Only set for rows whose query actually returns age_bin - see DimensionalityScatterPlot's hasAge. */
-  hasAge?: boolean;
 }) => {
   const columns: TableColDef<TSample>[] = [
     {
@@ -56,10 +53,7 @@ export const useOmeQuantificationTable = <TSample extends QuantificationSample>(
         label: VALUE_LABEL_OVERRIDES[sex] ?? sex,
       })),
     },
-  ];
-
-  if (hasAge) {
-    columns.push({
+    {
       field: "age_bin",
       headerName: "Age",
       renderCell: (params) => params.value ?? "",
@@ -68,8 +62,8 @@ export const useOmeQuantificationTable = <TSample extends QuantificationSample>(
         value: age_bin,
         label: age_bin ?? MISSING_LABEL,
       })),
-    });
-  }
+    },
+  ];
 
   return useSyncedTable({
     tableProps,

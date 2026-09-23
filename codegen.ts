@@ -11,7 +11,7 @@ const config: CodegenConfig = {
       },
     },
   ],
-  documents: ["src/**/*.{ts,tsx}"],
+  documents: ["src/**/*.{ts,tsx}", "!src/common/components/GenomeBrowser/_components/DomainDisplay.tsx"],
   generates: {
     "./src/common/types/generated/": {
       preset: "client",
