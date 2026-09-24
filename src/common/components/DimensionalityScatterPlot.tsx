@@ -110,7 +110,11 @@ const DimensionalityScatterPlot = <
 
   const scatterData: Point<T>[] = !data
     ? []
-    : data.map((x) => {
+    : data.reduce<Point<T>[]>((acc, x) => {
+        const xValue = getX(x);
+        const yValue = getY(x);
+        if (xValue == null || yValue == null) return acc;
+
         const highlighted = isHighlighted(x);
 
         const getColor = () => {
@@ -129,14 +133,15 @@ const DimensionalityScatterPlot = <
           } else return "#CCCCCC";
         };
 
-        return {
-          x: getX(x) ?? 0,
-          y: getY(x) ?? 0,
+        acc.push({
+          x: xValue,
+          y: yValue,
           r: highlighted ? 6 : 4,
           color: getColor(),
           metaData: x,
-        };
-      });
+        });
+        return acc;
+      }, []);
 
   const handlePointsSelected = (selectedPoints: Point<T>[]) => {
     const newlySelected: T[] = [];
@@ -182,7 +187,7 @@ const DimensionalityScatterPlot = <
             </Stack>
             <UMAPLegend colorScheme={colorScheme} scatterData={scatterData} />
           </Stack>
-          <Box sx={{ flexGrow: 1 }}>
+          <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: 0 }}>
             <ScatterPlot
               {...rest}
               onSelectionChange={handlePointsSelected}

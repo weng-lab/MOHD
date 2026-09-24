@@ -24,7 +24,6 @@ export default function Footer() {
       links: [
         { name: "SCREEN", href: "https://screen.wenglab.org/" },
         { name: "PsychSCREEN", href: "https://psychscreen.wenglab.org/psychscreen" },
-        { name: "igSCREEN", href: "https://igscreen.vercel.app/" },
         { name: "Factorbook", href: "https://www.factorbook.org/" },
       ],
     },

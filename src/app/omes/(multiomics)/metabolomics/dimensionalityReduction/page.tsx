@@ -34,7 +34,7 @@ const MetabolomicsDimensionalityReduction = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps, hasAge: true });
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedMetabolomicsDimenionalityProps: SharedMetabolomicsDimenionalityProps = {
     rows,
@@ -47,6 +47,7 @@ const MetabolomicsDimensionalityReduction = () => {
 
   return (
     <TwoPaneLayout
+      showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
       TableComponent={<MetabolomicsDimensionalityTable {...SharedMetabolomicsDimenionalityProps} />}

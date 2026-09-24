@@ -10,6 +10,7 @@ query fetchMetabolomicsQuantification {
     site
     status
     sex
+    age_bin
     quant_values
   }
   metabolomics_compounds {
@@ -31,6 +32,7 @@ export type MetabolomicsSample = {
   site: string;
   status: string;
   sex: string;
+  age_bin?: string | null;
   quantification: MetabolomicsCompoundValue[];
 };
 
@@ -61,6 +63,7 @@ const toMetabolomicsSamples = (
       site: row.site ?? "",
       status: row.status ?? "",
       sex: row.sex ?? "",
+      age_bin: row.age_bin,
       quantification: compounds.map((compound, index) => ({
         compound: compound.compound,
         mode: compound.mode,

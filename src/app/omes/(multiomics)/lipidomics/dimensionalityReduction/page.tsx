@@ -34,7 +34,7 @@ const LipidomicsDimensionalityReduction = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps, hasAge: true });
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedLipidomicsDimenionalityProps: SharedLipidomicsDimenionalityProps = {
     rows,
@@ -47,6 +47,7 @@ const LipidomicsDimensionalityReduction = () => {
 
   return (
     <TwoPaneLayout
+      showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
       TableComponent={<LipidomicsDimensionalityTable {...SharedLipidomicsDimenionalityProps} />}

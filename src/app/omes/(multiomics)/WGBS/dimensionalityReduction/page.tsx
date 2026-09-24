@@ -33,7 +33,7 @@ const WGBSDimensionalityReduction = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps, hasAge: true });
+  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
 
   const SharedWGBSDimenionalityProps: SharedWGBSDimenionalityProps = {
     rows,
@@ -46,6 +46,7 @@ const WGBSDimensionalityReduction = () => {
 
   return (
     <TwoPaneLayout
+      showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
       TableComponent={<WGBSDimensionalityTable {...SharedWGBSDimenionalityProps} />}

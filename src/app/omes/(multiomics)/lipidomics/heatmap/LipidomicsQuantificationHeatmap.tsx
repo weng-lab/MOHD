@@ -5,6 +5,7 @@ import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShe
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
 import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
+import { MISSING_LABEL } from "@/common/colors";
 
 const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
 
@@ -82,10 +83,12 @@ const LipidomicsQuantificationHeatmap = ({
       ref={ref}
       tooltipBody={(bin) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
+        const sample = bin.datum.metadata as LipidomicsSample | undefined;
         return (
           <PlotTooltip
             title={bin.datum.columnName}
             rows={[
+              { label: "Age", value: sample?.age_bin ?? MISSING_LABEL },
               { label: "Molecule", value: rowMeta?.fullName ?? bin.bin.rowName },
               { label: "Value", value: rowMeta?.rawValue ?? "No data" },
             ]}
