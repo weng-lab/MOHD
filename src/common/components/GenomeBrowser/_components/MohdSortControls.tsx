@@ -93,7 +93,7 @@ export default function MohdSortControls({
   };
 
   return (
-    <ButtonGroup variant="outlined" size="small" aria-label="Sort MOHD tracks" sx={{ minHeight: 44 }}>
+    <ButtonGroup variant="outlined" size="small" aria-label="Sort MOHD tracks" sx={{ height: 32 }}>
       <Button onClick={() => sortMohdTracks("sampleId")}>Sort by Sample ID</Button>
       <Button onClick={() => sortMohdTracks("fileType")}>Sort by File Type</Button>
     </ButtonGroup>

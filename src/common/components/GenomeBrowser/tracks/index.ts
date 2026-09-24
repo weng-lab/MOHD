@@ -26,8 +26,7 @@ const HG38_2BIT_URL = "https://hgdownload.soe.ucsc.edu/goldenpath/hg38/bigZips/h
  */
 export function createRulerTrack() {
   return rulerModule.create({
-    id: RULER_TRACK_ID,
-    title: "Coordinates",
+    base: { id: RULER_TRACK_ID, title: "Coordinates" },
     config: { sequenceUrl: HG38_2BIT_URL },
   });
 }
@@ -46,7 +45,7 @@ export function createTrackCollections(mohdOme?: MohdOme) {
      * this before it is passed back in.
      */
     validTrackIds: new Set(
-      collections.flatMap((collection) => collection.tracks.map((track) => `${collection.id}::${track.id}`))
+      collections.flatMap((collection) => collection.tracks.map((track) => `${collection.id}::${track.base.id}`))
     ),
   };
 }

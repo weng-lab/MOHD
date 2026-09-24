@@ -1,12 +1,11 @@
 import { gql as screenGql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { hg38, type BrowserStoreInstance } from "@weng-lab/genomebrowser";
 import { Cytobands, type CytobandsProps } from "@weng-lab/genomebrowser-ui";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-const CYTOBANDS_WIDTH = 700;
-const CYTOBANDS_HEIGHT = 20;
+const CYTOBANDS_HEIGHT = 14;
 
 /**
  * v1's <Cytobands> fetched its own band data. v2 made the component data-only,
@@ -68,39 +67,45 @@ export default function DomainDisplay({ useBrowserStore }: { useBrowserStore: Br
 
   const chromosomeLength = hg38.chromosomes[region.chromosome];
 
+  // Cytobands takes an explicit pixel width, so the ideogram is measured against
+  // its container to span the full track width instead of a fixed size.
+  const container = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const element = container.current;
+    if (!element) return;
+
+    const resize = () => setWidth(element.clientWidth);
+    resize();
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Stack alignItems="center" width="100%" maxWidth={CYTOBANDS_WIDTH}>
-      <Typography>
-        {region.chromosome}:{region.start.toLocaleString()}-{region.end.toLocaleString()}
-      </Typography>
-      {/* Cytobands renders a fixed-size <svg> with a viewBox; scale it to the container like v1 did. */}
-      <Box
-        minHeight={CYTOBANDS_HEIGHT}
-        width="100%"
-        display="flex"
-        alignItems="flex-end"
-        sx={{ "& svg": { width: "100%", height: "auto" } }}
-      >
-        {chromosomeLength && bands.length > 0 ? (
-          <Cytobands
-            chromosome={region.chromosome}
-            chromosomeLength={chromosomeLength}
-            bands={bands}
-            width={CYTOBANDS_WIDTH}
-            height={CYTOBANDS_HEIGHT}
-            currentRegion={region}
-            highlights={highlights}
-            // Clicking a highlight on the ideogram jumps the browser to it.
-            onHighlightClick={(highlight) =>
-              setRegion({
-                chromosome: highlight.region.chromosome ?? region.chromosome,
-                start: highlight.region.start,
-                end: highlight.region.end,
-              })
-            }
-          />
-        ) : null}
-      </Box>
-    </Stack>
+    // The toolbar's region search already displays the current coordinates, so this is ideogram-only.
+    <Box ref={container} width="100%" minHeight={CYTOBANDS_HEIGHT} mt={1} mb={0.5}>
+      {chromosomeLength && bands.length > 0 && width > 0 ? (
+        <Cytobands
+          chromosome={region.chromosome}
+          chromosomeLength={chromosomeLength}
+          bands={bands}
+          width={width}
+          height={CYTOBANDS_HEIGHT}
+          currentRegion={region}
+          highlights={highlights}
+          // Clicking a highlight on the ideogram jumps the browser to it.
+          onHighlightClick={(highlight) =>
+            setRegion({
+              chromosome: highlight.region.chromosome ?? region.chromosome,
+              start: highlight.region.start,
+              end: highlight.region.end,
+            })
+          }
+        />
+      ) : null}
+    </Box>
   );
 }

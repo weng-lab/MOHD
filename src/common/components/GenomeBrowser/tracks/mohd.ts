@@ -1,4 +1,4 @@
-import type { TrackSelectCollection, TrackSelectTrack } from "@weng-lab/genomebrowser-ui";
+import { hg38, type TrackCollection } from "@weng-lab/genomebrowser";
 import mohdAtacData from "./data/mohdAtac.json";
 import mohdRnaData from "./data/mohdRna.json";
 import mohdWgbsData from "./data/mohdWgbs.json";
@@ -82,6 +82,8 @@ export type MohdTrackInfo = {
   fileRank: number;
 };
 
+type MohdTrack = TrackCollection["tracks"][number];
+
 const WGBS_DESCRIPTION = "DNA methylation (CpG) and coverage";
 
 /** Track defaults carried over from the v1 folder definitions. */
@@ -164,7 +166,7 @@ function createFileTrack(
   sample: MohdSample,
   file: MohdFileSpec,
   fileRank: number
-): { track: TrackSelectTrack; info: MohdTrackInfo } {
+): { track: MohdTrack; info: MohdTrackInfo } {
   const { color, label } = getMohdOmeConfig(data.ome);
   const filename = `${sample.id}_${file.suffix}`;
   const isAnnotation = file.suffix.endsWith(".bigBed");
@@ -186,11 +188,13 @@ function createFileTrack(
   return {
     info,
     track: {
-      ...(isAnnotation ? BIGBED_DEFAULTS : BIGWIG_DEFAULTS),
       type: isAnnotation ? "bigbed" : "bigwig",
-      id: trackId,
-      title: `${sample.id} ${file.fileType}`,
-      color,
+      base: {
+        ...(isAnnotation ? BIGBED_DEFAULTS : BIGWIG_DEFAULTS),
+        id: trackId,
+        title: `${sample.id} ${file.fileType}`,
+        color,
+      },
       config: {
         url: `${MOHD_BASE_URL}/${data.downloadPath}/${sample.id}/${filename}`,
         ...(isAnnotation ? { bedSchema: BIGBED_SCHEMA } : {}),
@@ -204,10 +208,7 @@ function createFileTrack(
  * WGBS files are grouped per sample: one MethylC track covers both strands
  * across every published context plus coverage.
  */
-function createWgbsMethylTrack(
-  data: MohdOmeData,
-  sample: MohdSample
-): { track: TrackSelectTrack; info: MohdTrackInfo } {
+function createWgbsMethylTrack(data: MohdOmeData, sample: MohdSample): { track: MohdTrack; info: MohdTrackInfo } {
   const channelUrl = (marker: string) => {
     const file = data.files.find((candidate) => candidate.suffix.startsWith(marker));
     return { url: file ? `${MOHD_BASE_URL}/${data.downloadPath}/${sample.id}/${sample.id}_${file.suffix}` : "" };
@@ -229,10 +230,12 @@ function createWgbsMethylTrack(
   return {
     info,
     track: {
-      ...METHYLC_DEFAULTS,
       type: "methylc",
-      id: sample.id,
-      title: `${sample.id} ${WGBS_DESCRIPTION}`,
+      base: {
+        ...METHYLC_DEFAULTS,
+        id: sample.id,
+        title: `${sample.id} ${WGBS_DESCRIPTION}`,
+      },
       config: {
         urls: {
           plusStrand: {
@@ -295,7 +298,7 @@ const MOHD_VIEWS = [
 ];
 
 export type MohdCatalog = {
-  collection: TrackSelectCollection;
+  collection: TrackCollection;
   /** Qualified track ID -> sort metadata, for host-side track ordering. */
   trackInfoById: Map<string, MohdTrackInfo>;
 };
@@ -313,6 +316,7 @@ export function createMohdCatalog(ome?: MohdOme): MohdCatalog {
 
   return {
     collection: {
+      assembly: hg38.id,
       id: MOHD_COLLECTION_ID,
       label: "MOHD",
       description: "Public MOHD signal, methylation, and annotation tracks.",

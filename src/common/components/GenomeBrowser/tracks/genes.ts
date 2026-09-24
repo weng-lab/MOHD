@@ -1,6 +1,5 @@
-import { hg38 } from "@weng-lab/genomebrowser";
+import { hg38, type TrackCollection } from "@weng-lab/genomebrowser";
 import { getGeneDatasetTitle, getGeneDatasetsForAssembly } from "@weng-lab/genomebrowser-tracks/gene";
-import type { TrackSelectCollection } from "@weng-lab/genomebrowser-ui";
 
 /**
  * Gene annotation catalog.
@@ -46,7 +45,8 @@ export function qualifyGeneTrackId(trackId: string) {
 // track selection survives changing GENCODE_VERSION.
 export const GENCODE_BASIC_TRACK_ID = qualifyGeneTrackId("gencode-basic");
 
-export const genesCollection: TrackSelectCollection = {
+export const genesCollection: TrackCollection = {
+  assembly: hg38.id,
   id: GENES_COLLECTION_ID,
   label: "Genes",
   description: "Gene annotation tracks",
@@ -65,12 +65,14 @@ export const genesCollection: TrackSelectCollection = {
   tracks: [
     {
       type: "gene",
-      id: "gencode-basic",
-      // Matching the catalog title lets the title follow the dataset when a user
-      // switches releases in the settings panel.
-      title: getGeneDatasetTitle(gencodeDataset),
-      display: "full",
-      color: "#0c184a",
+      base: {
+        id: "gencode-basic",
+        // Matching the catalog title lets the title follow the dataset when a user
+        // switches releases in the settings panel.
+        title: getGeneDatasetTitle(gencodeDataset),
+        display: "full",
+        color: "#0c184a",
+      },
       config: {
         url: gencodeDataset.url,
         // The v1 transcript track coloured MANE Select transcripts separately;
