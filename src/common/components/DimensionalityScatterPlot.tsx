@@ -187,7 +187,7 @@ const DimensionalityScatterPlot = <
             </Stack>
             <UMAPLegend colorScheme={colorScheme} scatterData={scatterData} />
           </Stack>
-          <Box sx={{ flexGrow: 1 }}>
+          <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: 0 }}>
             <ScatterPlot
               {...rest}
               onSelectionChange={handlePointsSelected}

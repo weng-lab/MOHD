@@ -33,7 +33,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
         transition: "opacity 320ms ease, transform 320ms ease",
         borderRadius: 3,
         border: "1px solid rgba(255,255,255,0.28)",
-        background: "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(242,249,248,0.68) 100%)",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.90) 0%, rgba(242,249,248,0.85) 100%)",
         boxShadow: "0 24px 60px rgba(0, 0, 0, 0.16)",
         backdropFilter: "blur(16px)",
         color: "text.primary",

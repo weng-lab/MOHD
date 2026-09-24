@@ -58,7 +58,7 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
           <InfoOutlinedIcon fontSize="small" color="action" />
         </Tooltip>
       </Stack>
-      <Box sx={{ flexGrow: 1, minHeight: 0 }}>
+      <Box sx={{ flexGrow: 1, minHeight: 0, minWidth: 0 }}>
         {heatmapData.length === 0 ? (
           <Stack width="100%" height="100%" alignItems="center" justifyContent="center">
             <Typography color="text.secondary">{emptyMessage}</Typography>
