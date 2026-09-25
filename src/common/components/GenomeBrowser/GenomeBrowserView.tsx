@@ -1,17 +1,10 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import HighlightIcon from "@mui/icons-material/Highlight";
-import { Button } from "@mui/material";
 import { Stack, useMediaQuery } from "@mui/system";
 import { ScreenApolloWrapper } from "@/common/apollo/apollo-wrapper";
-import { GenomeBrowser, createBrowserStore, createSettingsStore, createTrackStore } from "@weng-lab/genomebrowser";
-import { TrackBaseSettings } from "@weng-lab/genomebrowser-tracks/shared";
-import { BrowserSelectionControls, HighlightDialog, TrackSelect } from "@weng-lab/genomebrowser-ui";
-import BrowserSearch from "./_components/BrowserSearch";
-import ControlButtons from "./_components/ControlButtons";
+import { GenomeBrowser, createBrowserStore, createTrackStore } from "@weng-lab/genomebrowser";
+import BrowserControls from "./_components/BrowserControls";
 import DomainDisplay from "./_components/DomainDisplay";
-import MohdSortControls from "./_components/MohdSortControls";
 import { DEFAULT_BROWSER_STATE } from "./defaultBrowserState";
 import { RULER_TRACK_ID, TRACK_MODULES, createRulerTrack, createTrackCollections, type MohdOme } from "./tracks";
 import { loadTrackIds, saveTrackIds } from "./trackSelectStorage";
@@ -28,9 +21,6 @@ export type GenomeBrowserViewProps = {
 };
 
 export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKey, mohdOme }: GenomeBrowserViewProps) {
-  const [trackSelectOpen, setTrackSelectOpen] = useState(false);
-  const [highlightOpen, setHighlightOpen] = useState(false);
-
   // Keep the collections stable: rebuilding the array re-parses every collection
   // and can restart TrackSelect's initialization.
   const { collections, mohdTrackInfoById, validTrackIds } = useMemo(() => createTrackCollections(mohdOme), [mohdOme]);
@@ -45,11 +35,6 @@ export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKe
       pinnedTrackIds: [RULER_TRACK_ID],
     })
   );
-
-  // Core is MUI-independent, so its stock base settings are unstyled HTML inputs.
-  // TrackBaseSettings renders the same title/display/colour/height fields as MUI,
-  // matching each module's own settings panel below it.
-  const [useSettingsStore] = useState(() => createSettingsStore({ baseSettingsComponent: TrackBaseSettings }));
 
   const [restoredTrackIds, setRestoredTrackIds] = useState<readonly string[] | undefined>(undefined);
 
@@ -83,72 +68,19 @@ export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKe
   return (
     <ScreenApolloWrapper>
       <Stack sx={{ overflow: "hidden", px: { xs: 2, md: 4, lg: 6 }, py: 2 }}>
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          spacing={2}
-          justifyContent="space-between"
-          alignItems={{ xs: "stretch", md: "center" }}
-        >
-          <BrowserSearch useBrowserStore={useBrowserStore} />
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1}
-            alignItems={{ xs: "stretch", sm: "center" }}
-            sx={{
-              width: { xs: "100%", md: "auto" },
-            }}
-          >
-            <MohdSortControls trackInfoById={mohdTrackInfoById} useTrackStore={useTrackStore} />
-            <Button
-              variant="contained"
-              startIcon={<HighlightIcon />}
-              size="small"
-              onClick={() => setHighlightOpen(true)}
-              sx={{ minHeight: 44 }}
-            >
-              Highlights
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<EditIcon />}
-              size="small"
-              onClick={() => setTrackSelectOpen(true)}
-              sx={{ minHeight: 44 }}
-            >
-              Select Tracks
-            </Button>
-          </Stack>
-        </Stack>
-        <Stack
-          direction={{ xs: "column", lg: "row" }}
-          spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
-          border="1px solid rgb(204, 204, 204)"
-          borderBottom="none"
-          p={1}
-          mt={2}
-        >
-          <DomainDisplay useBrowserStore={useBrowserStore} />
-          <Stack direction="column" spacing={1} alignItems="center">
-            <BrowserSelectionControls browserStore={useBrowserStore} />
-            <ControlButtons useBrowserStore={useBrowserStore} />
-          </Stack>
-        </Stack>
-        <GenomeBrowser browserStore={useBrowserStore} trackStore={useTrackStore} settingsStore={useSettingsStore} />
+        <BrowserControls
+          browserStore={useBrowserStore}
+          trackStore={useTrackStore}
+          collections={collections}
+          mohdTrackInfoById={mohdTrackInfoById}
+          initialTrackIds={restoredTrackIds}
+          defaultTrackIds={initialSelectedIds}
+          maxTracks={MAX_TRACKS}
+          onCommittedTrackIds={(trackIds) => saveTrackIds(sessionStorageKey, trackIds)}
+        />
+        <DomainDisplay useBrowserStore={useBrowserStore} />
+        <GenomeBrowser browserStore={useBrowserStore} trackStore={useTrackStore} />
       </Stack>
-      <HighlightDialog browserStore={useBrowserStore} open={highlightOpen} onClose={() => setHighlightOpen(false)} />
-      <TrackSelect
-        trackCollections={collections}
-        useTrackStore={useTrackStore}
-        initialTrackIds={restoredTrackIds}
-        defaultTrackIds={initialSelectedIds}
-        onCommittedTrackIds={(trackIds) => saveTrackIds(sessionStorageKey, trackIds)}
-        maxTracks={MAX_TRACKS}
-        open={trackSelectOpen}
-        onClose={() => setTrackSelectOpen(false)}
-        title="Select Tracks"
-      />
     </ScreenApolloWrapper>
   );
 }
