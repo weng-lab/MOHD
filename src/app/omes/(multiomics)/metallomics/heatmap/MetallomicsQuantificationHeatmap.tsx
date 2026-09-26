@@ -62,12 +62,7 @@ const MetallomicsQuantificationHeatmap = ({
 
   const valueByMetalPerSample = samples.map(valueByMetal);
 
-  const scale = buildHeatmapColorScale(
-    scaleMode,
-    valuesByRow(metals, rows.map(valueByMetal)),
-    valuesByRow(metals, valueByMetalPerSample),
-    "metal"
-  );
+  const scale = buildHeatmapColorScale(scaleMode, valuesByRow(metals, rows.map(valueByMetal)), "metal");
 
   const heatmapData: ColumnDatum<MetallomicsSample, MetalRowMeta>[] = samples.map((sample, sampleIndex) => ({
     columnName: sample.sample_id,
@@ -76,7 +71,8 @@ const MetallomicsQuantificationHeatmap = ({
       const rawValue = valueByMetalPerSample[sampleIndex].get(metal) ?? null;
       return {
         rowName: metal,
-        count: rawValue === null ? null : scale.toCount(metal, rawValue),
+        // Unclamped where a colorbar can move the range: the heatmap holds colors at its ends itself.
+        count: rawValue === null ? null : (scale.colorbar?.value ?? scale.toCount)(metal, rawValue),
         metadata: rawValue === null ? undefined : { rawValue },
       };
     }),
@@ -94,11 +90,10 @@ const MetallomicsQuantificationHeatmap = ({
       downloadFileName={downloadFileName}
       colors={scale.colors}
       colorDomain={scale.colorDomain}
-      header={
-        <HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} caption={scale.caption} />
-      }
+      colorbar={scale.colorbar}
+      header={<HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />}
       ref={ref}
-      tooltipBody={(bin) => {
+      tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as MetalRowMeta | undefined;
         return (
           <>
@@ -113,7 +108,7 @@ const MetallomicsQuantificationHeatmap = ({
             </Typography>
             {rowMeta && (
               <Typography>
-                <b>Color:</b> {scale.describe(bin.bin.rowName, rowMeta.rawValue)}
+                <b>Color:</b> {scale.describe(bin.bin.rowName, rowMeta.rawValue, domain)}
               </Typography>
             )}
           </>

@@ -5,6 +5,7 @@
  * rather than by group, and has no chips to toggle or values to filter by.
  */
 
+import { colorAt, percentile, type ColorRange } from "@/common/components/Colorbar/colorbarAxis";
 import { NEUTRAL_MID } from "@/common/components/plotDimming";
 
 /** In the order the color select lists them. `key` is what a link carries (?color=frip). */
@@ -25,7 +26,12 @@ export type Metric = MetricDefinition["key"];
  * A metric satisfies it as it is. A feature's quantification, which is continuous in the same way
  * without being a library metric, builds one - see features.ts.
  */
-export type ContinuousDefinition = { label: string; format: (value: number) => string };
+export type ContinuousDefinition = {
+  label: string;
+  format: (value: number) => string;
+  /** A sample's own value, where it wants more precision than the scale's rounded ends; `format` otherwise. */
+  formatValue?: (value: number) => string;
+};
 
 export const isMetric = (value: string | null): value is Metric => METRICS.some(({ key }) => key === value);
 
@@ -46,9 +52,6 @@ export const METRIC_RAMP = [
   { at: 1, color: "#d8422c" },
 ] as const;
 
-/** The ramp as a CSS gradient, for the legend's colorbar. */
-export const METRIC_GRADIENT = `linear-gradient(to right, ${METRIC_RAMP.map(({ at, color }) => `${color} ${Math.round(at * 100)}%`).join(", ")})`;
-
 /**
  * Percentile trimmed off each end of a metric's range before the ramp is stretched across it.
  *
@@ -67,27 +70,29 @@ export type MetricScale = {
   clippedHigh: boolean;
 };
 
-/** Linear interpolation between closest ranks - numpy's default, so it agrees with a quick check in Python. */
-const percentile = (sorted: readonly number[], p: number) => {
-  const rank = ((sorted.length - 1) * p) / 100;
-  const below = Math.floor(rank);
-  const above = Math.min(below + 1, sorted.length - 1);
-  return sorted[below] + (sorted[above] - sorted[below]) * (rank - below);
-};
+/** Where a metric's colors stop until the reader moves them: the middle 96% of its values, sorted ascending. */
+export const defaultRange = (sorted: ArrayLike<number>): ColorRange => [
+  percentile(sorted, CLIP_PERCENTILE),
+  percentile(sorted, 100 - CLIP_PERCENTILE),
+];
+
+/** The scale for colors spanning `range`, over a metric's values sorted ascending. */
+export const scaleOver = (sorted: ArrayLike<number>, [low, high]: ColorRange): MetricScale => ({
+  low,
+  high,
+  clippedLow: sorted[0] < low,
+  clippedHigh: sorted[sorted.length - 1] > high,
+});
 
 /**
- * The scale for a metric's values. Pass every sample the ome has, never only the visible ones, so
- * that a filter can't repaint the points it leaves. Null when no sample has a value.
+ * The default scale for a metric's values. Pass every sample the ome has, never only the visible
+ * ones, so that a filter can't repaint the points it leaves. Null when no sample has a value.
  */
 export const metricScale = (values: readonly number[]): MetricScale | null => {
   if (values.length === 0) return null;
-  const sorted = [...values].sort((a, b) => a - b);
-  const low = percentile(sorted, CLIP_PERCENTILE);
-  const high = percentile(sorted, 100 - CLIP_PERCENTILE);
-  return { low, high, clippedLow: sorted[0] < low, clippedHigh: sorted[sorted.length - 1] > high };
+  const sorted = Float64Array.from(values).sort();
+  return scaleOver(sorted, defaultRange(sorted));
 };
-
-const toRgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 
 /**
  * Where a value sits along the ramp, from 0 at `low` to 1 at `high`. A value beyond either end is
@@ -102,14 +107,5 @@ export const metricPosition = (scale: MetricScale, value: number) => {
 /** A value's color on the ramp. Samples with no value take the missing neutral, as they do on any other coloring. */
 export const metricColor = (scale: MetricScale | null, value: number | null): string => {
   if (scale === null || value === null) return NEUTRAL_MID;
-  const t = metricPosition(scale, value);
-  // The stops are unevenly placed, so find the pair t falls between rather than indexing by step.
-  const upper = Math.max(
-    METRIC_RAMP.findIndex(({ at }) => at >= t),
-    1
-  );
-  const [from, to] = [METRIC_RAMP[upper - 1], METRIC_RAMP[upper]];
-  const mix = (t - from.at) / (to.at - from.at);
-  const [start, end] = [toRgb(from.color), toRgb(to.color)];
-  return `rgb(${start.map((channel, i) => Math.round(channel + (end[i] - channel) * mix)).join(",")})`;
+  return colorAt(METRIC_RAMP, metricPosition(scale, value));
 };

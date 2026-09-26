@@ -39,12 +39,7 @@ const LipidomicsQuantificationHeatmap = ({
 
   const valueByMoleculePerSample = samples.map(valueByMolecule);
 
-  const scale = buildHeatmapColorScale(
-    scaleMode,
-    valuesByRow(molecules, rows.map(valueByMolecule)),
-    valuesByRow(molecules, valueByMoleculePerSample),
-    "lipid"
-  );
+  const scale = buildHeatmapColorScale(scaleMode, valuesByRow(molecules, rows.map(valueByMolecule)), "lipid");
 
   const heatmapData: ColumnDatum<LipidomicsSample, MoleculeRowMeta>[] = samples.map((sample, sampleIndex) => ({
     columnName: sample.sample_id,
@@ -53,7 +48,8 @@ const LipidomicsQuantificationHeatmap = ({
       const rawValue = valueByMoleculePerSample[sampleIndex].get(molecule) ?? null;
       return {
         rowName: truncateMoleculeName(molecule),
-        count: rawValue === null ? null : scale.toCount(molecule, rawValue),
+        // Unclamped where a colorbar can move the range: the heatmap holds colors at its ends itself.
+        count: rawValue === null ? null : (scale.colorbar?.value ?? scale.toCount)(molecule, rawValue),
         metadata: rawValue === null ? undefined : { fullName: molecule, rawValue },
       };
     }),
@@ -71,11 +67,10 @@ const LipidomicsQuantificationHeatmap = ({
       downloadFileName="lipidomics_quantification_heatmap"
       colors={scale.colors}
       colorDomain={scale.colorDomain}
-      header={
-        <HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} caption={scale.caption} />
-      }
+      colorbar={scale.colorbar}
+      header={<HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />}
       ref={ref}
-      tooltipBody={(bin) => {
+      tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
         return (
           <>
@@ -90,7 +85,7 @@ const LipidomicsQuantificationHeatmap = ({
             </Typography>
             {rowMeta && (
               <Typography>
-                <b>Color:</b> {scale.describe(rowMeta.fullName, rowMeta.rawValue)}
+                <b>Color:</b> {scale.describe(rowMeta.fullName, rowMeta.rawValue, domain)}
               </Typography>
             )}
           </>

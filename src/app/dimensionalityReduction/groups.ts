@@ -1,6 +1,7 @@
 import type { LegendGroup } from "@/common/components/PlotLegend";
 import { QC_GROUP, colorOf, groupOf, labelOf, sortValues, type Field } from "./fields";
-import type { ExplorerRow } from "./types";
+import type { ExplorerOme, Method } from "./omes";
+import type { ExplorerData, ExplorerRow } from "./types";
 
 /** Everything that decides whether a sample shows. */
 export type Filters = {
@@ -32,6 +33,10 @@ export const passesFilters = (row: ExplorerRow, filters: Filters, except?: Field
   row.qc
     ? !filters.hideQc
     : filters.fields.every((field) => field === except || !filters.hidden[field].has(groupOf(field, row)));
+
+/** The rows a method places. Every row has PCs - the server drops any without - but UMAP coordinates are checked per row. */
+export const rowsFor = (data: ExplorerData, ome: ExplorerOme, method: Method) =>
+  method === "UMAP" ? data[ome].rows.filter((row) => row.umap) : data[ome].rows;
 
 /** A field's values across an ome's participant samples, in display order. */
 export const valuesOf = (rows: readonly ExplorerRow[], field: Field) =>

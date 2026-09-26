@@ -22,13 +22,15 @@ import {
 import type { ReactNode } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
 import { PANEL_SX } from "./ExplorerLayout";
-import { FEATURE_COLOR, FEATURE_KINDS, type FeatureOption } from "./features";
-import { colorOptionsFor, labelOf, type ColorBy, type Field, type FieldDefinition } from "./fields";
+import { FEATURE_COLOR, FEATURE_KINDS } from "./features";
+import { colorOptionsFor, labelOf, type ColorBy, type Field } from "./fields";
 import GeneSearch from "./GeneSearch";
+import { rowsFor, valuesOf } from "./groups";
 import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "./omes";
 import { switchOme, toggleHidden, type ExplorerState } from "./params";
 import QuantificationSearch from "./QuantificationSearch";
-import { NO_SHAPE, type ShapeBy } from "./shapes";
+import { NO_SHAPE, shapeOptionsFor, type ShapeBy } from "./shapes";
+import type { ExplorerData } from "./types";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
 
@@ -123,36 +125,38 @@ const PcSelect = ({ label, value, other, pve, onChange }: PcSelectProps) => (
 export type ControlPanelProps = {
   state: ExplorerState;
   onChange: (state: ExplorerState) => void;
-  pve: readonly (number | null)[];
-  /** Each offered field's values on the current ome, in display order. */
-  options: Partial<Record<Field, string[]>>;
-  /** The fields this ome's data can be shaped by - fewer than it can be colored by, see shapes.ts. */
-  shapeOptions: FieldDefinition[];
+  /**
+   * Every ome's data, which the panel reads its own choices out of. Handed in whole rather than as
+   * those choices: worked out in the explorer, they fell into one React Compiler memo block with
+   * the plot's colors - it has to assume the helpers that build the points may mutate what they are
+   * given - and came out as new arrays on every step of a color-range drag, re-rendering the whole
+   * panel with them. Here they depend on the data and the state alone, which a drag leaves as they are.
+   */
+  data: ExplorerData;
   /**
    * The gene currently colouring the plot, named as the API names it once that is known. The search
    * below owns its own input and clears it on every submission, so without this a link opened with
    * a gene already set would leave the panel looking as though none was.
    */
   geneLabel: string | null;
-  /** What a mass-spec ome's picker lists - see OmeData.features. Empty elsewhere. */
-  features: FeatureOption[];
-  /** Whether the current ome has QC samples, and so whether their switch is shown. */
-  hasQc: boolean;
 };
 
-const ControlPanel = ({
-  state,
-  onChange,
-  pve,
-  options,
-  shapeOptions,
-  geneLabel,
-  features,
-  hasQc,
-}: ControlPanelProps) => {
+const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) => {
   const { ome, method, x, y, color, shape, hideQc } = state;
   const { umap } = OME_CAPABILITIES[ome];
   const { fields, metrics, feature } = colorOptionsFor(ome);
+  const { pve } = data[ome];
+  // What a mass-spec ome's picker lists - see OmeData.features. Empty elsewhere.
+  const features = data[ome].features ?? [];
+  const rows = rowsFor(data, ome, method);
+  // Each offered field's values on the current ome, in display order.
+  const options: Partial<Record<Field, string[]>> = Object.fromEntries(
+    fields.map(({ key }) => [key, valuesOf(rows, key)])
+  );
+  // The fields this ome's data can be shaped by - fewer than it can be colored by, see shapes.ts.
+  const shapeOptions = shapeOptionsFor(ome, data);
+  // Whether the current ome has QC samples, and so whether their switch is shown.
+  const hasQc = rows.some((row) => row.qc);
   const filtered = hideQc || Object.values(state.hidden).some((values) => values.length > 0);
 
   const update = (patch: Partial<ExplorerState>) => onChange({ ...state, ...patch });

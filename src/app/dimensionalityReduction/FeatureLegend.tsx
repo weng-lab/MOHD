@@ -1,8 +1,9 @@
 "use client";
 
 import { CircularProgress, Stack, Typography } from "@mui/material";
-import { FEATURE_KINDS, featureDefinition, featureNote, type FeatureKind, type FeatureValues } from "./features";
-import MetricLegend, { type RampRange } from "./MetricLegend";
+import type { RampRange } from "@/common/components/Colorbar/colorbarAxis";
+import { FEATURE_KINDS, featureDefinition, featureTransform, type FeatureKind, type FeatureValues } from "./features";
+import MetricLegend, { type ColorRangeControl } from "./MetricLegend";
 import type { MetricScale } from "./metrics";
 
 export type FeatureLegendProps = {
@@ -10,13 +11,16 @@ export type FeatureLegendProps = {
   feature: FeatureValues;
   /** Across log10(value + 1), which is what the colorbar's ends are written back out of. */
   scale: MetricScale | null;
+  /** In log10, as the scale is - see MetricLegend. */
+  values: ArrayLike<number>;
   /** Samples in focus the feature has no value for. */
   missing: number;
   /** The hovered sample's value, in log10 as the scale is. */
   hovered: number | null;
-  /** The colorbar's own hover, passed through - see MetricLegend. */
-  range: RampRange | null;
-  onRangeHover: (range: RampRange | null) => void;
+  /** The colorbar's own hover and range control, passed through - see MetricLegend. */
+  sweep: RampRange | null;
+  onSweep: (sweep: RampRange | null) => void;
+  control?: ColorRangeControl;
 };
 
 /**
@@ -27,17 +31,29 @@ export type FeatureLegendProps = {
  * say about it - an all-grey plot is what each of these four looks like, and they mean very
  * different things.
  */
-const FeatureLegend = ({ kind, feature, scale, missing, hovered, range, onRangeHover }: FeatureLegendProps) => {
+const FeatureLegend = ({
+  kind,
+  feature,
+  scale,
+  values,
+  missing,
+  hovered,
+  sweep,
+  onSweep,
+  control,
+}: FeatureLegendProps) => {
   if (feature.status === "ready") {
     return (
       <MetricLegend
         metric={featureDefinition(kind, feature)}
-        note={featureNote(kind)}
+        transform={featureTransform(kind)}
         scale={scale}
+        values={values}
         missing={missing}
         hovered={hovered}
-        range={range}
-        onRangeHover={onRangeHover}
+        sweep={sweep}
+        onSweep={onSweep}
+        control={control}
       />
     );
   }

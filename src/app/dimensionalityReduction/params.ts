@@ -15,10 +15,12 @@
  *   shape   none | site | status | sex | protocol - not age, which has too many bins to shape by
  *   hide    repeated; "field:value" fades one value's samples, "qc" fades the QC ones
  *           e.g. ?hide=site:LEO&hide=age:80%2B&hide=qc
+ *   range   low,high - where a metric's or feature's colors stop, in the data's own units (reads,
+ *           TPM), to four significant figures: ?range=5.87,31.27
  */
 
 import { isFeatureId } from "./features";
-import { isColorBy, isField, offersColor, type ColorBy, type Field } from "./fields";
+import { isColorBy, isContinuous, isField, offersColor, type ColorBy, type Field } from "./fields";
 import { OME_CAPABILITIES, PC_COUNT, findOme, type ExplorerOme, type Method } from "./omes";
 import { NO_SHAPE, isShapeBy, shapeFieldsFor, type ShapeBy } from "./shapes";
 
@@ -45,6 +47,13 @@ export type ExplorerState = {
   hidden: Partial<Record<Field, string[]>>;
   /** QC and reference samples keep their own color by default, rather than being faded out. */
   hideQc: boolean;
+  /**
+   * Where the colors stop on a metric or feature, [low, high] in the data's own units - TSS
+   * enrichment, reads, TPM - rather than the log10 a feature is colored in, so a link reads as the
+   * legend does. Null for the default, the middle 96% of samples. Dropped with any change of
+   * coloring - see forgetStaleRange.
+   */
+  range: [number, number] | null;
 };
 
 export const DEFAULT_STATE: ExplorerState = {
@@ -57,6 +66,7 @@ export const DEFAULT_STATE: ExplorerState = {
   shape: NO_SHAPE,
   hidden: {},
   hideQc: false,
+  range: null,
 };
 
 const QC_HIDE_VALUE = "qc";
@@ -86,8 +96,18 @@ export const normalize = (state: ExplorerState): ExplorerState => {
     feature: featureFor(state.ome, state.feature),
     shape: shapeFieldsFor(state.ome).some(({ key }) => key === state.shape) ? state.shape : NO_SHAPE,
     y: state.y === state.x ? (state.x === 1 ? 2 : 1) : state.y,
+    range: isContinuous(color) ? state.range : null,
   };
 };
+
+/**
+ * Drops the color range when what colors the plot changes - ome, coloring or feature. Where one
+ * metric's colors stop says nothing about where the next one's should.
+ */
+export const forgetStaleRange = (current: ExplorerState, next: ExplorerState): ExplorerState =>
+  next.ome !== current.ome || next.color !== current.color || next.feature !== current.feature
+    ? { ...next, range: null }
+    : next;
 
 type ReadableParams = {
   get(name: string): string | null;
@@ -97,6 +117,25 @@ type ReadableParams = {
 const parsePc = (raw: string | null, fallback: number) => {
   const pc = Number(raw);
   return raw !== null && Number.isInteger(pc) && pc >= 1 && pc <= PC_COUNT ? pc : fallback;
+};
+
+/**
+ * A bound to four significant figures, rounded away from the range's middle - down for its low end,
+ * up for its high - so a saved range never cuts off values the reader took in. Rounded to nearest,
+ * "all of them" would come back from a link leaving the highest sample just outside.
+ */
+const roundOutward = (bound: number, round: (value: number) => number) => {
+  if (bound === 0) return 0;
+  const step = 10 ** (Math.floor(Math.log10(Math.abs(bound))) - 3);
+  // The nudge keeps a bound already on the grid from stepping off it through float error.
+  const nudge = round === Math.floor ? 1e-9 : -1e-9;
+  return Number((round(bound / step + nudge) * step).toPrecision(4));
+};
+
+/** Two finite numbers, low first. */
+const parseRange = (raw: string | null): [number, number] | null => {
+  const bounds = raw?.split(",").map(Number);
+  return bounds?.length === 2 && bounds.every(Number.isFinite) && bounds[0] < bounds[1] ? [bounds[0], bounds[1]] : null;
 };
 
 /** Reads a state out of search params. Anything unrecognised falls back to its default rather than failing. */
@@ -131,6 +170,7 @@ export const parseState = (params: ReadableParams): ExplorerState => {
     shape: isShapeBy(shape) ? shape : DEFAULT_STATE.shape,
     hidden,
     hideQc,
+    range: parseRange(params.get("range")),
   });
 };
 
@@ -150,6 +190,10 @@ export const serializeState = (state: ExplorerState): string => {
     for (const value of [...new Set(values)].sort()) params.append("hide", `${field}:${value}`);
   }
   if (state.hideQc) params.append("hide", QC_HIDE_VALUE);
+  if (state.range) {
+    const [low, high] = state.range;
+    params.set("range", `${roundOutward(low, Math.floor)},${roundOutward(high, Math.ceil)}`);
+  }
 
   return params.toString();
 };

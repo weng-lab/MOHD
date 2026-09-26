@@ -1,21 +1,28 @@
 "use client";
 
 import { getSharedDomains, type Point } from "@weng-lab/visualization";
+import { useState } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
+import {
+  percentilePresets,
+  sameRange,
+  type ColorRange,
+  type RampRange,
+} from "@/common/components/Colorbar/colorbarAxis";
 import PlotLegend from "@/common/components/PlotLegend";
 import { dimHidden } from "@/common/components/plotDimming";
 import ControlPanel from "./ControlPanel";
 import ExplorerLayout from "./ExplorerLayout";
 import ExplorerPlot, { type PointMeta } from "./ExplorerPlot";
-import { FEATURE_COLOR, FEATURE_KINDS, featureLabel, toLogValue } from "./features";
+import { FEATURE_COLOR, FEATURE_KINDS, featureLabel, fromLogValue, toLogValue } from "./features";
 import FeatureLegend from "./FeatureLegend";
-import MetricLegend, { type RampRange } from "./MetricLegend";
+import MetricLegend, { type ColorRangeControl } from "./MetricLegend";
 import { QC_GROUP, colorLabel, colorOf, fieldsFor, groupOf, isContinuous, isNeutralGroup, type Field } from "./fields";
-import { legendGroups, passesFilters, toHiddenSets, valuesOf, type Filters } from "./groups";
+import { legendGroups, passesFilters, rowsFor, toHiddenSets, type Filters } from "./groups";
 import ShapeLegend from "./ShapeLegend";
-import { isMetric, metricColor, metricDefinition, metricPosition, metricScale } from "./metrics";
+import { defaultRange, isMetric, metricColor, metricDefinition, metricPosition, scaleOver } from "./metrics";
 import { OME_CAPABILITIES, pcLabel } from "./omes";
-import { toggleHidden } from "./params";
+import { toggleHidden, type ExplorerState } from "./params";
 import { NO_SHAPE, shapeOf, shapeOptionsFor, shapeScale } from "./shapes";
 import type { ExplorerData, ExplorerRow } from "./types";
 import { useExplorerState } from "./useExplorerState";
@@ -36,6 +43,15 @@ export type DimensionalityReductionExplorerProps = {
  */
 const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplorerProps) => {
   const [state, setState] = useExplorerState();
+  // Where the colors stop while the range editor is open, written to the URL once it closes. The
+  // URL is costly to write often: Safari allows 100 history updates in 30 seconds, and each one
+  // re-renders the page through Next's router - fast enough, from a held arrow key or a run of
+  // clicks along the track, that React gives up with "Maximum update depth exceeded". Held with
+  // the state it was set over, which is parsed afresh when the URL changes: once the URL carries
+  // the range, or anything else moves it, the draft stops applying in the same render, so the
+  // colors never fall back to the old range in between.
+  const [draft, setDraft] = useState<{ range: ColorRange; over: ExplorerState } | null>(null);
+  const draftRange = draft?.over === state ? draft.range : null;
 
   const { ome, method, x, y, color, hideQc } = state;
   // What one feature is on this ome - a gene, a lipid - or null where it has none to color by.
@@ -44,8 +60,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   // which is what skips the fetch. See useFeature.
   const feature = useFeature(ome, color === FEATURE_COLOR ? state.feature : null);
   const { pve } = data[ome];
-  // Every row has PCs - the server drops any without - but UMAP coordinates are checked per row.
-  const rows = method === "UMAP" ? data[ome].rows.filter((row) => row.umap) : data[ome].rows;
+  const rows = rowsFor(data, ome, method);
   const fields = fieldsFor(ome);
 
   // The field actually shaping the plot: what the URL asks for, if this ome's data can carry it.
@@ -75,7 +90,35 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   };
 
   // Across every sample the ome has, whatever the method or filters, so neither can repaint a point.
-  const scale = isContinuous(color) ? metricScale(data[ome].rows.flatMap((row) => continuousValue(row) ?? [])) : null;
+  const allValues = isContinuous(color)
+    ? Float64Array.from(data[ome].rows.flatMap((row) => continuousValue(row) ?? [])).sort()
+    : new Float64Array();
+  const hasValues = allValues.length > 0;
+  const initialRange = hasValues ? defaultRange(allValues) : null;
+
+  // A link holds the range in the data's own units; the ramp is drawn in log10 for a feature.
+  const [toRamp, fromRamp] = isMetric(color) ? [(v: number) => v, (v: number) => v] : [toLogValue, fromLogValue];
+  const savedRange: ColorRange | null = state.range && [toRamp(state.range[0]), toRamp(state.range[1])];
+  const colorRange = draftRange ?? savedRange ?? initialRange;
+  const scale = hasValues && colorRange ? scaleOver(allValues, colorRange) : null;
+
+  const rangeControl: ColorRangeControl | undefined =
+    hasValues && initialRange
+      ? {
+          defaultRange: initialRange,
+          extent: [allValues[0], allValues[allValues.length - 1]],
+          presets: percentilePresets(allValues),
+          onChange: (range) => setDraft({ range, over: state }),
+          onClose: () => {
+            if (!draftRange) return;
+            // The default is left out of the link, as every other default is.
+            setState({
+              ...state,
+              range: sameRange(draftRange, initialRange) ? null : [fromRamp(draftRange[0]), fromRamp(draftRange[1])],
+            });
+          },
+        }
+      : undefined;
 
   /**
    * A row's color: by group for a field, along the ramp for a metric or a feature - and for the
@@ -128,6 +171,9 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   // sample sits in a reduction only means anything beside the samples it was reduced with.
   const { points, shown } = dimHidden(plotted, (point) => point.metaData!.shown);
 
+  // What the colorbar's histogram counts: the samples in focus, as the plot shows them in color.
+  const shownValues = Float64Array.from(shown.flatMap(({ metaData }) => continuousValue(metaData!.row) ?? [])).sort();
+
   const pca = method === "PCA";
 
   return (
@@ -136,13 +182,9 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
         <ControlPanel
           state={state}
           onChange={setState}
-          pve={pve}
-          options={Object.fromEntries(fields.map(({ key }) => [key, valuesOf(rows, key)]))}
-          shapeOptions={shapeOptions}
+          data={data}
           // The id until the query names it, so a link opened with a gene already set says so at once.
           geneLabel={feature.name ?? feature.id}
-          features={data[ome].features ?? []}
-          hasQc={rows.some((row) => row.qc)}
         />
       }
       plot={
@@ -177,8 +219,8 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                   ? legendHover.value
                   : null;
             // The stretch of colorbar under the cursor, drawn back onto the bar it came from.
-            const range = legendHover?.kind === "range" ? legendHover : null;
-            const onRangeHover = (next: RampRange | null) =>
+            const sweep = legendHover?.kind === "range" ? legendHover : null;
+            const onSweep = (next: RampRange | null) =>
               onLegendHover(next === null ? null : { kind: "range", ...next });
             return (
               <>
@@ -203,20 +245,24 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                       kind={featureKind}
                       feature={feature}
                       scale={scale}
+                      values={shownValues}
                       missing={shown.filter(({ metaData }) => metaData!.featureValue === null).length}
                       hovered={hoveredValue === undefined ? null : toLogValue(hoveredValue)}
-                      range={range}
-                      onRangeHover={onRangeHover}
+                      sweep={sweep}
+                      onSweep={onSweep}
+                      control={rangeControl}
                     />
                   )
                 ) : isMetric(color) ? (
                   <MetricLegend
                     metric={metricDefinition(color)}
                     scale={scale}
+                    values={shownValues}
                     missing={shown.filter(({ metaData }) => (metaData!.row.metrics?.[color] ?? null) === null).length}
                     hovered={hovered?.metrics?.[color] ?? null}
-                    range={range}
-                    onRangeHover={onRangeHover}
+                    sweep={sweep}
+                    onSweep={onSweep}
+                    control={rangeControl}
                   />
                 ) : (
                   <PlotLegend

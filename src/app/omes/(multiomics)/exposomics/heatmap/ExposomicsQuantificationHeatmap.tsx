@@ -7,8 +7,8 @@ import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShe
 import HeatmapScaleToggle from "@/common/components/OmeQuantification/HeatmapScaleToggle";
 import {
   buildHeatmapColorScale,
+  EXPOSOMICS_MODES,
   HeatmapScaleMode,
-  RAW_MODES,
   valuesByRow,
 } from "@/common/components/OmeQuantification/heatmapColorScale";
 
@@ -48,12 +48,7 @@ const ExposomicsQuantificationHeatmap = ({
 
   const valueByPositionPerSample = samples.map(valueByPosition);
 
-  const scale = buildHeatmapColorScale(
-    scaleMode,
-    valuesByRow(moleculeKeys, rows.map(valueByPosition)),
-    valuesByRow(moleculeKeys, valueByPositionPerSample),
-    "molecule"
-  );
+  const scale = buildHeatmapColorScale(scaleMode, valuesByRow(moleculeKeys, rows.map(valueByPosition)), "molecule");
 
   const heatmapData: ColumnDatum<ExposomicsSample, MoleculeRowMeta>[] = samples.map((sample, sampleIndex) => ({
     columnName: sample.sample_id,
@@ -63,7 +58,8 @@ const ExposomicsQuantificationHeatmap = ({
       const rawValue = valueByPositionPerSample[sampleIndex].get(key) ?? null;
       return {
         rowName: truncateMoleculeName(molecule.molecule_name || "Unknown"),
-        count: rawValue === null ? null : scale.toCount(key, rawValue),
+        // Unclamped where a colorbar can move the range: the heatmap holds colors at its ends itself.
+        count: rawValue === null ? null : (scale.colorbar?.value ?? scale.toCount)(key, rawValue),
         metadata: {
           key,
           fullName: molecule.molecule_name || "Unknown",
@@ -88,11 +84,10 @@ const ExposomicsQuantificationHeatmap = ({
       downloadFileName="exposomics_quantification_heatmap"
       colors={scale.colors}
       colorDomain={scale.colorDomain}
-      header={
-        <HeatmapScaleToggle modes={RAW_MODES} value={scaleMode} onChange={setScaleMode} caption={scale.caption} />
-      }
+      colorbar={scale.colorbar}
+      header={<HeatmapScaleToggle modes={EXPOSOMICS_MODES} value={scaleMode} onChange={setScaleMode} />}
       ref={ref}
-      tooltipBody={(bin) => {
+      tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
         return (
           <>
@@ -122,7 +117,7 @@ const ExposomicsQuantificationHeatmap = ({
             </Typography>
             {rowMeta?.rawValue != null && (
               <Typography>
-                <b>Color:</b> {scale.describe(rowMeta.key, rowMeta.rawValue)}
+                <b>Color:</b> {scale.describe(rowMeta.key, rowMeta.rawValue, domain)}
               </Typography>
             )}
           </>

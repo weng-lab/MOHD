@@ -43,12 +43,7 @@ const MetabolomicsQuantificationHeatmap = ({
 
   const valueByCompoundPerSample = samples.map(valueByCompound);
 
-  const scale = buildHeatmapColorScale(
-    scaleMode,
-    valuesByRow(compoundKeys, rows.map(valueByCompound)),
-    valuesByRow(compoundKeys, valueByCompoundPerSample),
-    "compound"
-  );
+  const scale = buildHeatmapColorScale(scaleMode, valuesByRow(compoundKeys, rows.map(valueByCompound)), "compound");
 
   const heatmapData: ColumnDatum<MetabolomicsSample, CompoundRowMeta>[] = samples.map((sample, sampleIndex) => ({
     columnName: sample.sample_id,
@@ -58,7 +53,8 @@ const MetabolomicsQuantificationHeatmap = ({
       const rawValue = valueByCompoundPerSample[sampleIndex].get(key) ?? null;
       return {
         rowName: truncateCompoundName(compound.compound),
-        count: rawValue === null ? null : scale.toCount(key, rawValue),
+        // Unclamped where a colorbar can move the range: the heatmap holds colors at its ends itself.
+        count: rawValue === null ? null : (scale.colorbar?.value ?? scale.toCount)(key, rawValue),
         metadata: rawValue === null ? undefined : { fullName: compound.compound, mode: compound.mode, rawValue },
       };
     }),
@@ -76,11 +72,10 @@ const MetabolomicsQuantificationHeatmap = ({
       downloadFileName="metabolomics_quantification_heatmap"
       colors={scale.colors}
       colorDomain={scale.colorDomain}
-      header={
-        <HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} caption={scale.caption} />
-      }
+      colorbar={scale.colorbar}
+      header={<HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />}
       ref={ref}
-      tooltipBody={(bin) => {
+      tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as CompoundRowMeta | undefined;
         return (
           <>
@@ -98,7 +93,7 @@ const MetabolomicsQuantificationHeatmap = ({
             </Typography>
             {rowMeta && (
               <Typography>
-                <b>Color:</b> {scale.describe(compoundKey(rowMeta.fullName, rowMeta.mode), rowMeta.rawValue)}
+                <b>Color:</b> {scale.describe(compoundKey(rowMeta.fullName, rowMeta.mode), rowMeta.rawValue, domain)}
               </Typography>
             )}
           </>

@@ -1,6 +1,6 @@
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
-import { normalize, parseState, serializeState, type ExplorerState } from "./params";
+import { forgetStaleRange, normalize, parseState, serializeState, type ExplorerState } from "./params";
 
 /**
  * The explorer's state, read from and written to the URL.
@@ -17,7 +17,7 @@ export const useExplorerState = () => {
   const state = useMemo(() => parseState(new URLSearchParams(search)), [search]);
 
   const setState = (next: ExplorerState) => {
-    const search = serializeState(normalize(next));
+    const search = serializeState(normalize(forgetStaleRange(state, next)));
     // The native history API rather than router.replace: Next keeps useSearchParams in step with
     // it, so a filter click stays a re-render - no server round trip, no scroll reset, and no
     // history entry per click to step back through.

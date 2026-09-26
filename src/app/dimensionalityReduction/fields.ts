@@ -175,13 +175,17 @@ export const colorOf = (field: Field, value: string): string => {
 
 const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
+/** The sex values the API sends as a code rather than a word. */
+const SEX_LABELS: Record<string, string> = { prefer_not_to_answer: "Prefer no answer" };
+
 /** A value as the controls and legend show it. Display only: the raw value stays the group's identity. */
 export const labelOf = (field: Field, value: string): string => {
   if (isNeutralGroup(value)) return value;
   switch (field) {
     case "status":
-    case "sex":
       return capitalize(value);
+    case "sex":
+      return SEX_LABELS[value] ?? capitalize(value);
     case "protocol":
       return value.replace(/ method$/, "");
     default:

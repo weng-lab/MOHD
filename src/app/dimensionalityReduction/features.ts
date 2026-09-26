@@ -7,7 +7,7 @@
  * so the one feature a reader picks is fetched on its own - see useFeature.
  */
 
-import { CLIP_PERCENTILE, type ContinuousDefinition } from "./metrics";
+import type { ContinuousDefinition } from "./metrics";
 import type { ExplorerOme } from "./omes";
 
 /** What ?color= carries while a feature colors the plot. Which feature is ?feature=, alongside it. */
@@ -202,7 +202,8 @@ export type FeatureValues = {
  */
 export const toLogValue = (value: number) => Math.log10(value + 1);
 
-const fromLogValue = (log: number) => 10 ** log - 1;
+/** Back out of the ramp's units into the data's own, for a label or a link. */
+export const fromLogValue = (log: number) => 10 ** log - 1;
 
 /** How the plot names its coloring, with something honest to say before the feature has a name. */
 export const featureLabel = (kind: FeatureKind, { name }: FeatureValues) =>
@@ -212,7 +213,8 @@ export const featureLabel = (kind: FeatureKind, { name }: FeatureValues) =>
 export const featureDefinition = (kind: FeatureKind, feature: FeatureValues): ContinuousDefinition => ({
   label: featureLabel(kind, feature),
   format: (log) => FEATURE_KINDS[kind].formatBound(fromLogValue(log)),
+  formatValue: (log) => FEATURE_KINDS[kind].format(fromLogValue(log)),
 });
 
-export const featureNote = (kind: FeatureKind) =>
-  `log10(${FEATURE_KINDS[kind].unit} + 1). Spans the middle ${100 - 2 * CLIP_PERCENTILE}% of samples, so a few extreme values don't wash out the rest`;
+/** What a feature's values go through before they are colored. The colorbar adds where its colors stop. */
+export const featureTransform = (kind: FeatureKind) => `log10(${FEATURE_KINDS[kind].unit} + 1)`;
