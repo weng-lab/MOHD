@@ -5,7 +5,7 @@
 
 import { protocol_color_map, sex_color_map, site_color_map, status_color_map } from "@/common/colors";
 import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/components/plotDimming";
-import { FEATURE_COLOR, FEATURE_KINDS, type FeatureColor, type FeatureKind } from "./features";
+import { FEATURE_KINDS, isFeatureColor, type FeatureColor, type FeatureKind } from "./features";
 import { METRICS, isMetric, type Metric } from "./metrics";
 import { OME_CAPABILITIES, type ExplorerOme } from "./omes";
 import type { ExplorerRow } from "./types";
@@ -45,13 +45,13 @@ export const fieldsFor = (ome: ExplorerOme): FieldDefinition[] =>
 export type ColorBy = Field | Metric | FeatureColor;
 
 export const isColorBy = (value: string | null): value is ColorBy =>
-  isField(value) || isMetric(value) || value === FEATURE_COLOR;
+  isField(value) || isMetric(value) || isFeatureColor(value);
 
 /**
  * The colorings that carry a ramp and a colorbar rather than groups and chips. What separates them
  * from the fields is not the data type but the legend and the filters: neither has values to toggle.
  */
-export const isContinuous = (color: ColorBy) => isMetric(color) || color === FEATURE_COLOR;
+export const isContinuous = (color: ColorBy) => isMetric(color) || isFeatureColor(color);
 
 export type ColorOptions = {
   fields: FieldDefinition[];
@@ -70,10 +70,16 @@ export const colorOptionsFor = (ome: ExplorerOme): ColorOptions => ({
   feature: OME_CAPABILITIES[ome].feature,
 });
 
-/** Whether an ome offers a coloring at all, which is what a hand-edited ?color= is held to. */
+/**
+ * Whether an ome offers a coloring at all, which is what a hand-edited ?color= is held to, and what
+ * decides whether a coloring survives a change of ome. A feature coloring is offered only where it
+ * is this ome's own kind - see FEATURE_COLORS.
+ */
 export const offersColor = (ome: ExplorerOme, color: ColorBy) => {
   const { fields, metrics, feature } = colorOptionsFor(ome);
-  return color === FEATURE_COLOR ? feature !== null : [...fields, ...metrics].some(({ key }) => key === color);
+  return isFeatureColor(color)
+    ? feature !== null && FEATURE_KINDS[feature].color === color
+    : [...fields, ...metrics].some(({ key }) => key === color);
 };
 
 /**
@@ -83,7 +89,7 @@ export const offersColor = (ome: ExplorerOme, color: ColorBy) => {
  */
 export const colorLabel = (ome: ExplorerOme, color: ColorBy) => {
   const { fields, metrics, feature } = colorOptionsFor(ome);
-  if (color === FEATURE_COLOR) return feature ? FEATURE_KINDS[feature].option : "Feature";
+  if (isFeatureColor(color)) return feature ? FEATURE_KINDS[feature].option : "Feature";
   return [...fields, ...metrics].find(({ key }) => key === color)?.label ?? color;
 };
 

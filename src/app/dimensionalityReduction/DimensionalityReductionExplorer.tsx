@@ -14,7 +14,7 @@ import { dimHidden } from "@/common/components/plotDimming";
 import ControlPanel from "./ControlPanel";
 import ExplorerLayout from "./ExplorerLayout";
 import ExplorerPlot, { type PointMeta } from "./ExplorerPlot";
-import { FEATURE_COLOR, FEATURE_KINDS, featureLabel, fromLogValue, toLogValue } from "./features";
+import { FEATURE_KINDS, featureLabel, fromLogValue, isFeatureColor, toLogValue } from "./features";
 import FeatureLegend from "./FeatureLegend";
 import MetricLegend, { type ColorRangeControl } from "./MetricLegend";
 import { QC_GROUP, colorLabel, colorOf, fieldsFor, groupOf, isContinuous, isNeutralGroup, type Field } from "./fields";
@@ -58,7 +58,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   const featureKind = OME_CAPABILITIES[ome].feature;
   // Fetched rather than carried on the row; null whenever a feature is not what colors the plot,
   // which is what skips the fetch. See useFeature.
-  const feature = useFeature(ome, color === FEATURE_COLOR ? state.feature : null);
+  const feature = useFeature(ome, isFeatureColor(color) ? state.feature : null);
   const { pve } = data[ome];
   const rows = rowsFor(data, ome, method);
   const fields = fieldsFor(ome);
@@ -191,7 +191,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
         <ExplorerPlot
           title={`${getOmeLabel(ome)} · ${method}`}
           subtitle={[
-            `Colored by ${color === FEATURE_COLOR && featureKind ? featureLabel(featureKind, feature) : colorLabel(ome, color)}`,
+            `Colored by ${isFeatureColor(color) && featureKind ? featureLabel(featureKind, feature) : colorLabel(ome, color)}`,
             shapedField && `Shaped by ${shapedField.label}`,
             pca && `PC${x} vs PC${y}`,
           ]
@@ -237,7 +237,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                     }
                   />
                 )}
-                {color === FEATURE_COLOR ? (
+                {isFeatureColor(color) ? (
                   // normalize keeps a feature coloring off an ome with no features, so the kind is
                   // always there; checked only so the types agree.
                   featureKind && (

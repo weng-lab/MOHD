@@ -8,8 +8,8 @@
  *   ome     ATAC | RNA | WGBS | lipidomics | metabolomics | metallomics   (case-insensitive)
  *   method  PCA | UMAP
  *   x, y    principal component on each axis, 1-10
- *   color   site | status | sex | age | protocol, on ATAC tss | frip | reads, and feature on RNA,
- *           lipidomics, metabolomics and metallomics
+ *   color   site | status | sex | age | protocol, on ATAC tss | frip | reads, on RNA expression,
+ *           and on lipidomics, metabolomics and metallomics feature
  *   feature on RNA an Ensembl id without its version (ENSG00000000971), on the mass-spec omes a
  *           name as the data spells it (Metformin, TG(52:2) [SIM]); kept whatever colors the plot
  *   shape   none | site | status | sex | protocol - not age, which has too many bins to shape by

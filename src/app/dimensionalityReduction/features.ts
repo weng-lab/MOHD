@@ -10,10 +10,22 @@
 import type { ContinuousDefinition } from "./metrics";
 import type { ExplorerOme } from "./omes";
 
-/** What ?color= carries while a feature colors the plot. Which feature is ?feature=, alongside it. */
-export const FEATURE_COLOR = "feature";
+/**
+ * What ?color= carries while a feature colors the plot. Which feature is ?feature=, alongside it.
+ *
+ * Two of them, because a coloring carries over to the next ome wherever that ome offers it. The
+ * mass-spec omes share "feature": all three pick one analyte from a short list and color by its
+ * measured amount, so a reader moving between them is asked for another of the same. RNA's genes
+ * are "expression": a reader arriving from lipids is not looking for a gene, and would otherwise
+ * land on an empty gene search and a grey plot - so they fall back to site instead, as they do
+ * leaving RNA for a mass-spec ome.
+ */
+export const FEATURE_COLORS = ["feature", "expression"] as const;
 
-export type FeatureColor = typeof FEATURE_COLOR;
+export type FeatureColor = (typeof FEATURE_COLORS)[number];
+
+export const isFeatureColor = (value: string | null): value is FeatureColor =>
+  FEATURE_COLORS.some((color) => color === value);
 
 /** What one feature is on an ome that has them. */
 export type FeatureKind = "gene" | "lipid" | "metabolite" | "metal";
@@ -52,6 +64,8 @@ export const formatTpm = (tpm: number) => `${tpm.toLocaleString("en-US", { maxim
 const formatTpmBound = (tpm: number) => `${tpm.toLocaleString("en-US", { maximumSignificantDigits: 2 })} TPM`;
 
 type FeatureKindDefinition = {
+  /** What ?color= carries while one of these colors the plot. */
+  color: FeatureColor;
   /** The item in the color select. */
   option: string;
   /** What one feature is called, in the picker's label and the legend's messages. */
@@ -72,6 +86,7 @@ type FeatureKindDefinition = {
  */
 export const FEATURE_KINDS: Record<FeatureKind, FeatureKindDefinition> = {
   gene: {
+    color: "expression",
     option: "Gene expression",
     noun: "gene",
     measure: "expression",
@@ -81,6 +96,7 @@ export const FEATURE_KINDS: Record<FeatureKind, FeatureKindDefinition> = {
     formatBound: formatTpmBound,
   },
   lipid: {
+    color: "feature",
     option: "Lipid abundance",
     noun: "lipid",
     measure: "abundance",
@@ -90,6 +106,7 @@ export const FEATURE_KINDS: Record<FeatureKind, FeatureKindDefinition> = {
     formatBound: formatValueBound,
   },
   metabolite: {
+    color: "feature",
     option: "Metabolite abundance",
     noun: "metabolite",
     measure: "abundance",
@@ -99,6 +116,7 @@ export const FEATURE_KINDS: Record<FeatureKind, FeatureKindDefinition> = {
     formatBound: formatValueBound,
   },
   metal: {
+    color: "feature",
     option: "Metal concentration",
     noun: "metal",
     measure: "concentration",

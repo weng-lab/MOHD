@@ -22,7 +22,7 @@ import {
 import type { ReactNode } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
 import { PANEL_SX } from "./ExplorerLayout";
-import { FEATURE_COLOR, FEATURE_KINDS } from "./features";
+import { FEATURE_KINDS, isFeatureColor } from "./features";
 import { colorOptionsFor, labelOf, type ColorBy, type Field } from "./fields";
 import GeneSearch from "./GeneSearch";
 import { rowsFor, valuesOf } from "./groups";
@@ -238,7 +238,7 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
               Unheaded, unlike the metrics below: a heading earns its row by grouping several
               choices, and this is one. What it names itself is enough to say it is not a field.
             */}
-            {feature && <MenuItem value={FEATURE_COLOR}>{FEATURE_KINDS[feature].option}</MenuItem>}
+            {feature && <MenuItem value={FEATURE_KINDS[feature].color}>{FEATURE_KINDS[feature].option}</MenuItem>}
             {/* Headed apart from the fields: these color along a ramp, and have no filters below. */}
             {metrics.length > 0 && <MenuHeading>{getOmeLabel(ome)} quality</MenuHeading>}
             {metrics.map(({ key, label }) => (
@@ -247,7 +247,7 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
               </MenuItem>
             ))}
           </TextField>
-          {color === FEATURE_COLOR && feature === "gene" && (
+          {isFeatureColor(color) && feature === "gene" && (
             <Box>
               <GeneSearch onSelect={(gene) => update({ feature: gene })} />
               {geneLabel && (
@@ -257,7 +257,7 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
               )}
             </Box>
           )}
-          {color === FEATURE_COLOR && feature && feature !== "gene" && (
+          {isFeatureColor(color) && feature && feature !== "gene" && (
             <QuantificationSearch
               // Afresh on each ome: it holds its own value, and one ome's feature is not in the next one's list.
               key={ome}
