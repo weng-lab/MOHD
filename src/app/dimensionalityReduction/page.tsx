@@ -2,11 +2,11 @@ import { cacheLife, cacheTag } from "next/cache";
 import { Suspense } from "react";
 import { query } from "@/common/apollo/client";
 import DimensionalityReductionExplorer from "./DimensionalityReductionExplorer";
-import ExplorerSkeleton from "./ExplorerSkeleton";
-import { sortFeatures } from "./features";
-import { OME_CAPABILITIES, PC_COUNT, type ExplorerOme } from "./omes";
-import { GET_DIMENSIONALITY_REDUCTION } from "./queries";
-import type { ExplorerData, ExplorerRow, OmeData } from "./types";
+import ExplorerSkeleton from "./components/ExplorerSkeleton";
+import { sortFeatures } from "./model/features";
+import { OME_CAPABILITIES, PC_COUNT, type ExplorerOme } from "./model/omes";
+import { GET_DIMENSIONALITY_REDUCTION } from "./data/queries";
+import type { ExplorerData, ExplorerRow, OmeData } from "./model/types";
 
 const PC_KEYS = ["pc1", "pc2", "pc3", "pc4", "pc5", "pc6", "pc7", "pc8", "pc9", "pc10"] as const;
 
@@ -31,17 +31,10 @@ type MetadataRow = {
 
 type VarianceRow = { pc?: number | null; pve?: number | null };
 
-/**
- * Kits the API gives QC and reference material rather than a participant's sample. Those samples
- * also have no site, status, sex or age, but the kit is what says why.
- */
+/** Kits the API gives QC and reference material rather than a participant's sample. */
 const QC_KITS = new Set(["internal_QC", "external_QC", "reference"]);
 
-/**
- * Coordinate precision, in decimal places - the same trade the WGS page makes. The API returns far
- * more digits than a plot can draw, and rounding takes the gzipped payload for all six omes from
- * 713KB to 394KB.
- */
+/** Coordinate precision, in decimal places: more than a plot can draw, and it nearly halves the payload. */
 const COORDINATE_DECIMALS = 5;
 
 const round = (value: number) => Number(value.toFixed(COORDINATE_DECIMALS));
@@ -52,13 +45,12 @@ const toOmeData = (
   variance: readonly VarianceRow[] = []
 ): OmeData => {
   const { metrics } = OME_CAPABILITIES[ome];
-  // Keyed by pc rather than taken in order, so the array stays indexed by PC number - a reordered
-  // or missing row from the API can't shift the rest.
+  // Indexed by pc rather than row order, so a reordered or missing row can't shift the rest.
   const pveByPc = new Map(variance.map(({ pc, pve }) => [pc, pve]));
 
   const out: ExplorerRow[] = [];
   for (const row of rows) {
-    // Some lipidomics and metabolomics samples were never placed in the PCA; there is nothing to plot.
+    // Some lipidomics and metabolomics samples were never placed in the PCA.
     const pcs = PC_KEYS.map((key) => row[key]);
     if (!pcs.every((pc): pc is number => typeof pc === "number")) continue;
 
@@ -79,8 +71,7 @@ const toOmeData = (
       kit: row.kit ?? null,
       participant_id: row.participant_id ?? null,
       visit: row.visit ?? null,
-      // Spread in rather than set to undefined, which would still be written into the page payload
-      // for every sample on every other ome.
+      // Spread in, since an undefined key would still be written into the payload.
       ...(metrics && {
         metrics: {
           tss: row.tss_enrichment_score ?? null,
@@ -95,11 +86,8 @@ const toOmeData = (
 };
 
 /**
- * Fetches and reshapes every ome at once, so switching between them is instant.
- *
- * Cached: the metadata is identical for every visitor and only changes on a data release, so one
- * upstream query serves everyone. Bust it with revalidateTag("dimensionality-reduction") when new
- * data lands.
+ * Fetches and reshapes every ome at once, so switching between them is instant. Cached for every
+ * visitor; bust it with revalidateTag("dimensionality-reduction") when new data lands.
  */
 const getExplorerData = async (): Promise<ExplorerData> => {
   "use cache";

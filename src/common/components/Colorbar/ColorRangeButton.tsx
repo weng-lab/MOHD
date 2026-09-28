@@ -7,18 +7,15 @@ import { sameRange } from "./colorbarAxis";
 import ColorRangeEditor, { type ColorRangeEditorProps } from "./ColorRangeEditor";
 
 export type ColorRangeButtonProps = ColorRangeEditorProps & {
-  /** Written beside the icon, as a heatmap's header has room for. The icon alone where it is omitted. */
+  /** Written beside the icon. The icon alone where omitted. */
   label?: ReactNode;
   /** Fired as the editor opens. */
   onOpen?: () => void;
-  /**
-   * Fired as the editor closes, so a page that keeps the range somewhere costly to write - a link -
-   * writes it once, with wherever it was left, rather than on every step of a drag.
-   */
+  /** Fired as the editor closes, so a range kept somewhere costly to write, like the URL, is written once. */
   onClose?: () => void;
 };
 
-/** The open panel's props, handed past the Popover rather than through it - see ColorRangeButton. */
+/** The open panel's props, passed around the Popover rather than through it - see ColorRangeButton. */
 const EditorContext = createContext<ColorRangeEditorProps | null>(null);
 
 const EditorPanel = () => {
@@ -38,16 +35,12 @@ const EditorPanel = () => {
 };
 
 /**
- * Opens the color range editor. Kept behind a button rather than on the legend itself: handles on a
- * 160px bar crowd it, and catch the cursor mid-sweep. A dot on the icon says the range has been moved.
+ * Opens the color range editor, kept off the legend where handles would crowd the bar and catch the
+ * cursor mid-sweep. A dot on the icon says the range has been moved.
  *
- * The panel reads its props from context so that the Popover around it doesn't re-render as a handle
- * moves. MUI's Popover measures its anchor again on every render - an effect with no dependencies -
- * so re-rendered on every step of a drag it followed the button as the labels beside it changed
- * width, and shook under the cursor. And that effect sets state: a burst of clicks along the track
- * queued those updates faster than React drained them, until it gave up with "Maximum update depth
- * exceeded". Its props hold still while the range changes, so the React Compiler keeps the element,
- * and the Popover is left as it was placed.
+ * The panel reads its props from context so the Popover doesn't re-render during a drag: MUI's
+ * Popover repositions and sets state on every render, which shook the panel as the labels beside
+ * the button changed width, and on rapid clicks exceeded React's update depth.
  */
 const ColorRangeButton = ({ label, onOpen, onClose, ...editor }: ColorRangeButtonProps) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -58,8 +51,7 @@ const ColorRangeButton = ({ label, onOpen, onClose, ...editor }: ColorRangeButto
   };
   // A boolean, not the label: a label that is an element is a new one on every render.
   const alignRight = Boolean(label);
-  // The caller's onClose closes over the range, so it is a new function on every step of a drag.
-  // Reached through a ref, the Popover's own onClose stays the same one throughout.
+  // Through a ref, since the caller's onClose changes on every step of a drag.
   const onCloseRef = useRef(onClose);
   useEffect(() => {
     onCloseRef.current = onClose;

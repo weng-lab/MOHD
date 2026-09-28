@@ -1,14 +1,10 @@
 import { useQuery } from "@apollo/client/react";
 import { gql } from "@/common/types/generated/gql";
-import type { FeatureStatus, FeatureValues } from "./features";
+import type { FeatureStatus, FeatureValues } from "../model/features";
 
 /**
- * One gene's expression across every RNA sample.
- *
- * Matched on the unversioned id. The API also takes a full GENCODE id, and the search hands one
- * over, but that would tie every saved link to the release the quantification happened to be built
- * on - and a version the API does not hold comes back as an empty list rather than an error, so the
- * failure would read as "this gene has no data". gene_values answers with the version it holds.
+ * One gene's expression across every RNA sample, matched on the unversioned id: a version the API
+ * doesn't hold returns an empty list, which would read as "no data" once GENCODE moves on.
  */
 const GET_GENE_EXPRESSION = gql(`
 query fetchGeneExpression($gene: String!) {
@@ -23,19 +19,14 @@ query fetchGeneExpression($gene: String!) {
 }
 `);
 
-/**
- * Fetched in the browser rather than with the page: which gene is the reader's choice to make, and
- * the answer is ~900 numbers against a matrix of tens of thousands of genes.
- */
+/** Fetched in the browser, a gene at a time, as the reader picks one. */
 export const useGeneExpression = (id: string | null): FeatureValues => {
   const { data, loading, error } = useQuery(GET_GENE_EXPRESSION, {
     variables: { gene: id ?? "" },
     skip: id === null,
   });
 
-  // The API answers with every version of the gene it holds. The quantification carries one, so
-  // this list is one row; taking the first rather than asserting means a second version could only
-  // pick the wrong one, never throw on a reader mid-search.
+  // One row per version the API holds, which in practice is one.
   const match = data?.gene_values[0];
 
   const status: FeatureStatus =

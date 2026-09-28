@@ -23,18 +23,15 @@ export const toHiddenSets = (
 });
 
 /**
- * Whether a sample passes the filters. `except` leaves one field's filter out, which is how the
- * legend counts a hidden group: as many samples as would show if it were switched back on.
- *
- * QC samples answer to hideQc alone - they have no site, status, sex or age for a field's filter
- * to say anything about.
+ * Whether a sample passes the filters. `except` leaves one field's filter out, so the legend can
+ * count a hidden group as if it were shown. QC samples answer to hideQc alone.
  */
 export const passesFilters = (row: ExplorerRow, filters: Filters, except?: Field) =>
   row.qc
     ? !filters.hideQc
     : filters.fields.every((field) => field === except || !filters.hidden[field].has(groupOf(field, row)));
 
-/** The rows a method places. Every row has PCs - the server drops any without - but UMAP coordinates are checked per row. */
+/** The rows a method places. Every row has PCs; UMAP coordinates are checked per row. */
 export const rowsFor = (data: ExplorerData, ome: ExplorerOme, method: Method) =>
   method === "UMAP" ? data[ome].rows.filter((row) => row.umap) : data[ome].rows;
 
@@ -46,11 +43,8 @@ export const valuesOf = (rows: readonly ExplorerRow[], field: Field) =>
   );
 
 /**
- * The legend for the field the plot is colored by.
- *
- * Every value the ome has gets a chip, including one the other filters have emptied, so the legend
- * holds still while filters change rather than chips coming and going under the cursor. QC samples
- * get one chip of their own, last.
+ * The legend for the field the plot is colored by: a chip for every value the ome has, even one the
+ * other filters have emptied, so chips don't come and go under the cursor. QC samples come last.
  */
 export const legendGroups = (rows: readonly ExplorerRow[], field: Field, filters: Filters): LegendGroup[] => {
   const counts = new Map<string, number>();

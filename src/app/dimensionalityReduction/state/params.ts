@@ -1,9 +1,6 @@
 /**
- * The explorer's state, and how it is written into and read back out of the URL.
- *
- * The URL is where the state lives, which is what makes every view linkable:
- * /dimensionalityReduction?ome=RNA&method=UMAP opens exactly that. Only what differs from
- * DEFAULT_STATE is written, so the default view stays a bare path.
+ * The explorer's state, which lives in the URL so every view is linkable. Only what differs from
+ * DEFAULT_STATE is written, so the default view is a bare path.
  *
  *   ome     ATAC | RNA | WGBS | lipidomics | metabolomics | metallomics   (case-insensitive)
  *   method  PCA | UMAP
@@ -19,10 +16,10 @@
  *           TPM), to four significant figures: ?range=5.87,31.27
  */
 
-import { isFeatureId } from "./features";
-import { isColorBy, isContinuous, isField, offersColor, type ColorBy, type Field } from "./fields";
-import { OME_CAPABILITIES, PC_COUNT, findOme, type ExplorerOme, type Method } from "./omes";
-import { NO_SHAPE, isShapeBy, shapeFieldsFor, type ShapeBy } from "./shapes";
+import { isFeatureId } from "../model/features";
+import { isColorBy, isContinuous, isField, offersColor, type ColorBy, type Field } from "../model/fields";
+import { OME_CAPABILITIES, PC_COUNT, findOme, type ExplorerOme, type Method } from "../model/omes";
+import { NO_SHAPE, isShapeBy, shapeFieldsFor, type ShapeBy } from "../model/shapes";
 
 export type ExplorerState = {
   ome: ExplorerOme;
@@ -32,26 +29,19 @@ export type ExplorerState = {
   y: number;
   color: ColorBy;
   /**
-   * The feature whose quantification colors the plot: an unversioned Ensembl id on RNA, a name on
-   * the mass-spec omes. Kept through a change of coloring and back, the way x and y are kept through
-   * a switch to UMAP - looking at the sites for a moment should not cost the reader the gene they
-   * searched for. Dropped with a change of ome - see switchOme.
+   * An unversioned Ensembl id on RNA, a name on the mass-spec omes. Kept through a change of
+   * coloring, so a glance at site doesn't cost the reader their gene; dropped with a change of ome.
    */
   feature: string | null;
   /** The field points are shaped by, or NO_SHAPE while they are all circles. */
   shape: ShapeBy;
-  /**
-   * Values hidden, per field. Kept across a change of ome, so a filter applies wherever its
-   * value exists - hide a site and it stays hidden as you move between omes.
-   */
+  /** Values hidden, per field. Kept across a change of ome, so a hidden site stays hidden. */
   hidden: Partial<Record<Field, string[]>>;
-  /** QC and reference samples keep their own color by default, rather than being faded out. */
+  /** Fades the QC and reference samples, which otherwise keep their own color. */
   hideQc: boolean;
   /**
-   * Where the colors stop on a metric or feature, [low, high] in the data's own units - TSS
-   * enrichment, reads, TPM - rather than the log10 a feature is colored in, so a link reads as the
-   * legend does. Null for the default, the middle 96% of samples. Dropped with any change of
-   * coloring - see forgetStaleRange.
+   * Where a metric's or feature's colors stop, in the data's units (TPM, not the log10 it's colored
+   * in), so a link reads as the legend does. Null for the default, the middle 96% of samples.
    */
   range: [number, number] | null;
 };
@@ -71,21 +61,16 @@ export const DEFAULT_STATE: ExplorerState = {
 
 const QC_HIDE_VALUE = "qc";
 
-/**
- * The feature a state keeps: the one it has, where the ome has features and it is shaped like one of
- * them. Against the ome rather than the coloring, so a feature survives a look at another field and
- * is there on the way back.
- */
+/** The feature, if it's shaped like one of the ome's. Checked against the ome, not the coloring, so it survives a change of coloring. */
 const featureFor = (ome: ExplorerOme, feature: string | null): string | null => {
   const kind = OME_CAPABILITIES[ome].feature;
   return kind !== null && isFeatureId(kind, feature) ? feature : null;
 };
 
 /**
- * Brings a state back inside what its ome supports. Runs on every read and every write, so a
- * hand-edited link and a click that switches ome end up in the same valid place: UMAP falls back
- * to PCA where there is none, a field or metric the ome lacks falls back to site, a shape field
- * the ome lacks falls back to none, and a PC on both axes moves off the y axis.
+ * Brings a state inside what its ome supports, on every read and write, so hand-edited links and
+ * ome switches land somewhere valid: UMAP falls back to PCA, an unoffered coloring to site, an
+ * unoffered shape to none, and a PC on both axes moves off y.
  */
 export const normalize = (state: ExplorerState): ExplorerState => {
   const color = offersColor(state.ome, state.color) ? state.color : DEFAULT_STATE.color;
@@ -100,10 +85,7 @@ export const normalize = (state: ExplorerState): ExplorerState => {
   };
 };
 
-/**
- * Drops the color range when what colors the plot changes - ome, coloring or feature. Where one
- * metric's colors stop says nothing about where the next one's should.
- */
+/** Drops the color range when the ome, coloring or feature changes: it only meant something for the last one. */
 export const forgetStaleRange = (current: ExplorerState, next: ExplorerState): ExplorerState =>
   next.ome !== current.ome || next.color !== current.color || next.feature !== current.feature
     ? { ...next, range: null }
@@ -120,9 +102,8 @@ const parsePc = (raw: string | null, fallback: number) => {
 };
 
 /**
- * A bound to four significant figures, rounded away from the range's middle - down for its low end,
- * up for its high - so a saved range never cuts off values the reader took in. Rounded to nearest,
- * "all of them" would come back from a link leaving the highest sample just outside.
+ * A bound to four significant figures, rounded outward - down for the low end, up for the high - so
+ * a range that took in every sample still does when read back from a link.
  */
 const roundOutward = (bound: number, round: (value: number) => number) => {
   if (bound === 0) return 0;
@@ -163,9 +144,7 @@ export const parseState = (params: ReadableParams): ExplorerState => {
     x: parsePc(params.get("x"), DEFAULT_STATE.x),
     y: parsePc(params.get("y"), DEFAULT_STATE.y),
     color: isColorBy(color) ? color : DEFAULT_STATE.color,
-    // Shaped like a feature, not known to exist: what the data makes of it is the fetch's answer,
-    // and a feature that turns out not to be quantified is reported on the plot rather than
-    // silently dropped. Checked against the ome by normalize, below.
+    // Only its shape is checked (by normalize); one the data doesn't have is reported on the plot.
     feature: params.get("feature"),
     shape: isShapeBy(shape) ? shape : DEFAULT_STATE.shape,
     hidden,
@@ -210,10 +189,6 @@ export const toggleHidden = (state: ExplorerState, field: Field, value: string):
   };
 };
 
-/**
- * Moves to another ome. The feature goes with the ome it was picked on: a gene's id means nothing to
- * lipidomics, nor one lipid's name to metabolomics, and a reader arriving on an ome is better asked
- * for a feature than told the last one is not quantified there.
- */
+/** Moves to another ome, dropping the feature: one ome's features mean nothing on another. */
 export const switchOme = (state: ExplorerState, ome: ExplorerOme): ExplorerState =>
   ome === state.ome ? state : { ...state, ome, feature: null };

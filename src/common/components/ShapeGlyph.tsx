@@ -2,13 +2,7 @@
 
 import { getShapePoints, type PointShape } from "@weng-lab/visualization";
 
-/**
- * The scatter plot's point shapes, drawn at legend size.
- *
- * Geometry comes from the plotting library rather than a set of hand-written paths here, so the
- * key and the points it explains cannot drift apart - the library sizes every shape to the same
- * area, which is what keeps one glyph in a row from reading as heavier than its neighbours.
- */
+/** The scatter plot's point shapes at legend size, drawn with the library's own geometry so they match. */
 export type ShapeGlyphProps = {
   shape: PointShape;
   color: string;
@@ -17,12 +11,7 @@ export type ShapeGlyphProps = {
   size?: number;
 };
 
-/**
- * Radius the shapes are drawn at, as a fraction of the box.
- *
- * The widest shape is the X, whose points sit √2 further out than the cross it is turned from, at
- * about 1.68r. Sizing to that keeps every glyph inside the box without clipping the corners.
- */
+/** Radius as a fraction of the box, sized so the widest shape, the X (about 1.68r), isn't clipped. */
 const RADIUS_RATIO = 1 / 1.75;
 
 const ShapeGlyph = ({ shape, color, hollow = false, size = 12 }: ShapeGlyphProps) => {

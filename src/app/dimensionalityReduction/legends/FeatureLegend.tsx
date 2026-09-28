@@ -2,9 +2,15 @@
 
 import { CircularProgress, Stack, Typography } from "@mui/material";
 import type { RampRange } from "@/common/components/Colorbar/colorbarAxis";
-import { FEATURE_KINDS, featureDefinition, featureTransform, type FeatureKind, type FeatureValues } from "./features";
+import {
+  FEATURE_KINDS,
+  featureDefinition,
+  featureTransform,
+  type FeatureKind,
+  type FeatureValues,
+} from "../model/features";
 import MetricLegend, { type ColorRangeControl } from "./MetricLegend";
-import type { MetricScale } from "./metrics";
+import type { MetricScale } from "../model/metrics";
 
 export type FeatureLegendProps = {
   kind: FeatureKind;
@@ -24,12 +30,8 @@ export type FeatureLegendProps = {
 };
 
 /**
- * The colorbar for a feature, plus the states a fetched coloring has that a metric does not: none
- * picked, in flight, failed, or a feature the data does not carry.
- *
- * They read as a line of text where the bar would be, rather than as an empty plot with nothing to
- * say about it - an all-grey plot is what each of these four looks like, and they mean very
- * different things.
+ * The colorbar for a feature, or a line of text for the states a metric doesn't have - none picked,
+ * loading, failed, or not in the data - which would otherwise all look like the same grey plot.
  */
 const FeatureLegend = ({
   kind,
@@ -62,7 +64,7 @@ const FeatureLegend = ({
   const message = {
     idle: prompt,
     loading: `Loading ${measure}…`,
-    // Named by id, not by name: the fetch that would have given us a name is the one that failed.
+    // By id: the name would have come from the fetch that failed.
     missing: `No ${measure} recorded for ${feature.id}.`,
     error: `Could not load ${measure} for this ${noun}.`,
   }[feature.status];

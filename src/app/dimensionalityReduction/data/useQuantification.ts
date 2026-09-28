@@ -1,13 +1,10 @@
 import { useEffect, useSyncExternalStore } from "react";
-import type { FeatureSlice, FeatureStatus, FeatureValues, MassSpecOme } from "./features";
+import type { FeatureSlice, FeatureStatus, FeatureValues, MassSpecOme } from "../model/features";
 
 /**
- * Every feature fetched this session, by ome and name, so coming back to one recolors the plot at
- * once rather than after another round trip.
- *
- * Held outside React, and read through useSyncExternalStore rather than straight out of the Map
- * during render: React Compiler memoizes a plain read on its inputs, so a read keyed on a feature
- * that had not arrived yet would keep answering "not yet" after it had.
+ * Every feature fetched this session, so returning to one is instant. Read through
+ * useSyncExternalStore: React Compiler would memoize a plain Map read, and keep answering "not yet"
+ * after the fetch landed.
  */
 type Entry =
   { status: "ready"; name: string; values: ReadonlyMap<string, number> } | { status: "missing" } | { status: "error" };
@@ -39,8 +36,7 @@ const load = (ome: MassSpecOme, feature: string) => {
   const entry = entries.get(key);
   if (entry && entry.status !== "error") return;
 
-  // A failure is the one thing not kept: picking the feature again is how a reader tries again, and
-  // the retry reads as loading rather than as the failure it is replacing.
+  // A failure isn't kept: picking the feature again retries it, showing as loading.
   if (entry) {
     entries.delete(key);
     notify();
@@ -56,18 +52,13 @@ const load = (ome: MassSpecOme, feature: string) => {
     .catch(() => settle(key, { status: "error" }));
 };
 
-/**
- * One feature's values across a mass-spec ome's samples, sliced out of the ome's matrix on the
- * server - see /api/quantification. Null for either argument skips the fetch, as a skipped query
- * would.
- */
+/** One feature's values across a mass-spec ome's samples, from /api/quantification. Null for either argument skips the fetch. */
 export const useQuantification = (ome: MassSpecOme | null, feature: string | null): FeatureValues => {
   const key = ome !== null && feature !== null ? keyOf(ome, feature) : null;
   const entry = useSyncExternalStore(
     subscribe,
     () => (key === null ? undefined : entries.get(key)),
-    // Nothing is fetched on the server, so a page rendered there with a feature in its URL shows it
-    // loading, and hydrates to the same.
+    // Nothing is fetched on the server: it renders loading, and hydrates to the same.
     () => undefined
   );
 

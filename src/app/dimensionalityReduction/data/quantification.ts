@@ -2,14 +2,12 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { query } from "@/common/apollo/client";
 import { gql } from "@/common/types/generated/gql";
-import type { FeatureSlice, MassSpecOme } from "./features";
+import type { FeatureSlice, MassSpecOme } from "../model/features";
 
 /**
- * The mass-spec omes' quantification, sliced a feature at a time for the explorer.
- *
- * The API serves each of these only as a whole matrix - a value per feature per sample, with no way
- * to ask for one feature - and lipidomics' is 10MB. So the server fetches a matrix once, caches it
- * for every visitor, and hands a browser the one column it asked for: 10KB gzipped at most.
+ * The mass-spec omes' quantification, sliced a feature at a time for the explorer. The API only
+ * serves whole matrices (lipidomics' is 10MB), so the server caches each and hands out one column.
+ * Replaceable by a client query once the API can filter by feature.
  */
 
 const GET_LIPIDOMICS_MATRIX = gql(`
@@ -57,8 +55,7 @@ type RawMatrix = {
   samples: readonly ({ sample_id: string; quant_values?: readonly (number | null)[] | null } | null)[];
 };
 
-// Uncached by Apollo: the answer is reshaped and cached below, and a copy held in Apollo's store
-// too would only double the memory a 10MB response costs while it is being built.
+// Not cached by Apollo, which would only hold a second copy of what getMatrix caches.
 const fetchMatrix = async (ome: MassSpecOme): Promise<RawMatrix> => {
   switch (ome) {
     case "lipidomics": {
@@ -97,29 +94,20 @@ type Matrix = {
   /** Every sample with values, in row order. */
   sampleIds: string[];
   /**
-   * Column-major, so one feature's values are one contiguous run: feature i's value for sample j is
-   * at i * sampleIds.length + j. NaN where the sample has none.
-   *
-   * A typed array rather than nested number arrays because a cache hit deserializes the whole
-   * entry, and a hit is every feature a reader picks: this comes back as one block of bytes rather
-   * than as 845 thousand numbers parsed one at a time.
+   * Column-major - feature i's value for sample j is at i * sampleIds.length + j - and NaN where
+   * there's none. A typed array, since every cache hit deserializes the whole entry.
    */
   values: Float64Array;
 };
 
-/**
- * Cached like the explorer's page data - the matrix is the same for every visitor and only changes
- * on a data release - and under the same tag, so one revalidateTag("dimensionality-reduction")
- * refreshes the plot and its colorings together.
- */
+/** Cached under the page data's tag, so one revalidateTag refreshes the plot and its colorings together. */
 const getMatrix = async (ome: MassSpecOme): Promise<Matrix> => {
   "use cache";
   cacheLife("days");
   cacheTag("dimensionality-reduction");
 
   const { features, samples } = await fetchMatrix(ome);
-  // Samples the reduction left out come back with no values at all - 50 of them on lipidomics.
-  // They are not on the plot either, so they are dropped rather than carried as a row of NaN.
+  // Samples with no values at all (50 on lipidomics) aren't on the plot either.
   const rows = samples.flatMap((sample) =>
     sample?.quant_values ? [{ sampleId: sample.sample_id, values: sample.quant_values }] : []
   );
@@ -127,8 +115,7 @@ const getMatrix = async (ome: MassSpecOme): Promise<Matrix> => {
   const values = new Float64Array(features.length * rows.length).fill(NaN);
   features.forEach(({ position }, column) => {
     rows.forEach((row, index) => {
-      // Positions count from 1. Indexed by position rather than by the feature's place in the list,
-      // so a list that arrived in another order, or with a gap, cannot shift every column after it.
+      // Positions count from 1, and are used rather than list order so a reordered list can't shift columns.
       const value = row.values[position - 1];
       if (typeof value === "number") values[column * rows.length + index] = value;
     });
@@ -138,12 +125,8 @@ const getMatrix = async (ome: MassSpecOme): Promise<Matrix> => {
 };
 
 /**
- * One feature's values across the ome's samples, or null where the ome quantifies no feature of that
- * name.
- *
- * Deliberately not cached itself. Slicing a column out of the cached matrix is a loop over a
- * thousand samples, and caching each slice would let any request fill the cache with an entry per
- * name it cared to make up - pushing out the matrices every real request needs.
+ * One feature's values, or null where the ome has no feature of that name. Not cached per slice:
+ * slicing is cheap, and made-up names could otherwise evict the matrices.
  */
 export const getFeatureSlice = async (ome: MassSpecOme, name: string): Promise<FeatureSlice | null> => {
   const { names, sampleIds, values } = await getMatrix(ome);

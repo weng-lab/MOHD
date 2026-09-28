@@ -2,7 +2,7 @@
 
 import { Autocomplete, TextField, Typography } from "@mui/material";
 import { useState } from "react";
-import { FEATURE_KINDS, featureGroup, type FeatureKind, type FeatureOption } from "./features";
+import { FEATURE_KINDS, featureGroup, type FeatureKind, type FeatureOption } from "../model/features";
 
 export type QuantificationSearchProps = {
   kind: Exclude<FeatureKind, "gene">;
@@ -14,18 +14,13 @@ export type QuantificationSearchProps = {
 };
 
 /**
- * Picks the lipid, metabolite or metal the plot is colored by, from the full list the ome quantifies
- * - short enough to list, unlike RNA's genes, which are searched for instead.
- *
- * Applied on the click that chooses it, as the gene search is. Holds its own value rather than taking
- * it from the URL, and has no clear button, because a clearable Autocomplete reports "nothing chosen"
- * the moment its text is emptied - which is how a reader starts typing the next name, and would blank
- * the plot between the first keystroke and the choice. Remount it with a key to start it afresh.
+ * Picks the lipid, metabolite or metal the plot is colored by, applied as soon as it's chosen.
+ * Uncontrolled and unclearable: a clearable Autocomplete reports "nothing chosen" as soon as its
+ * text is emptied to type the next name, which would blank the plot. Remount it with a key to reset.
  */
 const QuantificationSearch = ({ kind, options, initial, onSelect }: QuantificationSearchProps) => {
   const { noun } = FEATURE_KINDS[kind];
-  // Taken at mount and held. `initial` follows the URL, so it changes with every pick, and an
-  // uncontrolled Autocomplete treats a default that moves after mount as a mistake.
+  // Held from mount: `initial` changes with every pick, and an uncontrolled default mustn't move.
   const [defaultValue] = useState(() => options.find(({ name }) => name === initial));
   return (
     <Autocomplete

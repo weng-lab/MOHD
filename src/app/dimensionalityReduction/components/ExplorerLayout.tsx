@@ -1,26 +1,20 @@
 import { Box } from "@mui/material";
 import type { ReactNode } from "react";
 
-/**
- * Layout shared by the explorer and the skeleton standing in for it, so the placeholder holds the
- * shape the controls and plot land in.
- */
+/** Layout shared by the explorer and its skeleton. */
 
 const PANEL_WIDTH = 300;
 
 /** Height under the app header, less the page's own padding (p={2}, top and bottom). */
 export const VIEWPORT_HEIGHT = "calc(100vh - var(--header-height, 64px) - 32px)";
 
-/**
- * From md up both columns fit the viewport, so the plot never scrolls out from beside the controls
- * that drive it. The panel scrolls within itself instead, if its filters outgrow a short window.
- */
+/** From md up both columns fit the viewport, so the plot stays beside its controls; the panel scrolls itself. */
 export const PANEL_SX = {
   maxHeight: { md: VIEWPORT_HEIGHT },
   overflowY: { md: "auto" },
 } as const;
 
-/** The floor keeps the plot usable on short screens, where scrolling the page is the better trade. */
+/** Below this the page scrolls instead, keeping the plot usable on short screens. */
 export const CARD_SX = {
   height: { xs: 560, md: `max(${VIEWPORT_HEIGHT}, 600px)` },
 } as const;

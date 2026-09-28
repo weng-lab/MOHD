@@ -1,9 +1,6 @@
-import ExplorerSkeleton from "./ExplorerSkeleton";
+import ExplorerSkeleton from "./components/ExplorerSkeleton";
 
-/**
- * Route-level fallback, shown during navigation into this route. The inner <Suspense> in page.tsx
- * is what covers the query; both render the same skeleton, so the two stages read as one.
- */
+/** Shown while navigating in; page.tsx's own Suspense shows the same skeleton while the query runs. */
 const Loading = () => <ExplorerSkeleton />;
 
 export default Loading;

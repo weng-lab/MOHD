@@ -24,15 +24,12 @@ const GAP = 2;
 const HISTOGRAM = { horizontal: 12, vertical: 16 } as const;
 /** Pixels of bar per histogram column. */
 const COLUMN = 5;
-/** Neutral, so the columns read as counts rather than as more of the ramp - its yellow would vanish on white. */
+/** Neutral, so the columns read as counts rather than as part of the ramp. */
 const COLUMN_COLOR = blueGrey[700];
 
 /**
- * The break cut through a capped column, as a broken axis draws it: a band slanting up to the right,
- * which reads as a cut at any size - a level gap a couple of pixels high reads as a glitch. Given in
- * the column's own terms, `from` to `to` across its width and centred `at` along its height, with
- * `rise` the band's climb over that width and `gap` its height; `place` puts a point in those terms
- * on screen. Handed back as polygon points.
+ * The slanted cut through a capped column, as polygon points: `from` to `to` across the column,
+ * centred `at` along it, climbing `rise` with thickness `gap`. `place` maps those onto the screen.
  */
 export const breakPoints = (
   place: (across: number, up: number) => [number, number],
@@ -60,10 +57,8 @@ export type ColorbarGraphicProps = {
   /** Every value on the plot, sorted ascending and unclamped: what the columns count. */
   values: ArrayLike<number>;
   format: (value: number) => string;
-  /**
-   * How the sweep writes the lowest and highest value inside it - real values, which can want more
    * precision than the scale's rounded ends: two lipids at 104M and 116M both round to "110M".
-   */
+  /** How the sweep writes real values, which can want more precision than the scale's rounded ends. */
   formatValue?: (value: number) => string;
   /** What one value is, for the sweep's count: "sample", "cell". */
   noun: string;
@@ -73,22 +68,15 @@ export type ColorbarGraphicProps = {
   onSweep: (sweep: RampRange | null) => void;
   /** A value to mark on the bar - the hovered point's. */
   marker?: number | null;
-  /**
-   * Where the sweep's tooltip portals to, where the page's body won't do: inside a heatmap's
-   * expanded minimap, which sits above everything portaled there - see HeatmapLegendFrame.
-   */
+  /** Where the sweep's tooltip portals to when the body won't do - see HeatmapLegendFrame. */
   overlayContainer?: HTMLElement;
 };
 
 /**
- * A colorbar with a histogram of the plot's values along it, drawn as SVG - a `<g>` in the caller's
- * own `<svg>` - so a heatmap can hand it to the library as its legend and downloads keep it.
- *
- * The histogram is scaled to its tallest column short of the two ends. The ends count every value
- * beyond the colors' range as well as their own, and a feature below its detection limit piles half
- * the samples into the lowest one; scaled to that, every other column would flatten to a pixel. An
- * end column taller than the rest is drawn to the top with a gap cut through its middle - the break
- * of a broken bar chart.
+ * A colorbar with a histogram of the plot's values along it, as a `<g>` for the caller's `<svg>`, so
+ * a heatmap can use it as its legend and downloads keep it. The end columns also count the values
+ * beyond the range and can dwarf the rest, so the histogram is scaled to the tallest middle column,
+ * and a taller end column is capped with a break.
  */
 const ColorbarGraphic = ({
   orientation,
@@ -114,8 +102,8 @@ const ColorbarGraphic = ({
   const counts = histogram(values, axis, bins);
   const tallest = Math.max(1, ...counts.slice(1, -1));
 
-  // Everything is placed along the bar (t, 0 at its low end) and across it. Lying down, the
-  // histogram sits above the bar; standing up, it sits to the bar's right, and low is at the bottom.
+  // Placed along the bar (t from 0 at its low end) and across it. The histogram sits above a
+  // horizontal bar, and right of a vertical one, whose low end is at the bottom.
   const barAcross: [number, number] = horizontal ? [depth + GAP, depth + GAP + BAR] : [0, BAR];
   const box = (t0: number, t1: number, [a0, a1]: [number, number]) =>
     horizontal
@@ -139,9 +127,8 @@ const ColorbarGraphic = ({
         // The true lowest and highest inside - at either end of the bar, past where the colors stop.
         ` · ${formatValue(inside.lowest!)} – ${formatValue(inside.highest!)}`;
 
-  // Whether the cursor is sweeping this bar. A bar can go while it is - Escape closes a heatmap's
-  // expanded minimap, legend and all, under a still cursor - and then no mouseleave comes to end
-  // the sweep, which would leave the plot dimmed with nothing under the cursor to undo it.
+  // Whether this bar is being swept. It can unmount mid-sweep (Escape closing the expanded minimap)
+  // with no mouseleave, so unmounting ends the sweep too.
   const sweeping = useRef(false);
   const onSweepRef = useRef(onSweep);
   useEffect(() => {
@@ -186,7 +173,7 @@ const ColorbarGraphic = ({
             <rect {...box(t0, t1, columnAcross(size))} fill={COLUMN_COLOR} />
             {share > 1 && (
               <polygon
-                // Past the column's sides by half a pixel, so no sliver of it is left standing either side.
+                // Half a pixel past the column's sides, so no sliver is left either side.
                 points={breakPoints(
                   // Lying down, a column grows up the screen, where y falls; standing up, it grows rightward.
                   (across, up) => point(across, horizontal ? depth - up : BAR + GAP + up),

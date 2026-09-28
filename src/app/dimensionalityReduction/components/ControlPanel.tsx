@@ -22,15 +22,15 @@ import {
 import type { ReactNode } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
 import { PANEL_SX } from "./ExplorerLayout";
-import { FEATURE_KINDS, isFeatureColor } from "./features";
-import { colorOptionsFor, labelOf, type ColorBy, type Field } from "./fields";
+import { FEATURE_KINDS, isFeatureColor } from "../model/features";
+import { colorOptionsFor, labelOf, type ColorBy, type Field } from "../model/fields";
 import GeneSearch from "./GeneSearch";
-import { rowsFor, valuesOf } from "./groups";
-import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "./omes";
-import { switchOme, toggleHidden, type ExplorerState } from "./params";
+import { rowsFor, valuesOf } from "../model/groups";
+import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "../model/omes";
+import { switchOme, toggleHidden, type ExplorerState } from "../state/params";
 import QuantificationSearch from "./QuantificationSearch";
-import { NO_SHAPE, shapeOptionsFor, type ShapeBy } from "./shapes";
-import type { ExplorerData } from "./types";
+import { NO_SHAPE, shapeOptionsFor, type ShapeBy } from "../model/shapes";
+import type { ExplorerData } from "../model/types";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
 
@@ -46,10 +46,8 @@ const omeButtonSx: SxProps<Theme> = {
 };
 
 /**
- * Styled like the download page's filters - outlined, dimmed when off - but inverted: every value
- * starts on and a click fades its samples, rather than starting off and a click narrowing to it.
- * That makes a value switched off here the same state as its chip struck through in the legend, so
- * it is struck through here too.
+ * Styled like the download page's filters, but inverted: every value starts on, and a click fades
+ * its samples. Struck through when off, like its chip in the legend.
  */
 const filterButtonSx: SxProps<Theme> = {
   textTransform: "none",
@@ -69,11 +67,8 @@ const filterButtonSx: SxProps<Theme> = {
 };
 
 /**
- * A heading inside a select's menu. Select stamps role="option" and aria-selected onto every child
- * it is given, which would announce a ListSubheader as one more choice; taking only `children`
- * drops those, and aria-hidden keeps the heading out of the options a screen reader counts - the
- * choices beneath it name themselves. The static flag is what MenuList reads to step past it with
- * the arrow keys.
+ * A heading inside a select's menu. Takes only `children`, dropping the role="option" Select stamps
+ * on every child, and is aria-hidden; `muiSkipListHighlight` makes the arrow keys skip it.
  */
 const MenuHeading = ({ children }: { children: ReactNode }) => <ListSubheader aria-hidden>{children}</ListSubheader>;
 MenuHeading.muiSkipListHighlight = true;
@@ -99,11 +94,7 @@ type PcSelectProps = {
   onChange: (pc: number) => void;
 };
 
-/**
- * The menu lists each PC with its variance, to show which are worth picking. The field itself shows
- * the bare PC - the axis label beside the plot already carries the percentage, and the two selects
- * share a 300px panel.
- */
+/** The menu lists each PC with its variance; the field shows the bare PC, as the axis label has the percentage. */
 const PcSelect = ({ label, value, other, pve, onChange }: PcSelectProps) => (
   <TextField
     select
@@ -126,18 +117,12 @@ export type ControlPanelProps = {
   state: ExplorerState;
   onChange: (state: ExplorerState) => void;
   /**
-   * Every ome's data, which the panel reads its own choices out of. Handed in whole rather than as
-   * those choices: worked out in the explorer, they fell into one React Compiler memo block with
-   * the plot's colors - it has to assume the helpers that build the points may mutate what they are
-   * given - and came out as new arrays on every step of a color-range drag, re-rendering the whole
-   * panel with them. Here they depend on the data and the state alone, which a drag leaves as they are.
+   * Every ome's data, from which the panel works out its own choices. Worked out in the explorer,
+   * they shared a React Compiler memo block with the plot's colors and re-rendered the panel on
+   * every step of a color-range drag.
    */
   data: ExplorerData;
-  /**
-   * The gene currently colouring the plot, named as the API names it once that is known. The search
-   * below owns its own input and clears it on every submission, so without this a link opened with
-   * a gene already set would leave the panel looking as though none was.
-   */
+  /** The gene coloring the plot, shown beneath the search, which clears its own input after each pick. */
   geneLabel: string | null;
 };
 
@@ -146,16 +131,12 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
   const { umap } = OME_CAPABILITIES[ome];
   const { fields, metrics, feature } = colorOptionsFor(ome);
   const { pve } = data[ome];
-  // What a mass-spec ome's picker lists - see OmeData.features. Empty elsewhere.
   const features = data[ome].features ?? [];
   const rows = rowsFor(data, ome, method);
-  // Each offered field's values on the current ome, in display order.
   const options: Partial<Record<Field, string[]>> = Object.fromEntries(
     fields.map(({ key }) => [key, valuesOf(rows, key)])
   );
-  // The fields this ome's data can be shaped by - fewer than it can be colored by, see shapes.ts.
   const shapeOptions = shapeOptionsFor(ome, data);
-  // Whether the current ome has QC samples, and so whether their switch is shown.
   const hasQc = rows.some((row) => row.qc);
   const filtered = hideQc || Object.values(state.hidden).some((values) => values.length > 0);
 
@@ -234,12 +215,7 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
                 {label}
               </MenuItem>
             ))}
-            {/*
-              Unheaded, unlike the metrics below: a heading earns its row by grouping several
-              choices, and this is one. What it names itself is enough to say it is not a field.
-            */}
             {feature && <MenuItem value={FEATURE_KINDS[feature].color}>{FEATURE_KINDS[feature].option}</MenuItem>}
-            {/* Headed apart from the fields: these color along a ramp, and have no filters below. */}
             {metrics.length > 0 && <MenuHeading>{getOmeLabel(ome)} quality</MenuHeading>}
             {metrics.map(({ key, label }) => (
               <MenuItem key={key} value={key}>
@@ -259,7 +235,7 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
           )}
           {isFeatureColor(color) && feature && feature !== "gene" && (
             <QuantificationSearch
-              // Afresh on each ome: it holds its own value, and one ome's feature is not in the next one's list.
+              // Remounted per ome, since it holds its own value.
               key={ome}
               kind={feature}
               options={features}
@@ -277,12 +253,7 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
             slotProps={SELECT_SLOT_PROPS}
           >
             <MenuItem value={NO_SHAPE}>None</MenuItem>
-            {/*
-              A field this ome cannot shape by is listed and disabled rather than left out, with
-              the reason on it. The absence would otherwise be the reader's to explain - age is
-              the conspicuous one - and this answers it where the question gets asked rather than
-              in helper text that is noise on every other visit.
-            */}
+            {/* Unshapeable fields are listed disabled with the reason, rather than silently missing. */}
             {fields.map(({ key, label }) => {
               const shapeable = shapeOptions.some((option) => option.key === key);
               return (

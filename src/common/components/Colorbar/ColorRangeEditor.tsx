@@ -25,7 +25,7 @@ const GAP = 3;
 const BAR = 12;
 /** Pixels of bar per histogram column: wider than the compact legend's, for a steadier shape. */
 const COLUMN = 7;
-/** Samples of the bar's color per pixel run - fine enough that its kinks at the squeezed tails don't band. */
+/** Samples of the bar's color per pixel: fine enough that the squeezed tails don't band. */
 const COLOR_STEP = 3;
 
 export type ColorRangeEditorProps = {
@@ -33,7 +33,7 @@ export type ColorRangeEditorProps = {
   kind: RampKind;
   /** Where the colors stop now. */
   range: ColorRange;
-  /** Where they stop until the reader says otherwise - the middle of the editor's axis. */
+  /** The default range, which the editor's axis is built around. */
   defaultRange: ColorRange;
   /** The lowest and highest value there is, which the editor's bar reaches. */
   extent: ColorRange;
@@ -48,12 +48,9 @@ export type ColorRangeEditorProps = {
 };
 
 /**
- * Where a plot's colors stop, set by dragging a handle at either end or picking a preset.
- *
- * The bar spans every value there is, not only the colors' range, so there is somewhere to drag a
- * handle out to - on an axis that squeezes the long tails, so the bulk of the values stays wide
- * enough to set a range in (see squeezedAxis). Beyond the handles the bar runs flat in the end
- * colors, and the columns there fade, as every value they count is colored alike.
+ * Sets where a plot's colors stop, by dragging a handle or picking a preset. The bar spans every
+ * value, with the tails squeezed (see squeezedAxis); beyond the handles it runs flat in the end
+ * colors, and the columns there fade.
  */
 const ColorRangeEditor = ({
   stops,
@@ -76,12 +73,11 @@ const ColorRangeEditor = ({
 
   const bins = Math.round(WIDTH / COLUMN);
   const counts = histogram(values, axis, bins);
-  // As the compact legend scales its columns, and for the same reason - see ColorbarGraphic.
+  // Scaled as ColorbarGraphic scales its columns.
   const tallest = Math.max(1, ...counts.slice(1, -1));
   const column = WIDTH / bins;
 
-  // Sampled rather than a plain gradient: the bar is linear in the middle and squeezed at the ends,
-  // and runs flat beyond the handles, none of which a gradient between the ramp's own stops can draw.
+  // Sampled, since a gradient between the ramp's stops can't follow the squeezed axis or the flat ends.
   const barStops = Array.from({ length: Math.ceil(WIDTH / COLOR_STEP) + 1 }, (_, i) => {
     const t = Math.min((i * COLOR_STEP) / WIDTH, 1);
     return { t, color: colorAt(stops, span > 0 ? (axis.fromT(t) - low) / span : 0.5) };
@@ -96,7 +92,7 @@ const ColorRangeEditor = ({
       onChange([-limit, limit]);
       return;
     }
-    // Kept a sliver apart, so the two ends can't meet and leave the colors no range at all.
+    // Kept a sliver apart, so the range can't collapse.
     const minimumSpan = (extent[1] - extent[0]) / 200;
     onChange(
       active === 0 ? [Math.min(dragged, high - minimumSpan), high] : [low, Math.max(dragged, low + minimumSpan)]
@@ -106,8 +102,7 @@ const ColorRangeEditor = ({
   const presetValue = presets.find((preset) => sameRange(preset.range, range))?.label ?? null;
 
   return (
-    // As wide as the bar, so the readout wraps under it rather than widening the panel - and its end
-    // labels, pinned to the panel's sides - a little more with every step of a drag.
+    // As wide as the bar, so a long readout wraps rather than widening the panel mid-drag.
     <Stack gap={1} width={WIDTH}>
       <Box position="relative" width={WIDTH} height={HISTOGRAM + GAP + BAR}>
         <svg width={WIDTH} height={HISTOGRAM + GAP + BAR} style={{ display: "block", overflow: "visible" }} aria-hidden>

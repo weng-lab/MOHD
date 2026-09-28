@@ -11,65 +11,63 @@ import {
 } from "@/common/components/Colorbar/colorbarAxis";
 import PlotLegend from "@/common/components/PlotLegend";
 import { dimHidden } from "@/common/components/plotDimming";
-import ControlPanel from "./ControlPanel";
-import ExplorerLayout from "./ExplorerLayout";
-import ExplorerPlot, { type PointMeta } from "./ExplorerPlot";
-import { FEATURE_KINDS, featureLabel, fromLogValue, isFeatureColor, toLogValue } from "./features";
-import FeatureLegend from "./FeatureLegend";
-import MetricLegend, { type ColorRangeControl } from "./MetricLegend";
-import { QC_GROUP, colorLabel, colorOf, fieldsFor, groupOf, isContinuous, isNeutralGroup, type Field } from "./fields";
-import { legendGroups, passesFilters, rowsFor, toHiddenSets, type Filters } from "./groups";
-import ShapeLegend from "./ShapeLegend";
-import { defaultRange, isMetric, metricColor, metricDefinition, metricPosition, scaleOver } from "./metrics";
-import { OME_CAPABILITIES, pcLabel } from "./omes";
-import { toggleHidden, type ExplorerState } from "./params";
-import { NO_SHAPE, shapeOf, shapeOptionsFor, shapeScale } from "./shapes";
-import type { ExplorerData, ExplorerRow } from "./types";
-import { useExplorerState } from "./useExplorerState";
-import { useFeature } from "./useFeature";
+import ControlPanel from "./components/ControlPanel";
+import ExplorerLayout from "./components/ExplorerLayout";
+import ExplorerPlot, { type PointMeta } from "./components/ExplorerPlot";
+import { FEATURE_KINDS, featureLabel, fromLogValue, isFeatureColor, toLogValue } from "./model/features";
+import FeatureLegend from "./legends/FeatureLegend";
+import MetricLegend, { type ColorRangeControl } from "./legends/MetricLegend";
+import {
+  QC_GROUP,
+  colorLabel,
+  colorOf,
+  fieldsFor,
+  groupOf,
+  isContinuous,
+  isNeutralGroup,
+  type Field,
+} from "./model/fields";
+import { legendGroups, passesFilters, rowsFor, toHiddenSets, type Filters } from "./model/groups";
+import ShapeLegend from "./legends/ShapeLegend";
+import { defaultRange, isMetric, metricColor, metricDefinition, metricPosition, scaleOver } from "./model/metrics";
+import { OME_CAPABILITIES, pcLabel } from "./model/omes";
+import { toggleHidden, type ExplorerState } from "./state/params";
+import { NO_SHAPE, shapeOf, shapeOptionsFor, shapeScale } from "./model/shapes";
+import type { ExplorerData, ExplorerRow } from "./model/types";
+import { useExplorerState } from "./state/useExplorerState";
+import { useFeature } from "./data/useFeature";
 
 export type DimensionalityReductionExplorerProps = {
   data: ExplorerData;
 };
 
 /**
- * Note what this component deliberately does not hold: the hover.
- *
- * React Compiler memoizes in scopes, and it puts neighbouring values in one scope together - so
- * hover state here would land in the same scope as `points` and `domains` and rebuild both on every
- * point the cursor crosses. ScatterPlot cancels its hover growth when those arrays change identity,
- * which left a hovered point drawn at zero growth while the same hover from a legend chip animated
- * in full. The hover therefore lives in ExplorerPlot, and the legend is built through a callback.
+ * Holds no hover state, deliberately: React Compiler would put it in one memo scope with `points`
+ * and `domains`, rebuilding them on every hover and restarting ScatterPlot's hover animation. The
+ * hover lives in ExplorerPlot, which builds the legend through a callback.
  */
 const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplorerProps) => {
   const [state, setState] = useExplorerState();
-  // Where the colors stop while the range editor is open, written to the URL once it closes. The
-  // URL is costly to write often: Safari allows 100 history updates in 30 seconds, and each one
-  // re-renders the page through Next's router - fast enough, from a held arrow key or a run of
-  // clicks along the track, that React gives up with "Maximum update depth exceeded". Held with
-  // the state it was set over, which is parsed afresh when the URL changes: once the URL carries
-  // the range, or anything else moves it, the draft stops applying in the same render, so the
-  // colors never fall back to the old range in between.
+  // The range while the editor is open, written to the URL only on close: frequent URL writes hit
+  // Safari's history limit and React's update depth. Keyed to the state it was set over, so it stops
+  // applying as soon as the URL changes, without a flash of the old range.
   const [draft, setDraft] = useState<{ range: ColorRange; over: ExplorerState } | null>(null);
   const draftRange = draft?.over === state ? draft.range : null;
 
   const { ome, method, x, y, color, hideQc } = state;
-  // What one feature is on this ome - a gene, a lipid - or null where it has none to color by.
   const featureKind = OME_CAPABILITIES[ome].feature;
-  // Fetched rather than carried on the row; null whenever a feature is not what colors the plot,
-  // which is what skips the fetch. See useFeature.
+  // Null, skipping the fetch, unless a feature colors the plot.
   const feature = useFeature(ome, isFeatureColor(color) ? state.feature : null);
   const { pve } = data[ome];
   const rows = rowsFor(data, ome, method);
   const fields = fieldsFor(ome);
 
-  // The field actually shaping the plot: what the URL asks for, if this ome's data can carry it.
+  // What the URL asks to shape by, if this ome's data can carry it.
   const shapeOptions = shapeOptionsFor(ome, data);
   const shapedField = state.shape === NO_SHAPE ? null : (shapeOptions.find(({ key }) => key === state.shape) ?? null);
   const shapes = shapedField ? shapeScale(data, shapedField.key) : null;
 
-  // The shape encoding gets a legend of its own only where the two encodings disagree. Where one
-  // field drives both, the color chips carry its glyphs instead, which says it once rather than twice.
+  // A separate shape legend only when shape and color are different fields; otherwise the color chips show the glyphs.
   const shapeLegend = shapedField && shapes && shapedField.key !== color ? { field: shapedField, scale: shapes } : null;
 
   const filters: Filters = {
@@ -78,18 +76,14 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
     hideQc,
   };
 
-  /**
-   * A row's place on whichever ramp is colouring the plot, in that ramp's own units: a metric as
-   * the API reports it, a feature as log10(value + 1). Null where the sample has no value, which is
-   * also what every sample has before a feature is picked.
-   */
+  /** A row's value on the ramp coloring the plot, in the ramp's units (log10(value + 1) for a feature), or null. */
   const continuousValue = (row: ExplorerRow): number | null => {
     if (isMetric(color)) return row.metrics?.[color] ?? null;
     const value = feature.values?.get(row.sample_id);
     return value === undefined ? null : toLogValue(value);
   };
 
-  // Across every sample the ome has, whatever the method or filters, so neither can repaint a point.
+  // Across every sample the ome has, so neither method nor filters can repaint a point.
   const allValues = isContinuous(color)
     ? Float64Array.from(data[ome].rows.flatMap((row) => continuousValue(row) ?? [])).sort()
     : new Float64Array();
@@ -120,10 +114,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
         }
       : undefined;
 
-  /**
-   * A row's color: by group for a field, along the ramp for a metric or a feature - and for the
-   * latter where on the ramp, which is what a sweep along the colorbar is matched against.
-   */
+  /** A row's color, and for a ramp its position on it, which a colorbar sweep matches against. */
   const paint = (row: ExplorerRow) => {
     if (isContinuous(color)) {
       const value = continuousValue(row);
@@ -140,15 +131,13 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   const painted = rows.map((row) => ({
     row,
     ...paint(row),
-    // Undefined rather than "circle" where nothing is shaped, so the plot falls back to its own
-    // default rather than this being a second place that decides what an unshaped point looks like.
+    // Undefined where nothing is shaped, leaving the default to the plot.
     shape: shapedField ? shapeOf(shapes, groupOf(shapedField.key, row)) : undefined,
-    // The raw value, not the log the ramp uses: this is for the hover to quote, in the data's units.
+    // Raw, not logged, for the hover to quote.
     featureValue: feature.values?.get(row.sample_id) ?? null,
   }));
 
-  // The neutral groups first, so QC samples and missing values are drawn beneath the samples they
-  // would otherwise cover; each layer keeps the API's order.
+  // Neutral groups first, so they're drawn beneath the rest.
   const plotted = [...painted.filter(({ neutral }) => neutral), ...painted.filter(({ neutral }) => !neutral)].map(
     ({ row, fill, shape, featureValue, rampPosition }): Point<PointMeta> => {
       const [px, py] = method === "UMAP" && row.umap ? row.umap : [row.pcs[x - 1], row.pcs[y - 1]];
@@ -163,15 +152,13 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
     }
   );
 
-  // From every point rather than the ones in focus, so filtering never rescales the axes under
-  // the points that keep their color.
+  // From every point, so filtering never rescales the axes.
   const domains = plotted.length > 0 ? getSharedDomains(plotted) : undefined;
 
-  // Filtered samples stay on the plot, pale and underneath, rather than being dropped: where a
-  // sample sits in a reduction only means anything beside the samples it was reduced with.
+  // Filtered samples are dimmed rather than dropped: a sample's place only means something beside the rest.
   const { points, shown } = dimHidden(plotted, (point) => point.metaData!.shown);
 
-  // What the colorbar's histogram counts: the samples in focus, as the plot shows them in color.
+  // The samples in focus, for the colorbar's histogram.
   const shownValues = Float64Array.from(shown.flatMap(({ metaData }) => continuousValue(metaData!.row) ?? [])).sort();
 
   const pca = method === "PCA";
@@ -183,7 +170,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
           state={state}
           onChange={setState}
           data={data}
-          // The id until the query names it, so a link opened with a gene already set says so at once.
+          // The id until the query returns a name.
           geneLabel={feature.name ?? feature.id}
         />
       }
@@ -207,18 +194,15 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
             featureKind && feature.name ? { name: feature.name, format: FEATURE_KINDS[featureKind].format } : null
           }
           renderLegend={({ hovered, legendHover, onLegendHover }) => {
-            // Where the hovered sample sits on the ramp, in the ramp's units - undefined rather
-            // than null so a sample with no value and no sample at all stay distinguishable.
+            // The hovered sample's raw feature value; undefined with no hover or no value.
             const hoveredValue = hovered ? feature.values?.get(hovered.sample_id) : undefined;
-            // The chip to ring in one field's row: the group of the sample under the cursor on the
-            // plot, or else the chip under the cursor - from this row, not the one above or below.
+            // The chip to ring in a field's row: the hovered sample's group, or the hovered chip if it's in this row.
             const ringed = (field: Field) =>
               hovered
                 ? groupOf(field, hovered)
                 : legendHover?.kind === "group" && legendHover.field === field
                   ? legendHover.value
                   : null;
-            // The stretch of colorbar under the cursor, drawn back onto the bar it came from.
             const sweep = legendHover?.kind === "range" ? legendHover : null;
             const onSweep = (next: RampRange | null) =>
               onLegendHover(next === null ? null : { kind: "range", ...next });
@@ -238,8 +222,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                   />
                 )}
                 {isFeatureColor(color) ? (
-                  // normalize keeps a feature coloring off an ome with no features, so the kind is
-                  // always there; checked only so the types agree.
+                  // Always set here (normalize ensures it); checked for the types.
                   featureKind && (
                     <FeatureLegend
                       kind={featureKind}
@@ -266,8 +249,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                   />
                 ) : (
                   <PlotLegend
-                    // Named only when a shape row sits above it, where two rows of chips would
-                    // otherwise leave the reader to work out which encoding each one explains.
+                    // Named only beneath a shape row, to tell the two apart.
                     label={shapeLegend ? colorLabel(ome, color) : undefined}
                     groups={legendGroups(rows, color, filters).map((group) =>
                       shapes && shapedField?.key === color ? { ...group, shape: shapeOf(shapes, group.value) } : group

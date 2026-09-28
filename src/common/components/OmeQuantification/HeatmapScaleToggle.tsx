@@ -7,10 +7,7 @@ type HeatmapScaleToggleProps = {
   onChange: (mode: HeatmapScaleMode) => void;
 };
 
-/**
- * The heatmap's color scales, each named by its formula. What a scale's colors span, and how many
- * cells lie beyond, is the colorbar's to say - see OmeHeatmapShell.
- */
+/** Switches the heatmap's color scale, each named by its formula. */
 
 const HeatmapScaleToggle = ({ modes, value, onChange }: HeatmapScaleToggleProps) => (
   <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap" sx={{ pb: 1 }}>
@@ -23,7 +20,7 @@ const HeatmapScaleToggle = ({ modes, value, onChange }: HeatmapScaleToggleProps)
       aria-label="Color scale"
     >
       {modes.map((mode) => (
-        // MUI's buttons are uppercase by default, which would make a formula read as LOG10(VALUE + 1).
+        // Not uppercased, so the formula reads as written.
         <ToggleButton key={mode} value={mode} sx={{ textTransform: "none" }}>
           {HEATMAP_SCALE_LABELS[mode]}
         </ToggleButton>

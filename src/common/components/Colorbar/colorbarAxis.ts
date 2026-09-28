@@ -1,10 +1,7 @@
 /**
  * The arithmetic behind a colorbar: where a value sits along the bar, how many values fall in each
- * stretch of it, and the ranges a reader can set its colors to span.
- *
- * Everything here takes values sorted ascending and answers by bisecting them rather than walking
- * them, so a heatmap's hundreds of thousands of cells cost a histogram no more than a plot's few
- * hundred points.
+ * stretch, and the ranges its colors can span. Values come sorted ascending and are bisected, so a
+ * heatmap's hundreds of thousands of cells cost no more than a plot's points.
  */
 
 /** Where the colors stop, in the units the ramp is drawn in. Values beyond take the end colors. */
@@ -13,10 +10,7 @@ export type ColorRange = [low: number, high: number];
 /** A color stop, `at` from 0 at the low end of the ramp to 1 at its high end. */
 export type RampStop = { at: number; color: string };
 
-/**
- * Sequential runs one way, low to high. Diverging runs out both ways from a neutral 0, so its range
- * stays symmetric - one number, ±limit - and moving either end moves both.
- */
+/** Sequential runs low to high. Diverging runs out both ways from 0, so its range stays symmetric (±limit). */
 export type RampKind = "sequential" | "diverging";
 
 /** A stretch of the bar, from 0 at its low end to 1 at its high end. */
@@ -28,7 +22,7 @@ export type RangePreset = { label: string; range: ColorRange };
 type Sorted = ArrayLike<number>;
 
 /** How many values lie below x. */
-export const lowerBound = (sorted: Sorted, x: number) => {
+const lowerBound = (sorted: Sorted, x: number) => {
   let lo = 0;
   let hi = sorted.length;
   while (lo < hi) {
@@ -40,7 +34,7 @@ export const lowerBound = (sorted: Sorted, x: number) => {
 };
 
 /** How many values lie at or below x. */
-export const upperBound = (sorted: Sorted, x: number) => {
+const upperBound = (sorted: Sorted, x: number) => {
   let lo = 0;
   let hi = sorted.length;
   while (lo < hi) {
@@ -75,11 +69,7 @@ export type BarAxis = {
 
 const clamp01 = (t: number) => Math.min(Math.max(t, 0), 1);
 
-/**
- * The bar spanning the colors' range, with anything beyond held at its ends - where its color comes
- * from. The compact legend's axis: its ends are where the colors stop, so a value's place on it and
- * its color always agree.
- */
+/** The compact legend's axis: the colors' range, with values beyond held at the ends, as their colors are. */
 export const rangeAxis = ([low, high]: ColorRange): BarAxis => {
   const span = high - low;
   return {
@@ -93,14 +83,9 @@ export const rangeAxis = ([low, high]: ColorRange): BarAxis => {
 const TAIL_SHARE = 0.16;
 
 /**
- * The bar spanning every value, for setting where the colors stop.
- *
- * Linear across `core` - the default range, where nearly every value lies - and logarithmic in the
- * tails beyond it, which are squeezed into the last 16% at either end: a cytometry "logicle" axis in
- * all but name. Linear across the whole extent would hand most of the bar to a handful of values -
- * heatmap z-scores run to ±23 while 99% of cells lie within ±3 - and leave the bulk too cramped to
- * set a range in. The axis stays put whatever the range is, so a handle stays under the cursor
- * while it is dragged. A diverging axis is symmetric, so 0 stays in the middle.
+ * The range editor's axis, spanning every value: linear across `core`, where nearly every value
+ * lies, and logarithmic in the tails, squeezed into the last 16% at either end - heatmap z-scores run
+ * to ±23 with 99% within ±3. Independent of the range, so a dragged handle stays under the cursor.
  */
 export const squeezedAxis = (core: ColorRange, extent: ColorRange, kind: RampKind): BarAxis => {
   const [low, high] = core;
@@ -144,10 +129,7 @@ export const histogram = (sorted: Sorted, axis: BarAxis, bins: number): number[]
   return counts;
 };
 
-/**
- * The values a stretch of the bar takes in. At either end it reaches past the range to take in the
- * values held at that end's color, so a window at the end of the bar lights every point wearing it.
- */
+/** The values a stretch of the bar takes in, open-ended at the bar's ends to include values clamped there. */
 export const valuesIn = (axis: BarAxis, { from, to }: RampRange): ColorRange => [
   from <= 0 ? -Infinity : axis.fromT(from),
   to >= 1 ? Infinity : axis.fromT(to),
@@ -165,17 +147,10 @@ export const summarize = (sorted: Sorted, [low, high]: ColorRange) => {
 export const countBeyond = (sorted: Sorted, [low, high]: ColorRange) =>
   lowerBound(sorted, low) + (sorted.length - upperBound(sorted, high));
 
-/**
- * How much of the bar a sweep takes in. Wide enough that the window holds a visible handful of
- * values most places along it, narrow enough that a sweep end to end passes through colors that are
- * plainly different.
- */
-export const RANGE_WIDTH = 0.15;
+/** How much of the bar a sweep takes in: enough to catch a handful of values, narrow enough to separate colors. */
+const RANGE_WIDTH = 0.15;
 
-/**
- * The window centred on a place along the bar, slid inward at either end rather than cut short, so it
- * spans the same share of the bar wherever the cursor is.
- */
+/** The window centred on a place along the bar, slid inward at the ends rather than cut short. */
 export const rangeAt = (t: number): RampRange => {
   const from = Math.min(Math.max(t - RANGE_WIDTH / 2, 0), 1 - RANGE_WIDTH);
   return { from, to: from + RANGE_WIDTH };
@@ -189,10 +164,7 @@ export const percentilePresets = (sorted: Sorted): RangePreset[] => [
   { label: "All", range: [sorted[0], sorted[sorted.length - 1]] },
 ];
 
-/**
- * A symmetric limit, rounded up to a tenth, so "All" takes in every value rather than all but the
- * float noise at the far end.
- */
+/** A symmetric limit, rounded up to a tenth, so "All" really takes in every value. */
 export const reachOf = (sorted: Sorted) => Math.ceil(Math.max(-sorted[0], sorted[sorted.length - 1]) * 10) / 10;
 
 /** ±2, ±3, ±5 and ±10 where the values reach past them, and all of them. */
@@ -203,18 +175,11 @@ export const symmetricPresets = (reach: number): RangePreset[] => [
   { label: "All", range: [-reach, reach] },
 ];
 
-/**
- * Rounds a dragged diverging limit to a figure worth writing down: tenths below 5, halves below 10,
- * whole numbers beyond. Dragging through the squeezed tail moves several units a pixel, where a
- * tenth would be false precision.
- */
+/** Rounds a dragged diverging limit: tenths below 5, halves below 10, whole numbers beyond, as the tails move fast. */
 export const snapLimit = (limit: number) =>
   limit < 5 ? Math.round(limit * 10) / 10 : limit < 10 ? Math.round(limit * 2) / 2 : Math.round(limit);
 
-/**
- * Whether two ranges are the same to within half a percent of their span: past the rounding a link
- * applies, well short of any difference a reader would see on the bar.
- */
+/** Whether two ranges match within half a percent of their span: beyond a link's rounding, below what shows. */
 export const sameRange = (a: ColorRange, b: ColorRange) => {
   const tolerance = Math.max(Math.abs(a[1] - a[0]), Math.abs(b[1] - b[0])) * 5e-3;
   return Math.abs(a[0] - b[0]) <= tolerance && Math.abs(a[1] - b[1]) <= tolerance;
@@ -236,10 +201,7 @@ export const colorAt = (stops: readonly RampStop[], s: number): string => {
   return `rgb(${start.map((channel, i) => Math.round(channel + (end[i] - channel) * mix)).join(",")})`;
 };
 
-/**
- * A count as a share of a total, never rounded to a misleading zero: 381 of 845,208 cells is "<0.1%",
- * not "0.0%". Tenths below 10%, whole percents above.
- */
+/** A count as a share of a total, never rounded to zero ("<0.1%"). Tenths below 10%, whole percents above. */
 export const formatShare = (count: number, total: number) => {
   const share = (100 * count) / Math.max(total, 1);
   return count === 0 ? "0%" : share < 0.1 ? "<0.1%" : `${share.toFixed(share < 10 ? 1 : 0)}%`;
