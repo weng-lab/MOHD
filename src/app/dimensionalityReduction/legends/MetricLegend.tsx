@@ -1,12 +1,12 @@
 "use client";
 
-import { Box, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useState } from "react";
+import ColorbarEnd from "@/common/components/Colorbar/ColorbarEnd";
 import ColorbarGraphic, { colorbarDepth } from "@/common/components/Colorbar/ColorbarGraphic";
 import ColorRangeButton from "@/common/components/Colorbar/ColorRangeButton";
 import SteadyText from "@/common/components/Colorbar/SteadyText";
 import {
-  sameRange,
   type ColorRange,
   type RampRange,
   type RangePreset,
@@ -38,7 +38,10 @@ export type MetricLegendProps = {
   missing: number;
   /** The hovered point's value, marked on the bar. Null when there's none. */
   hovered: number | null;
-  /** Any transform the values go through before they're colored, e.g. "log10(TPM + 1)". */
+  /**
+   * A log transform the values go through before they're colored, e.g. "log10(TPM + 1)", named in
+   * the range panel only: the legend's ends are the values themselves, which aren't transformed.
+   */
   transform?: string;
   /** The stretch of the ramp under the cursor, drawn on the bar as a window. */
   sweep: RampRange | null;
@@ -53,7 +56,7 @@ const BAR_LENGTH = 160;
 
 /**
  * Colorbar for a continuous value, in place of a field's chips and held to their height so switching
- * doesn't shift the plot. The plot's subtitle names the value.
+ * doesn't shift the plot. The plot's subtitle names the value; the range panel says how it's scaled.
  */
 const MetricLegend = ({
   metric: { label, format, formatValue },
@@ -67,23 +70,29 @@ const MetricLegend = ({
   control,
 }: MetricLegendProps) => {
   const range: ColorRange | null = scale && [scale.low, scale.high];
-  const adjusted = control !== undefined && range !== null && !sameRange(range, control.defaultRange);
-  const extent = control?.extent ?? (values.length ? [values[0], values[values.length - 1]] : null);
   // While the range editor is open, the end labels hold their width - see SteadyText.
   const [editing, setEditing] = useState(false);
 
-  // What the scale is and where its ends come from; shown on the end labels, and on the bar until a sweep starts.
-  const note =
+  // An end label highlights its clamp, or sweeps its end of the bar where there's none - see ColorbarEnd.
+  const end = (side: "low" | "high", text: string) =>
     scale &&
-    [
-      transform && `Colored by ${transform}`,
-      adjusted
-        ? `Colors span ${format(scale.low)} – ${format(scale.high)}, as set with the adjuster beside the bar`
-        : `Colors span the middle ${100 - 2 * CLIP_PERCENTILE}% of samples, so a few extreme values don't wash out the rest`,
-      extent && `Values run ${format(extent[0])} to ${format(extent[1])}`,
-    ]
-      .filter(Boolean)
-      .join(". ") + ".";
+    range && (
+      <ColorbarEnd
+        end={side}
+        clamped={side === "low" ? scale.clippedLow : scale.clippedHigh}
+        range={range}
+        values={values}
+        noun="sample"
+        formatValue={formatValue ?? format}
+        onSweep={onSweep}
+        placement="top"
+      >
+        {/* Focusable, so the ends can be reached from the keyboard as the bar can't be. */}
+        <Typography variant="caption" tabIndex={0} sx={{ cursor: "default" }}>
+          <SteadyText text={text} hold={editing} align={side === "low" ? "end" : undefined} />
+        </Typography>
+      </ColorbarEnd>
+    );
 
   return (
     <Stack direction="row" alignItems="center" flexWrap="wrap" columnGap={2} rowGap={0.5} minHeight={24} flexShrink={0}>
@@ -100,40 +109,34 @@ const MetricLegend = ({
         ) : (
           <Stack direction="row" alignItems="center" gap={0.5}>
             {/*
-              Hidden during a sweep, whose own count follows the cursor, and not interactive, so it
-              can't catch the cursor moving onto the bar and end the sweep.
+              Baseline-aligned: the svg has no text, so its baseline is its bottom edge - the bar's -
+              and the end labels sit on it.
             */}
-            <Tooltip arrow title={sweep ? "" : note} disableInteractive>
-              <Stack direction="row" alignItems="center" gap={1} tabIndex={0}>
-                <Typography variant="caption">
-                  <SteadyText text={`${scale.clippedLow ? "≤ " : ""}${format(scale.low)}`} hold={editing} align="end" />
-                </Typography>
-                <svg
-                  width={BAR_LENGTH}
-                  height={colorbarDepth("horizontal")}
-                  role="img"
-                  aria-label={`${label} color scale, from blue at ${format(scale.low)} to red at ${format(scale.high)}`}
-                  style={{ display: "block", overflow: "visible" }}
-                >
-                  <ColorbarGraphic
-                    orientation="horizontal"
-                    length={BAR_LENGTH}
-                    stops={SEQUENTIAL_RAMP}
-                    range={range}
-                    values={values}
-                    format={format}
-                    formatValue={formatValue}
-                    noun="sample"
-                    sweep={sweep}
-                    onSweep={onSweep}
-                    marker={hovered}
-                  />
-                </svg>
-                <Typography variant="caption">
-                  <SteadyText text={`${scale.clippedHigh ? "≥ " : ""}${format(scale.high)}`} hold={editing} />
-                </Typography>
-              </Stack>
-            </Tooltip>
+            <Stack direction="row" alignItems="baseline" gap={1}>
+              {end("low", `${scale.clippedLow ? "≤ " : ""}${format(scale.low)}`)}
+              <svg
+                width={BAR_LENGTH}
+                height={colorbarDepth("horizontal")}
+                role="img"
+                aria-label={`${label} color scale, from blue at ${format(scale.low)} to red at ${format(scale.high)}`}
+                style={{ display: "block", overflow: "visible" }}
+              >
+                <ColorbarGraphic
+                  orientation="horizontal"
+                  length={BAR_LENGTH}
+                  stops={SEQUENTIAL_RAMP}
+                  range={range}
+                  values={values}
+                  format={format}
+                  formatValue={formatValue}
+                  noun="sample"
+                  sweep={sweep}
+                  onSweep={onSweep}
+                  marker={hovered}
+                />
+              </svg>
+              {end("high", `${scale.clippedHigh ? "≥ " : ""}${format(scale.high)}`)}
+            </Stack>
             {control && (
               <ColorRangeButton
                 stops={SEQUENTIAL_RAMP}
@@ -142,6 +145,10 @@ const MetricLegend = ({
                 values={values}
                 format={format}
                 noun="sample"
+                notes={[
+                  ...(transform ? [`On a log scale: colors follow ${transform}.`] : []),
+                  `Starts at the middle ${100 - 2 * CLIP_PERCENTILE}% of samples, so a few extreme values don't wash out the rest.`,
+                ]}
                 {...control}
                 onOpen={() => setEditing(true)}
                 onClose={() => {

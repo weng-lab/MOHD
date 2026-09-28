@@ -11,6 +11,7 @@ import {
 } from "@/common/hooks/omeHooks/useLipidomicsQuantification";
 import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
+import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
 export type LipidomicsMetadata = LipidomicsSample[];
 
@@ -35,7 +36,7 @@ const LipidomicsHeatmap = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ rows, tableProps });
+  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ ome: "lipidomics", rows, tableProps });
 
   const SharedLipidomicsProps: SharedLipidomicsProps = {
     rows,
@@ -51,7 +52,7 @@ const LipidomicsHeatmap = () => {
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
-      rowHeight="max(60vh, 700px)"
+      {...TWO_PANE_HEIGHTS}
       TableComponent={<LipidomicsQuantificationTable {...SharedLipidomicsProps} />}
       plots={[
         {

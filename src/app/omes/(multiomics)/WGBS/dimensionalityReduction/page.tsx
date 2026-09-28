@@ -9,6 +9,7 @@ import { useWGBSData, UseWGBSDataReturn } from "@/common/hooks/omeHooks/useWGBSD
 import SampleTable from "@/common/sampleFields/SampleTable";
 import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
+import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
 export type WGBSMetadata = NonNullable<UseWGBSDataReturn["data"]>;
 
@@ -34,7 +35,7 @@ const WGBSDimensionalityReduction = () => {
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
-      rowHeight="max(60vh, 700px)"
+      {...TWO_PANE_HEIGHTS}
       TableComponent={
         <SampleTable
           label="WGBS Dimensionality Reduction"

@@ -7,6 +7,7 @@ import { useId } from "react";
 import {
   colorAt,
   countBeyond,
+  formatRange,
   formatShare,
   histogram,
   sameRange,
@@ -219,7 +220,7 @@ const ColorRangeEditor = ({
       <Typography variant="caption" color="text.secondary" component="p">
         Colors span{" "}
         <Box component="strong" color="text.primary">
-          {kind === "diverging" ? `±${format(high)}` : `${format(low)} – ${format(high)}`}
+          {formatRange(kind, range, format)}
         </Box>
         ; {beyond.toLocaleString("en-US")} {noun}
         {beyond === 1 ? "" : "s"} ({formatShare(beyond, values.length)}) lie beyond and take the end colors.

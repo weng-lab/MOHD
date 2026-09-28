@@ -25,8 +25,8 @@ const LipidomicsPCA = ({ lipidomicsMetadata, sampleTable, ref }: SharedLipidomic
       downloadFileName="lipidomics_dimensionality_reduction_PCA"
       axisSelectors={
         <Stack direction="row" gap={1}>
-          <PcAxisSelect label="X Axis" value={xField} onChange={setXField} disabledValue={yField} />
-          <PcAxisSelect label="Y Axis" value={yField} onChange={setYField} disabledValue={xField} />
+          <PcAxisSelect label="X Axis" value={xField} onChange={setXField} disabledValue={yField} pve={pve} />
+          <PcAxisSelect label="Y Axis" value={yField} onChange={setYField} disabledValue={xField} pve={pve} />
         </Stack>
       }
     />

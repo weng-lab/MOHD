@@ -6,7 +6,17 @@ import { createContext, use, useEffect, useRef, useState, type ReactNode } from 
 import { sameRange } from "./colorbarAxis";
 import ColorRangeEditor, { type ColorRangeEditorProps } from "./ColorRangeEditor";
 
-export type ColorRangeButtonProps = ColorRangeEditorProps & {
+/** The panel's props: the editor's, and what the panel says about the scale above it. */
+type PanelProps = ColorRangeEditorProps & {
+  /**
+   * What the scale is and where it starts, one paragraph each: a log transform, why the default range
+   * is what it is, a caveat on reading it. Kept here rather than on the legend, where it would have
+   * to be hovered to be found.
+   */
+  notes?: readonly string[];
+};
+
+export type ColorRangeButtonProps = PanelProps & {
   /** Written beside the icon. The icon alone where omitted. */
   label?: ReactNode;
   /** Fired as the editor opens. */
@@ -16,19 +26,29 @@ export type ColorRangeButtonProps = ColorRangeEditorProps & {
 };
 
 /** The open panel's props, passed around the Popover rather than through it - see ColorRangeButton. */
-const EditorContext = createContext<ColorRangeEditorProps | null>(null);
+const EditorContext = createContext<PanelProps | null>(null);
 
 const EditorPanel = () => {
-  const editor = use(EditorContext)!;
+  const { notes = [], ...editor } = use(EditorContext)!;
   const adjusted = !sameRange(editor.range, editor.defaultRange);
   return (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={notes.length ? 0.5 : 1}>
         <Typography variant="subtitle2">Color range</Typography>
         <Button size="small" disabled={!adjusted} onClick={() => editor.onChange(editor.defaultRange)}>
           Reset
         </Button>
       </Stack>
+      {/* As wide as the editor, so a long note wraps rather than widening the panel. */}
+      {notes.length > 0 && (
+        <Stack gap={0.5} mb={1.5} width={0} minWidth="100%">
+          {notes.map((note) => (
+            <Typography key={note} variant="caption" color="text.secondary" component="p">
+              {note}
+            </Typography>
+          ))}
+        </Stack>
+      )}
       <ColorRangeEditor {...editor} />
     </>
   );
@@ -71,7 +91,13 @@ const ColorRangeButton = ({ label, onOpen, onClose, ...editor }: ColorRangeButto
           startIcon={<TuneIcon fontSize="small" />}
           onClick={open}
           aria-haspopup="dialog"
-          sx={{ flexShrink: 0, whiteSpace: "nowrap", borderColor: adjusted ? undefined : "divider" }}
+          // White, for a plot's header.
+          sx={{
+            flexShrink: 0,
+            whiteSpace: "nowrap",
+            bgcolor: "background.paper",
+            borderColor: adjusted ? undefined : "divider",
+          }}
         >
           {label}
         </Button>

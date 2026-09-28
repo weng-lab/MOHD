@@ -1,5 +1,6 @@
 import { formatValue, formatValueBound, fromLogValue, toLogValue } from "@/common/quantification";
 import {
+  CLIP_PERCENTILE,
   SEQUENTIAL_RAMP,
   defaultRange,
   percentilePresets,
@@ -70,8 +71,8 @@ export type HeatmapColorbar = {
   format: (value: number) => string;
   /** A cell's own value, where it wants more precision than the legend's ends; `format` otherwise. */
   formatValue?: (value: number) => string;
-  /** A caveat on reading the scale, added to the legend's tooltip. */
-  note?: string;
+  /** What the colors follow, where the default range comes from, any caveat: the range panel's notes. */
+  notes: string[];
 };
 
 export type HeatmapColorScale = {
@@ -94,7 +95,7 @@ const coloredAs = (value: number, [low, high]: ColorRange, format: (end: number)
 /**
  * @param reference each row's values across every sample, which every mode scales against so
  *   filtering the table can't repaint the remaining columns.
- * @param rowNoun what a row is, for the legend's tooltip: "compound", "molecule".
+ * @param rowNoun what a row is, for the range panel's notes: "compound", "molecule".
  */
 export const buildHeatmapColorScale = (
   mode: HeatmapScaleMode,
@@ -104,8 +105,8 @@ export const buildHeatmapColorScale = (
   // Whether rows have undetected samples, whose statistics then come from detections alone (exposomics).
   const hasMissing = [...reference.values()].some((values) => values.includes(null));
 
-  /** Each row z-scored across every sample, after `transform`. */
-  const zScored = (transform: (value: number) => number): HeatmapColorScale => {
+  /** Each row z-scored across every sample, after `transform`, which `of` names. */
+  const zScored = (transform: (value: number) => number, of: string): HeatmapColorScale => {
     const zByRow = new Map(
       [...reference].map(([key, values]) => [key, zScoreByRow(values.map((v) => (v === null ? null : transform(v))))])
     );
@@ -131,19 +132,24 @@ export const buildHeatmapColorScale = (
         value: z,
         presets: symmetricPresets(Math.max(reach, Z_LIMIT)),
         format: formatZ,
-        note: hasMissing
-          ? `Each ${rowNoun}'s z-scores come only from the samples it was detected in, so a ${rowNoun} found in a handful of samples has few values to vary against.`
-          : undefined,
+        notes: [
+          `Colors follow each ${rowNoun}'s z-score of ${of}, across every sample.`,
+          ...(hasMissing
+            ? [
+                `Each ${rowNoun}'s z-scores come only from the samples it was detected in, so a ${rowNoun} found in a handful of samples has few values to vary against.`,
+              ]
+            : []),
+        ],
       },
     };
   };
 
   switch (mode) {
     case "zscore":
-      return zScored(toLogValue);
+      return zScored(toLogValue, "log10(value + 1)");
 
     case "rawZscore":
-      return zScored((value) => value);
+      return zScored((value) => value, "its raw values");
 
     case "log": {
       const sorted = Float64Array.from(
@@ -166,6 +172,10 @@ export const buildHeatmapColorScale = (
               presets: percentilePresets(sorted),
               format,
               formatValue: (log) => formatValue(fromLogValue(log)),
+              notes: [
+                "On a log scale: colors follow log10(value + 1).",
+                `Starts at the middle ${100 - 2 * CLIP_PERCENTILE}% of cells, so a few extreme values don't wash out the rest.`,
+              ],
             }
           : undefined,
       };

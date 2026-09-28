@@ -3,6 +3,8 @@
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { ScatterPlot, type Point } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
+import { spotlight } from "@/common/components/plotDimming";
+import { PLOT_HEADER_SX } from "@/common/components/PlotHeader";
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { CARD_SX } from "./ExplorerLayout";
 import { FIELDS, groupOf, labelOf, type Field } from "@/common/sampleFields/fields";
@@ -142,6 +144,10 @@ const ExplorerPlot = ({
             const position = metaData!.rampPosition;
             return position !== null && position >= legendHover.from && position <= legendHover.to;
           });
+  // The rest dimmed around them. A colorbar window dims everything outside it even while empty, as
+  // the heatmap's sweep does; a chip with nothing in focus - one switched off - leaves the plot be.
+  const highlighted =
+    hoveredPoints && (hoveredPoints.length > 0 || legendHover?.kind === "range") ? hoveredPoints : null;
 
   return (
     <Paper
@@ -153,7 +159,7 @@ const ExplorerPlot = ({
         alignItems="center"
         justifyContent="space-between"
         gap={1.5}
-        sx={{ px: 2, py: 1, bgcolor: "surface.light", borderBottom: 1, borderColor: "divider", flexShrink: 0 }}
+        sx={{ px: 2, py: 1, ...PLOT_HEADER_SX }}
       >
         <Box minWidth={0}>
           <Typography variant="subtitle1" fontWeight={700} noWrap>
@@ -176,7 +182,7 @@ const ExplorerPlot = ({
         <Box flex={1} minHeight={0} position="relative">
           <ScatterPlot
             key={viewKey}
-            pointData={points}
+            pointData={spotlight(points, highlighted)}
             loading={false}
             {...domains}
             bottomAxisLabel={xLabel}

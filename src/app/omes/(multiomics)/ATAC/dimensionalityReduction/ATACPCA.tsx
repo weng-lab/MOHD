@@ -25,8 +25,8 @@ const ATACPCA = ({ ATACData, sampleTable, ref }: SharedATACDimenionalityProps) =
       downloadFileName="ATAC_dimesionality_reduction_PCA"
       axisSelectors={
         <Stack direction="row" gap={1}>
-          <PcAxisSelect label="X Axis" value={xField} onChange={setXField} disabledValue={yField} />
-          <PcAxisSelect label="Y Axis" value={yField} onChange={setYField} disabledValue={xField} />
+          <PcAxisSelect label="X Axis" value={xField} onChange={setXField} disabledValue={yField} pve={pve} />
+          <PcAxisSelect label="Y Axis" value={yField} onChange={setYField} disabledValue={xField} pve={pve} />
         </Stack>
       }
     />

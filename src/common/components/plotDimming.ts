@@ -26,6 +26,8 @@ export type DimmedPoints<T> = {
   shown: Point<T>[];
 };
 
+const dim = <T>(point: Point<T>): Point<T> => ({ ...point, color: DIMMED_COLOR, opacity: DIMMED_OPACITY });
+
 /**
  * Splits points by a filter, repainting the ones that fail rather than dropping them. Dimmed points
  * come first so they're drawn beneath - which also means they win ScatterPlot's hit test near a
@@ -37,8 +39,24 @@ export const dimHidden = <T>(points: Point<T>[], isShown: (point: Point<T>) => b
 
   for (const point of points) {
     if (isShown(point)) shown.push(point);
-    else dimmed.push({ ...point, color: DIMMED_COLOR, opacity: DIMMED_OPACITY });
+    else dimmed.push(dim(point));
   }
 
   return { points: [...dimmed, ...shown], shown };
+};
+
+/**
+ * The points while a legend entry is hovered: the entry's own points as they are, and every other
+ * point dimmed like a filtered one, so a handful of highlighted samples stand out from the rest.
+ * `highlighted` is null while nothing is hovered, and a subset of `points` (the same objects)
+ * otherwise; an empty one dims everything, as a colorbar window with no samples in it should.
+ *
+ * Safe to rebuild per hover: a legend sets its hover in an event handler, so the new points reach
+ * ScatterPlot in the same render as its hoveredPoints and don't restart their growth - see
+ * ExplorerPlot. The order is kept, so the highlighted points' place in the hit test doesn't move.
+ */
+export const spotlight = <T>(points: Point<T>[], highlighted: readonly Point<T>[] | null): Point<T>[] => {
+  if (highlighted === null) return points;
+  const kept = new Set(highlighted);
+  return points.map((point) => (kept.has(point) ? point : dim(point)));
 };

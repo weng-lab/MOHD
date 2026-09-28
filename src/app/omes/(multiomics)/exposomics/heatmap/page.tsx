@@ -11,6 +11,7 @@ import {
 } from "@/common/hooks/omeHooks/useExposomicsData";
 import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
+import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
 export type ExposomicsMetadata = ExposomicsSample[];
 
@@ -35,7 +36,7 @@ const ExposomicsHeatmap = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ rows, tableProps });
+  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ ome: "exposomics", rows, tableProps });
 
   const SharedExposomicsProps: SharedExposomicsProps = {
     rows,
@@ -51,7 +52,7 @@ const ExposomicsHeatmap = () => {
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
-      rowHeight="max(60vh, 700px)"
+      {...TWO_PANE_HEIGHTS}
       TableComponent={<ExposomicsQuantificationTable {...SharedExposomicsProps} />}
       plots={[
         {

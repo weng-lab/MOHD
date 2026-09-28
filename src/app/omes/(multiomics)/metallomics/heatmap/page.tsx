@@ -7,6 +7,7 @@ import { DownloadPlotHandle } from "@weng-lab/visualization";
 import { useMetallomicsData, UseMetallomicsDataReturn } from "@/common/hooks/omeHooks/useMetallomicsData";
 import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
+import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
 export type MetallomicsSample = NonNullable<NonNullable<UseMetallomicsDataReturn["data"]>[number]>;
 export type MetallomicsMetadata = MetallomicsSample[];
@@ -35,7 +36,7 @@ const MetallomicsHeatmap = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ rows, tableProps });
+  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ ome: "metallomics", rows, tableProps });
 
   const SharedMetallomicsProps: SharedMetallomicsProps = {
     rows,
@@ -51,7 +52,7 @@ const MetallomicsHeatmap = () => {
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
-      rowHeight="max(60vh, 700px)"
+      {...TWO_PANE_HEIGHTS}
       TableComponent={<MetallomicsQuantificationTable {...SharedMetallomicsProps} />}
       plots={[
         {

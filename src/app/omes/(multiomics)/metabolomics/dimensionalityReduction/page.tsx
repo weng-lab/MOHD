@@ -11,6 +11,7 @@ import {
 import SampleTable from "@/common/sampleFields/SampleTable";
 import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
+import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
 export type MetabolomicsDimenionalityMetadata = NonNullable<UseMetabolomicsDimensionalityReductionReturn["data"]>;
 
@@ -35,7 +36,7 @@ const MetabolomicsDimensionalityReduction = () => {
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
-      rowHeight="max(60vh, 700px)"
+      {...TWO_PANE_HEIGHTS}
       TableComponent={
         <SampleTable
           label="Metabolomics Dimensionality Reduction"

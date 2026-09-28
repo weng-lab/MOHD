@@ -3,8 +3,9 @@
 import { Tooltip } from "@mui/material";
 import { blueGrey } from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
-import { useEffect, useId, useRef, type MouseEvent } from "react";
+import { useEffect, useId, useRef, useState, type MouseEvent } from "react";
 import {
+  clampOf,
   formatShare,
   histogram,
   rangeAt,
@@ -44,6 +45,37 @@ export const breakPoints = (
     .map(([x, y]) => `${x},${y}`)
     .join(" ");
 
+/**
+ * What a stretch of the bar takes in, as its sweep's tooltip says it: "12 samples (3.4%) · 0.2 – 1.5",
+ * the true lowest and highest inside - at either end of the bar, past where the colors stop. A
+ * clamp's is "10 samples (2.0%) · up to 113M": its near end is the clamp the label already names,
+ * which written to more places than the label's rounding would seem to contradict it.
+ */
+export const describeSweep = (
+  values: ArrayLike<number>,
+  range: ColorRange,
+  sweep: RampRange,
+  noun: string,
+  formatValue: (value: number) => string
+) => {
+  const inside = summarize(values, valuesIn(rangeAxis(range), sweep));
+  if (inside.count === 0) return `No ${noun}s here`;
+  const [lowest, highest] = [formatValue(inside.lowest!), formatValue(inside.highest!)];
+  const clamp = clampOf(sweep);
+  const reach =
+    clamp === "high"
+      ? `up to ${highest}`
+      : clamp === "low"
+        ? `down to ${lowest}`
+        : lowest === highest
+          ? lowest
+          : `${lowest} – ${highest}`;
+  return (
+    `${inside.count.toLocaleString("en-US")} ${noun}${inside.count === 1 ? "" : "s"}` +
+    ` (${formatShare(inside.count, values.length)}) · ${reach}`
+  );
+};
+
 /** How much room the graphic takes across the bar: histogram, gap and bar. */
 export const colorbarDepth = (orientation: ColorbarOrientation) => HISTOGRAM[orientation] + GAP + BAR;
 
@@ -61,7 +93,10 @@ export type ColorbarGraphicProps = {
   formatValue?: (value: number) => string;
   /** What one value is, for the sweep's count: "sample", "cell". */
   noun: string;
-  /** The stretch of the bar under the cursor, drawn on it as a window. */
+  /**
+   * The stretch of the bar under the cursor, drawn on it as a window - or an end's clamp (see
+   * clampAt), drawn as a ring round that end's tip, as it has no width to frame.
+   */
   sweep: RampRange | null;
   /** Fired as the cursor moves along the bar and when it leaves, so the plot can highlight the window's values. */
   onSweep: (sweep: RampRange | null) => void;
@@ -116,15 +151,9 @@ const ColorbarGraphic = ({
     horizontal ? [along, across] : [across, length - along];
   const around = (pad: number): [number, number] => [barAcross[0] - pad, barAcross[1] + pad];
 
-  const inside = sweep && summarize(values, valuesIn(axis, sweep));
-  const sweepText = !inside
-    ? ""
-    : inside.count === 0
-      ? `No ${noun}s here`
-      : `${inside.count.toLocaleString("en-US")} ${noun}${inside.count === 1 ? "" : "s"}` +
-        ` (${formatShare(inside.count, values.length)})` +
-        // The true lowest and highest inside - at either end of the bar, past where the colors stop.
-        ` · ${formatValue(inside.lowest!)} – ${formatValue(inside.highest!)}`;
+  const sweepText = sweep ? describeSweep(values, range, sweep, noun, formatValue) : "";
+  // Whether the cursor is on the bar: a sweep can also come from an end label, which shows its own count.
+  const [over, setOver] = useState(false);
 
   // Whether this bar is being swept. It can unmount mid-sweep (Escape closing the expanded minimap)
   // with no mouseleave, so unmounting ends the sweep too.
@@ -143,10 +172,12 @@ const ColorbarGraphic = ({
   const handleMove = (event: MouseEvent<SVGRectElement>) => {
     const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
     sweeping.current = true;
+    setOver(true);
     onSweep(rangeAt(horizontal ? (event.clientX - left) / width : 1 - (event.clientY - top) / height));
   };
   const handleLeave = () => {
     sweeping.current = false;
+    setOver(false);
     onSweep(null);
   };
 
@@ -187,18 +218,29 @@ const ColorbarGraphic = ({
 
       <rect {...box(0, 1, barAcross)} rx={BAR / 2} fill={`url(#${gradientId})`} />
 
-      {sweep && (
-        <g fill="none">
-          {/* White inside and out, so the frame holds against the dark and pale ends alike. */}
-          <rect
-            {...box(sweep.from, sweep.to, around(3))}
-            rx={3}
-            stroke={theme.palette.background.paper}
-            strokeWidth={4}
-          />
-          <rect {...box(sweep.from, sweep.to, around(3))} rx={3} stroke={theme.palette.text.primary} strokeWidth={2} />
-        </g>
-      )}
+      {sweep &&
+        (() => {
+          // A clamp takes the rounded tip at its end, as a ring as far round as the frame sits off
+          // the bar; a window, its stretch of the bar.
+          const clamp = clampOf(sweep);
+          const frame = clamp
+            ? {
+                ...box(
+                  clamp === "low" ? -3 / length : 1 - (BAR + 3) / length,
+                  clamp === "low" ? (BAR + 3) / length : 1 + 3 / length,
+                  around(3)
+                ),
+                rx: BAR / 2 + 3,
+              }
+            : { ...box(sweep.from, sweep.to, around(3)), rx: 3 };
+          return (
+            <g fill="none">
+              {/* White inside and out, so the frame holds against the dark and pale ends alike. */}
+              <rect {...frame} stroke={theme.palette.background.paper} strokeWidth={4} />
+              <rect {...frame} stroke={theme.palette.text.primary} strokeWidth={2} />
+            </g>
+          );
+        })()}
 
       {marker !== null && (
         <rect
@@ -216,7 +258,7 @@ const ColorbarGraphic = ({
       */}
       <Tooltip
         title={sweepText}
-        open={sweep !== null}
+        open={over && sweep !== null}
         followCursor
         placement={horizontal ? "top" : "right"}
         disableInteractive

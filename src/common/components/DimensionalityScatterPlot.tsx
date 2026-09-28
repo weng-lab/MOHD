@@ -18,7 +18,9 @@ import { passesFilters } from "@/common/sampleFields/groups";
 import { NO_SHAPE, shapeOptions, shapeScale, type ShapeBy } from "@/common/sampleFields/shapes";
 import FieldLegends, { type GroupHover } from "@/common/sampleFields/FieldLegends";
 import type { SampleTableState } from "@/common/sampleFields/useSampleTable";
-import { dimHidden } from "./plotDimming";
+import PaneFigure from "./PaneFigure";
+import { HEADER_SELECT_SX, PlotHeaderTitle } from "./PlotHeader";
+import { dimHidden, spotlight } from "./plotDimming";
 import { shapeOf } from "./pointShapes";
 import PlotTooltip from "./PlotTooltip";
 
@@ -39,8 +41,6 @@ const MINIMAP = { position: { right: 50, bottom: 50 } };
 
 const SELECT_SLOT_PROPS = { select: { MenuProps: { disableScrollLock: true } } };
 
-const SELECT_SX = { minWidth: 130, alignSelf: "flex-start" };
-
 /** "Sex", "Sex and search", "Sex, Dataset and search". */
 const listOf = (names: readonly string[]) =>
   names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
@@ -54,6 +54,7 @@ export type DimensionalityScatterPlotProps<T extends SampleRow> = {
   leftAxisLabel: string;
   bottomAxisLabel: string;
   downloadFileName: string;
+  /** More controls for the header, after color and shape - a PCA's axes. */
   axisSelectors?: ReactNode;
   ref?: Ref<DownloadPlotHandle>;
 };
@@ -139,26 +140,38 @@ const DimensionalityScatterPlot = <T extends SampleRow>({
   if (plotted.length === 0) return null;
 
   return (
-    <Stack width="100%" height="100%" gap={1}>
-      <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-        <TextField
-          select
-          size="small"
-          label="Color by"
-          value={color}
-          onChange={(event) => setColor(event.target.value as Field)}
-          slotProps={SELECT_SLOT_PROPS}
-          sx={SELECT_SX}
-        >
-          {fields.map(({ key, label }) => (
-            <MenuItem key={key} value={key}>
-              {label}
-            </MenuItem>
-          ))}
-        </TextField>
-        <ShapeSelect fields={fields} shapeable={shapeable} value={shapedField?.key ?? NO_SHAPE} onChange={setShape} />
-        {axisSelectors}
-      </Stack>
+    <PaneFigure
+      title={
+        <PlotHeaderTitle
+          title="Samples"
+          // The ones the table's filters leave in, matching the table's own count. A selection fades
+          // the rest without filtering them, so it isn't counted.
+          shown={plotted.filter(({ metaData }) => metaData!.faded !== "filtered").length}
+          total={plotted.length}
+        />
+      }
+      controls={
+        <>
+          <TextField
+            select
+            size="small"
+            label="Color by"
+            value={color}
+            onChange={(event) => setColor(event.target.value as Field)}
+            slotProps={SELECT_SLOT_PROPS}
+            sx={HEADER_SELECT_SX}
+          >
+            {fields.map(({ key, label }) => (
+              <MenuItem key={key} value={key}>
+                {label}
+              </MenuItem>
+            ))}
+          </TextField>
+          <ShapeSelect fields={fields} shapeable={shapeable} value={shapedField?.key ?? NO_SHAPE} onChange={setShape} />
+          {axisSelectors}
+        </>
+      }
+    >
       <LinkedPlot
         points={points}
         shown={shown}
@@ -196,7 +209,7 @@ const DimensionalityScatterPlot = <T extends SampleRow>({
           </>
         )}
       />
-    </Stack>
+    </PaneFigure>
   );
 };
 
@@ -216,7 +229,7 @@ const ShapeSelect = ({ fields, shapeable, value, onChange }: ShapeSelectProps) =
     value={value}
     onChange={(event) => onChange(event.target.value as ShapeBy)}
     slotProps={SELECT_SLOT_PROPS}
-    sx={SELECT_SX}
+    sx={HEADER_SELECT_SX}
   >
     <MenuItem value={NO_SHAPE}>None</MenuItem>
     {fields.map(({ key, label }) => {
@@ -233,7 +246,7 @@ const ShapeSelect = ({ fields, shapeable, value, onChange }: ShapeSelectProps) =
 type LinkedPlotProps<T extends SampleRow> = {
   /** Every point, the faded ones first - what dimHidden returns. */
   points: Point<PointMeta<T>>[];
-  /** The points in focus, which a hovered chip can swell. */
+  /** The points in focus, which a hovered chip can swell and set apart. */
   shown: Point<PointMeta<T>>[];
   onSelectPoints: (points: Point<PointMeta<T>>[]) => void;
   onTogglePoint: (point: Point<PointMeta<T>>) => void;
@@ -278,23 +291,25 @@ const LinkedPlot = <T extends SampleRow>({
   const [plotHover, setPlotHover] = useState<SampleGroups | null>(null);
   const [legendHover, setLegendHover] = useState<GroupHover | null>(null);
 
+  // A hovered chip's points, from those in focus, with the rest dimmed around them. A chip with none
+  // in focus - one switched off - leaves the plot as it is.
+  const group = legendHover
+    ? shown.filter(({ metaData }) => groupOf(legendHover.field, metaData!.sample) === legendHover.value)
+    : [];
+  const highlighted = group.length > 0 ? group : null;
+
   return (
     <>
       {renderLegend({ hovered: plotHover, legendHover, onLegendHover: setLegendHover })}
       <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: 0 }}>
         <ScatterPlot
           ref={plotRef}
-          pointData={points}
+          pointData={spotlight(points, highlighted)}
           loading={loading}
           selectable
           onSelectionChange={onSelectPoints}
           onPointClicked={onTogglePoint}
-          // Only points in focus, so the chip of a faded group swells nothing.
-          hoveredPoints={
-            legendHover
-              ? shown.filter(({ metaData }) => groupOf(legendHover.field, metaData!.sample) === legendHover.value)
-              : undefined
-          }
+          hoveredPoints={highlighted ?? undefined}
           onHoveredPointChange={(point) => setPlotHover(point?.metaData?.sample ?? null)}
           tooltipBody={({ metaData }) => {
             const { sample, faded } = metaData!;

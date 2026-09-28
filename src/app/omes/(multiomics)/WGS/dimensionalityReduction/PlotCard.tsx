@@ -1,7 +1,8 @@
 "use client";
 
-import { Box, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Box, MenuItem, Paper, Stack, TextField } from "@mui/material";
 import { useState, type ReactNode, type RefObject } from "react";
+import PlotHeader, { HEADER_SELECT_SX, PlotHeaderTitle } from "@/common/components/PlotHeader";
 import PlotLegend from "@/common/components/PlotLegend";
 import ShapeLegend from "@/common/components/ShapeLegend";
 import { shapeOf, type ShapeScale } from "@/common/components/pointShapes";
@@ -11,9 +12,6 @@ import type { GroupInfo } from "./groups";
 
 /** The shape select's value for no shape encoding. No field is named this. */
 const NO_SHAPE = "none";
-
-/** Capped at the header's width, so a long value truncates on a phone rather than pushing the card wider. */
-const SELECT_SX = { minWidth: 130, maxWidth: "100%", bgcolor: "background.paper" };
 
 /** One row of chips: the field's groups, which are switched off, and what a click does. */
 export type LegendRow = {
@@ -132,66 +130,43 @@ const PlotCard = <K extends ColorField>({
         ...CARD_SX,
       }}
     >
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        flexWrap="wrap"
-        columnGap={1.5}
-        rowGap={1}
-        sx={{
-          px: 1.5,
-          py: 0.75,
-          bgcolor: "surface.light",
-          borderBottom: 1,
-          borderColor: "divider",
-          flexShrink: 0,
-        }}
-      >
-        <Typography variant="subtitle2" noWrap>
-          {title}{" "}
-          <Typography component="span" variant="body2" color="text.secondary">
-            {/* Fixed locale: this renders on the server too, and the browser's own
-              locale would separate the thousands differently and fail hydration.
-              Nothing switched off is the common case, and "(1,161 / 1,161)" would
-              only make the reader check two numbers to learn that. */}
-            ({shown.toLocaleString("en-US")}
-            {shown !== total && ` / ${total.toLocaleString("en-US")}`})
-          </Typography>
-        </Typography>
-        <Stack direction="row" flexWrap="wrap" gap={1} maxWidth="100%">
-          <TextField
-            select
-            size="small"
-            label="Color by"
-            value={String(colorBy)}
-            onChange={(e) => onColorByChange(e.target.value as K)}
-            sx={{ ...SELECT_SX, minWidth: 180 }}
-          >
-            {options.map((o) => (
-              <MenuItem key={String(o.key)} value={String(o.key)}>
-                {o.label}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            size="small"
-            label="Shape by"
-            value={shapeBy === null ? NO_SHAPE : String(shapeBy)}
-            onChange={(e) => onShapeByChange(e.target.value === NO_SHAPE ? null : (e.target.value as K))}
-            sx={SELECT_SX}
-          >
-            <MenuItem value={NO_SHAPE}>None</MenuItem>
-            {/* Unshapeable fields are listed disabled with the reason, rather than silently missing. */}
-            {options.map((o) => (
-              <MenuItem key={String(o.key)} value={String(o.key)} disabled={!canShape(o.key)}>
-                {canShape(o.key) ? o.label : `${o.label} — too many values to shape by`}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Stack>
-      </Stack>
+      <PlotHeader
+        title={<PlotHeaderTitle title={title} shown={shown} total={total} />}
+        controls={
+          <>
+            <TextField
+              select
+              size="small"
+              label="Color by"
+              value={String(colorBy)}
+              onChange={(e) => onColorByChange(e.target.value as K)}
+              sx={{ ...HEADER_SELECT_SX, minWidth: 180 }}
+            >
+              {options.map((o) => (
+                <MenuItem key={String(o.key)} value={String(o.key)}>
+                  {o.label}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              select
+              size="small"
+              label="Shape by"
+              value={shapeBy === null ? NO_SHAPE : String(shapeBy)}
+              onChange={(e) => onShapeByChange(e.target.value === NO_SHAPE ? null : (e.target.value as K))}
+              sx={HEADER_SELECT_SX}
+            >
+              <MenuItem value={NO_SHAPE}>None</MenuItem>
+              {/* Unshapeable fields are listed disabled with the reason, rather than silently missing. */}
+              {options.map((o) => (
+                <MenuItem key={String(o.key)} value={String(o.key)} disabled={!canShape(o.key)}>
+                  {canShape(o.key) ? o.label : `${o.label} — too many values to shape by`}
+                </MenuItem>
+              ))}
+            </TextField>
+          </>
+        }
+      />
 
       <Stack gap={1} sx={{ px: 1.5, pt: 1.25, pb: 1.5, flex: 1, minHeight: 0 }}>
         {shapeRow && (

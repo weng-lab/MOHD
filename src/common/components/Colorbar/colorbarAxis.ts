@@ -147,8 +147,22 @@ export const summarize = (sorted: Sorted, [low, high]: ColorRange) => {
 export const countBeyond = (sorted: Sorted, [low, high]: ColorRange) =>
   lowerBound(sorted, low) + (sorted.length - upperBound(sorted, high));
 
+/** A range as the legends write it: "±3.0" for a diverging scale, "0.5 – 120" otherwise. */
+export const formatRange = (kind: RampKind, [low, high]: ColorRange, format: (value: number) => string) =>
+  kind === "diverging" ? `±${format(high)}` : `${format(low)} – ${format(high)}`;
+
 /** How much of the bar a sweep takes in: enough to catch a handful of values, narrow enough to separate colors. */
 const RANGE_WIDTH = 0.15;
+
+/**
+ * The values past the clamp at one end - the ones drawn in that end's color - as a stretch of no
+ * width at that end of the bar, which valuesIn opens out past it: [high, ∞) or (−∞, low].
+ */
+export const clampAt = (end: "low" | "high"): RampRange => (end === "low" ? { from: 0, to: 0 } : { from: 1, to: 1 });
+
+/** Which end's clamp a stretch of the bar is, if it's one - see clampAt. */
+export const clampOf = ({ from, to }: RampRange): "low" | "high" | null =>
+  from !== to ? null : from === 0 ? "low" : from === 1 ? "high" : null;
 
 /** The window centred on a place along the bar, slid inward at the ends rather than cut short. */
 export const rangeAt = (t: number): RampRange => {

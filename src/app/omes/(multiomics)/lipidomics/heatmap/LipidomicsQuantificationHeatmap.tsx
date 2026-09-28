@@ -69,7 +69,8 @@ const LipidomicsQuantificationHeatmap = ({
       colors={scale.colors}
       colorDomain={scale.colorDomain}
       colorbar={scale.colorbar}
-      header={<HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />}
+      total={rows.length}
+      controls={<HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />}
       ref={ref}
       tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;

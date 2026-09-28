@@ -3,7 +3,7 @@
 import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { ScatterPlot, ScatterPlotSync, getSharedDomains, type Point } from "@weng-lab/visualization";
 import { useRef, useState } from "react";
-import { dimHidden } from "@/common/components/plotDimming";
+import { dimHidden, spotlight } from "@/common/components/plotDimming";
 import { shapeOf } from "@/common/components/pointShapes";
 import { PLOT_HEIGHT } from "./dimensions";
 import {
@@ -133,13 +133,24 @@ const encodeCohort = <T extends { sample_id: string; pcs: number[] }, K extends 
   };
 };
 
-/** The points of a hovered chip's group, from those in focus - see the plots below. */
-const hoveredGroup = <T,>(shown: Point<Meta<T>>[], hover: LegendHover | null) =>
-  hover
+/**
+ * The points of a hovered chip's group, from those in focus, so hovering the chip of a group that is
+ * toggled off highlights nothing - it is on the plot, but as background. Null with none to highlight.
+ */
+const hoveredGroup = <T,>(shown: Point<Meta<T>>[], hover: LegendHover | null) => {
+  const group = hover
     ? shown.filter(
         ({ metaData }) => (hover.legend === "color" ? metaData!.group : metaData!.shapeGroup) === hover.value
       )
-    : undefined;
+    : [];
+  return group.length > 0 ? group : null;
+};
+
+/** A cohort's plot props for the chip under the cursor: its group highlighted, and the rest dimmed around it. */
+const highlightFor = <T,>(all: Point<Meta<T>>[], shown: Point<Meta<T>>[], hover: LegendHover | null) => {
+  const group = hoveredGroup(shown, hover);
+  return { pointData: spotlight(all, group), hoveredPoints: group ?? undefined };
+};
 
 const Tooltip = <T,>({
   row,
@@ -293,7 +304,7 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
             >
               {({ legendHover, onPlotHover }) => (
                 <ScatterPlot
-                  pointData={mohdAll}
+                  {...highlightFor(mohdAll, mohdShown, legendHover)}
                   loading={false}
                   bottomAxisLabel={xLabel}
                   leftAxisLabel={yLabel}
@@ -301,9 +312,6 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
                   tooltipBody={(p) => (
                     <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} dimmed={!mohdCohort.isShown(p)} />
                   )}
-                  // From the points in focus rather than all of them, so hovering the chip of a group
-                  // that is toggled off highlights nothing - it is on the plot, but as background.
-                  hoveredPoints={hoveredGroup(mohdShown, legendHover)}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
                   miniMap={MINIMAP_POSITION}
                   {...sync}
@@ -327,7 +335,7 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
             >
               {({ legendHover, onPlotHover }) => (
                 <ScatterPlot
-                  pointData={refAll}
+                  {...highlightFor(refAll, refShown, legendHover)}
                   loading={false}
                   bottomAxisLabel={xLabel}
                   leftAxisLabel={yLabel}
@@ -335,9 +343,6 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
                   tooltipBody={(p) => (
                     <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} dimmed={!refCohort.isShown(p)} />
                   )}
-                  // From the points in focus rather than all of them, so hovering the chip of a group
-                  // that is toggled off highlights nothing - it is on the plot, but as background.
-                  hoveredPoints={hoveredGroup(refShown, legendHover)}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
                   miniMap={MINIMAP_POSITION}
                   {...sync}

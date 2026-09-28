@@ -1,72 +1,33 @@
-import { SyncedTableProps, Table, TableColDef, useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
+import { SyncedTableProps, Table, useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
 import type { GridSortModel } from "@mui/x-data-grid-premium";
 import { Typography } from "@mui/material";
-import { MISSING_LABEL, VALUE_LABEL_OVERRIDES } from "@/common/colors";
+import { useMemo } from "react";
 import { useHeldTableState } from "@/common/hooks/useHeldTableState";
-import { QC_GROUP } from "@/common/sampleFields/fields";
+import { fieldsFor, type SampleGroups } from "@/common/sampleFields/fields";
+import { sampleColumns } from "@/common/sampleFields/sampleColumns";
+import type { OmesDataType } from "@/common/types/globalTypes";
 
-export type QuantificationSample = {
-  sample_id: string;
-  site: string;
-  status: string;
-  sex: string;
-  age_bin?: string | null;
-};
+/** A heatmap's sample, its QC flagged by toQuantificationSample. */
+export type QuantificationSample = SampleGroups;
 
 const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
 
+/**
+ * A heatmap page's table, with the same columns as the dimensionality reduction pages' tables: a QC
+ * sample reads "QC / Reference" in every column, a missing value "Unknown", and values are named as
+ * the legends name them.
+ */
 export const useOmeQuantificationTable = <TSample extends QuantificationSample>({
+  ome,
   rows,
   tableProps,
 }: {
+  ome: OmesDataType;
   rows: TSample[];
   tableProps: ReturnType<typeof useTablePlotSync<TSample>>["tableProps"];
 }) => {
-  const columns: TableColDef<TSample>[] = [
-    {
-      field: "sample_id",
-      headerName: "Dataset",
-    },
-    {
-      field: "site",
-      headerName: "Site",
-      type: "singleSelect",
-      valueOptions: Array.from(new Set(rows.map((row) => row.site))).map((site) => ({
-        value: site,
-        label: site,
-      })),
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      // These rows carry no kit to tell QC by, but every QC sample and only QC has no status.
-      renderCell: (params) => params.value || QC_GROUP,
-      type: "singleSelect",
-      valueOptions: Array.from(new Set(rows.map((row) => row.status))).map((status) => ({
-        value: status,
-        label: status || QC_GROUP,
-      })),
-    },
-    {
-      field: "sex",
-      headerName: "Sex",
-      type: "singleSelect",
-      valueOptions: Array.from(new Set(rows.map((row) => row.sex))).map((sex) => ({
-        value: sex,
-        label: VALUE_LABEL_OVERRIDES[sex] ?? sex,
-      })),
-    },
-    {
-      field: "age_bin",
-      headerName: "Age",
-      renderCell: (params) => params.value ?? "",
-      type: "singleSelect",
-      valueOptions: Array.from(new Set(rows.map((row) => row.age_bin))).map((age_bin) => ({
-        value: age_bin,
-        label: age_bin ?? MISSING_LABEL,
-      })),
-    },
-  ];
+  // Memoized by hand, as useSampleTable's are: React Compiler leaves values passed into hooks alone.
+  const columns = useMemo(() => sampleColumns(fieldsFor(ome), rows), [ome, rows]);
 
   const { syncedTableProps, autoSort } = useSyncedTable({
     tableProps,

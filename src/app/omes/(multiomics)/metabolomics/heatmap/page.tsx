@@ -11,6 +11,7 @@ import {
 } from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
 import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
+import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
 export type MetabolomicsMetadata = MetabolomicsSample[];
 
@@ -35,7 +36,7 @@ const MetabolomicsHeatmap = () => {
     rows,
     getRowId: (row) => row.sample_id,
   });
-  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ rows, tableProps });
+  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ ome: "metabolomics", rows, tableProps });
 
   const SharedMetabolomicsProps: SharedMetabolomicsProps = {
     rows,
@@ -51,7 +52,7 @@ const MetabolomicsHeatmap = () => {
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
-      rowHeight="max(60vh, 700px)"
+      {...TWO_PANE_HEIGHTS}
       TableComponent={<MetabolomicsQuantificationTable {...SharedMetabolomicsProps} />}
       plots={[
         {

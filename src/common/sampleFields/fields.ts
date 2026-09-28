@@ -36,9 +36,15 @@ export const isField = (value: string | null): value is Field => FIELDS.some(({ 
 /** The omes whose samples were taken by more than one protocol: every other ome has one throughout. */
 const VARIED_PROTOCOL_OMES: readonly OmesDataType[] = ["ATAC"];
 
-/** All of them, less protocol wherever it doesn't vary. */
+/** The omes the API records no age for, so an Age column would read "Unknown" for everyone. */
+const AGELESS_OMES: readonly OmesDataType[] = ["exposomics"];
+
+/** All of them, less protocol wherever it doesn't vary and age wherever there is none. */
 export const fieldsFor = (ome: OmesDataType): FieldDefinition[] =>
-  FIELDS.filter(({ key }) => key !== "protocol" || VARIED_PROTOCOL_OMES.includes(ome));
+  FIELDS.filter(
+    ({ key }) =>
+      (key !== "protocol" || VARIED_PROTOCOL_OMES.includes(ome)) && (key !== "age" || !AGELESS_OMES.includes(ome))
+  );
 
 /** What a sample's groups are read from: any page's row, with `qc` set by isQcKit. */
 export type SampleGroups = {
@@ -76,6 +82,16 @@ export const isQcKit = (kit: string | null | undefined) => QC_KITS.has(kit ?? ""
 export type SampleRow = Omit<SampleGroups, "qc"> & { kit?: string | null };
 
 export const toSample = <R extends SampleRow>(row: R): R & SampleGroups => ({ ...row, qc: isQcKit(row.kit) });
+
+/**
+ * A quantification row, which the API returns without a kit. Its QC samples are the ones with no
+ * status: checked against each ome's metadata (2026-09-28), every QC-kit sample has none, and every
+ * other sample has one.
+ */
+export const toQuantificationSample = <R extends Omit<SampleGroups, "qc">>(row: R): R & SampleGroups => ({
+  ...row,
+  qc: !row.status,
+});
 
 /**
  * Where every QC and reference sample goes, whatever the field: they're not a participant's, so

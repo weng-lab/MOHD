@@ -1,19 +1,21 @@
 import { Heatmap, ColumnDatum, HeatmapProps, DownloadPlotHandle } from "@weng-lab/visualization";
-import { Stack, Box, CircularProgress, Tooltip, Typography } from "@mui/material";
+import { Stack, Box, CircularProgress, Typography } from "@mui/material";
 import { useState, type ReactElement, type ReactNode, type SVGProps } from "react";
+import ColorbarEnd from "../Colorbar/ColorbarEnd";
 import ColorbarGraphic, { colorbarDepth } from "../Colorbar/ColorbarGraphic";
 import ColorRangeButton from "../Colorbar/ColorRangeButton";
 import SteadyText from "../Colorbar/SteadyText";
 import {
-  countBeyond,
   evenStops,
-  formatShare,
+  formatRange,
   rangeAxis,
   valuesIn,
   type ColorRange,
   type RampRange,
   type RampStop,
 } from "../Colorbar/colorbarAxis";
+import PaneFigure from "../PaneFigure";
+import { PlotHeaderTitle } from "../PlotHeader";
 import type { HeatmapColorbar } from "./heatmapColorScale";
 import { useHeatmapCellSelection, CellSelectionSample } from "./useHeatmapCellSelection";
 
@@ -21,7 +23,10 @@ type HeatmapBin = Parameters<NonNullable<HeatmapProps["tooltipBody"]>>[0];
 
 export type OmeHeatmapShellProps<TSample extends CellSelectionSample> = {
   loading: boolean;
+  /** The samples the table's filters leave in, as the heatmap's columns. */
   samples: TSample[];
+  /** How many samples there are before the table's filters, for the header's count. */
+  total: number;
   heatmapData: ColumnDatum<TSample, Record<string, unknown>>[];
   selected: TSample[];
   setSelected: React.Dispatch<React.SetStateAction<TSample[]>>;
@@ -34,8 +39,8 @@ export type OmeHeatmapShellProps<TSample extends CellSelectionSample> = {
   emptyMessage?: string;
   colorDomain?: HeatmapProps["colorDomain"];
   colors: HeatmapProps["colors"];
-  /** Above the heatmap, e.g. a HeatmapScaleToggle. */
-  header?: React.ReactNode;
+  /** In the header, e.g. a HeatmapScaleToggle - before the colors' range button, with a colorbar. */
+  controls?: React.ReactNode;
   /**
    * Swaps the library's legend for a colorbar that can be swept to pick out a stretch of the scale,
    * and whose range can be moved - see AdjustableHeatmap. Its range starts at colorDomain.
@@ -50,6 +55,7 @@ const sortedCounts = (data: ColumnDatum[]) =>
 const OmeHeatmapShell = <TSample extends CellSelectionSample>({
   loading,
   samples,
+  total,
   heatmapData,
   selected,
   setSelected,
@@ -61,7 +67,7 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
   emptyMessage = "No samples match the current table filters.",
   colorDomain,
   colors,
-  header,
+  controls,
   colorbar,
 }: OmeHeatmapShellProps<TSample>) => {
   const { selectedCells, handleCellClick } = useHeatmapCellSelection(heatmapData, samples, selected, setSelected);
@@ -91,42 +97,39 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
     scrollToSelection: !autoSort,
   };
 
+  const title = <PlotHeaderTitle title="Samples" shown={samples.length} total={total} />;
+
   if (heatmapData.length === 0) {
     return (
-      <Stack width="100%" height="100%">
-        {header}
+      <PaneFigure title={title} controls={controls}>
         <Stack flexGrow={1} alignItems="center" justifyContent="center">
           <Typography color="text.secondary">{emptyMessage}</Typography>
         </Stack>
-      </Stack>
+      </PaneFigure>
     );
   }
 
   // Sorted here, in a component with no hover state, so a sweep never sorts them again.
   const values = colorbar ? sortedCounts(heatmapData) : null;
 
-  return (
-    <Stack width="100%" height="100%">
-      {/* A colorbar needs values to span; with none on screen, the library's plain legend stands in. */}
-      {colorbar && colorDomain && values?.length ? (
-        <AdjustableHeatmap
-          heatmap={heatmap}
-          header={header}
-          tooltipBody={tooltipBody}
-          colorbar={colorbar}
-          defaultRange={colorDomain}
-          values={values}
-          stops={evenStops(colors)}
-        />
-      ) : (
-        <>
-          {header}
-          <Box sx={{ flexGrow: 1, minHeight: 0, minWidth: 0 }}>
-            <Heatmap {...heatmap} colorDomain={colorDomain} tooltipBody={tooltipBody} />
-          </Box>
-        </>
-      )}
-    </Stack>
+  // A colorbar needs values to span; with none on screen, the library's plain legend stands in.
+  return colorbar && colorDomain && values?.length ? (
+    <AdjustableHeatmap
+      heatmap={heatmap}
+      title={title}
+      controls={controls}
+      tooltipBody={tooltipBody}
+      colorbar={colorbar}
+      defaultRange={colorDomain}
+      values={values}
+      stops={evenStops(colors)}
+    />
+  ) : (
+    <PaneFigure title={title} controls={controls}>
+      <Box sx={{ flexGrow: 1, minHeight: 0, minWidth: 0 }}>
+        <Heatmap {...heatmap} colorDomain={colorDomain} tooltipBody={tooltipBody} />
+      </Box>
+    </PaneFigure>
   );
 };
 
@@ -142,7 +145,8 @@ const LABEL_TEXT = { fontSize: 11, fontFamily: "sans-serif", fill: "#4d4f52" } a
 
 type AdjustableHeatmapProps = {
   heatmap: Omit<HeatmapProps, "colorDomain" | "tooltipBody" | "renderLegend" | "legendWidth" | "highlightRange">;
-  header?: ReactNode;
+  title: ReactNode;
+  controls?: ReactNode;
   tooltipBody: OmeHeatmapShellProps<CellSelectionSample>["tooltipBody"];
   colorbar: HeatmapColorbar;
   /** Where the colors stop until the reader moves them. */
@@ -154,7 +158,7 @@ type AdjustableHeatmapProps = {
 
 /**
  * The heatmap with a colorbar of its own standing where the library's legend stood, and the button
- * that moves its range beside the scale toggle.
+ * that moves its range in the header, after the scale toggle.
  *
  * Sweeping the colorbar fades every cell outside the window under the cursor, in the grid and the
  * minimap alike, so the cells in one stretch of the scale - the outliers past ±3, say - show wherever
@@ -166,7 +170,8 @@ type AdjustableHeatmapProps = {
  */
 const AdjustableHeatmap = ({
   heatmap,
-  header,
+  title,
+  controls,
   tooltipBody,
   colorbar,
   defaultRange,
@@ -184,40 +189,37 @@ const AdjustableHeatmap = ({
 
   const [low, high] = range;
   const extent: ColorRange = [values[0], values[values.length - 1]];
-  const rangeText = kind === "diverging" ? `±${format(high)}` : `${format(low)} – ${format(high)}`;
-  const beyond = countBeyond(values, range);
-  const note =
-    `Colors stop at ${rangeText}; ${formatShare(beyond, values.length)} of shown cells lie beyond and ` +
-    `take the end colors. Values run ${format(extent[0])} to ${format(extent[1])}.` +
-    (colorbar.note ? ` ${colorbar.note}` : "");
 
   return (
-    <>
-      <Stack direction="row" alignItems="flex-start" gap={2}>
-        <Box flex={1} minWidth={0}>
-          {header}
-        </Box>
-        <ColorRangeButton
-          // One span, so the space after "Colors" survives the button's flexbox.
-          label={
-            <span>
-              Colors <SteadyText text={rangeText} hold={editing} />
-            </span>
-          }
-          stops={stops}
-          kind={kind}
-          range={range}
-          defaultRange={defaultRange}
-          extent={extent}
-          values={values}
-          presets={colorbar.presets}
-          format={format}
-          noun="cell"
-          onChange={(next) => setAdjusted({ mode: colorbar.mode, range: next })}
-          onOpen={() => setEditing(true)}
-          onClose={() => setEditing(false)}
-        />
-      </Stack>
+    <PaneFigure
+      title={title}
+      controls={
+        <>
+          {controls}
+          <ColorRangeButton
+            // One span, so the space after "Colors" survives the button's flexbox.
+            label={
+              <span>
+                Colors <SteadyText text={formatRange(kind, range, format)} hold={editing} />
+              </span>
+            }
+            stops={stops}
+            kind={kind}
+            range={range}
+            defaultRange={defaultRange}
+            extent={extent}
+            values={values}
+            presets={colorbar.presets}
+            format={format}
+            noun="cell"
+            notes={colorbar.notes}
+            onChange={(next) => setAdjusted({ mode: colorbar.mode, range: next })}
+            onOpen={() => setEditing(true)}
+            onClose={() => setEditing(false)}
+          />
+        </>
+      }
+    >
       <Box sx={{ flexGrow: 1, minHeight: 0, minWidth: 0 }}>
         <Heatmap
           {...heatmap}
@@ -225,21 +227,26 @@ const AdjustableHeatmap = ({
           highlightRange={sweep && valuesIn(rangeAxis(range), sweep)}
           legendWidth={LEGEND_WIDTH}
           renderLegend={({ width, height, orientation, overlayContainer }) => {
-            // An end label, with the note on hover. Portaled into the expanded minimap when drawn
-            // there, or the note would open behind it.
+            // An end label, which highlights its clamp or sweeps its end - see ColorbarEnd. Portaled
+            // into the expanded minimap when drawn there, or its count would open behind it.
             const endLabel = (end: "low" | "high", position: SVGProps<SVGTextElement>) => (
-              <Tooltip
-                title={sweep ? "" : note}
+              <ColorbarEnd
+                end={end}
+                clamped={end === "high" ? extent[1] > high : extent[0] < low}
+                range={range}
+                values={values}
+                noun="cell"
+                formatValue={colorbar.formatValue ?? format}
+                onSweep={setSweep}
                 placement={orientation === "vertical" ? "left" : "top"}
-                disableInteractive
-                slotProps={{ popper: { container: overlayContainer } }}
+                overlayContainer={overlayContainer}
               >
                 <text {...LABEL_TEXT} {...position}>
                   {end === "high"
                     ? `${extent[1] > high ? "≥ " : ""}${format(high)}`
                     : `${extent[0] < low ? "≤ " : ""}${format(low)}`}
                 </text>
-              </Tooltip>
+              </ColorbarEnd>
             );
             const graphic = (length: number) => (
               <ColorbarGraphic
@@ -267,24 +274,23 @@ const AdjustableHeatmap = ({
                 </g>
               );
             }
-            // Across the top of the expanded minimap: the labels either side of the bar, as the
-            // explorer's colorbar has them.
+            // Across the top of the expanded minimap: the labels either side of the bar, sitting on
+            // its bottom edge, as the explorer's colorbar has them.
             const length = Math.max(width - 2 * LEGEND_WIDTH, 40);
-            const middle = height / 2;
+            const top = height / 2 - colorbarDepth("horizontal") / 2;
+            const barBottom = top + colorbarDepth("horizontal");
             return (
               <g>
-                {endLabel("low", { x: LEGEND_WIDTH - 6, y: middle, textAnchor: "end", dominantBaseline: "middle" })}
-                <g transform={`translate(${LEGEND_WIDTH},${middle - colorbarDepth("horizontal") / 2})`}>
-                  {graphic(length)}
-                </g>
-                {endLabel("high", { x: LEGEND_WIDTH + length + 6, y: middle, dominantBaseline: "middle" })}
+                {endLabel("low", { x: LEGEND_WIDTH - 6, y: barBottom, textAnchor: "end" })}
+                <g transform={`translate(${LEGEND_WIDTH},${top})`}>{graphic(length)}</g>
+                {endLabel("high", { x: LEGEND_WIDTH + length + 6, y: barBottom })}
               </g>
             );
           }}
           tooltipBody={(bin) => tooltipBody(bin, range)}
         />
       </Box>
-    </>
+    </PaneFigure>
   );
 };
 
