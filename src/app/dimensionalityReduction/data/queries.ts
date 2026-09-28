@@ -1,9 +1,6 @@
 import { gql } from "@/common/types/generated/gql";
 
-/**
- * Every ome the explorer offers, in one round trip, with the mass-spec omes' feature names for the
- * picker. Selects age_bin, never age_at_enrollment: raw age is sensitive.
- */
+/** Every ome the explorer offers, in one round trip, with the mass-spec omes' feature names for the picker. */
 export const GET_DIMENSIONALITY_REDUCTION = gql(`
 query fetchDimensionalityReductionExplorer {
   atac_metadata {

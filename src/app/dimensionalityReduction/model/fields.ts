@@ -1,6 +1,13 @@
 /** The fields samples can be colored and filtered by, and how their values are grouped, named, ordered and colored. */
 
-import { protocol_color_map, sex_color_map, site_color_map, status_color_map } from "@/common/colors";
+import { age_bin_color_map, AGE_BIN_LABELS } from "@/common/ageBins";
+import {
+  protocol_color_map,
+  sex_color_map,
+  site_color_map,
+  status_color_map,
+  VALUE_LABEL_OVERRIDES,
+} from "@/common/colors";
 import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/components/plotDimming";
 import { FEATURE_KINDS, isFeatureColor, type FeatureColor, type FeatureKind } from "./features";
 import { METRICS, isMetric, type Metric } from "./metrics";
@@ -96,31 +103,12 @@ export const groupOf = (field: Field, row: ExplorerRow): string => {
   return !value || value.toLowerCase() === UNKNOWN_GROUP.toLowerCase() ? UNKNOWN_GROUP : value;
 };
 
-/** The API's age_bin values, youngest first. */
-const AGE_BINS = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"];
-
-/**
- * AGE_BIN_RAMP from src/common/ageBins.ts, by position. Copied, since that file bins
- * age_at_enrollment and should go with it; its bin edges differ but there are nine of each.
- */
-const AGE_BIN_COLORS: Record<string, string> = {
-  "0-9": "#1e3a8a",
-  "10-19": "#2d68ab",
-  "20-29": "#3b94b4",
-  "30-39": "#47a988",
-  "40-49": "#7abc62",
-  "50-59": "#c4cc52",
-  "60-69": "#f1c248",
-  "70-79": "#ec893f",
-  "80+": "#d9502a",
-};
-
 /** The app's color maps, so a value is the same color here as on every ome page. */
 const PALETTES: Record<Field, Record<string, string>> = {
   site: site_color_map,
   status: status_color_map,
   sex: sex_color_map,
-  age: AGE_BIN_COLORS,
+  age: age_bin_color_map,
   protocol: protocol_color_map,
 };
 
@@ -139,9 +127,6 @@ export const colorOf = (field: Field, value: string): string => {
 
 const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-/** Sex values the API sends as a code. */
-const SEX_LABELS: Record<string, string> = { prefer_not_to_answer: "Prefer no answer" };
-
 /** A value as the controls and legend show it. Display only: the raw value stays the group's key. */
 export const labelOf = (field: Field, value: string): string => {
   if (isNeutralGroup(value)) return value;
@@ -149,7 +134,7 @@ export const labelOf = (field: Field, value: string): string => {
     case "status":
       return capitalize(value);
     case "sex":
-      return SEX_LABELS[value] ?? capitalize(value);
+      return VALUE_LABEL_OVERRIDES[value] ?? capitalize(value);
     case "protocol":
       return value.replace(/ method$/, "");
     default:
@@ -160,8 +145,8 @@ export const labelOf = (field: Field, value: string): string => {
 /** Distinct values: age by band, the rest alphabetically, neutral groups last. Never by count, so order holds across omes. */
 export const sortValues = (field: Field, values: Iterable<string>): string[] => {
   const band = (value: string) => {
-    const index = AGE_BINS.indexOf(value);
-    return field === "age" && index !== -1 ? index : AGE_BINS.length;
+    const index = AGE_BIN_LABELS.indexOf(value);
+    return field === "age" && index !== -1 ? index : AGE_BIN_LABELS.length;
   };
   return [...new Set(values)].sort(
     (a, b) => Number(isNeutralGroup(a)) - Number(isNeutralGroup(b)) || band(a) - band(b) || a.localeCompare(b)

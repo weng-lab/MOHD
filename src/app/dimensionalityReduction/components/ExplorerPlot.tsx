@@ -3,6 +3,7 @@
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { ScatterPlot, type Point } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
+import PlotTooltip from "@/common/components/PlotTooltip";
 import { CARD_SX } from "./ExplorerLayout";
 import { FIELDS, groupOf, labelOf, type Field } from "../model/fields";
 import { METRICS } from "../model/metrics";
@@ -62,45 +63,25 @@ type TooltipBodyProps = {
 };
 
 const TooltipBody = ({ row, dimmed, feature }: TooltipBodyProps) => (
-  <Box sx={{ p: 1 }}>
-    <Typography variant="body2">
-      <strong>{row.sample_id}</strong>
-    </Typography>
-    {/* Dimmed points can win the hit test, so a dimmed sample says it's hidden. */}
-    {dimmed && (
-      <Typography variant="caption" display="block" color="text.secondary" fontStyle="italic">
-        Hidden by the current filters
-      </Typography>
-    )}
-    {/* A QC sample would read "QC / Reference" four times over. */}
-    {row.qc ? (
-      <Typography variant="caption" display="block">
-        QC / reference sample
-      </Typography>
-    ) : (
-      TOOLTIP_FIELDS.map(({ key, label }) => (
-        <Typography key={key} variant="caption" display="block">
-          {label}: {labelOf(key, groupOf(key, row))}
-        </Typography>
-      ))
-    )}
-    {TOOLTIP_DETAILS.map(({ label, value }) => {
-      const text = value(row);
-      return (
-        text && (
-          <Typography key={label} variant="caption" display="block">
-            {label}: {text}
-          </Typography>
-        )
-      );
-    })}
-    {/* Shown even with no value: it explains why the point is grey. */}
-    {feature && (
-      <Typography variant="caption" display="block">
-        {feature.name}: {feature.value === null ? "no value" : feature.format(feature.value)}
-      </Typography>
-    )}
-  </Box>
+  <PlotTooltip
+    title={row.sample_id}
+    // Dimmed points can win the hit test, so a dimmed sample says it's hidden.
+    note={dimmed ? "Hidden by the current filters" : undefined}
+    rows={[
+      // One line for a QC sample, which would otherwise read "QC / Reference" for every field.
+      ...(row.qc
+        ? [{ label: "Sample", value: "QC / reference" }]
+        : TOOLTIP_FIELDS.map(({ key, label }) => ({ label, value: labelOf(key, groupOf(key, row)) }))),
+      ...TOOLTIP_DETAILS.flatMap(({ label, value }) => {
+        const text = value(row);
+        return text ? [{ label, value: text }] : [];
+      }),
+      // Shown even with no value: it explains why the point is grey.
+      ...(feature
+        ? [{ label: feature.name, value: feature.value === null ? "no value" : feature.format(feature.value) }]
+        : []),
+    ]}
+  />
 );
 
 export type ExplorerPlotProps = {
