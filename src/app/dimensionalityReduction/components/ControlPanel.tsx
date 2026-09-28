@@ -23,13 +23,15 @@ import type { ReactNode } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
 import { PANEL_SX } from "./ExplorerLayout";
 import { FEATURE_KINDS, isFeatureColor } from "../model/features";
-import { colorOptionsFor, labelOf, type ColorBy, type Field } from "../model/fields";
+import { colorOptionsFor, type ColorBy } from "../model/colorBy";
+import { labelOf, type Field } from "@/common/sampleFields/fields";
 import GeneSearch from "./GeneSearch";
-import { rowsFor, valuesOf } from "../model/groups";
+import { rowsFor, allRows } from "../model/rows";
+import { valuesOf } from "@/common/sampleFields/groups";
 import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "../model/omes";
 import { switchOme, toggleHidden, type ExplorerState } from "../state/params";
 import QuantificationSearch from "./QuantificationSearch";
-import { NO_SHAPE, shapeOptionsFor, type ShapeBy } from "../model/shapes";
+import { NO_SHAPE, shapeOptions, type ShapeBy } from "@/common/sampleFields/shapes";
 import type { ExplorerData } from "../model/types";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
@@ -136,7 +138,7 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
   const options: Partial<Record<Field, string[]>> = Object.fromEntries(
     fields.map(({ key }) => [key, valuesOf(rows, key)])
   );
-  const shapeOptions = shapeOptionsFor(ome, data);
+  const shapeable = shapeOptions(fields, allRows(data));
   const hasQc = rows.some((row) => row.qc);
   const filtered = hideQc || Object.values(state.hidden).some((values) => values.length > 0);
 
@@ -255,10 +257,10 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
             <MenuItem value={NO_SHAPE}>None</MenuItem>
             {/* Unshapeable fields are listed disabled with the reason, rather than silently missing. */}
             {fields.map(({ key, label }) => {
-              const shapeable = shapeOptions.some((option) => option.key === key);
+              const fits = shapeable.some((option) => option.key === key);
               return (
-                <MenuItem key={key} value={key} disabled={!shapeable}>
-                  {shapeable ? label : `${label} — too many values to shape by`}
+                <MenuItem key={key} value={key} disabled={!fits}>
+                  {fits ? label : `${label} — too many values to shape by`}
                 </MenuItem>
               );
             })}

@@ -1,4 +1,7 @@
-/** The fields samples can be colored and filtered by, and how their values are grouped, named, ordered and colored. */
+/**
+ * The fields samples can be colored, shaped and filtered by on any page, and how their values are
+ * grouped, named, ordered and colored.
+ */
 
 import { age_bin_color_map, AGE_BIN_LABELS } from "@/common/ageBins";
 import {
@@ -9,10 +12,7 @@ import {
   VALUE_LABEL_OVERRIDES,
 } from "@/common/colors";
 import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/components/plotDimming";
-import { FEATURE_KINDS, isFeatureColor, type FeatureColor, type FeatureKind } from "./features";
-import { METRICS, isMetric, type Metric } from "./metrics";
-import { OME_CAPABILITIES, type ExplorerOme } from "./omes";
-import type { ExplorerRow } from "./types";
+import type { OmesDataType } from "@/common/types/globalTypes";
 
 /**
  * In the order the controls list them. `key` is what a link carries (?color=age) - see ROW_KEYS for
@@ -33,46 +33,23 @@ export type Field = FieldDefinition["key"];
 
 export const isField = (value: string | null): value is Field => FIELDS.some(({ key }) => key === value);
 
+/** The omes whose samples were taken by more than one protocol: every other ome has one throughout. */
+const VARIED_PROTOCOL_OMES: readonly OmesDataType[] = ["ATAC"];
+
 /** All of them, less protocol wherever it doesn't vary. */
-export const fieldsFor = (ome: ExplorerOme): FieldDefinition[] =>
-  FIELDS.filter(({ key }) => key !== "protocol" || OME_CAPABILITIES[ome].protocol);
+export const fieldsFor = (ome: OmesDataType): FieldDefinition[] =>
+  FIELDS.filter(({ key }) => key !== "protocol" || VARIED_PROTOCOL_OMES.includes(ome));
 
-/** A field, one of ATAC's library metrics, or one feature's quantification. */
-export type ColorBy = Field | Metric | FeatureColor;
-
-export const isColorBy = (value: string | null): value is ColorBy =>
-  isField(value) || isMetric(value) || isFeatureColor(value);
-
-/** The colorings drawn on a ramp with a colorbar, rather than as groups with chips and filters. */
-export const isContinuous = (color: ColorBy) => isMetric(color) || isFeatureColor(color);
-
-export type ColorOptions = {
-  fields: FieldDefinition[];
-  /** Empty on an ome with no metrics. */
-  metrics: readonly (typeof METRICS)[number][];
-  /** The kind of feature that can color this ome, if any. */
-  feature: FeatureKind | null;
-};
-
-export const colorOptionsFor = (ome: ExplorerOme): ColorOptions => ({
-  fields: fieldsFor(ome),
-  metrics: OME_CAPABILITIES[ome].metrics ? METRICS : [],
-  feature: OME_CAPABILITIES[ome].feature,
-});
-
-/** Whether an ome offers a coloring: what a hand-edited ?color=, or one carried over from another ome, is held to. */
-export const offersColor = (ome: ExplorerOme, color: ColorBy) => {
-  const { fields, metrics, feature } = colorOptionsFor(ome);
-  return isFeatureColor(color)
-    ? feature !== null && FEATURE_KINDS[feature].color === color
-    : [...fields, ...metrics].some(({ key }) => key === color);
-};
-
-/** "Site", "TSS enrichment", "Lipid abundance". The explorer names a picked feature itself. */
-export const colorLabel = (ome: ExplorerOme, color: ColorBy) => {
-  const { fields, metrics, feature } = colorOptionsFor(ome);
-  if (isFeatureColor(color)) return feature ? FEATURE_KINDS[feature].option : "Feature";
-  return [...fields, ...metrics].find(({ key }) => key === color)?.label ?? color;
+/** What a sample's groups are read from: any page's row, with `qc` set by isQcKit. */
+export type SampleGroups = {
+  sample_id: string;
+  qc: boolean;
+  site?: string | null;
+  status?: string | null;
+  sex?: string | null;
+  /** Binned by the API ("0-9" ... "80+"). Raw age is sensitive and never fetched. */
+  age_bin?: string | null;
+  protocol?: string | null;
 };
 
 const ROW_KEYS = {
@@ -81,7 +58,24 @@ const ROW_KEYS = {
   sex: "sex",
   age: "age_bin",
   protocol: "protocol",
-} as const satisfies Record<Field, keyof ExplorerRow>;
+} as const satisfies Record<Field, keyof SampleGroups>;
+
+/** The table column holding a field. */
+export const columnOf = (field: Field) => ROW_KEYS[field];
+
+/** The field a table column holds, if it holds one. */
+export const fieldOfColumn = (column: string): Field | undefined =>
+  FIELDS.find(({ key }) => ROW_KEYS[key] === column)?.key;
+
+/** Kits the API gives QC and reference material rather than a participant's sample. */
+const QC_KITS = new Set(["internal_QC", "external_QC", "reference"]);
+
+export const isQcKit = (kit: string | null | undefined) => QC_KITS.has(kit ?? "");
+
+/** A sample as the API returns it, which tells QC material apart only by its kit. */
+export type SampleRow = Omit<SampleGroups, "qc"> & { kit?: string | null };
+
+export const toSample = <R extends SampleRow>(row: R): R & SampleGroups => ({ ...row, qc: isQcKit(row.kit) });
 
 /**
  * Where every QC and reference sample goes, whatever the field: they're not a participant's, so
@@ -96,7 +90,7 @@ const UNKNOWN_GROUP = "Unknown";
 /** Groups colored neutral, drawn beneath the rest and listed after them. */
 export const isNeutralGroup = (value: string) => value === QC_GROUP || value === UNKNOWN_GROUP;
 
-export const groupOf = (field: Field, row: ExplorerRow): string => {
+export const groupOf = (field: Field, row: SampleGroups): string => {
   if (row.qc) return QC_GROUP;
   const value = row[ROW_KEYS[field]];
   // A recorded "unknown" means the same as no value, and its palette grey would read as faded.

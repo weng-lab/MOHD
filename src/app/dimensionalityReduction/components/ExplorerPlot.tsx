@@ -5,7 +5,7 @@ import { ScatterPlot, type Point } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { CARD_SX } from "./ExplorerLayout";
-import { FIELDS, groupOf, labelOf, type Field } from "../model/fields";
+import { FIELDS, groupOf, labelOf, type Field } from "@/common/sampleFields/fields";
 import { METRICS } from "../model/metrics";
 import type { ExplorerRow } from "../model/types";
 

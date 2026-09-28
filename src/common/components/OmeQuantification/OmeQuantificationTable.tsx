@@ -1,7 +1,9 @@
 import { SyncedTableProps, Table, TableColDef, useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
-import { GridSortModel } from "@mui/x-data-grid-premium";
+import type { GridSortModel } from "@mui/x-data-grid-premium";
 import { Typography } from "@mui/material";
 import { MISSING_LABEL, VALUE_LABEL_OVERRIDES } from "@/common/colors";
+import { useHeldTableState } from "@/common/hooks/useHeldTableState";
+import { QC_GROUP } from "@/common/sampleFields/fields";
 
 export type QuantificationSample = {
   sample_id: string;
@@ -37,11 +39,12 @@ export const useOmeQuantificationTable = <TSample extends QuantificationSample>(
     {
       field: "status",
       headerName: "Status",
-      renderCell: (params) => params.value || "Experimental Control",
+      // These rows carry no kit to tell QC by, but every QC sample and only QC has no status.
+      renderCell: (params) => params.value || QC_GROUP,
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.status))).map((status) => ({
         value: status,
-        label: status || "Experimental Control",
+        label: status || QC_GROUP,
       })),
     },
     {
@@ -65,12 +68,15 @@ export const useOmeQuantificationTable = <TSample extends QuantificationSample>(
     },
   ];
 
-  return useSyncedTable({
+  const { syncedTableProps, autoSort } = useSyncedTable({
     tableProps,
     columns,
     initialSort: INITIAL_SORT,
     isPresorted: false,
   });
+  const held = useHeldTableState(INITIAL_SORT);
+
+  return { syncedTableProps: { ...syncedTableProps, ...held.tableProps }, autoSort };
 };
 
 export type OmeQuantificationTableProps<TSample extends QuantificationSample> = {

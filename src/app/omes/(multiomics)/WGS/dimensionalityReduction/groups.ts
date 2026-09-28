@@ -10,6 +10,7 @@
  */
 
 import { NEUTRAL_DARK } from "@/common/components/plotDimming";
+import { shapeScaleOf, type ShapeScale } from "@/common/components/pointShapes";
 import { FIELD_LABELS, FIELD_PALETTES, fallbackPalette, type ColorField, type Palette } from "./fields";
 import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";
 import { VALUE_LABEL_OVERRIDES } from "@/common/colors";
@@ -157,4 +158,29 @@ export const buildGroups = <T>(
               sequentialColor(i, bands.length)
             : fallback[cursor++ % fallback.length]),
   }));
+};
+
+/** The same groups, in the same order and colors, counted over the rows another legend's filter leaves in. */
+export const recount = <T>(groups: GroupInfo[], rows: T[], key: keyof T & ColorField): GroupInfo[] => {
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const value = groupValue(row[key]);
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+  return groups.map((group) => ({ ...group, count: counts.get(group.value) ?? 0 }));
+};
+
+/**
+ * Which shape each of a field's values takes, or null where there are more values than shapes.
+ * Alphabetical rather than by count, so a value keeps its shape as a release fills out - and each
+ * site, status and sex takes the same shape here as on the other dimensionality reduction plots.
+ * The privacy bin comes after them, so whether a release has one can't move the others; "Unknown"
+ * has no value, and stays a circle.
+ */
+export const shapeScaleFor = <T>(rows: T[], key: keyof T & ColorField): ShapeScale | null => {
+  const values = new Set(rows.map((row) => groupValue(row[key])));
+  return shapeScaleOf([
+    ...[...values].filter((value) => value !== "Unknown" && value !== PRIVACY_BIN).sort((a, b) => a.localeCompare(b)),
+    ...(values.has(PRIVACY_BIN) ? [PRIVACY_BIN] : []),
+  ]);
 };

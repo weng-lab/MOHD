@@ -1,14 +1,16 @@
+/** Grouping samples by a field: what shows under the filters, and the chips a legend lists. */
+
 import type { LegendGroup } from "@/common/components/PlotLegend";
-import { QC_GROUP, colorOf, groupOf, labelOf, sortValues, type Field } from "./fields";
-import type { ExplorerOme, Method } from "./omes";
-import type { ExplorerData, ExplorerRow } from "./types";
+import { QC_GROUP, colorOf, groupOf, labelOf, sortValues, type Field, type SampleGroups } from "./fields";
 
 /** Everything that decides whether a sample shows. */
 export type Filters = {
-  /** The fields the current ome offers. Values hidden on any other field are ignored. */
+  /** The fields filtering applies to. Values hidden on any other field are ignored. */
   fields: readonly Field[];
   hidden: Readonly<Record<Field, ReadonlySet<string>>>;
   hideQc: boolean;
+  /** Whatever else a sample must pass that no field's chips stand for, such as a table's search. */
+  others?: (row: SampleGroups) => boolean;
 };
 
 /** Spelled out per field rather than built from FIELDS, so adding a field without a set here fails to compile. */
@@ -24,29 +26,32 @@ export const toHiddenSets = (
 
 /**
  * Whether a sample passes the filters. `except` leaves one field's filter out, so the legend can
- * count a hidden group as if it were shown. QC samples answer to hideQc alone.
+ * count a hidden group as if it were shown. QC samples answer to hideQc rather than the fields.
  */
-export const passesFilters = (row: ExplorerRow, filters: Filters, except?: Field) =>
-  row.qc
+export const passesFilters = (row: SampleGroups, filters: Filters, except?: Field) =>
+  (row.qc
     ? !filters.hideQc
-    : filters.fields.every((field) => field === except || !filters.hidden[field].has(groupOf(field, row)));
+    : filters.fields.every((field) => field === except || !filters.hidden[field].has(groupOf(field, row)))) &&
+  (filters.others?.(row) ?? true);
 
-/** The rows a method places. Every row has PCs; UMAP coordinates are checked per row. */
-export const rowsFor = (data: ExplorerData, ome: ExplorerOme, method: Method) =>
-  method === "UMAP" ? data[ome].rows.filter((row) => row.umap) : data[ome].rows;
-
-/** A field's values across an ome's participant samples, in display order. */
-export const valuesOf = (rows: readonly ExplorerRow[], field: Field) =>
+/** A field's values across the participant samples given, in display order. */
+export const valuesOf = (rows: readonly SampleGroups[], field: Field) =>
   sortValues(
     field,
     rows.flatMap((row) => (row.qc ? [] : [groupOf(field, row)]))
   );
 
+/** A field's groups in the order its chips list them, QC last wherever there are QC samples. */
+export const groupsOf = (rows: readonly SampleGroups[], field: Field) => [
+  ...valuesOf(rows, field),
+  ...(rows.some(({ qc }) => qc) ? [QC_GROUP] : []),
+];
+
 /**
- * The legend for the field the plot is colored by: a chip for every value the ome has, even one the
- * other filters have emptied, so chips don't come and go under the cursor. QC samples come last.
+ * A field's legend chips: one for every value the samples have, even one the other filters have
+ * emptied, so chips don't come and go under the cursor. QC samples come last.
  */
-export const legendGroups = (rows: readonly ExplorerRow[], field: Field, filters: Filters): LegendGroup[] => {
+export const legendGroups = (rows: readonly SampleGroups[], field: Field, filters: Filters): LegendGroup[] => {
   const counts = new Map<string, number>();
   let qcCount = 0;
 

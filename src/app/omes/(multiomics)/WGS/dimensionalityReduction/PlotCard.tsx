@@ -3,14 +3,36 @@
 import { Box, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
 import { useState, type ReactNode, type RefObject } from "react";
 import PlotLegend from "@/common/components/PlotLegend";
+import ShapeLegend from "@/common/components/ShapeLegend";
+import { shapeOf, type ShapeScale } from "@/common/components/pointShapes";
 import { CARD_SX } from "./dimensions";
 import type { ColorField, ColorOption } from "./fields";
 import type { GroupInfo } from "./groups";
 
+/** The shape select's value for no shape encoding. No field is named this. */
+const NO_SHAPE = "none";
+
+/** Capped at the header's width, so a long value truncates on a phone rather than pushing the card wider. */
+const SELECT_SX = { minWidth: 130, maxWidth: "100%", bgcolor: "background.paper" };
+
+/** One row of chips: the field's groups, which are switched off, and what a click does. */
+export type LegendRow = {
+  /** The field's name, shown beside its chips while there are two rows. */
+  label: string;
+  groups: GroupInfo[];
+  hidden: ReadonlySet<string>;
+  onToggle: (value: string) => void;
+};
+
+/** A chip under the cursor, and which legend it's in. */
+export type LegendHover = { legend: "color" | "shape"; value: string };
+
+/** The groups of the point under the cursor, whose chips to ring. `shapeGroup` is null while nothing shapes the plot. */
+export type PlotHover = { group: string; shapeGroup: string | null };
+
 /**
- * Generic over the color-by field rather than the row type: the row never
- * reaches this component, and the three props below are the only ones that have
- * to agree with each other.
+ * Generic over the field rather than the row type: the row never reaches this component, and the
+ * props below are the only ones that have to agree with each other.
  */
 export type PlotCardProps<K extends ColorField> = {
   /** Cohort name, shown in the header. */
@@ -19,19 +41,23 @@ export type PlotCardProps<K extends ColorField> = {
   shown: number;
   /** Samples on the plot, the dimmed ones included. Named beside `shown` only while the two differ. */
   total: number;
-  /** Fields this cohort can be colored by. */
+  /** Fields this cohort can be colored and shaped by. */
   options: readonly ColorOption<K>[];
   colorBy: K;
   onColorByChange: (key: K) => void;
-  groups: GroupInfo[];
-  hidden: ReadonlySet<string>;
-  onToggle: (value: string) => void;
+  shapeBy: K | null;
+  onShapeByChange: (key: K | null) => void;
+  /** Whether a field's values fit the shape scale. The rest are listed disabled, with the reason. */
+  canShape: (key: K) => boolean;
+  color: LegendRow;
+  /** While the plot is shaped. Merged into the color chips where both name the same field. */
+  shape: (LegendRow & { scale: ShapeScale }) | null;
   /** Measured by the parent so both plots can be given one shared size. */
   plotRef: RefObject<HTMLDivElement | null>;
   /**
-   * The plot, built for the hover this card is tracking: `legendHover` is the group whose chip is
-   * under the cursor, which the plot renders as `hoveredPoints`, and `onPlotHover` is what it
-   * calls with the group under its own cursor.
+   * The plot, built for the hover this card is tracking: `legendHover` is the chip under the cursor,
+   * whose group the plot renders as `hoveredPoints`, and `onPlotHover` is what it calls with the
+   * groups of the point under its own cursor.
    *
    * Taken as a function, and the hover state kept here rather than on the page, because a hover
    * must not re-render whatever builds the points. React Compiler memoizes in scopes and puts
@@ -40,20 +66,19 @@ export type PlotCardProps<K extends ColorField> = {
    * hover growth when pointData changes identity mid-animation, which is one stray re-render away
    * from a highlight that never grows - see ExplorerPlot, where that bug was found.
    */
-  children: (hover: { legendHover: string | null; onPlotHover: (group: string | null) => void }) => ReactNode;
+  children: (hover: { legendHover: LegendHover | null; onPlotHover: (hover: PlotHover | null) => void }) => ReactNode;
 };
 
 /**
- * One cohort's pane: header, legend and plot inside a single border.
+ * One cohort's pane: header, legends and plot inside a single border.
  *
- * The "color by" select sits in the card header rather than in a page-level
- * toolbar. With both cohorts on screen a shared toolbar leaves the reader
- * matching each select to its plot by reading its label; inside the border
- * there is only one plot it can belong to, at every breakpoint. That also
- * lets the label shrink to "Color by" - the title beside it names the cohort.
+ * The "color by" and "shape by" selects sit in the card header rather than in a page-level
+ * toolbar. With both cohorts on screen a shared toolbar leaves the reader matching each select to
+ * its plot by reading its label; inside the border there is only one plot it can belong to, at
+ * every breakpoint.
  *
- * The axis selects stay outside this component for the same reason: they drive
- * both plots through ScatterPlotSync, so they must not sit inside either card.
+ * The axis selects stay outside this component for the same reason: they drive both plots through
+ * ScatterPlotSync, so they must not sit inside either card.
  */
 const PlotCard = <K extends ColorField>({
   title,
@@ -62,22 +87,37 @@ const PlotCard = <K extends ColorField>({
   options,
   colorBy,
   onColorByChange,
-  groups,
-  hidden,
-  onToggle,
+  shapeBy,
+  onShapeByChange,
+  canShape,
+  color,
+  shape,
   plotRef,
   children,
 }: PlotCardProps<K>) => {
-  // The highlight runs both ways. plotHover is the group under the cursor in the plot, which rings
-  // the matching chip; legendHover is the chip under the cursor, handed back to the plot so its
-  // group swells. Only one can be set at a time - reaching a chip means leaving the plot - but they
-  // are kept apart so neither can feed the other back into itself.
+  // The highlight runs both ways. plotHover is the point under the cursor in the plot, which rings
+  // its chips; legendHover is the chip under the cursor, handed back to the plot so its group
+  // swells. Only one can be set at a time - reaching a chip means leaving the plot - but they are
+  // kept apart so neither can feed the other back into itself.
   //
-  // Only a chip swells a group. A hovered point grows alone and names its group by ringing the
-  // chip, as on the dimensionality reduction explorer, where a point sits in a group in both a color
-  // and a shape legend and swelling either one on the plot would favour it over the other.
-  const [plotHover, setPlotHover] = useState<string | null>(null);
-  const [legendHover, setLegendHover] = useState<string | null>(null);
+  // Only a chip swells a group. A hovered point grows alone and names its groups by ringing their
+  // chips, as on the dimensionality reduction explorer: a point sits in a group in both the color
+  // and the shape legend, and swelling either one on the plot would favour it over the other.
+  const [plotHover, setPlotHover] = useState<PlotHover | null>(null);
+  const [legendHover, setLegendHover] = useState<LegendHover | null>(null);
+
+  // A row of its own only for another field; otherwise the color chips carry the glyphs.
+  const shapeRow = shape && shapeBy !== colorBy ? shape : null;
+  const ringed = (legend: LegendHover["legend"]) =>
+    plotHover
+      ? legend === "color"
+        ? plotHover.group
+        : plotHover.shapeGroup
+      : legendHover?.legend === legend
+        ? legendHover.value
+        : null;
+  const hover = (legend: LegendHover["legend"]) => (value: string | null) =>
+    setLegendHover(value === null ? null : { legend, value });
 
   return (
     <Paper
@@ -96,7 +136,9 @@ const PlotCard = <K extends ColorField>({
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        gap={1.5}
+        flexWrap="wrap"
+        columnGap={1.5}
+        rowGap={1}
         sx={{
           px: 1.5,
           py: 0.75,
@@ -117,29 +159,64 @@ const PlotCard = <K extends ColorField>({
             {shown !== total && ` / ${total.toLocaleString("en-US")}`})
           </Typography>
         </Typography>
-        <TextField
-          select
-          size="small"
-          label="Color by"
-          value={String(colorBy)}
-          onChange={(e) => onColorByChange(e.target.value as K)}
-          sx={{ minWidth: 200, flexShrink: 0, bgcolor: "background.paper" }}
-        >
-          {options.map((o) => (
-            <MenuItem key={String(o.key)} value={String(o.key)}>
-              {o.label}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Stack direction="row" flexWrap="wrap" gap={1} maxWidth="100%">
+          <TextField
+            select
+            size="small"
+            label="Color by"
+            value={String(colorBy)}
+            onChange={(e) => onColorByChange(e.target.value as K)}
+            sx={{ ...SELECT_SX, minWidth: 180 }}
+          >
+            {options.map((o) => (
+              <MenuItem key={String(o.key)} value={String(o.key)}>
+                {o.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            select
+            size="small"
+            label="Shape by"
+            value={shapeBy === null ? NO_SHAPE : String(shapeBy)}
+            onChange={(e) => onShapeByChange(e.target.value === NO_SHAPE ? null : (e.target.value as K))}
+            sx={SELECT_SX}
+          >
+            <MenuItem value={NO_SHAPE}>None</MenuItem>
+            {/* Unshapeable fields are listed disabled with the reason, rather than silently missing. */}
+            {options.map((o) => (
+              <MenuItem key={String(o.key)} value={String(o.key)} disabled={!canShape(o.key)}>
+                {canShape(o.key) ? o.label : `${o.label} — too many values to shape by`}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Stack>
       </Stack>
 
       <Stack gap={1} sx={{ px: 1.5, pt: 1.25, pb: 1.5, flex: 1, minHeight: 0 }}>
+        {shapeRow && (
+          <ShapeLegend
+            label={shapeRow.label}
+            scale={shapeRow.scale}
+            groups={shapeRow.groups}
+            hidden={shapeRow.hidden}
+            onToggle={shapeRow.onToggle}
+            highlighted={ringed("shape")}
+            onHover={hover("shape")}
+          />
+        )}
         <PlotLegend
-          groups={groups}
-          hidden={hidden}
-          onToggle={onToggle}
-          highlighted={plotHover ?? legendHover}
-          onHover={setLegendHover}
+          // Named only beneath a shape row, to tell the two apart.
+          label={shapeRow ? color.label : undefined}
+          groups={
+            shape && !shapeRow
+              ? color.groups.map((group) => ({ ...group, shape: shapeOf(shape.scale, group.value) }))
+              : color.groups
+          }
+          hidden={color.hidden}
+          onToggle={color.onToggle}
+          highlighted={ringed("color")}
+          onHover={hover("color")}
         />
         {/*
         Bottom-aligned, not centred. Both plots render at the smaller of the two containers, so

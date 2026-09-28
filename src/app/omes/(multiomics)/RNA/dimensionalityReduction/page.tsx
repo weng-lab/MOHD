@@ -1,23 +1,20 @@
 "use client";
-import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
+import { TwoPaneLayout } from "@weng-lab/ui-components";
 import { ScatterPlot } from "@mui/icons-material";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
 import { useRNAData, UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
 import RNADimensionalityScatterPlot from "./RNAUMAP";
 import RNADimensionalityPCAPlot from "./RNAPCA";
-import RNADimensionalityTable from "./RNADimensionalityTable";
 
+import SampleTable from "@/common/sampleFields/SampleTable";
+import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type RNAMetadata = NonNullable<UseRNADataReturn["data"]>;
 
 export type SharedRNADimenionalityProps = {
-  rows: RNAMetadata;
   RNAData: UseRNADataReturn;
-  selected: RNAMetadata;
-  setSelected: React.Dispatch<React.SetStateAction<RNAMetadata>>;
-  sortedFilteredData: RNAMetadata;
-  tableProps: ReturnType<typeof useTablePlotSync<RNAMetadata[number]>>["tableProps"];
+  sampleTable: SampleTableState<RNAMetadata[number]>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -26,20 +23,11 @@ const RNADimensionalityReduction = () => {
   const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
   const RNAData = useRNAData({ skip: false });
 
-  const rows: RNAMetadata = RNAData.data ?? [];
-
-  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-    rows,
-    getRowId: (row) => row.sample_id,
-  });
+  const sampleTable = useSampleTable("RNA", RNAData.data);
 
   const SharedRNADimenionalityProps: SharedRNADimenionalityProps = {
-    rows,
     RNAData,
-    selected,
-    setSelected,
-    sortedFilteredData,
-    tableProps,
+    sampleTable,
   };
 
   return (
@@ -47,7 +35,14 @@ const RNADimensionalityReduction = () => {
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
-      TableComponent={<RNADimensionalityTable {...SharedRNADimenionalityProps} />}
+      TableComponent={
+        <SampleTable
+          label="RNA-seq Dimensionality Reduction"
+          table={sampleTable}
+          loading={RNAData.loading}
+          error={RNAData.error}
+        />
+      }
       plots={[
         {
           tabTitle: "PCA",

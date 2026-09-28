@@ -4,36 +4,39 @@ import { getSharedDomains, type Point } from "@weng-lab/visualization";
 import { useState } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
 import {
+  defaultRange,
   percentilePresets,
   sameRange,
   type ColorRange,
   type RampRange,
 } from "@/common/components/Colorbar/colorbarAxis";
-import PlotLegend from "@/common/components/PlotLegend";
 import { dimHidden } from "@/common/components/plotDimming";
-import ControlPanel from "./components/ControlPanel";
-import ExplorerLayout from "./components/ExplorerLayout";
-import ExplorerPlot, { type PointMeta } from "./components/ExplorerPlot";
-import { FEATURE_KINDS, featureLabel, fromLogValue, isFeatureColor, toLogValue } from "./model/features";
-import FeatureLegend from "./legends/FeatureLegend";
-import MetricLegend, { type ColorRangeControl } from "./legends/MetricLegend";
+import { shapeOf } from "@/common/components/pointShapes";
+import { fromLogValue, toLogValue } from "@/common/quantification";
+import FieldLegends from "@/common/sampleFields/FieldLegends";
 import {
   QC_GROUP,
-  colorLabel,
   colorOf,
   fieldsFor,
   groupOf,
-  isContinuous,
+  isField,
   isNeutralGroup,
   type Field,
-} from "./model/fields";
-import { legendGroups, passesFilters, rowsFor, toHiddenSets, type Filters } from "./model/groups";
-import ShapeLegend from "./legends/ShapeLegend";
-import { defaultRange, isMetric, metricColor, metricDefinition, metricPosition, scaleOver } from "./model/metrics";
+} from "@/common/sampleFields/fields";
+import { passesFilters, toHiddenSets, type Filters } from "@/common/sampleFields/groups";
+import { NO_SHAPE, shapeOptions, shapeScale } from "@/common/sampleFields/shapes";
+import ControlPanel from "./components/ControlPanel";
+import ExplorerLayout from "./components/ExplorerLayout";
+import ExplorerPlot, { type PointMeta } from "./components/ExplorerPlot";
+import FeatureLegend from "./legends/FeatureLegend";
+import MetricLegend, { type ColorRangeControl } from "./legends/MetricLegend";
+import { colorLabel, isContinuous } from "./model/colorBy";
+import { FEATURE_KINDS, featureLabel, isFeatureColor } from "./model/features";
+import { isMetric, metricColor, metricDefinition, metricPosition, scaleOver } from "./model/metrics";
 import { OME_CAPABILITIES, pcLabel } from "./model/omes";
-import { toggleHidden, type ExplorerState } from "./state/params";
-import { NO_SHAPE, shapeOf, shapeOptionsFor, shapeScale } from "./model/shapes";
+import { allRows, rowsFor } from "./model/rows";
 import type { ExplorerData, ExplorerRow } from "./model/types";
+import { toggleHidden, type ExplorerState } from "./state/params";
 import { useExplorerState } from "./state/useExplorerState";
 import { useFeature } from "./data/useFeature";
 
@@ -62,13 +65,11 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   const rows = rowsFor(data, ome, method);
   const fields = fieldsFor(ome);
 
-  // What the URL asks to shape by, if this ome's data can carry it.
-  const shapeOptions = shapeOptionsFor(ome, data);
-  const shapedField = state.shape === NO_SHAPE ? null : (shapeOptions.find(({ key }) => key === state.shape) ?? null);
-  const shapes = shapedField ? shapeScale(data, shapedField.key) : null;
-
-  // A separate shape legend only when shape and color are different fields; otherwise the color chips show the glyphs.
-  const shapeLegend = shapedField && shapes && shapedField.key !== color ? { field: shapedField, scale: shapes } : null;
+  // What the URL asks to shape by, if the data can carry it. Shapes are assigned across every ome.
+  const everyRow = allRows(data);
+  const shapedField =
+    state.shape === NO_SHAPE ? null : (shapeOptions(fields, everyRow).find(({ key }) => key === state.shape) ?? null);
+  const shapes = shapedField ? shapeScale(everyRow, shapedField.key) : null;
 
   const filters: Filters = {
     fields: fields.map(({ key }) => key),
@@ -208,61 +209,46 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
               onLegendHover(next === null ? null : { kind: "range", ...next });
             return (
               <>
-                {shapeLegend && (
-                  <ShapeLegend
-                    label={shapeLegend.field.label}
-                    scale={shapeLegend.scale}
-                    groups={legendGroups(rows, shapeLegend.field.key, filters)}
-                    hidden={filters.hidden[shapeLegend.field.key]}
-                    onToggle={(value) => setState(toggleHidden(state, shapeLegend.field.key, value))}
-                    highlighted={ringed(shapeLegend.field.key)}
-                    onHover={(value) =>
-                      onLegendHover(value === null ? null : { kind: "group", field: shapeLegend.field.key, value })
-                    }
-                  />
-                )}
-                {isFeatureColor(color) ? (
-                  // Always set here (normalize ensures it); checked for the types.
-                  featureKind && (
-                    <FeatureLegend
-                      kind={featureKind}
-                      feature={feature}
-                      scale={scale}
-                      values={shownValues}
-                      missing={shown.filter(({ metaData }) => metaData!.featureValue === null).length}
-                      hovered={hoveredValue === undefined ? null : toLogValue(hoveredValue)}
-                      sweep={sweep}
-                      onSweep={onSweep}
-                      control={rangeControl}
-                    />
-                  )
-                ) : isMetric(color) ? (
-                  <MetricLegend
-                    metric={metricDefinition(color)}
-                    scale={scale}
-                    values={shownValues}
-                    missing={shown.filter(({ metaData }) => (metaData!.row.metrics?.[color] ?? null) === null).length}
-                    hovered={hovered?.metrics?.[color] ?? null}
-                    sweep={sweep}
-                    onSweep={onSweep}
-                    control={rangeControl}
-                  />
-                ) : (
-                  <PlotLegend
-                    // Named only beneath a shape row, to tell the two apart.
-                    label={shapeLegend ? colorLabel(ome, color) : undefined}
-                    groups={legendGroups(rows, color, filters).map((group) =>
-                      shapes && shapedField?.key === color ? { ...group, shape: shapeOf(shapes, group.value) } : group
+                <FieldLegends
+                  rows={rows}
+                  filters={filters}
+                  color={isField(color) ? { key: color, label: colorLabel(ome, color) } : null}
+                  shape={shapedField && shapes && { key: shapedField.key, label: shapedField.label, scale: shapes }}
+                  onToggle={(field, value) =>
+                    setState(value === QC_GROUP ? { ...state, hideQc: !hideQc } : toggleHidden(state, field, value))
+                  }
+                  ringed={ringed}
+                  onHover={(hover) => onLegendHover(hover && { kind: "group", ...hover })}
+                />
+                {isFeatureColor(color)
+                  ? // Always set here (normalize ensures it); checked for the types.
+                    featureKind && (
+                      <FeatureLegend
+                        kind={featureKind}
+                        feature={feature}
+                        scale={scale}
+                        values={shownValues}
+                        missing={shown.filter(({ metaData }) => metaData!.featureValue === null).length}
+                        hovered={hoveredValue === undefined ? null : toLogValue(hoveredValue)}
+                        sweep={sweep}
+                        onSweep={onSweep}
+                        control={rangeControl}
+                      />
+                    )
+                  : isMetric(color) && (
+                      <MetricLegend
+                        metric={metricDefinition(color)}
+                        scale={scale}
+                        values={shownValues}
+                        missing={
+                          shown.filter(({ metaData }) => (metaData!.row.metrics?.[color] ?? null) === null).length
+                        }
+                        hovered={hovered?.metrics?.[color] ?? null}
+                        sweep={sweep}
+                        onSweep={onSweep}
+                        control={rangeControl}
+                      />
                     )}
-                    // The QC chip toggles hideQc rather than a value on the colored field - see QC_GROUP.
-                    hidden={hideQc ? new Set([...filters.hidden[color], QC_GROUP]) : filters.hidden[color]}
-                    onToggle={(value) =>
-                      setState(value === QC_GROUP ? { ...state, hideQc: !hideQc } : toggleHidden(state, color, value))
-                    }
-                    highlighted={ringed(color)}
-                    onHover={(value) => onLegendHover(value === null ? null : { kind: "group", field: color, value })}
-                  />
-                )}
               </>
             );
           }}

@@ -16,8 +16,11 @@ import { age_bin_color_map } from "@/common/ageBins";
 import { GNOMAD_POP_COLORS, GNOMAD_POP_LABELS, SUPERPOP_COLORS, SUPERPOP_LABELS } from "./populations";
 import type { MohdRow, ReferenceRow } from "./types";
 
-/** A field a plot can be colored by, and the label shown in its select. */
-export type ColorOption<K> = { key: K; label: string };
+/**
+ * A field a plot can be colored by, and the label shown in its select. `shapeable: false` keeps it
+ * out of the shape select whatever its values: age is ordered, which only a color ramp shows.
+ */
+export type ColorOption<K> = { key: K; label: string; shapeable?: false };
 
 /**
  * `as const` so the keys survive as literals for ColorField below; `satisfies`
@@ -36,7 +39,7 @@ export const MOHD_COLOR_OPTIONS = [
   { key: "site", label: "Site" },
   { key: "recruited_condition", label: "Recruited Condition" },
   { key: "reported_race_ethnicity", label: "Reported Race/Ethnicity" },
-  { key: "age_bin", label: "Age" },
+  { key: "age_bin", label: "Age", shapeable: false },
 ] as const satisfies readonly ColorOption<keyof MohdRow>[];
 
 export type ReferenceColorField = (typeof REFERENCE_COLOR_OPTIONS)[number]["key"];

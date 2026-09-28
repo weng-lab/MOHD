@@ -1,23 +1,20 @@
 "use client";
-import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
-import ATACDimensionalityTable from "./ATACDimensionalityTable";
+import { TwoPaneLayout } from "@weng-lab/ui-components";
 import { ScatterPlot } from "@mui/icons-material";
 import ATACDimensionalityScatterPlot from "./ATACUMAP";
 import ATACDimensionalityPCAPlot from "./ATACPCA";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
 
 import { useATACData, UseATACDataReturn } from "@/common/hooks/omeHooks/useATACData";
+import SampleTable from "@/common/sampleFields/SampleTable";
+import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type ATACMetadata = NonNullable<UseATACDataReturn["data"]>;
 
 export type SharedATACDimenionalityProps = {
-  rows: ATACMetadata;
   ATACData: UseATACDataReturn;
-  selected: ATACMetadata;
-  setSelected: React.Dispatch<React.SetStateAction<ATACMetadata>>;
-  sortedFilteredData: ATACMetadata;
-  tableProps: ReturnType<typeof useTablePlotSync<ATACMetadata[number]>>["tableProps"];
+  sampleTable: SampleTableState<ATACMetadata[number]>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -26,20 +23,11 @@ const ATACDimensionalityReduction = () => {
   const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
   const ATACData = useATACData({ skip: false });
 
-  const rows: ATACMetadata = ATACData.data ?? [];
-
-  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-    rows,
-    getRowId: (row) => row.sample_id,
-  });
+  const sampleTable = useSampleTable("ATAC", ATACData.data);
 
   const SharedATACDimenionalityProps: SharedATACDimenionalityProps = {
-    rows,
     ATACData,
-    selected,
-    setSelected,
-    sortedFilteredData,
-    tableProps,
+    sampleTable,
   };
 
   return (
@@ -47,7 +35,14 @@ const ATACDimensionalityReduction = () => {
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
-      TableComponent={<ATACDimensionalityTable {...SharedATACDimenionalityProps} />}
+      TableComponent={
+        <SampleTable
+          label="ATAC-seq Dimensionality Reduction"
+          table={sampleTable}
+          loading={ATACData.loading}
+          error={ATACData.error}
+        />
+      }
       plots={[
         {
           tabTitle: "PCA",

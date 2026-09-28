@@ -1,13 +1,13 @@
 "use client";
 
-import PlotLegend, { type LegendGroup } from "@/common/components/PlotLegend";
-import type { ShapeScale } from "../model/shapes";
+import PlotLegend, { type LegendGroup } from "./PlotLegend";
+import { shapeOf, type ShapeScale } from "./pointShapes";
 
 export type ShapeLegendProps = {
   /** The field's name, labelling the row so it isn't mistaken for the color legend. */
   label: string;
   scale: ShapeScale;
-  /** The field's groups, as the color legend would build them - see legendGroups. */
+  /** The field's groups, as its color legend would list them. */
   groups: LegendGroup[];
   hidden: ReadonlySet<string>;
   onToggle: (value: string) => void;
@@ -20,17 +20,13 @@ const GLYPH_INK = "currentColor";
 
 /**
  * The legend for the shape encoding, shown while the plot is shaped and colored by different fields
- * (otherwise the color chips carry the glyphs). Its chips toggle the same per-field filters.
+ * (otherwise the color chips carry the glyphs). Its chips toggle the field's filter, as color chips
+ * do, and list every group the color legend would: those the scale doesn't name are circles.
  */
 const ShapeLegend = ({ label, scale, groups, hidden, onToggle, highlighted, onHover }: ShapeLegendProps) => (
   <PlotLegend
     label={label}
-    // Only the values the scale names: QC and Unknown are circles for having no value, which the
-    // color legend accounts for.
-    groups={groups.flatMap((group) => {
-      const shape = scale.get(group.value);
-      return shape ? [{ ...group, shape, color: GLYPH_INK }] : [];
-    })}
+    groups={groups.map((group) => ({ ...group, shape: shapeOf(scale, group.value), color: GLYPH_INK }))}
     hidden={hidden}
     onToggle={onToggle}
     highlighted={highlighted}

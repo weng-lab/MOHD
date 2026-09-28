@@ -1,6 +1,5 @@
 "use client";
-import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
-import MetallomicsDimensionalityTable from "./MetallomicsDimensionalityTable";
+import { TwoPaneLayout } from "@weng-lab/ui-components";
 import { ScatterPlot } from "@mui/icons-material";
 import MetallomicsPCA from "./MetallomicsPCA";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
@@ -9,18 +8,15 @@ import {
   useMetallomicsDimensionalityReduction,
   UseMetallomicsDimensionalityReductionReturn,
 } from "@/common/hooks/omeHooks/useMetallomicsDimensionalityReduction";
-import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
+import SampleTable from "@/common/sampleFields/SampleTable";
+import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type MetallomicsDimenionalityMetadata = NonNullable<UseMetallomicsDimensionalityReductionReturn["data"]>;
 
 export type SharedMetallomicsDimenionalityProps = {
-  rows: MetallomicsDimenionalityMetadata;
   metallomicsMetadata: UseMetallomicsDimensionalityReductionReturn;
-  selected: MetallomicsDimenionalityMetadata;
-  setSelected: React.Dispatch<React.SetStateAction<MetallomicsDimenionalityMetadata>>;
-  sortedFilteredData: MetallomicsDimenionalityMetadata;
-  syncedTableProps: SyncedTableProps<MetallomicsDimenionalityMetadata[number]>;
+  sampleTable: SampleTableState<MetallomicsDimenionalityMetadata[number]>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -28,21 +24,11 @@ const MetallomicsDimensionalityReduction = () => {
   const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
   const metallomicsMetadata = useMetallomicsDimensionalityReduction({ skip: false });
 
-  const rows: MetallomicsDimenionalityMetadata = metallomicsMetadata.data ?? [];
-
-  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-    rows,
-    getRowId: (row) => row.sample_id,
-  });
-  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
+  const sampleTable = useSampleTable("metallomics", metallomicsMetadata.data);
 
   const SharedMetallomicsDimenionalityProps: SharedMetallomicsDimenionalityProps = {
-    rows,
     metallomicsMetadata,
-    selected,
-    setSelected,
-    sortedFilteredData,
-    syncedTableProps,
+    sampleTable,
   };
 
   return (
@@ -50,7 +36,14 @@ const MetallomicsDimensionalityReduction = () => {
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
-      TableComponent={<MetallomicsDimensionalityTable {...SharedMetallomicsDimenionalityProps} />}
+      TableComponent={
+        <SampleTable
+          label="Metallomics Dimensionality Reduction"
+          table={sampleTable}
+          loading={metallomicsMetadata.loading}
+          error={metallomicsMetadata.error}
+        />
+      }
       plots={[
         {
           tabTitle: "PCA",

@@ -10,15 +10,11 @@ import {
   type ColorRange,
   type RampRange,
   type RangePreset,
+  CLIP_PERCENTILE,
+  SEQUENTIAL_RAMP,
 } from "@/common/components/Colorbar/colorbarAxis";
 import { NEUTRAL_MID } from "@/common/components/plotDimming";
-import {
-  CLIP_PERCENTILE,
-  METRIC_RAMP,
-  metricColor,
-  type ContinuousDefinition,
-  type MetricScale,
-} from "../model/metrics";
+import { metricColor, type ContinuousDefinition, type MetricScale } from "../model/metrics";
 
 /** What moving the colors' range needs beyond what the legend already has. */
 export type ColorRangeControl = {
@@ -122,7 +118,7 @@ const MetricLegend = ({
                   <ColorbarGraphic
                     orientation="horizontal"
                     length={BAR_LENGTH}
-                    stops={METRIC_RAMP}
+                    stops={SEQUENTIAL_RAMP}
                     range={range}
                     values={values}
                     format={format}
@@ -140,7 +136,7 @@ const MetricLegend = ({
             </Tooltip>
             {control && (
               <ColorRangeButton
-                stops={METRIC_RAMP}
+                stops={SEQUENTIAL_RAMP}
                 kind="sequential"
                 range={range}
                 values={values}

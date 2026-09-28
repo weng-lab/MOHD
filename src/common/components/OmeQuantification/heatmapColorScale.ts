@@ -1,6 +1,7 @@
-import { formatValue, formatValueBound, fromLogValue, toLogValue } from "@/app/dimensionalityReduction/model/features";
-import { METRIC_RAMP, defaultRange } from "@/app/dimensionalityReduction/model/metrics";
+import { formatValue, formatValueBound, fromLogValue, toLogValue } from "@/common/quantification";
 import {
+  SEQUENTIAL_RAMP,
+  defaultRange,
   percentilePresets,
   reachOf,
   symmetricPresets,
@@ -39,8 +40,11 @@ type Colors = [string, string, ...string[]];
  */
 const DIVERGING_COLORS: Colors = ["#00766c", "#70b9af", "#eeeeee", "#e0946f", "#a34604"];
 
-/** The explorer's ramp, so a value is the same color on both pages. Its stops are within 1% of even. */
-const RAMP_COLORS = METRIC_RAMP.map(({ color }) => color) as unknown as Colors;
+/**
+ * The sequential ramp the explorer colors by too, so a value reads the same on both pages. Its stops
+ * are within 1% of even.
+ */
+const RAMP_COLORS = SEQUENTIAL_RAMP.map(({ color }) => color) as unknown as Colors;
 
 /** Where the z-score scales start: 99% of logged metabolomics cells fall inside, and 98.7% raw. */
 const Z_LIMIT = 3;

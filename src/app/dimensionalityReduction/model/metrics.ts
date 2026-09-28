@@ -1,6 +1,6 @@
 /** ATAC-seq library quality metrics: continuous, so they color along a ramp rather than by group. */
 
-import { colorAt, percentile, type ColorRange } from "@/common/components/Colorbar/colorbarAxis";
+import { SEQUENTIAL_RAMP, colorAt, type ColorRange } from "@/common/components/Colorbar/colorbarAxis";
 import { NEUTRAL_MID } from "@/common/components/plotDimming";
 
 /** In the order the color select lists them. `key` is what a link carries (?color=frip). */
@@ -27,23 +27,6 @@ export const isMetric = (value: string | null): value is Metric => METRICS.some(
 
 export const metricDefinition = (metric: Metric): MetricDefinition => METRICS.find(({ key }) => key === metric)!;
 
-/**
- * The original embedding explorer applet's scale, stops as it has them, so a sample reads the same
- * color in both. Its order is carried by hue, not lightness: the yellow stop is the lightest.
- */
-export const METRIC_RAMP = [
-  { at: 0, color: "#2541b2" },
-  { at: 0.34, color: "#35a6a0" },
-  { at: 0.68, color: "#f6d55c" },
-  { at: 1, color: "#d8422c" },
-] as const;
-
-/**
- * Percentile trimmed off each end before the ramp is stretched across a metric: reads mapped reaches
- * 113M against a 99th percentile of 62M. Samples beyond an end take its color.
- */
-export const CLIP_PERCENTILE = 2;
-
 export type MetricScale = {
   /** The values the two ends of the ramp stand for. */
   low: number;
@@ -52,12 +35,6 @@ export type MetricScale = {
   clippedLow: boolean;
   clippedHigh: boolean;
 };
-
-/** Where a metric's colors stop until the reader moves them: the middle 96% of its values, sorted ascending. */
-export const defaultRange = (sorted: ArrayLike<number>): ColorRange => [
-  percentile(sorted, CLIP_PERCENTILE),
-  percentile(sorted, 100 - CLIP_PERCENTILE),
-];
 
 /** The scale for colors spanning `range`, over a metric's values sorted ascending. */
 export const scaleOver = (sorted: ArrayLike<number>, [low, high]: ColorRange): MetricScale => ({
@@ -76,5 +53,5 @@ export const metricPosition = (scale: MetricScale, value: number) => {
 /** A value's color on the ramp, or the missing neutral for no value. */
 export const metricColor = (scale: MetricScale | null, value: number | null): string => {
   if (scale === null || value === null) return NEUTRAL_MID;
-  return colorAt(METRIC_RAMP, metricPosition(scale, value));
+  return colorAt(SEQUENTIAL_RAMP, metricPosition(scale, value));
 };

@@ -4,6 +4,7 @@
  * a feature at a time rather than carried on the row - see useFeature.
  */
 
+import { formatValue, formatValueBound, fromLogValue } from "@/common/quantification";
 import type { ContinuousDefinition } from "./metrics";
 import type { ExplorerOme } from "./omes";
 
@@ -28,17 +29,6 @@ export type MassSpecOme = (typeof MASS_SPEC_OMES)[number];
 
 export const isMassSpecOme = (value: string | null): value is MassSpecOme =>
   MASS_SPEC_OMES.some((ome) => ome === value);
-
-/**
- * A mass-spec value, compact and to four figures ("142M"): these run from single digits to hundreds
- * of millions. Fixed locale, so server and client render the same.
- */
-export const formatValue = (value: number) =>
-  value.toLocaleString("en-US", { notation: "compact", maximumSignificantDigits: 4 });
-
-/** An end of a color scale, which falls between values, so only its magnitude matters. */
-export const formatValueBound = (value: number) =>
-  value.toLocaleString("en-US", { notation: "compact", maximumSignificantDigits: 2 });
 
 const formatTpm = (tpm: number) => `${tpm.toLocaleString("en-US", { maximumFractionDigits: 2 })} TPM`;
 
@@ -175,15 +165,6 @@ export type FeatureValues = {
   values: ReadonlyMap<string, number> | null;
   status: FeatureStatus;
 };
-
-/**
- * Colored on log10(value + 1): one feature's values span orders of magnitude, which a linear ramp
- * would crush to one end. The + 1 keeps zeros - 22% of metallomics, and real measurements - at the
- * bottom of the ramp rather than at -Infinity.
- */
-export const toLogValue = (value: number) => Math.log10(value + 1);
-
-export const fromLogValue = (log: number) => 10 ** log - 1;
 
 /** How the plot names its coloring, before and after the feature's name is known. */
 export const featureLabel = (kind: FeatureKind, { name }: FeatureValues) =>

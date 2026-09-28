@@ -4,6 +4,7 @@ import { query } from "@/common/apollo/client";
 import DimensionalityReductionExplorer from "./DimensionalityReductionExplorer";
 import ExplorerSkeleton from "./components/ExplorerSkeleton";
 import { sortFeatures } from "./model/features";
+import { isQcKit } from "@/common/sampleFields/fields";
 import { OME_CAPABILITIES, PC_COUNT, type ExplorerOme } from "./model/omes";
 import { GET_DIMENSIONALITY_REDUCTION } from "./data/queries";
 import type { ExplorerData, ExplorerRow, OmeData } from "./model/types";
@@ -30,9 +31,6 @@ type MetadataRow = {
 } & Partial<Record<(typeof PC_KEYS)[number], number | null>>;
 
 type VarianceRow = { pc?: number | null; pve?: number | null };
-
-/** Kits the API gives QC and reference material rather than a participant's sample. */
-const QC_KITS = new Set(["internal_QC", "external_QC", "reference"]);
 
 /** Coordinate precision, in decimal places: more than a plot can draw, and it nearly halves the payload. */
 const COORDINATE_DECIMALS = 5;
@@ -61,7 +59,7 @@ const toOmeData = (
         typeof row.umap_x === "number" && typeof row.umap_y === "number"
           ? [round(row.umap_x), round(row.umap_y)]
           : null,
-      qc: QC_KITS.has(row.kit ?? ""),
+      qc: isQcKit(row.kit),
       site: row.site ?? null,
       status: row.status ?? null,
       sex: row.sex ?? null,

@@ -1,6 +1,5 @@
 "use client";
-import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
-import LipidomicsDimensionalityTable from "./LipidomicsDimensionalityTable";
+import { TwoPaneLayout } from "@weng-lab/ui-components";
 import { ScatterPlot } from "@mui/icons-material";
 import LipidomicsPCA from "./LipidomicsPCA";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
@@ -9,18 +8,15 @@ import {
   useLipidomicsDimensionalityReduction,
   UseLipidomicsDimensionalityReductionReturn,
 } from "@/common/hooks/omeHooks/useLipidomicsDimensionalityReduction";
-import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
+import SampleTable from "@/common/sampleFields/SampleTable";
+import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 
 export type LipidomicsDimenionalityMetadata = NonNullable<UseLipidomicsDimensionalityReductionReturn["data"]>;
 
 export type SharedLipidomicsDimenionalityProps = {
-  rows: LipidomicsDimenionalityMetadata;
   lipidomicsMetadata: UseLipidomicsDimensionalityReductionReturn;
-  selected: LipidomicsDimenionalityMetadata;
-  setSelected: React.Dispatch<React.SetStateAction<LipidomicsDimenionalityMetadata>>;
-  sortedFilteredData: LipidomicsDimenionalityMetadata;
-  syncedTableProps: SyncedTableProps<LipidomicsDimenionalityMetadata[number]>;
+  sampleTable: SampleTableState<LipidomicsDimenionalityMetadata[number]>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -28,21 +24,11 @@ const LipidomicsDimensionalityReduction = () => {
   const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
   const lipidomicsMetadata = useLipidomicsDimensionalityReduction({ skip: false });
 
-  const rows: LipidomicsDimenionalityMetadata = lipidomicsMetadata.data ?? [];
-
-  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-    rows,
-    getRowId: (row) => row.sample_id,
-  });
-  const { syncedTableProps } = useOmeQuantificationTable({ rows, tableProps });
+  const sampleTable = useSampleTable("lipidomics", lipidomicsMetadata.data);
 
   const SharedLipidomicsDimenionalityProps: SharedLipidomicsDimenionalityProps = {
-    rows,
     lipidomicsMetadata,
-    selected,
-    setSelected,
-    sortedFilteredData,
-    syncedTableProps,
+    sampleTable,
   };
 
   return (
@@ -50,7 +36,14 @@ const LipidomicsDimensionalityReduction = () => {
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
-      TableComponent={<LipidomicsDimensionalityTable {...SharedLipidomicsDimenionalityProps} />}
+      TableComponent={
+        <SampleTable
+          label="Lipidomics Dimensionality Reduction"
+          table={sampleTable}
+          loading={lipidomicsMetadata.loading}
+          error={lipidomicsMetadata.error}
+        />
+      }
       plots={[
         {
           tabTitle: "PCA",
