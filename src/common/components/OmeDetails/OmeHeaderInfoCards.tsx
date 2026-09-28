@@ -84,8 +84,6 @@ export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
           rowGap: 1,
           width: "100%",
         }}
-        //mobile spacing
-        justifyContent={"space-between"}
       >
         {stats.map((stat, index) => (
           <Grow in={visible[index]} timeout={500 + index * 140} key={stat.label}>

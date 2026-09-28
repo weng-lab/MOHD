@@ -121,7 +121,7 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
       ) : (
         <>
           {header}
-          <Box sx={{ flexGrow: 1, minHeight: 0 }}>
+          <Box sx={{ flexGrow: 1, minHeight: 0, minWidth: 0 }}>
             <Heatmap {...heatmap} colorDomain={colorDomain} tooltipBody={tooltipBody} />
           </Box>
         </>
@@ -218,7 +218,7 @@ const AdjustableHeatmap = ({
           onClose={() => setEditing(false)}
         />
       </Stack>
-      <Box sx={{ flexGrow: 1, minHeight: 0 }}>
+      <Box sx={{ flexGrow: 1, minHeight: 0, minWidth: 0 }}>
         <Heatmap
           {...heatmap}
           colorDomain={range}

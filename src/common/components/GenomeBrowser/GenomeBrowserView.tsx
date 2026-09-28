@@ -1,55 +1,53 @@
 "use client";
-import { useEffect, useState } from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import HighlightIcon from "@mui/icons-material/Highlight";
-import { Button } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import { Stack, useMediaQuery } from "@mui/system";
 import { ScreenApolloWrapper } from "@/common/apollo/apollo-wrapper";
-import { Browser, createBrowserStore, createTrackStore } from "@weng-lab/genomebrowser";
-import {
-  foldersByAssembly,
-  InitialSelectedIdsByAssembly,
-  type MohdRowInfo,
-  TrackSelect,
-} from "@weng-lab/genomebrowser-ui";
-import BrowserSearch from "./_components/BrowserSearch";
-import ControlButtons from "./_components/ControlButtons";
+import { GenomeBrowser, createBrowserStore, createTrackStore } from "@weng-lab/genomebrowser";
+import BrowserControls from "./_components/BrowserControls";
 import DomainDisplay from "./_components/DomainDisplay";
-import HighlightDialog from "./_components/HighlightDialog";
-import MohdSortControls from "./_components/MohdSortControls";
-import { DEFAULT_BROWSER_STATE } from "./defaultDomain";
+import { DEFAULT_BROWSER_STATE } from "./defaultBrowserState";
+import { RULER_TRACK_ID, TRACK_MODULES, createRulerTrack, createTrackCollections, type MohdOme } from "./tracks";
+import { loadTrackIds, saveTrackIds } from "./trackSelectStorage";
 
-const ASSEMBLY = "GRCh38";
-const FOLDER_IDS = new Set(["human-genes", "human-mohd"]);
-const MOHD_FOLDER_ID = "human-mohd";
-const ALL_FOLDERS = foldersByAssembly[ASSEMBLY].filter((folder) => FOLDER_IDS.has(folder.id));
+const MAX_TRACKS = 30;
 
 export type GenomeBrowserViewProps = {
   /** Tracks selected by default when the browser first loads (and no session-stored selection exists). */
-  initialSelectedIds: InitialSelectedIdsByAssembly;
+  initialSelectedIds: readonly string[];
   /** sessionStorage key used to persist the user's track selection; keep unique per browser instance. */
   sessionStorageKey: string;
-  /** Restricts the MOHD folder (in the browser tracks and the Select Tracks dialog) to a single ome's experiments. */
-  mohdOme?: MohdRowInfo["ome"];
+  /** Restricts the MOHD collection (in the browser tracks and the Select Tracks dialog) to a single ome's experiments. */
+  mohdOme?: MohdOme;
 };
 
 export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKey, mohdOme }: GenomeBrowserViewProps) {
-  const [trackSelectOpen, setTrackSelectOpen] = useState(false);
-  const [highlightOpen, setHighlightOpen] = useState(false);
-
-  const FOLDERS = !mohdOme
-    ? ALL_FOLDERS
-    : ALL_FOLDERS.map((folder) =>
-        folder.id !== MOHD_FOLDER_ID
-          ? folder
-          : {
-              ...folder,
-              rows: (folder.rows as MohdRowInfo[]).filter((row) => row.ome === mohdOme),
-            }
-      );
+  // Keep the collections stable: rebuilding the array re-parses every collection
+  // and can restart TrackSelect's initialization.
+  const { collections, mohdTrackInfoById, validTrackIds } = useMemo(() => createTrackCollections(mohdOme), [mohdOme]);
 
   const [useBrowserStore] = useState(() => createBrowserStore(DEFAULT_BROWSER_STATE));
-  const [useTrackStore] = useState(() => createTrackStore([]));
+  // v2 core ships no track types of its own, and the coordinate ruler is now an
+  // ordinary (pinned) track rather than browser chrome.
+  const [useTrackStore] = useState(() =>
+    createTrackStore({
+      modules: TRACK_MODULES,
+      tracks: [createRulerTrack()],
+      pinnedTrackIds: [RULER_TRACK_ID],
+    })
+  );
+
+  const [restoredTrackIds, setRestoredTrackIds] = useState<readonly string[] | undefined>(undefined);
+
+  // Restore the saved selection after mount. Reading sessionStorage while
+  // rendering would disagree with what the server rendered, so — as with the
+  // download tray — the restore has to land one paint late.
+  // react-doctor-disable-next-line react-doctor/rendering-hydration-no-flicker
+  useEffect(() => {
+    // Deliberate: a lazy useState initializer would read storage during render.
+    // react-doctor-disable-next-line react-hooks-js/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRestoredTrackIds(loadTrackIds(sessionStorageKey, validTrackIds, MAX_TRACKS));
+  }, [sessionStorageKey, validTrackIds]);
 
   const isMedium = useMediaQuery("(max-width:900px)");
   const isSmall = useMediaQuery("(max-width:600px)");
@@ -64,80 +62,25 @@ export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKe
       return;
     }
 
-    useBrowserStore.setState({
-      trackWidth,
-      titleSize,
-      fontSize,
-      browserWidth: trackWidth + current.marginWidth,
-    });
+    useBrowserStore.setState({ trackWidth, titleSize, fontSize });
   }, [trackWidth, titleSize, fontSize, useBrowserStore]);
 
   return (
     <ScreenApolloWrapper>
       <Stack sx={{ overflow: "hidden", px: { xs: 2, md: 4, lg: 6 }, py: 2 }}>
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          spacing={2}
-          justifyContent="space-between"
-          alignItems={{ xs: "stretch", md: "center" }}
-        >
-          <BrowserSearch useBrowserStore={useBrowserStore} />
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1}
-            alignItems={{ xs: "stretch", sm: "center" }}
-            sx={{
-              width: { xs: "100%", md: "auto" },
-            }}
-          >
-            <MohdSortControls folders={FOLDERS} useTrackStore={useTrackStore} />
-            <Button
-              variant="contained"
-              startIcon={<HighlightIcon />}
-              size="small"
-              onClick={() => setHighlightOpen(true)}
-              sx={{ minHeight: 44 }}
-            >
-              Highlights
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<EditIcon />}
-              size="small"
-              onClick={() => setTrackSelectOpen(true)}
-              sx={{ minHeight: 44 }}
-            >
-              Select Tracks
-            </Button>
-          </Stack>
-        </Stack>
-        <Stack
-          direction={{ xs: "column", lg: "row" }}
-          spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
-          border="1px solid rgb(204, 204, 204)"
-          borderBottom="none"
-          p={1}
-          mt={2}
-        >
-          <DomainDisplay useBrowserStore={useBrowserStore} />
-          <ControlButtons useBrowserStore={useBrowserStore} />
-        </Stack>
-        <Browser browserStore={useBrowserStore} trackStore={useTrackStore} />
+        <BrowserControls
+          browserStore={useBrowserStore}
+          trackStore={useTrackStore}
+          collections={collections}
+          mohdTrackInfoById={mohdTrackInfoById}
+          initialTrackIds={restoredTrackIds}
+          defaultTrackIds={initialSelectedIds}
+          maxTracks={MAX_TRACKS}
+          onCommittedTrackIds={(trackIds) => saveTrackIds(sessionStorageKey, trackIds)}
+        />
+        <DomainDisplay useBrowserStore={useBrowserStore} />
+        <GenomeBrowser browserStore={useBrowserStore} trackStore={useTrackStore} />
       </Stack>
-      <HighlightDialog open={highlightOpen} onClose={() => setHighlightOpen(false)} useBrowserStore={useBrowserStore} />
-      <TrackSelect
-        assembly={ASSEMBLY}
-        folders={FOLDERS}
-        initialSelectedIds={initialSelectedIds}
-        sessionStorageKey={sessionStorageKey}
-        trackStore={useTrackStore}
-        maxTracks={30}
-        open={trackSelectOpen}
-        onClose={() => setTrackSelectOpen(false)}
-        title="Select Tracks"
-      />
     </ScreenApolloWrapper>
   );
 }

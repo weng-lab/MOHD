@@ -1,12 +1,14 @@
 import { SyncedTableProps, Table, TableColDef, useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
 import { GridSortModel } from "@mui/x-data-grid-premium";
 import { Typography } from "@mui/material";
+import { MISSING_LABEL, VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
 export type QuantificationSample = {
   sample_id: string;
   site: string;
   status: string;
   sex: string;
+  age_bin?: string | null;
 };
 
 const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
@@ -48,7 +50,17 @@ export const useOmeQuantificationTable = <TSample extends QuantificationSample>(
       type: "singleSelect",
       valueOptions: Array.from(new Set(rows.map((row) => row.sex))).map((sex) => ({
         value: sex,
-        label: sex,
+        label: VALUE_LABEL_OVERRIDES[sex] ?? sex,
+      })),
+    },
+    {
+      field: "age_bin",
+      headerName: "Age",
+      renderCell: (params) => params.value ?? "",
+      type: "singleSelect",
+      valueOptions: Array.from(new Set(rows.map((row) => row.age_bin))).map((age_bin) => ({
+        value: age_bin,
+        label: age_bin ?? MISSING_LABEL,
       })),
     },
   ];

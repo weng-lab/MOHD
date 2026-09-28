@@ -41,12 +41,16 @@ export const site_color_map = {
 
 export const BAR_PLOT_COLORS = ["#4193d4", "#38938a", "#73338f", "#c9803f", "#cd6156"];
 
-export const sex_color_map = {
-  female: "#9d5ca3",
-  male: "#62A35C",
-  "prefer no answer": "lightsteelblue",
-  // As the API sends it; the explorer writes it out as "Prefer no answer".
-  prefer_not_to_answer: "lightsteelblue",
+export const sex_color_map = { female: "#9d5ca3", male: "#62A35C", prefer_not_to_answer: "lightsteelblue" };
+
+/**
+ * Display overrides for raw values whose on-screen wording should read the same
+ * everywhere in the app, regardless of which component renders them - currently
+ * just the "prefer not to answer" survey code, which APIs return as
+ * prefer_not_to_answer.
+ */
+export const VALUE_LABEL_OVERRIDES: Record<string, string> = {
+  prefer_not_to_answer: "Prefer no answer",
 };
 
 export const protocol_color_map = {

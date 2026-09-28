@@ -1,0 +1,5514 @@
+{
+  "ome": "wgbs",
+  "downloadPath": "1_WGBS",
+  "files": [
+    {
+      "suffix": "coverage-minus_GRCh38_v0.bigWig",
+      "fileType": "Signal file of genomic coverage, minus strand"
+    },
+    {
+      "suffix": "coverage-plus_GRCh38_v0.bigWig",
+      "fileType": "Signal file of genomic coverage, plus strand"
+    },
+    {
+      "suffix": "DNAme-CpG-minus_GRCh38_v0.bigWig",
+      "fileType": "Signal file of DNAme level at CpGs, minus strand"
+    },
+    {
+      "suffix": "DNAme-CpG-plus_GRCh38_v0.bigWig",
+      "fileType": "Signal file of DNAme level at CpGs, plus strand"
+    }
+  ],
+  "samples": [
+    {
+      "id": "MOHD_EB100001",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100002",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100003",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100004",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100005",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100006",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100007",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100008",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100009",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100010",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100011",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100012",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100013",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100014",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100015",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100016",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100017",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100018",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100019",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100020",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100021",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100022",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100023",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100024",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100025",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100026",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100027",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100028",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100029",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100030",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100031",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100032",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100033",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100034",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100035",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100036",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100037",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100038",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100039",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100040",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100041",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100042",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100043",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100044",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100045",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100046",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100047",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100048",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100049",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100050",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100051",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100052",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100053",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100054",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100055",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100056",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100057",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100058",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100059",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100060",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100061",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100062",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100063",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100064",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100065",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100066",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100067",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100068",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100069",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100070",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100071",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100072",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100073",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100074",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100075",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100076",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100077",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100078",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100079",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100080",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100081",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100083",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100084",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100085",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100086",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100087",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100088",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100089",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100090",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100091",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100092",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100093",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100094",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100095",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100096",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100097",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100098",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100099",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100100",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100101",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100102",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100103",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100104",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100105",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100106",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100107",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100108",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100109",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100110",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100111",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100112",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100113",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100114",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100115",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100116",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100117",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100118",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100119",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100120",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100121",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100122",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100123",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100124",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100125",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100126",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100127",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100128",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100129",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100130",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100131",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100132",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100133",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100134",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100135",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100136",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100137",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100138",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100139",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100140",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100141",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100142",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100143",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100144",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100145",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100146",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100147",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100148",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100149",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100150",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100151",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100152",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100153",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100154",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100155",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100156",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100157",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100158",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100159",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100160",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100161",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100162",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100163",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100164",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100165",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100166",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100167",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100168",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100169",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100170",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100171",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100172",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100173",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100174",
+      "sex": "male",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100175",
+      "sex": "male",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100176",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100177",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100178",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100179",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100180",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100181",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100182",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100183",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100184",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100185",
+      "sex": "male",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100186",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100187",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100188",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100189",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100190",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100191",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100192",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100193",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100194",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100195",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100196",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100197",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100198",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100199",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100200",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100201",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100202",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100203",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100204",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100205",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100206",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100207",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100210",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100211",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100212",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100213",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100214",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100215",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100216",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100217",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100218",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100219",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100220",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100221",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100222",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100223",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100224",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100225",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100226",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100227",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100228",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100229",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100230",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100232",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100233",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100234",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100235",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100236",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100237",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100238",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100239",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100240",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100241",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100242",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100243",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100245",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100246",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100247",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100248",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100249",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100250",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100251",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100252",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100253",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100254",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100255",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100256",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100257",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100258",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100259",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100260",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100261",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100262",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100263",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100264",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100265",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100266",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100267",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100268",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100269",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100270",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100271",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100272",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100273",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100274",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100275",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100276",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100277",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100278",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100279",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100280",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100281",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100282",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100283",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100284",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100285",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100286",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100287",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100288",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100289",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100290",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100291",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100292",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100293",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100294",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100295",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100296",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100297",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100298",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100299",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100300",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100301",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100302",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100303",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100304",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100305",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100306",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100307",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100308",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100309",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100310",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100311",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100312",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100313",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100314",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100315",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100316",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100317",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100318",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100319",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100320",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100321",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100322",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100323",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100324",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100325",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100326",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100327",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100328",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100329",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100330",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100331",
+      "sex": "male",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100332",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100333",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100334",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100335",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100336",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100337",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100338",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100339",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100340",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100341",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100342",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100343",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100344",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100345",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100346",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100347",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100348",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100349",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100350",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100351",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100352",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100353",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100354",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100355",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100356",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100357",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100358",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100359",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100360",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100361",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100362",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100363",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100364",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100365",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100366",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100367",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100368",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100369",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100370",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100372",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100373",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100374",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100375",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100376",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100377",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100378",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100379",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100380",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100381",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100382",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100383",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100384",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100385",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100386",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100387",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100388",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100389",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100390",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100391",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100392",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100393",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100394",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100395",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100396",
+      "sex": "female",
+      "site": "CKD",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100397",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100398",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100399",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100400",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100401",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100402",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100403",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100404",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100405",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100406",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100407",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100408",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100409",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100410",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100411",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100412",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100413",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100414",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100415",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100416",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100417",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100418",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100419",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100420",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100421",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100422",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100423",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100425",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100426",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100428",
+      "sex": "male",
+      "site": "LEO",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100429",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100430",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100431",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100432",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100433",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100434",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100435",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100436",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100438",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100439",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100440",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100441",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100442",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100443",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100444",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100445",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100446",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100448",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100449",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100450",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100451",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100452",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100453",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100454",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100455",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100456",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100457",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100458",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100459",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100460",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100461",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100462",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100463",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100464",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100465",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100466",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100467",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100468",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100469",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100470",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100471",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100472",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100473",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100474",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100475",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100476",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100477",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100478",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100479",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100480",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100481",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100482",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100483",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100484",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100485",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100486",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100487",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100488",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100489",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100490",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100491",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100492",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100493",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100494",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100495",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100496",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100497",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100498",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100499",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100501",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100502",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100503",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100504",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100505",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100506",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100507",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100508",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100509",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100510",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100511",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100512",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100513",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100514",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100515",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100516",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100517",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100518",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100519",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100520",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100521",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100522",
+      "sex": "female",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100523",
+      "sex": "female",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100524",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100525",
+      "sex": "female",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100526",
+      "sex": "male",
+      "site": "LEO",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100527",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100528",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100529",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100530",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100531",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100532",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100533",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100534",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100535",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100536",
+      "sex": "prefer no answer",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100537",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100538",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100539",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100540",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100541",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100542",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100543",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100544",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100545",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100546",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100547",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100548",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100549",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100550",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100551",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100552",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100553",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100554",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100555",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100556",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100557",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100558",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100559",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100560",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100561",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100562",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100563",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100564",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100565",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100566",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100567",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100568",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100569",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100570",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100571",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100572",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100573",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100574",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100575",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100576",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100577",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100578",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100579",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100581",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100582",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100583",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100584",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100585",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100586",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100587",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100588",
+      "sex": "female",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100589",
+      "sex": "male",
+      "site": "LEO",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100590",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100591",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100593",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100594",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100595",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100596",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100597",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100598",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100599",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100600",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100601",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100602",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100603",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100604",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100605",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100606",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100607",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100608",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100609",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100610",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100611",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100612",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100613",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100614",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100616",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100617",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100618",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100619",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100620",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100621",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100622",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100623",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100624",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100625",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100626",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100627",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100628",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100629",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100630",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100631",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100632",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100633",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100634",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100635",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100636",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100637",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100638",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100639",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100640",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100641",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100642",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100643",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100644",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100645",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100646",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100647",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100648",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100649",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100650",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100651",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100652",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100653",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100654",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100655",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100656",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100657",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100658",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100659",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100660",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100661",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100662",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100663",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100664",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100665",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100666",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100667",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100668",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100669",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100670",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100671",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100672",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100673",
+      "sex": "male",
+      "site": "LEO",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100674",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100675",
+      "sex": "male",
+      "site": "LEO",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100676",
+      "sex": "female",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100677",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100679",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100680",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100681",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100682",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100683",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100684",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100685",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100686",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100687",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100688",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100689",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100690",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100691",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100692",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100693",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100694",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100695",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100696",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100697",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100698",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100699",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100700",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100701",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100702",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100703",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100704",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100705",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100706",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100707",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100708",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100709",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100710",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100711",
+      "sex": "male",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100712",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100713",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100714",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100715",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100716",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100717",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100718",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100719",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100720",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100721",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100722",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100723",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100724",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100725",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100726",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100727",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100728",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100729",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100730",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100731",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100733",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100734",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100735",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100736",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100738",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100739",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100740",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100741",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100742",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100745",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100746",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100747",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100748",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100749",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100750",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100751",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100752",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100753",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100754",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100755",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100756",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100757",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100758",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100759",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100760",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100761",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100762",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100763",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100764",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100765",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100766",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100767",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100768",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100769",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100770",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100771",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100772",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100773",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100774",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100775",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100776",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100777",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100778",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100779",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100780",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100781",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100782",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100783",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100784",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100785",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100786",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100787",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100788",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100789",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100790",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100791",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100792",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100793",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100794",
+      "sex": "female",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100795",
+      "sex": "male",
+      "site": "CCH",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100796",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100797",
+      "sex": "female",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100798",
+      "sex": "male",
+      "site": "CCH",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100799",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100800",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100801",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100802",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100803",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100804",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100805",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100806",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100807",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100808",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100809",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100810",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100811",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100812",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100813",
+      "sex": "female",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100814",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100815",
+      "sex": "male",
+      "site": "CKD",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100816",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100818",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100819",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100820",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100821",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100822",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100823",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100824",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100825",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100826",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100827",
+      "sex": "male",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100828",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100829",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100830",
+      "sex": "female",
+      "site": "EXP",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100831",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100832",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100835",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100836",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100837",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100838",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100839",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100840",
+      "sex": "male",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100841",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100842",
+      "sex": "female",
+      "site": "EXP",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100843",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100844",
+      "sex": "female",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100846",
+      "sex": "female",
+      "site": "LEO",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100847",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100848",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100849",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100851",
+      "sex": "female",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100852",
+      "sex": "male",
+      "site": "LEO",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100853",
+      "sex": "male",
+      "site": "LEO",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100854",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100855",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100856",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100857",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100858",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100859",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100860",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100861",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100862",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100863",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100864",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100865",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100866",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100867",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100868",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100869",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100870",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100871",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100873",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100874",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100875",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100876",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100878",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100879",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100880",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100882",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100883",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100884",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100885",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100886",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100887",
+      "sex": "female",
+      "site": "MOM",
+      "status": "low risk"
+    },
+    {
+      "id": "MOHD_EB100888",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100889",
+      "sex": "female",
+      "site": "MOM",
+      "status": "high risk"
+    },
+    {
+      "id": "MOHD_EB100890",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100891",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100892",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100893",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100894",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100895",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100896",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100897",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100898",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100899",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100900",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100901",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100902",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100903",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100904",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100905",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100906",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100907",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100908",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100909",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100910",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100911",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100912",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100913",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100914",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100915",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100916",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100917",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100918",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100919",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100920",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100921",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100922",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100923",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100925",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100926",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100927",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100928",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100929",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100930",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100931",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100932",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100933",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100934",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100935",
+      "sex": "female",
+      "site": "UIC",
+      "status": "control"
+    },
+    {
+      "id": "MOHD_EB100936",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100937",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100938",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100939",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100940",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100941",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100942",
+      "sex": "male",
+      "site": "UIC",
+      "status": "case"
+    },
+    {
+      "id": "MOHD_EB100943",
+      "sex": "female",
+      "site": "UIC",
+      "status": "case"
+    }
+  ]
+}

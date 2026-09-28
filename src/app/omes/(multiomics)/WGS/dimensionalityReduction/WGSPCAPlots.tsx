@@ -15,6 +15,7 @@ import {
 } from "./fields";
 import { buildGroups, displayValue, groupValue, type GroupInfo } from "./groups";
 import PlotCard from "./PlotCard";
+import PlotTooltip from "@/common/components/PlotTooltip";
 import { useSharedPlotSize } from "./useSharedPlotSize";
 import { PC_COUNT, type MohdRow, type ReferenceRow } from "./types";
 
@@ -75,26 +76,12 @@ const Tooltip = <T,>({
   options: readonly ColorOption<keyof T & ColorField>[];
   dimmed: boolean;
 }) => (
-  <Box sx={{ p: 1 }}>
-    <Typography variant="body2">
-      <strong>{String((row as { sample_id: string }).sample_id)}</strong>
-    </Typography>
-    {/*
-      A dimmed sample says so. The plot hit-tests in draw order, so a dimmed point within a few
-      pixels of one in focus is the one the cursor finds, and without this line the reader is left
-      wondering why the colored point they aimed at named a sample from a group they switched off.
-    */}
-    {dimmed && (
-      <Typography variant="caption" display="block" color="text.secondary" fontStyle="italic">
-        Hidden by the current filters
-      </Typography>
-    )}
-    {options.map(({ key, label }) => (
-      <Typography key={String(key)} variant="caption" display="block">
-        {label}: {displayValue(key, row[key])}
-      </Typography>
-    ))}
-  </Box>
+  <PlotTooltip
+    title={String((row as { sample_id: string }).sample_id)}
+    // Dimmed points can win the hit test, so a dimmed sample says it's hidden.
+    note={dimmed ? "Hidden by the current filters" : undefined}
+    rows={options.map(({ key, label }) => ({ label, value: displayValue(key, row[key]) }))}
+  />
 );
 
 /**

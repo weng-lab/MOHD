@@ -5,13 +5,7 @@ import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { OmesDataType } from "@/common/types/globalTypes";
 import { OME_COLORS } from "@/common/colors";
-import {
-  OME_DESCRIPTIONS,
-  // getGenomeBrowserHref,
-  getOmeIconName,
-  getOmeInfoHref,
-  getOmeLabel,
-} from "./omeContent";
+import { OME_DESCRIPTIONS, getGenomeBrowserHref, getOmeIconName, getOmeInfoHref, getOmeLabel } from "./omeContent";
 
 type OmeInfoCardProps = {
   selectedOme: OmesDataType;
@@ -21,7 +15,8 @@ type OmeInfoCardProps = {
 
 export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfoCardProps) {
   const selectedColor = OME_COLORS[selectedOme.toLowerCase()] ?? "#3f7f79";
-  // const genomeBrowserHref = getGenomeBrowserHref(selectedOme);
+  // null for the omes with no genome-browser-displayable data, which hides the button entirely.
+  const genomeBrowserHref = getGenomeBrowserHref(selectedOme);
 
   return (
     <Box
@@ -38,7 +33,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
         transition: "opacity 320ms ease, transform 320ms ease",
         borderRadius: 3,
         border: "1px solid rgba(255,255,255,0.28)",
-        background: "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(242,249,248,0.68) 100%)",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.90) 0%, rgba(242,249,248,0.85) 100%)",
         boxShadow: "0 24px 60px rgba(0, 0, 0, 0.16)",
         backdropFilter: "blur(16px)",
         color: "text.primary",
@@ -87,7 +82,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
                 </Box>
                 {(selectedOme === "WGS" || selectedOme === "WGBS") && (
                   <Typography variant="h5">
-                    {selectedOme === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
+                    {selectedOme === "WGBS" ? "(Whole Genome Bisulfite Sequencing)" : "(Whole Genome Sequencing)"}
                   </Typography>
                 )}
               </Stack>
@@ -124,7 +119,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
               mt: 2,
             }}
           >
-            Available March 2027
+            Available May 2027
           </Typography>
         ) : (
           <Stack
@@ -134,10 +129,10 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             mt={2}
           >
             <Button
-              // component={genomeBrowserHref ? Link : "button"}
-              // href={genomeBrowserHref ?? undefined}
+              component={genomeBrowserHref ? Link : "button"}
+              href={genomeBrowserHref ?? undefined}
               variant="contained"
-              // disabled={!genomeBrowserHref}
+              disabled={!genomeBrowserHref}
               sx={{
                 minWidth: 170,
                 backgroundColor: "secondary.main",

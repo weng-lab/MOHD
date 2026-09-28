@@ -1,11 +1,12 @@
 import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { useState } from "react";
-import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor } from "@/common/colors";
-import { getAgeBin, age_bin_color_map } from "@/common/ageBins";
-import { Typography, Stack, SelectChangeEvent, Box, useMediaQuery } from "@mui/material";
+import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor, VALUE_LABEL_OVERRIDES } from "@/common/colors";
+import { age_bin_color_map, AGE_UNKNOWN_LABEL } from "@/common/ageBins";
+import { Stack, SelectChangeEvent, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ColorBySelect } from "@/common/components/ColorBySelect";
 import UMAPLegend from "@/common/components/UMAPLegend";
+import PlotTooltip, { PlotTooltipRow } from "@/common/components/PlotTooltip";
 
 export type DimensionalityReductionMeta = {
   sample_id: string;
@@ -13,9 +14,7 @@ export type DimensionalityReductionMeta = {
   status: string;
   site: string;
   protocol?: string;
-  /** Sensitive - only ever surface this as a bin via getAgeBin(), never the raw value. */
-  age_at_enrollment?: number | null;
-  /** Precomputed on the server via getAgeBin(); preferred over age_at_enrollment when present. */
+  /** Binned by the API - raw age is never returned to the client. */
   age_bin?: string | null;
 };
 
@@ -46,29 +45,37 @@ const map = {
   },
 };
 
-const TooltipBody = ({ point, hasProtocol }: { point: Point<DimensionalityReductionMeta>; hasProtocol: boolean }) => {
-  return (
-    <>
-      <Typography>
-        <b>Dataset:</b> {point.metaData?.sample_id}
-      </Typography>
-      <Typography>
-        <b>Status:</b> {getCategoricalLabel("status", point.metaData?.status)}
-      </Typography>
-      <Typography>
-        <b>Site:</b> {getCategoricalLabel("site", point.metaData?.site)}
-      </Typography>
-      <Typography>
-        <b>Sex:</b>{" "}
-        {point.metaData?.sex ? point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1) : MISSING_LABEL}
-      </Typography>
-      {hasProtocol && (
-        <Typography>
-          <b>Protocol:</b> {getCategoricalLabel("protocol", point.metaData?.protocol).replaceAll(" method", "")}
-        </Typography>
-      )}
-    </>
-  );
+const TooltipBody = ({
+  point,
+  hasProtocol,
+  hasAge,
+}: {
+  point: Point<DimensionalityReductionMeta>;
+  hasProtocol: boolean;
+  hasAge: boolean;
+}) => {
+  const rows: PlotTooltipRow[] = [
+    { label: "Status", value: getCategoricalLabel("status", point.metaData?.status) },
+    { label: "Site", value: getCategoricalLabel("site", point.metaData?.site) },
+    {
+      label: "Sex",
+      value: point.metaData?.sex
+        ? (VALUE_LABEL_OVERRIDES[point.metaData.sex] ??
+          point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1))
+        : MISSING_LABEL,
+    },
+  ];
+  if (hasProtocol) {
+    rows.push({
+      label: "Protocol",
+      value: getCategoricalLabel("protocol", point.metaData?.protocol).replaceAll(" method", ""),
+    });
+  }
+  if (hasAge) {
+    rows.push({ label: "Age", value: point.metaData?.age_bin ?? MISSING_LABEL });
+  }
+
+  return <PlotTooltip title={point.metaData?.sample_id} rows={rows} />;
 };
 
 const DimensionalityScatterPlot = <
@@ -93,7 +100,6 @@ const DimensionalityScatterPlot = <
 }: DimensionalityScatterPlotProps<T, S, Z>) => {
   const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol" | "age">("site");
   const theme = useTheme();
-  const isXs = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleColorSchemeChange = (event: SelectChangeEvent) => {
     setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol" | "age");
@@ -104,7 +110,11 @@ const DimensionalityScatterPlot = <
 
   const scatterData: Point<T>[] = !data
     ? []
-    : data.map((x) => {
+    : data.reduce<Point<T>[]>((acc, x) => {
+        const xValue = getX(x);
+        const yValue = getY(x);
+        if (xValue == null || yValue == null) return acc;
+
         const highlighted = isHighlighted(x);
 
         const getColor = () => {
@@ -118,19 +128,20 @@ const DimensionalityScatterPlot = <
             } else if (colorScheme === "protocol") {
               return getCategoricalColor("protocol", getCategoricalLabel("protocol", x.protocol));
             } else if (colorScheme === "age") {
-              return age_bin_color_map[x.age_bin ?? getAgeBin(x.age_at_enrollment)];
+              return age_bin_color_map[x.age_bin ?? AGE_UNKNOWN_LABEL];
             }
           } else return "#CCCCCC";
         };
 
-        return {
-          x: getX(x) ?? 0,
-          y: getY(x) ?? 0,
+        acc.push({
+          x: xValue,
+          y: yValue,
           r: highlighted ? 6 : 4,
           color: getColor(),
           metaData: x,
-        };
-      });
+        });
+        return acc;
+      }, []);
 
   const handlePointsSelected = (selectedPoints: Point<T>[]) => {
     const newlySelected: T[] = [];
@@ -165,7 +176,7 @@ const DimensionalityScatterPlot = <
             flexWrap="wrap"
             mb={1}
           >
-            <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" gap={1} flexWrap="wrap">
+            <Stack direction={"row"} alignItems="center" gap={1} flexWrap="wrap">
               <ColorBySelect
                 colorScheme={colorScheme}
                 handleColorSchemeChange={handleColorSchemeChange}
@@ -176,18 +187,18 @@ const DimensionalityScatterPlot = <
             </Stack>
             <UMAPLegend colorScheme={colorScheme} scatterData={scatterData} />
           </Stack>
-          <Box sx={{ flexGrow: 1 }}>
+          <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: 0 }}>
             <ScatterPlot
               {...rest}
               onSelectionChange={handlePointsSelected}
               onPointClicked={handlePointSelected}
               controlsHighlight={theme.palette.primary.main}
-              controlsPosition={isXs ? "right" : "left"}
+              controlsPosition={"right"}
               pointData={scatterData}
               selectable
               loading={loading}
               miniMap={map}
-              tooltipBody={(point) => <TooltipBody point={point} hasProtocol={hasProtocol} />}
+              tooltipBody={(point) => <TooltipBody point={point} hasProtocol={hasProtocol} hasAge={hasAge} />}
               leftAxisLabel={leftAxisLabel}
               bottomAxisLabel={bottomAxisLabel}
               ref={ref}

@@ -1,26 +1,28 @@
-import { SharedWGBSDimenionalityProps } from "./WGBSDimensionalityReductionClient";
-import type { WGBSRow } from "./types";
+import { WGBSMetadata, SharedWGBSDimenionalityProps } from "./page";
 import { ChartProps } from "@weng-lab/visualization";
 import DimensionalityScatterPlot from "@/common/components/DimensionalityScatterPlot";
 
 export type WGBSDimensionalityUmapProps<
   S extends boolean | undefined,
   Z extends boolean | undefined,
-> = SharedWGBSDimenionalityProps & Partial<ChartProps<WGBSRow, S, Z>>;
+> = SharedWGBSDimenionalityProps & Partial<ChartProps<WGBSMetadata[number], S, Z>>;
 
 const WGBSUMAP = <S extends true, Z extends boolean | undefined>({
   rows,
+  WGBSData,
   selected,
   setSelected,
   ref,
   ...rest
 }: WGBSDimensionalityUmapProps<S, Z>) => {
+  const { loading } = WGBSData;
+
   return (
     <DimensionalityScatterPlot
       {...rest}
       ref={ref}
       data={rows}
-      loading={false}
+      loading={loading}
       selected={selected}
       setSelected={setSelected}
       getX={(row) => row.umap_x}

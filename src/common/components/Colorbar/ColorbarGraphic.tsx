@@ -57,7 +57,6 @@ export type ColorbarGraphicProps = {
   /** Every value on the plot, sorted ascending and unclamped: what the columns count. */
   values: ArrayLike<number>;
   format: (value: number) => string;
-   * precision than the scale's rounded ends: two lipids at 104M and 116M both round to "110M".
   /** How the sweep writes real values, which can want more precision than the scale's rounded ends. */
   formatValue?: (value: number) => string;
   /** What one value is, for the sweep's count: "sample", "cell". */

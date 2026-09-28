@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import DataExplorer from "./DataExplorer";
+import DataExplorerSkeleton from "./DataExplorerSkeleton";
 
 export default function ClinicalDataLanding() {
   return (
@@ -12,7 +14,7 @@ export default function ClinicalDataLanding() {
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "minmax(0, 7fr) minmax(0, 5fr)" },
           alignItems: "stretch",
-          minHeight: { xs: "100dvh", md: "70vh" },
+          minHeight: { xs: "100dvh", sm: "auto", md: "70vh" },
           backgroundImage: "url('/Backgrounds/clinical-landing-bg@4x.png')",
           backgroundRepeat: "no-repeat",
           backgroundPosition: { xs: "35% 20%", md: "top right" },
@@ -37,7 +39,7 @@ export default function ClinicalDataLanding() {
             justifyContent: { xs: "flex-start", md: "center" },
             px: { xs: 3, sm: 4, md: 8, lg: 10 },
             py: { xs: 4, md: 5 },
-            minHeight: { xs: "100dvh", md: "auto" },
+            minHeight: { xs: "100dvh", sm: "auto" },
           }}
         >
           <Typography variant="h4" fontWeight={600}>
@@ -68,7 +70,9 @@ export default function ClinicalDataLanding() {
           </Box>
         </Stack>
       </Box>
-      <DataExplorer />
+      <Suspense fallback={<DataExplorerSkeleton />}>
+        <DataExplorer />
+      </Suspense>
     </Box>
   );
 }

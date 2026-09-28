@@ -2,9 +2,8 @@
  * Client-facing data shapes for the WGS PCA page.
  *
  * These are deliberately NOT the raw GraphQL row type. The server splits the
- * single flat `wgs_pca` type into its two cohorts (the schema packs both into
- * one shape, so every row carries nulls for the other cohort's fields) and
- * bins participant age before anything reaches the browser.
+ * single flat `wgs_pca` type into its two cohorts - the schema packs both into
+ * one shape, so every row carries nulls for the other cohort's fields.
  */
 
 /** Number of principal components exposed by the API. */
@@ -21,7 +20,7 @@ export type ReferenceRow = {
   project: string | null;
 };
 
-/** MOHD cohort samples. Raw age is never included - see ageBin() on the server. */
+/** MOHD cohort samples. Raw age is never included - the API only ever returns age_bin. */
 export type MohdRow = {
   sample_id: string;
   pcs: number[];
@@ -31,7 +30,7 @@ export type MohdRow = {
   recruited_condition: string | null;
   /** May arrive as PRIVACY_BIN rather than a category - see binReportedRace(). */
   reported_race_ethnicity: string | null;
-  /** 10-year band, top-coded at "80+". Raw age stays on the server. */
+  /** 10-year band, top-coded at "80+", binned by the API. */
   age_bin: string | null;
 };
 

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ColumnDatum } from "@weng-lab/visualization";
-import { Typography } from "@mui/material";
 import { SharedMetabolomicsProps } from "./page";
 import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
@@ -11,6 +10,8 @@ import {
   valuesByRow,
   Z_SCORED_MODES,
 } from "@/common/components/OmeQuantification/heatmapColorScale";
+import PlotTooltip from "@/common/components/PlotTooltip";
+import { MISSING_LABEL } from "@/common/colors";
 
 const compoundKey = (compound: string, mode: string) => `${compound}::${mode}`;
 const truncateCompoundName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
@@ -36,7 +37,7 @@ const MetabolomicsQuantificationHeatmap = ({
 
   const compounds = Array.from(
     new Map(
-      samples.flatMap((sample) => sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q] as const))
+      rows.flatMap((sample) => sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q] as const))
     ).values()
   ).sort((a, b) => a.compound.localeCompare(b.compound) || a.mode.localeCompare(b.mode));
   const compoundKeys = compounds.map((compound) => compoundKey(compound.compound, compound.mode));
@@ -77,26 +78,25 @@ const MetabolomicsQuantificationHeatmap = ({
       ref={ref}
       tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as CompoundRowMeta | undefined;
+        const sample = bin.datum.metadata as MetabolomicsSample | undefined;
         return (
-          <>
-            <Typography>
-              <b>Dataset:</b> {bin.datum.columnName}
-            </Typography>
-            <Typography>
-              <b>Compound:</b> {rowMeta?.fullName ?? bin.bin.rowName}
-            </Typography>
-            <Typography>
-              <b>Mode:</b> {rowMeta?.mode}
-            </Typography>
-            <Typography>
-              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
-            </Typography>
-            {rowMeta && (
-              <Typography>
-                <b>Color:</b> {scale.describe(compoundKey(rowMeta.fullName, rowMeta.mode), rowMeta.rawValue, domain)}
-              </Typography>
-            )}
-          </>
+          <PlotTooltip
+            title={bin.datum.columnName}
+            rows={[
+              { label: "Age", value: sample?.age_bin ?? MISSING_LABEL },
+              { label: "Compound", value: rowMeta?.fullName ?? bin.bin.rowName },
+              { label: "Mode", value: rowMeta?.mode },
+              { label: "Value", value: rowMeta?.rawValue ?? "No data" },
+              ...(rowMeta
+                ? [
+                    {
+                      label: "Color",
+                      value: scale.describe(compoundKey(rowMeta.fullName, rowMeta.mode), rowMeta.rawValue, domain),
+                    },
+                  ]
+                : []),
+            ]}
+          />
         );
       }}
     />

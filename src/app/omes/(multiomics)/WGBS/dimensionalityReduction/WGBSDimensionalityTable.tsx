@@ -1,12 +1,12 @@
 import OmeQuantificationTable from "@/common/components/OmeQuantification/OmeQuantificationTable";
-import { SharedWGBSDimenionalityProps } from "./WGBSDimensionalityReductionClient";
+import { SharedWGBSDimenionalityProps } from "./page";
 
-const WGBSDimensionalityTable = ({ rows, syncedTableProps }: SharedWGBSDimenionalityProps) => (
+const WGBSDimensionalityTable = ({ rows, WGBSData, syncedTableProps }: SharedWGBSDimenionalityProps) => (
   <OmeQuantificationTable
     label="WGBS Dimensionality Reduction"
     rows={rows}
-    loading={false}
-    error={undefined}
+    loading={WGBSData.loading}
+    error={WGBSData.error}
     syncedTableProps={syncedTableProps}
   />
 );

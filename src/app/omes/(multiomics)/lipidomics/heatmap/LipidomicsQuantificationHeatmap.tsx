@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ColumnDatum } from "@weng-lab/visualization";
-import { Typography } from "@mui/material";
 import { SharedLipidomicsProps } from "./page";
 import { LipidomicsSample } from "@/common/hooks/omeHooks/useLipidomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
@@ -11,6 +10,8 @@ import {
   valuesByRow,
   Z_SCORED_MODES,
 } from "@/common/components/OmeQuantification/heatmapColorScale";
+import PlotTooltip from "@/common/components/PlotTooltip";
+import { MISSING_LABEL } from "@/common/colors";
 
 const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
 
@@ -34,7 +35,7 @@ const LipidomicsQuantificationHeatmap = ({
   const samples: LipidomicsSample[] = sortedFilteredData;
 
   const molecules = Array.from(
-    new Set(samples.flatMap((sample) => sample.quantification.map((q) => q.molecule_name)))
+    new Set(rows.flatMap((sample) => sample.quantification.map((q) => q.molecule_name)))
   ).sort();
 
   const valueByMoleculePerSample = samples.map(valueByMolecule);
@@ -72,23 +73,19 @@ const LipidomicsQuantificationHeatmap = ({
       ref={ref}
       tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
+        const sample = bin.datum.metadata as LipidomicsSample | undefined;
         return (
-          <>
-            <Typography>
-              <b>Dataset:</b> {bin.datum.columnName}
-            </Typography>
-            <Typography>
-              <b>Molecule:</b> {rowMeta?.fullName ?? bin.bin.rowName}
-            </Typography>
-            <Typography>
-              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
-            </Typography>
-            {rowMeta && (
-              <Typography>
-                <b>Color:</b> {scale.describe(rowMeta.fullName, rowMeta.rawValue, domain)}
-              </Typography>
-            )}
-          </>
+          <PlotTooltip
+            title={bin.datum.columnName}
+            rows={[
+              { label: "Age", value: sample?.age_bin ?? MISSING_LABEL },
+              { label: "Molecule", value: rowMeta?.fullName ?? bin.bin.rowName },
+              { label: "Value", value: rowMeta?.rawValue ?? "No data" },
+              ...(rowMeta
+                ? [{ label: "Color", value: scale.describe(rowMeta.fullName, rowMeta.rawValue, domain) }]
+                : []),
+            ]}
+          />
         );
       }}
     />

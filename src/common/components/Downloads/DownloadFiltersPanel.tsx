@@ -22,6 +22,7 @@ import type { GridFilterModel } from "@mui/x-data-grid-premium";
 import MultiSelect, { type MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
 import { activeFilterCount } from "@/common/components/Downloads/filterModel";
 import { theme } from "@/app/theme";
+import { VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
 const ControlLabelWrapper = ({ label, children }: { label: string; children: ReactNode }) => (
   <Box width={"auto"}>
@@ -197,7 +198,7 @@ export default function DownloadFiltersPanel({
                   >
                     {(datasetOptionsMap[filter.field] ?? []).map((option) => (
                       <ToggleButton key={option} value={option}>
-                        {option}
+                        {VALUE_LABEL_OVERRIDES[option] ?? option}
                       </ToggleButton>
                     ))}
                   </ToggleButtonGroup>

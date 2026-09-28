@@ -60,14 +60,11 @@ export default function ClientAppWrapper({ children }: { children: React.ReactNo
     <DownloadJobsProvider>
       <Box display={"flex"} flexDirection={"column"}>
         {/* Header + content alone fill at least the viewport, so the footer starts below the fold and stays hidden until the user scrolls */}
-        {/* The column track is explicit so a wide child can't inflate it: an implicit auto track floors at its
-        content's min-content width, which for a plot sized from its measured parent width is self-reinforcing —
-        the grid never shrinks back, so neither does the plot. minmax(0, 1fr) keeps the track at the viewport width. */}
         <Box
           id="app-wrapper"
           display={"grid"}
-          gridTemplateColumns={"minmax(0, 1fr)"}
           gridTemplateRows={"auto minmax(0, 1fr)"}
+          gridTemplateColumns={"minmax(0, 1fr)"}
           minHeight={"100vh"}
         >
           <Header maintenance={maintenance} />

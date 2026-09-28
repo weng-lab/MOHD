@@ -10,6 +10,7 @@ query fetchMetallomicsData {
     site
     status
     sex
+    age_bin
     quant_values
   }
   metallomics_metals {
@@ -29,6 +30,7 @@ export type MetallomicsSample = {
   site: string;
   status: string;
   sex: string;
+  age_bin?: string | null;
   quantification: MetallomicsMetalValue[];
 };
 
@@ -54,6 +56,7 @@ const toMetallomicsSamples = (data: FetchMetallomicsDataQuery | undefined): Meta
       site: row.site ?? "",
       status: row.status ?? "",
       sex: row.sex ?? "",
+      age_bin: row.age_bin,
       quantification: metals.map((metal, index) => ({
         metal: metal.metal,
         value: row.quant_values?.[index] ?? null,

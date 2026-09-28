@@ -8,7 +8,7 @@
  * genotype coordinates.
  *
  * Small categories are therefore folded into one bin before the data leaves the
- * server, for the same reason and in the same place as ageBin() - the raw
+ * server, for the same reason age is binned before it ever reaches here - the raw
  * category has to stay out of the cache and the RSC payload, not just off the
  * legend. Binning on the client would leave it in both, and in the point tooltip.
  *

@@ -61,8 +61,19 @@ export default function DatasetsPane({
                           size="small"
                           variant="outlined"
                           startIcon={<Download />}
+                          sx={{ minWidth: 0 }}
                         >
-                          {file.file_type} ({formatBytes(file.size)})
+                          <Box
+                            component="span"
+                            sx={{
+                              minWidth: 0,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {file.file_type} ({formatBytes(file.size)})
+                          </Box>
                         </Button>
                       </Tooltip>
                     ))

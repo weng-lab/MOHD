@@ -44,21 +44,22 @@ const ATACDimensionalityReduction = () => {
 
   return (
     <TwoPaneLayout
+      showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
       TableComponent={<ATACDimensionalityTable {...SharedATACDimenionalityProps} />}
       plots={[
         {
-          tabTitle: "UMAP",
-          icon: <ScatterPlot />,
-          plotComponent: <ATACDimensionalityScatterPlot ref={umapRef} {...SharedATACDimenionalityProps} />,
-          ...umapDownload,
-        },
-        {
           tabTitle: "PCA",
           icon: <ScatterPlot />,
           plotComponent: <ATACDimensionalityPCAPlot ref={pcaRef} {...SharedATACDimenionalityProps} />,
           ...pcaDownload,
+        },
+        {
+          tabTitle: "UMAP",
+          icon: <ScatterPlot />,
+          plotComponent: <ATACDimensionalityScatterPlot ref={umapRef} {...SharedATACDimenionalityProps} />,
+          ...umapDownload,
         },
       ]}
     />

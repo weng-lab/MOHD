@@ -12,6 +12,7 @@
  */
 
 import { sex_color_map, site_color_map, status_color_map } from "@/common/colors";
+import { age_bin_color_map } from "@/common/ageBins";
 import { GNOMAD_POP_COLORS, GNOMAD_POP_LABELS, SUPERPOP_COLORS, SUPERPOP_LABELS } from "./populations";
 import type { MohdRow, ReferenceRow } from "./types";
 
@@ -59,7 +60,10 @@ export type Palette = Record<string, string | undefined>;
  * MOHD fields reuse the maps in src/common/colors.ts, so a site or a case status
  * is the same color here as anywhere else in the app. Reference `sex` shares
  * sex_color_map with MOHD `sex_at_birth` on purpose: the two plots sit side by
- * side, so male and female have to agree across them.
+ * side, so male and female have to agree across them. `age_bin` likewise shares
+ * age_bin_color_map with every other dimensionality reduction plot, rather than
+ * the generic sequential ramp in groups.ts, so an age band reads as the same
+ * color everywhere in the app.
  *
  * Both population fields are named here rather than left to a pool. Their values
  * are a fixed published vocabulary, so a code keeps its color no matter which
@@ -71,6 +75,7 @@ export const FIELD_PALETTES: Partial<Record<ColorField, Palette>> = {
   site: site_color_map,
   sex_at_birth: sex_color_map,
   sex: sex_color_map,
+  age_bin: age_bin_color_map,
   superpop: SUPERPOP_COLORS,
   gnomad_pop: GNOMAD_POP_COLORS,
 };

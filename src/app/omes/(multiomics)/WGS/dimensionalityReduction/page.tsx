@@ -8,21 +8,6 @@ import { PC_COUNT, type MohdRow, type PCAData, type ReferenceRow } from "./types
 import WGSPCAPlots from "./WGSPCAPlots";
 
 /**
- * 10-year age band, top-coded at 80+.
- *
- * Raw age is identifying: at 10-year granularity the oldest participant is alone
- * in a 90-99 band, and would show up as the only point of its color on the plot.
- * Folding 80-89 and above together keeps that top band at n=30, and also satisfies
- * the HIPAA Safe Harbor rule that ages over 89 be aggregated.
- */
-const ageBin = (age: number | null | undefined): string | null => {
-  if (age === null || age === undefined) return null;
-  if (age >= 80) return "80+";
-  const low = Math.floor(age / 10) * 10;
-  return `${low}-${low + 9}`;
-};
-
-/**
  * Coordinate precision, in decimal places.
  *
  * The API returns roughly six significant figures, far more than the plot can
@@ -75,8 +60,7 @@ const getPCAData = async (): Promise<PCAData> => {
         site: row.site ?? null,
         recruited_condition: row.recruited_condition ?? null,
         reported_race_ethnicity: row.reported_race_ethnicity ?? null,
-        // Binned here so raw age never enters the cache or the RSC payload.
-        age_bin: ageBin(row.age),
+        age_bin: row.age_bin ?? null,
       });
     } else {
       reference.push({
@@ -90,10 +74,10 @@ const getPCAData = async (): Promise<PCAData> => {
     }
   }
 
-  // Folded here rather than in the browser, and for the same reason as age above:
-  // a category of one has to stay out of the cache and the RSC payload, not just
-  // off the legend. It also keeps the point tooltip honest for free - the tooltip
-  // reads this field, so a binned row already shows the bin.
+  // Folded here rather than in the browser: a category of one has to stay out of
+  // the cache and the RSC payload, not just off the legend. It also keeps the
+  // point tooltip honest for free - the tooltip reads this field, so a binned
+  // row already shows the bin.
   const { rows: binnedMohd, members } = binReportedRace(mohd);
 
   return { reference, mohd: binnedMohd, pve, binnedRaceEthnicity: members };

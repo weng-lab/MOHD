@@ -11,6 +11,7 @@ query fetchRNAMetadata {
     sex
     site
     status
+    age_bin
     umap_x
     umap_y
     pc1

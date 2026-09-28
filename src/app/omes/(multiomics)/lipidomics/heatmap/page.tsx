@@ -49,6 +49,7 @@ const LipidomicsHeatmap = () => {
 
   return (
     <TwoPaneLayout
+      showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
       TableComponent={<LipidomicsQuantificationTable {...SharedLipidomicsProps} />}

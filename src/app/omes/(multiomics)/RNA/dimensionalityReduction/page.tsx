@@ -44,21 +44,22 @@ const RNADimensionalityReduction = () => {
 
   return (
     <TwoPaneLayout
+      showTabLabels
       direction={{ xs: "column", lg: "row" }}
       rowHeight="max(60vh, 700px)"
       TableComponent={<RNADimensionalityTable {...SharedRNADimenionalityProps} />}
       plots={[
         {
-          tabTitle: "UMAP",
-          icon: <ScatterPlot />,
-          plotComponent: <RNADimensionalityScatterPlot ref={umapRef} {...SharedRNADimenionalityProps} />,
-          ...umapDownload,
-        },
-        {
           tabTitle: "PCA",
           icon: <ScatterPlot />,
           plotComponent: <RNADimensionalityPCAPlot ref={pcaRef} {...SharedRNADimenionalityProps} />,
           ...pcaDownload,
+        },
+        {
+          tabTitle: "UMAP",
+          icon: <ScatterPlot />,
+          plotComponent: <RNADimensionalityScatterPlot ref={umapRef} {...SharedRNADimenionalityProps} />,
+          ...umapDownload,
         },
       ]}
     />

@@ -12,6 +12,7 @@
 import { NEUTRAL_DARK } from "@/common/components/plotDimming";
 import { FIELD_LABELS, FIELD_PALETTES, fallbackPalette, type ColorField, type Palette } from "./fields";
 import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";
+import { VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
 /**
  * The dark end of the shared neutral scale, not the light grey this used to be: filtered-out points
@@ -83,7 +84,7 @@ export const groupValue = (raw: unknown): string =>
  */
 export const displayValue = (key: ColorField, raw: unknown): string => {
   const value = groupValue(raw);
-  return FIELD_LABELS[key]?.[value] ?? value;
+  return FIELD_LABELS[key]?.[value] ?? VALUE_LABEL_OVERRIDES[value] ?? value;
 };
 
 /**

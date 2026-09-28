@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ColumnDatum } from "@weng-lab/visualization";
-import { Typography } from "@mui/material";
 import { MetallomicsSample, SharedMetallomicsProps } from "./page";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
 import HeatmapScaleToggle from "@/common/components/OmeQuantification/HeatmapScaleToggle";
@@ -10,6 +9,8 @@ import {
   valuesByRow,
   Z_SCORED_MODES,
 } from "@/common/components/OmeQuantification/heatmapColorScale";
+import PlotTooltip from "@/common/components/PlotTooltip";
+import { MISSING_LABEL } from "@/common/colors";
 
 export type MetalGroup = "base" | "ucr";
 
@@ -45,7 +46,7 @@ const MetallomicsQuantificationHeatmap = ({
 
   const metals = Array.from(
     new Set(
-      samples.flatMap((sample) =>
+      rows.flatMap((sample) =>
         sample.quantification
           .filter((q): q is NonNullable<typeof q> => q !== null && isInGroup(q.metal, metalGroup))
           .map((q) => q.metal)
@@ -95,23 +96,19 @@ const MetallomicsQuantificationHeatmap = ({
       ref={ref}
       tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as MetalRowMeta | undefined;
+        const sample = bin.datum.metadata as MetallomicsSample | undefined;
         return (
-          <>
-            <Typography>
-              <b>Dataset:</b> {bin.datum.columnName}
-            </Typography>
-            <Typography>
-              <b>Metal:</b> {bin.bin.rowName}
-            </Typography>
-            <Typography>
-              <b>Value:</b> {rowMeta?.rawValue ?? "No data"}
-            </Typography>
-            {rowMeta && (
-              <Typography>
-                <b>Color:</b> {scale.describe(bin.bin.rowName, rowMeta.rawValue, domain)}
-              </Typography>
-            )}
-          </>
+          <PlotTooltip
+            title={bin.datum.columnName}
+            rows={[
+              { label: "Age", value: sample?.age_bin ?? MISSING_LABEL },
+              { label: "Metal", value: bin.bin.rowName },
+              { label: "Value", value: rowMeta?.rawValue ?? "No data" },
+              ...(rowMeta
+                ? [{ label: "Color", value: scale.describe(bin.bin.rowName, rowMeta.rawValue, domain) }]
+                : []),
+            ]}
+          />
         );
       }}
     />
