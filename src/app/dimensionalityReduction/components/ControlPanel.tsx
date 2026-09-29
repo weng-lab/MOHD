@@ -250,20 +250,18 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
             size="small"
             fullWidth
             label="Shape by"
-            value={shape}
+            // A field the data has outgrown shapes nothing, as on the plot - see shapingOf.
+            value={shapeable.some(({ key }) => key === shape) ? shape : NO_SHAPE}
             onChange={(event) => update({ shape: event.target.value as ShapeBy })}
             slotProps={SELECT_SLOT_PROPS}
           >
             <MenuItem value={NO_SHAPE}>None</MenuItem>
-            {/* Unshapeable fields are listed disabled with the reason, rather than silently missing. */}
-            {fields.map(({ key, label }) => {
-              const fits = shapeable.some((option) => option.key === key);
-              return (
-                <MenuItem key={key} value={key} disabled={!fits}>
-                  {fits ? label : `${label} — too many values to shape by`}
-                </MenuItem>
-              );
-            })}
+            {/* Only the fields that can be shaped by: age, with its order, and any with too many values are left out. */}
+            {shapeable.map(({ key, label }) => (
+              <MenuItem key={key} value={key}>
+                {label}
+              </MenuItem>
+            ))}
           </TextField>
         </Section>
 

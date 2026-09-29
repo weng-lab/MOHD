@@ -46,7 +46,7 @@ export type PlotCardProps<K extends ColorField> = {
   onColorByChange: (key: K) => void;
   shapeBy: K | null;
   onShapeByChange: (key: K | null) => void;
-  /** Whether a field's values fit the shape scale. The rest are listed disabled, with the reason. */
+  /** Whether a field can be shaped by: not age, with its order, and not one with too many values. Only these are listed. */
   canShape: (key: K) => boolean;
   color: LegendRow;
   /** While the plot is shaped. Merged into the color chips where both name the same field. */
@@ -158,12 +158,13 @@ const PlotCard = <K extends ColorField>({
               sx={HEADER_SELECT_SX}
             >
               <MenuItem value={NO_SHAPE}>None</MenuItem>
-              {/* Unshapeable fields are listed disabled with the reason, rather than silently missing. */}
-              {options.map((o) => (
-                <MenuItem key={String(o.key)} value={String(o.key)} disabled={!canShape(o.key)}>
-                  {canShape(o.key) ? o.label : `${o.label} — too many values to shape by`}
-                </MenuItem>
-              ))}
+              {options
+                .filter((o) => canShape(o.key))
+                .map((o) => (
+                  <MenuItem key={String(o.key)} value={String(o.key)}>
+                    {o.label}
+                  </MenuItem>
+                ))}
             </TextField>
           </>
         }

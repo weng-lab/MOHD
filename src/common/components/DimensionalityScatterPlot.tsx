@@ -164,7 +164,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
               </MenuItem>
             ))}
           </TextField>
-          <ShapeSelect fields={fields} shapeable={shapeable} value={shaping?.key ?? NO_SHAPE} onChange={setShape} />
+          <ShapeSelect shapeable={shapeable} value={shaping?.key ?? NO_SHAPE} onChange={setShape} />
           {axisSelectors}
         </>
       }
@@ -211,14 +211,13 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
 };
 
 type ShapeSelectProps = {
-  fields: readonly FieldDefinition[];
-  /** The fields that fit the shape scale; the rest are listed disabled, with the reason. */
+  /** The fields that can be shaped by, the only ones listed: age, with its order, and any with too many values are left out. */
   shapeable: readonly FieldDefinition[];
   value: ShapeBy;
   onChange: (value: ShapeBy) => void;
 };
 
-const ShapeSelect = ({ fields, shapeable, value, onChange }: ShapeSelectProps) => (
+const ShapeSelect = ({ shapeable, value, onChange }: ShapeSelectProps) => (
   <TextField
     select
     size="small"
@@ -229,14 +228,11 @@ const ShapeSelect = ({ fields, shapeable, value, onChange }: ShapeSelectProps) =
     sx={HEADER_SELECT_SX}
   >
     <MenuItem value={NO_SHAPE}>None</MenuItem>
-    {fields.map(({ key, label }) => {
-      const fits = shapeable.some((option) => option.key === key);
-      return (
-        <MenuItem key={key} value={key} disabled={!fits}>
-          {fits ? label : `${label} — too many values to shape by`}
-        </MenuItem>
-      );
-    })}
+    {shapeable.map(({ key, label }) => (
+      <MenuItem key={key} value={key}>
+        {label}
+      </MenuItem>
+    ))}
   </TextField>
 );
 
