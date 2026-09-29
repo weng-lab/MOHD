@@ -1,5 +1,6 @@
 import { Skeleton } from "@mui/material";
-import ExplorerLayout, { CARD_SX, PANEL_SX, VIEWPORT_HEIGHT } from "./ExplorerLayout";
+import ExplorerLayout from "./ExplorerLayout";
+import { CARD_SX, PANEL_SX, VIEWPORT_HEIGHT } from "./dimensions";
 
 /** A stand-in shaped like the explorer, for loading.tsx and page.tsx's Suspense alike. */
 const ExplorerSkeleton = () => (

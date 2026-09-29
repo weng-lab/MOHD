@@ -1,18 +1,11 @@
 "use client";
 
 import { getSharedDomains, type Point } from "@weng-lab/visualization";
-import { useState } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
-import {
-  defaultRange,
-  percentilePresets,
-  sameRange,
-  type ColorRange,
-  type RampRange,
-} from "@/common/components/Colorbar/colorbarAxis";
+import type { RampRange } from "@/common/components/Colorbar/colorbarAxis";
 import { dimHidden } from "@/common/components/plotDimming";
 import { shapeOf } from "@/common/components/pointShapes";
-import { fromLogValue, toLogValue } from "@/common/quantification";
+import { toLogValue } from "@/common/quantification";
 import FieldLegends from "@/common/sampleFields/FieldLegends";
 import {
   QC_GROUP,
@@ -24,19 +17,20 @@ import {
   type Field,
 } from "@/common/sampleFields/fields";
 import { passesFilters, toHiddenSets, type Filters } from "@/common/sampleFields/groups";
-import { NO_SHAPE, shapeOptions, shapeScale } from "@/common/sampleFields/shapes";
+import { shapeOptions, shapingOf } from "@/common/sampleFields/shapes";
 import ControlPanel from "./components/ControlPanel";
 import ExplorerLayout from "./components/ExplorerLayout";
 import ExplorerPlot, { type PointMeta } from "./components/ExplorerPlot";
 import FeatureLegend from "./legends/FeatureLegend";
-import MetricLegend, { type ColorRangeControl } from "./legends/MetricLegend";
+import MetricLegend from "./legends/MetricLegend";
 import { colorLabel, isContinuous } from "./model/colorBy";
 import { FEATURE_KINDS, featureLabel, isFeatureColor } from "./model/features";
-import { isMetric, metricColor, metricDefinition, metricPosition, scaleOver } from "./model/metrics";
+import { isMetric, metricColor, metricDefinition, metricPosition } from "./model/metrics";
 import { OME_CAPABILITIES, pcLabel } from "./model/omes";
 import { allRows, rowsFor } from "./model/rows";
 import type { ExplorerData, ExplorerRow } from "./model/types";
-import { toggleHidden, type ExplorerState } from "./state/params";
+import { toggleHidden } from "./state/params";
+import { useColorRange } from "./state/useColorRange";
 import { useExplorerState } from "./state/useExplorerState";
 import { useFeature } from "./data/useFeature";
 
@@ -51,11 +45,6 @@ export type DimensionalityReductionExplorerProps = {
  */
 const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplorerProps) => {
   const [state, setState] = useExplorerState();
-  // The range while the editor is open, written to the URL only on close: frequent URL writes hit
-  // Safari's history limit and React's update depth. Keyed to the state it was set over, so it stops
-  // applying as soon as the URL changes, without a flash of the old range.
-  const [draft, setDraft] = useState<{ range: ColorRange; over: ExplorerState } | null>(null);
-  const draftRange = draft?.over === state ? draft.range : null;
 
   const { ome, method, x, y, color, hideQc } = state;
   const featureKind = OME_CAPABILITIES[ome].feature;
@@ -67,9 +56,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
 
   // What the URL asks to shape by, if the data can carry it. Shapes are assigned across every ome.
   const everyRow = allRows(data);
-  const shapedField =
-    state.shape === NO_SHAPE ? null : (shapeOptions(fields, everyRow).find(({ key }) => key === state.shape) ?? null);
-  const shapes = shapedField ? shapeScale(everyRow, shapedField.key) : null;
+  const shaping = shapingOf(state.shape, shapeOptions(fields, everyRow), everyRow);
 
   const filters: Filters = {
     fields: fields.map(({ key }) => key),
@@ -88,32 +75,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   const allValues = isContinuous(color)
     ? Float64Array.from(data[ome].rows.flatMap((row) => continuousValue(row) ?? [])).sort()
     : new Float64Array();
-  const hasValues = allValues.length > 0;
-  const initialRange = hasValues ? defaultRange(allValues) : null;
-
-  // A link holds the range in the data's own units; the ramp is drawn in log10 for a feature.
-  const [toRamp, fromRamp] = isMetric(color) ? [(v: number) => v, (v: number) => v] : [toLogValue, fromLogValue];
-  const savedRange: ColorRange | null = state.range && [toRamp(state.range[0]), toRamp(state.range[1])];
-  const colorRange = draftRange ?? savedRange ?? initialRange;
-  const scale = hasValues && colorRange ? scaleOver(allValues, colorRange) : null;
-
-  const rangeControl: ColorRangeControl | undefined =
-    hasValues && initialRange
-      ? {
-          defaultRange: initialRange,
-          extent: [allValues[0], allValues[allValues.length - 1]],
-          presets: percentilePresets(allValues),
-          onChange: (range) => setDraft({ range, over: state }),
-          onClose: () => {
-            if (!draftRange) return;
-            // The default is left out of the link, as every other default is.
-            setState({
-              ...state,
-              range: sameRange(draftRange, initialRange) ? null : [fromRamp(draftRange[0]), fromRamp(draftRange[1])],
-            });
-          },
-        }
-      : undefined;
+  const { scale, control: rangeControl } = useColorRange(state, setState, allValues);
 
   /** A row's color, and for a ramp its position on it, which a colorbar sweep matches against. */
   const paint = (row: ExplorerRow) => {
@@ -133,7 +95,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
     row,
     ...paint(row),
     // Undefined where nothing is shaped, leaving the default to the plot.
-    shape: shapedField ? shapeOf(shapes, groupOf(shapedField.key, row)) : undefined,
+    shape: shaping ? shapeOf(shaping.scale, groupOf(shaping.key, row)) : undefined,
     // Raw, not logged, for the hover to quote.
     featureValue: feature.values?.get(row.sample_id) ?? null,
   }));
@@ -180,7 +142,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
           title={`${getOmeLabel(ome)} · ${method}`}
           subtitle={[
             `Colored by ${isFeatureColor(color) && featureKind ? featureLabel(featureKind, feature) : colorLabel(ome, color)}`,
-            shapedField && `Shaped by ${shapedField.label}`,
+            shaping && `Shaped by ${shaping.label}`,
             pca && `PC${x} vs PC${y}`,
           ]
             .filter(Boolean)
@@ -213,7 +175,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                   rows={rows}
                   filters={filters}
                   color={isField(color) ? { key: color, label: colorLabel(ome, color) } : null}
-                  shape={shapedField && shapes && { key: shapedField.key, label: shapedField.label, scale: shapes }}
+                  shape={shaping}
                   onToggle={(field, value) =>
                     setState(value === QC_GROUP ? { ...state, hideQc: !hideQc } : toggleHidden(state, field, value))
                   }

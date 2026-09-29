@@ -18,7 +18,7 @@ import {
   type RampStop,
   type RangePreset,
 } from "./colorbarAxis";
-import { breakPoints } from "./ColorbarGraphic";
+import { breakPoints } from "./colorbarGeometry";
 
 const WIDTH = 348;
 const HISTOGRAM = 56;

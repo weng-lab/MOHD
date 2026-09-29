@@ -62,6 +62,10 @@ export const useQuantification = (ome: MassSpecOme | null, feature: string | nul
     () => undefined
   );
 
+  // The store above is the data layer: a key already loaded or in flight isn't fetched again, and a
+  // response settles only its own key, so a slow one can't race the feature picked after it. Interim,
+  // until the API has a per-feature query for Apollo to serve, as it does for genes.
+  // react-doctor-disable-next-line react-doctor/no-fetch-in-effect -- fetches go through load's dedupe and keyed cache
   useEffect(() => {
     if (ome !== null && feature !== null) load(ome, feature);
   }, [ome, feature]);

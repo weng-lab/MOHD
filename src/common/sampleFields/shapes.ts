@@ -28,3 +28,20 @@ export const shapeScale = (rows: readonly SampleGroups[], field: Field): ShapeSc
  */
 export const shapeOptions = (fields: readonly FieldDefinition[], rows: readonly SampleGroups[]): FieldDefinition[] =>
   fields.filter(({ key, shapeable }) => shapeable && shapeScale(rows, key) !== null);
+
+/** A field a plot is shaped by, and the shape each of its values takes. */
+export type Shaping = { key: Field; label: string; scale: ShapeScale };
+
+/**
+ * What `shape` asks to shape by, if it's one of `options` - see shapeOptions. Null for no shape, and
+ * for a field these samples have outgrown, which a link made before can still name.
+ */
+export const shapingOf = (
+  shape: ShapeBy,
+  options: readonly FieldDefinition[],
+  rows: readonly SampleGroups[]
+): Shaping | null => {
+  const field = shape === NO_SHAPE ? undefined : options.find(({ key }) => key === shape);
+  const scale = field && shapeScale(rows, field.key);
+  return field && scale ? { key: field.key, label: field.label, scale } : null;
+};

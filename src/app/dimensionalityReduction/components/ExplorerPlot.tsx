@@ -4,9 +4,9 @@ import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { ScatterPlot, type Point } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
 import { spotlight } from "@/common/components/plotDimming";
-import { PLOT_HEADER_SX } from "@/common/components/PlotHeader";
+import { PLOT_HEADER_SX } from "@/common/components/plotHeaderSx";
 import PlotTooltip from "@/common/components/PlotTooltip";
-import { CARD_SX } from "./ExplorerLayout";
+import { CARD_SX } from "./dimensions";
 import { FIELDS, groupOf, labelOf, type Field } from "@/common/sampleFields/fields";
 import { METRICS } from "../model/metrics";
 import type { ExplorerRow } from "../model/types";
@@ -60,7 +60,7 @@ const TOOLTIP_DETAILS: { label: string; value: (row: ExplorerRow) => string | nu
 type TooltipBodyProps = {
   row: ExplorerRow;
   dimmed: boolean;
-  /** The feature colouring the plot and this sample's value for it, or null when none is. */
+  /** The feature coloring the plot and this sample's value for it, or null when none is. */
   feature: (PlotFeature & { value: number | null }) | null;
 };
 

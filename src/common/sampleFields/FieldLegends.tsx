@@ -2,9 +2,10 @@
 
 import PlotLegend from "@/common/components/PlotLegend";
 import ShapeLegend from "@/common/components/ShapeLegend";
-import { shapeOf, type ShapeScale } from "@/common/components/pointShapes";
+import { shapeOf } from "@/common/components/pointShapes";
 import { QC_GROUP, type Field, type SampleGroups } from "./fields";
 import { legendGroups, type Filters } from "./groups";
+import type { Shaping } from "./shapes";
 
 /** A chip under the cursor, with its field, since the color and shape rows can both show. */
 export type GroupHover = { field: Field; value: string };
@@ -14,7 +15,7 @@ export type FieldLegendsProps = {
   filters: Filters;
   /** The field coloring the plot, or null where a colorbar stands in for its chips. */
   color: { key: Field; label: string } | null;
-  shape: { key: Field; label: string; scale: ShapeScale } | null;
+  shape: Shaping | null;
   /** A chip clicked. The QC chip's value is QC_GROUP, which stands for the QC samples on any field. */
   onToggle: (field: Field, value: string) => void;
   /** The chip to ring in a field's row: the hovered sample's group, or the hovered chip. */

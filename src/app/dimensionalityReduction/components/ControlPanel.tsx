@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import type { ReactNode } from "react";
 import { getOmeLabel } from "@/app/omes/omeContent";
-import { PANEL_SX } from "./ExplorerLayout";
+import { PANEL_SX } from "./dimensions";
 import { FEATURE_KINDS, isFeatureColor } from "../model/features";
 import { colorOptionsFor, type ColorBy } from "../model/colorBy";
 import { labelOf, type Field } from "@/common/sampleFields/fields";

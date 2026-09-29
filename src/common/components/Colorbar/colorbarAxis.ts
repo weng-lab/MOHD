@@ -244,3 +244,34 @@ export const defaultRange = (sorted: Sorted): ColorRange => [
   percentile(sorted, CLIP_PERCENTILE),
   percentile(sorted, 100 - CLIP_PERCENTILE),
 ];
+
+/**
+ * What a stretch of the bar takes in, as its sweep's tooltip says it: "12 samples (3.4%) · 0.2 – 1.5",
+ * the true lowest and highest inside - at either end of the bar, past where the colors stop. A
+ * clamp's is "10 samples (2.0%) · up to 113M": its near end is the clamp the label already names,
+ * which written to more places than the label's rounding would seem to contradict it.
+ */
+export const describeSweep = (
+  values: ArrayLike<number>,
+  range: ColorRange,
+  sweep: RampRange,
+  noun: string,
+  formatValue: (value: number) => string
+) => {
+  const inside = summarize(values, valuesIn(rangeAxis(range), sweep));
+  if (inside.count === 0) return `No ${noun}s here`;
+  const [lowest, highest] = [formatValue(inside.lowest!), formatValue(inside.highest!)];
+  const clamp = clampOf(sweep);
+  const reach =
+    clamp === "high"
+      ? `up to ${highest}`
+      : clamp === "low"
+        ? `down to ${lowest}`
+        : lowest === highest
+          ? lowest
+          : `${lowest} – ${highest}`;
+  return (
+    `${inside.count.toLocaleString("en-US")} ${noun}${inside.count === 1 ? "" : "s"}` +
+    ` (${formatShare(inside.count, values.length)}) · ${reach}`
+  );
+};

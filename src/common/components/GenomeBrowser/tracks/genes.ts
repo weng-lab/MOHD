@@ -75,8 +75,8 @@ export const genesCollection: TrackCollection = {
       },
       config: {
         url: gencodeDataset.url,
-        // The v1 transcript track coloured MANE Select transcripts separately;
-        // the gene module expresses that as a tag colour.
+        // The v1 transcript track colored MANE Select transcripts separately;
+        // the gene module expresses that as a tag color.
         tagColors: [{ tag: "MANE_Select", color: "#100e98" }],
         highlightColor: "#3c69e8",
       },

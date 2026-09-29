@@ -14,11 +14,12 @@ import {
   type SampleGroups,
 } from "@/common/sampleFields/fields";
 import { passesFilters } from "@/common/sampleFields/groups";
-import { NO_SHAPE, shapeOptions, shapeScale, type ShapeBy } from "@/common/sampleFields/shapes";
+import { NO_SHAPE, shapeOptions, shapingOf, type ShapeBy } from "@/common/sampleFields/shapes";
 import FieldLegends, { type GroupHover } from "@/common/sampleFields/FieldLegends";
 import type { SampleTableState } from "@/common/sampleFields/useSampleTable";
 import PaneFigure from "./PaneFigure";
-import { HEADER_SELECT_SX, PlotHeaderTitle } from "./PlotHeader";
+import { PlotHeaderTitle } from "./PlotHeader";
+import { HEADER_SELECT_SX } from "./plotHeaderSx";
 import { dimHidden, spotlight } from "./plotDimming";
 import { shapeOf } from "./pointShapes";
 import PlotTooltip from "./PlotTooltip";
@@ -78,11 +79,10 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
   const { samples, fields, filters, selected, setSelected } = table;
 
   const shapeable = shapeOptions(fields, samples);
-  const shapedField = shape === NO_SHAPE ? null : (shapeable.find(({ key }) => key === shape) ?? null);
-  const shapes = shapedField && shapeScale(samples, shapedField.key);
+  const shaping = shapingOf(shape, shapeable, samples);
 
   // Filters no legend row shows, named so the reader knows why points are faded.
-  const unshown = table.unshownFilters(shapedField ? [color, shapedField.key] : [color]);
+  const unshown = table.unshownFilters(shaping ? [color, shaping.key] : [color]);
 
   const selectedIds = new Set(selected.map(({ sample_id }) => sample_id));
 
@@ -103,7 +103,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
         r: isSelected && !faded ? 6 : 4,
         color: colorOf(color, groupOf(color, sample)),
         // Undefined where nothing is shaped, leaving the default to the plot.
-        shape: shapedField ? shapeOf(shapes, groupOf(shapedField.key, sample)) : undefined,
+        shape: shaping ? shapeOf(shaping.scale, groupOf(shaping.key, sample)) : undefined,
         metaData: { sample, faded },
       },
     ];
@@ -164,7 +164,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
               </MenuItem>
             ))}
           </TextField>
-          <ShapeSelect fields={fields} shapeable={shapeable} value={shapedField?.key ?? NO_SHAPE} onChange={setShape} />
+          <ShapeSelect fields={fields} shapeable={shapeable} value={shaping?.key ?? NO_SHAPE} onChange={setShape} />
           {axisSelectors}
         </>
       }
@@ -185,8 +185,8 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
             <FieldLegends
               rows={samples}
               filters={filters}
-              color={{ key: color, label: fields.find(({ key }) => key === color)!.label }}
-              shape={shapedField && shapes && { key: shapedField.key, label: shapedField.label, scale: shapes }}
+              color={{ key: color, label: fields.find(({ key }) => key === color)?.label ?? color }}
+              shape={shaping}
               onToggle={table.toggleFilter}
               ringed={(field) =>
                 hovered ? groupOf(field, hovered) : legendHover?.field === field ? legendHover.value : null

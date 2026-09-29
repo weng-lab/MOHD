@@ -2,8 +2,7 @@
 
 import { Tooltip, type TooltipProps } from "@mui/material";
 import { useEffect, useRef, useState, type ReactElement } from "react";
-import { describeSweep } from "./ColorbarGraphic";
-import { clampAt, rangeAt, type ColorRange, type RampRange } from "./colorbarAxis";
+import { clampAt, describeSweep, rangeAt, type ColorRange, type RampRange } from "./colorbarAxis";
 
 export type ColorbarEndProps = {
   end: "low" | "high";

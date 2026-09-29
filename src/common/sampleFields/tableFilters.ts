@@ -166,10 +166,13 @@ export const unshownFilters = (
   filters: Filters,
   fields: readonly FieldDefinition[],
   shownFields: readonly Field[]
-): string[] => [
-  ...fields.filter(({ key }) => !shownFields.includes(key) && filters.hidden[key].size > 0).map(({ label }) => label),
-  ...(model.items.some((item) => item.field === DATASET_COLUMN.field && testOf(item, TEXT_OPERATORS))
-    ? [DATASET_COLUMN.headerName]
-    : []),
-  ...(searchWords(model).length > 0 ? ["search"] : []),
-];
+): string[] => {
+  const shown = new Set(shownFields);
+  return [
+    ...fields.filter(({ key }) => !shown.has(key) && filters.hidden[key].size > 0).map(({ label }) => label),
+    ...(model.items.some((item) => item.field === DATASET_COLUMN.field && testOf(item, TEXT_OPERATORS))
+      ? [DATASET_COLUMN.headerName]
+      : []),
+    ...(searchWords(model).length > 0 ? ["search"] : []),
+  ];
+};

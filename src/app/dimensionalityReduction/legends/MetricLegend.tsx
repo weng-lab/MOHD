@@ -3,7 +3,8 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import ColorbarEnd from "@/common/components/Colorbar/ColorbarEnd";
-import ColorbarGraphic, { colorbarDepth } from "@/common/components/Colorbar/ColorbarGraphic";
+import ColorbarGraphic from "@/common/components/Colorbar/ColorbarGraphic";
+import { colorbarDepth } from "@/common/components/Colorbar/colorbarGeometry";
 import ColorRangeButton from "@/common/components/Colorbar/ColorRangeButton";
 import SteadyText from "@/common/components/Colorbar/SteadyText";
 import {

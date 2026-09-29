@@ -2,7 +2,8 @@
 
 import { Box, MenuItem, Paper, Stack, TextField } from "@mui/material";
 import { useState, type ReactNode, type RefObject } from "react";
-import PlotHeader, { HEADER_SELECT_SX, PlotHeaderTitle } from "@/common/components/PlotHeader";
+import PlotHeader, { PlotHeaderTitle } from "@/common/components/PlotHeader";
+import { HEADER_SELECT_SX } from "@/common/components/plotHeaderSx";
 import PlotLegend from "@/common/components/PlotLegend";
 import ShapeLegend from "@/common/components/ShapeLegend";
 import { shapeOf, type ShapeScale } from "@/common/components/pointShapes";

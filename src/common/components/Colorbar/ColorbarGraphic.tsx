@@ -6,78 +6,20 @@ import { useTheme } from "@mui/material/styles";
 import { useEffect, useId, useRef, useState, type MouseEvent } from "react";
 import {
   clampOf,
-  formatShare,
+  describeSweep,
   histogram,
   rangeAt,
   rangeAxis,
-  summarize,
-  valuesIn,
   type ColorRange,
   type RampRange,
   type RampStop,
 } from "./colorbarAxis";
+import { BAR, GAP, HISTOGRAM, breakPoints, colorbarDepth, type ColorbarOrientation } from "./colorbarGeometry";
 
-export type ColorbarOrientation = "horizontal" | "vertical";
-
-const BAR = 10;
-const GAP = 2;
-/** The histogram's depth: held to a chip row's 24px lying down, roomier standing up beside a heatmap. */
-const HISTOGRAM = { horizontal: 12, vertical: 16 } as const;
 /** Pixels of bar per histogram column. */
 const COLUMN = 5;
 /** Neutral, so the columns read as counts rather than as part of the ramp. */
 const COLUMN_COLOR = blueGrey[700];
-
-/**
- * The slanted cut through a capped column, as polygon points: `from` to `to` across the column,
- * centred `at` along it, climbing `rise` with thickness `gap`. `place` maps those onto the screen.
- */
-export const breakPoints = (
-  place: (across: number, up: number) => [number, number],
-  { from, to, at, rise, gap }: { from: number; to: number; at: number; rise: number; gap: number }
-) =>
-  [
-    place(from, at - rise / 2 - gap / 2),
-    place(to, at + rise / 2 - gap / 2),
-    place(to, at + rise / 2 + gap / 2),
-    place(from, at - rise / 2 + gap / 2),
-  ]
-    .map(([x, y]) => `${x},${y}`)
-    .join(" ");
-
-/**
- * What a stretch of the bar takes in, as its sweep's tooltip says it: "12 samples (3.4%) · 0.2 – 1.5",
- * the true lowest and highest inside - at either end of the bar, past where the colors stop. A
- * clamp's is "10 samples (2.0%) · up to 113M": its near end is the clamp the label already names,
- * which written to more places than the label's rounding would seem to contradict it.
- */
-export const describeSweep = (
-  values: ArrayLike<number>,
-  range: ColorRange,
-  sweep: RampRange,
-  noun: string,
-  formatValue: (value: number) => string
-) => {
-  const inside = summarize(values, valuesIn(rangeAxis(range), sweep));
-  if (inside.count === 0) return `No ${noun}s here`;
-  const [lowest, highest] = [formatValue(inside.lowest!), formatValue(inside.highest!)];
-  const clamp = clampOf(sweep);
-  const reach =
-    clamp === "high"
-      ? `up to ${highest}`
-      : clamp === "low"
-        ? `down to ${lowest}`
-        : lowest === highest
-          ? lowest
-          : `${lowest} – ${highest}`;
-  return (
-    `${inside.count.toLocaleString("en-US")} ${noun}${inside.count === 1 ? "" : "s"}` +
-    ` (${formatShare(inside.count, values.length)}) · ${reach}`
-  );
-};
-
-/** How much room the graphic takes across the bar: histogram, gap and bar. */
-export const colorbarDepth = (orientation: ColorbarOrientation) => HISTOGRAM[orientation] + GAP + BAR;
 
 export type ColorbarGraphicProps = {
   orientation: ColorbarOrientation;

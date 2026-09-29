@@ -2,7 +2,8 @@ import { Heatmap, ColumnDatum, HeatmapProps, DownloadPlotHandle } from "@weng-la
 import { Stack, Box, CircularProgress, Typography } from "@mui/material";
 import { useState, type ReactElement, type ReactNode, type SVGProps } from "react";
 import ColorbarEnd from "../Colorbar/ColorbarEnd";
-import ColorbarGraphic, { colorbarDepth } from "../Colorbar/ColorbarGraphic";
+import ColorbarGraphic from "../Colorbar/ColorbarGraphic";
+import { colorbarDepth } from "../Colorbar/colorbarGeometry";
 import ColorRangeButton from "../Colorbar/ColorRangeButton";
 import SteadyText from "../Colorbar/SteadyText";
 import {

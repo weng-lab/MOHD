@@ -83,7 +83,7 @@ const encodeCohort = <T extends { sample_id: string; pcs: number[] }, K extends 
   const { colorBy, hidden } = view;
   const scale = view.shapeBy && shapeScaleFor(rows, view.shapeBy);
   const shapeBy = scale ? view.shapeBy : null;
-  const labelOf = (key: K) => options.find((option) => option.key === key)!.label;
+  const labelOf = (key: K) => options.find((option) => option.key === key)?.label ?? key;
 
   const colorGroups = buildGroups(rows, colorBy, binMembers);
   const colors = new Map(colorGroups.map((g) => [g.value, g.color]));
