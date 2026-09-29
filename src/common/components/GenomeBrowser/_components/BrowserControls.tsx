@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider, type Theme } from "@mui/material/styles";
 import type { BrowserStoreInstance, TrackCollection, TrackStoreInstance } from "@weng-lab/genomebrowser";
 import { ControlToolbar, HighlightDialog, TrackSelect } from "@weng-lab/genomebrowser-ui";
 import type { MohdTrackInfo } from "../tracks";
-import MohdSortControls from "./MohdSortControls";
+import MohdSortDialog from "./MohdSortDialog";
 
 const ASSEMBLY = "GRCh38";
 
@@ -38,6 +38,7 @@ export default function BrowserControls({
 }) {
   const [highlightOpen, setHighlightOpen] = useState(false);
   const [trackSelectOpen, setTrackSelectOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
 
   return (
     <>
@@ -57,9 +58,9 @@ export default function BrowserControls({
               graphqlUrl: "/api/screen-graphql",
               queries: ["Gene", "SNP", "cCRE", "Coordinate"],
             }}
-            managementActions={<MohdSortControls trackInfoById={mohdTrackInfoById} useTrackStore={trackStore} />}
             onManageHighlights={() => setHighlightOpen(true)}
             onSelectTracks={() => setTrackSelectOpen(true)}
+            onSortTracks={() => setSortOpen(true)}
           />
         </ThemeProvider>
       </Box>
@@ -74,6 +75,12 @@ export default function BrowserControls({
         open={trackSelectOpen}
         onClose={() => setTrackSelectOpen(false)}
         title="Select Tracks"
+      />
+      <MohdSortDialog
+        trackInfoById={mohdTrackInfoById}
+        trackStore={trackStore}
+        open={sortOpen}
+        onClose={() => setSortOpen(false)}
       />
     </>
   );

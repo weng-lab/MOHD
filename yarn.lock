@@ -323,6 +323,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dnd-kit/modifiers@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@dnd-kit/modifiers@npm:9.0.0"
+  dependencies:
+    "@dnd-kit/utilities": "npm:^3.2.2"
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    "@dnd-kit/core": ^6.3.0
+    react: ">=16.8.0"
+  checksum: 10c0/ca8cc9da8296df10774d779c1611074dc327ccc3c49041c102111c98c7f2b2b73b6af5209c0eef6b2fe978ac63dc2a985efa87c85a8d786577304bd2e64cee1d
+  languageName: node
+  linkType: hard
+
 "@dnd-kit/sortable@npm:^10.0.0":
   version: 10.0.0
   resolution: "@dnd-kit/sortable@npm:10.0.0"
@@ -3762,10 +3775,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/genomebrowser-ui@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@weng-lab/genomebrowser-ui@npm:2.0.1"
+"@weng-lab/genomebrowser-ui@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@weng-lab/genomebrowser-ui@npm:2.1.0"
   dependencies:
+    "@dnd-kit/core": "npm:^6.3.1"
+    "@dnd-kit/modifiers": "npm:^9.0.0"
+    "@dnd-kit/sortable": "npm:^10.0.0"
+    "@dnd-kit/utilities": "npm:^3.2.2"
     "@weng-lab/genomebrowser": "npm:^2.0.0"
     "@weng-lab/genomic-reader": "npm:^2.0.0"
     zod: "npm:^4.4.3"
@@ -3780,7 +3797,7 @@ __metadata:
     "@weng-lab/ui-components": ^3.1.4
     react: ^19.2.0
     react-dom: ^19.2.0
-  checksum: 10c0/a1f56ef604655a66b84bdd30303bcd09a862acda157d5315166625a3e294a68dc22aa9d126eb57f81a59fd640f60f67340e78ffea05f7fec25a3a3c8048ac9c4
+  checksum: 10c0/0e39f5f44999abd3072c93dd07554c341690a615f9c4f56ad48472989a23ed394bebd5375b279cf91dccf296a80efa84210f13017b0c0aebd1f3cce610e26e8f
   languageName: node
   linkType: hard
 
@@ -7767,7 +7784,7 @@ __metadata:
     "@visx/visx": "npm:^4"
     "@weng-lab/genomebrowser": "npm:2.0.0"
     "@weng-lab/genomebrowser-tracks": "npm:2.0.0"
-    "@weng-lab/genomebrowser-ui": "npm:2.0.1"
+    "@weng-lab/genomebrowser-ui": "npm:2.1.0"
     "@weng-lab/ui-components": "npm:^3.3.2"
     "@weng-lab/visualization": "npm:^2.5.1"
     babel-plugin-react-compiler: "npm:1.0.0"
