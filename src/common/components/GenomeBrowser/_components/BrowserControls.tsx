@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 import { createTheme, ThemeProvider, type Theme } from "@mui/material/styles";
 import type { BrowserStoreInstance, TrackCollection, TrackStoreInstance } from "@weng-lab/genomebrowser";
 import { ControlToolbar, HighlightDialog, TrackSelect } from "@weng-lab/genomebrowser-ui";
-import type { MohdTrackInfo } from "../tracks";
+import type { MohdOme, MohdTrackInfo } from "../tracks";
 import MohdSortDialog from "./MohdSortDialog";
 
 const ASSEMBLY = "GRCh38";
@@ -22,7 +22,7 @@ export default function BrowserControls({
   trackStore,
   collections,
   mohdTrackInfoById,
-  includeOmeSort,
+  mohdOme,
   initialTrackIds,
   defaultTrackIds,
   maxTracks,
@@ -32,7 +32,7 @@ export default function BrowserControls({
   trackStore: TrackStoreInstance;
   collections: TrackCollection[];
   mohdTrackInfoById: Map<string, MohdTrackInfo>;
-  includeOmeSort: boolean;
+  mohdOme: MohdOme | undefined;
   initialTrackIds: readonly string[] | undefined;
   defaultTrackIds: readonly string[];
   maxTracks: number;
@@ -80,7 +80,7 @@ export default function BrowserControls({
       />
       <MohdSortDialog
         trackInfoById={mohdTrackInfoById}
-        includeOmeSort={includeOmeSort}
+        mohdOme={mohdOme}
         trackStore={trackStore}
         open={sortOpen}
         onClose={() => setSortOpen(false)}
