@@ -13,8 +13,8 @@ const DIMMED_OPACITY = 0.4;
 /**
  * Two grays for groups that aren't categories - a missing value, QC material, a privacy bin - dark
  * enough never to read as faded (~26 ΔE2000 from dimmed points, ~29 from each other). Each page
- * assigns them to keep its own legend distinct: the explorer uses MID for missing and DARK for QC;
- * the WGS page, whose privacy slate sits near MID, uses DARK for "Unknown".
+ * assigns them to keep its own legend distinct: the explorer and ome pages use MID for QC and DARK
+ * for missing; the WGS page, whose privacy slate sits near MID, also uses DARK for "Unknown".
  */
 export const NEUTRAL_MID = "#757575";
 export const NEUTRAL_DARK = "#212121";

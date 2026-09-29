@@ -130,8 +130,8 @@ const UNMAPPED_COLOR = "#37474F";
 
 /** The neutral groups take the shared gray scale's two steps, distinct from each other and from a faded point. */
 export const colorOf = (field: Field, value: string): string => {
-  if (value === QC_GROUP) return NEUTRAL_DARK;
-  if (value === UNKNOWN_GROUP) return NEUTRAL_MID;
+  if (value === QC_GROUP) return NEUTRAL_MID;
+  if (value === UNKNOWN_GROUP) return NEUTRAL_DARK;
   return PALETTES[field][value] ?? UNMAPPED_COLOR;
 };
 
