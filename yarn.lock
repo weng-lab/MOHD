@@ -3811,9 +3811,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/ui-components@npm:^3.3.2":
-  version: 3.3.2
-  resolution: "@weng-lab/ui-components@npm:3.3.2"
+"@weng-lab/ui-components@npm:4.0.0-beta.0":
+  version: 4.0.0-beta.0
+  resolution: "@weng-lab/ui-components@npm:4.0.0-beta.0"
   peerDependencies:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.0
@@ -3822,13 +3822,13 @@ __metadata:
     "@mui/x-data-grid-premium": ^8.18.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/dfed82900149863f31684cc5e6beaa96f227c2e77063dcb98726ccb2ddd51f06ff85546f3313fcdbd5d40b8a78b0af778337af25e426b789b16ff3080ebcfd63
+  checksum: 10c0/85d6548134202a6d8d8ba97f675f495522877236303ebf81eedde72f0e416d152489b29101c3c7111e0836162312aeec34cd0324cfd2913b66790da3434d6f39
   languageName: node
   linkType: hard
 
-"@weng-lab/visualization@npm:2.6.0-beta.0":
-  version: 2.6.0-beta.0
-  resolution: "@weng-lab/visualization@npm:2.6.0-beta.0"
+"@weng-lab/visualization@npm:2.6.0-beta.1":
+  version: 2.6.0-beta.1
+  resolution: "@weng-lab/visualization@npm:2.6.0-beta.1"
   dependencies:
     "@types/d3-hierarchy": "npm:^3.1.7"
     "@types/d3-shape": "npm:^3.1.8"
@@ -3851,7 +3851,7 @@ __metadata:
     "@visx/visx": ^4.0.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/b6feae32920ea76e6d0292b435b2acbf9d4883aada490f733eb575f32deaf7f19aa134fcedc1be71a190d74c12c7dfc53130df689d30e6f49169325204a374b0
+  checksum: 10c0/6a56731b29f9f86d91a8154b3da75285580176414658341ac0957c5db46dc1d7f465cbe9c4a8ec7df7b20f0972369450f30a15cae42971193f5ca14240036edd
   languageName: node
   linkType: hard
 
@@ -7768,8 +7768,8 @@ __metadata:
     "@weng-lab/genomebrowser": "npm:2.0.0"
     "@weng-lab/genomebrowser-tracks": "npm:2.0.0"
     "@weng-lab/genomebrowser-ui": "npm:2.0.1"
-    "@weng-lab/ui-components": "npm:^3.3.2"
-    "@weng-lab/visualization": "npm:2.6.0-beta.0"
+    "@weng-lab/ui-components": "npm:4.0.0-beta.0"
+    "@weng-lab/visualization": "npm:2.6.0-beta.1"
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"
     eslint: "npm:^9.38.0"

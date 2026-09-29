@@ -1,25 +1,21 @@
 "use client";
-import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
-import MetallomicsQuantificationTable from "./MetallomicsQuantificationTable";
+import { TwoPaneLayout } from "@weng-lab/ui-components";
 import { GridOn } from "@mui/icons-material";
 import MetallomicsQuantificationHeatmap from "./MetallomicsQuantificationHeatmap";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
-import { useMetallomicsData, UseMetallomicsDataReturn } from "@/common/hooks/omeHooks/useMetallomicsData";
-import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
+import {
+  useMetallomicsData,
+  UseMetallomicsDataReturn,
+  MetallomicsSample,
+} from "@/common/hooks/omeHooks/useMetallomicsData";
+import SampleTable from "@/common/sampleFields/SampleTable";
+import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
-export type MetallomicsSample = NonNullable<NonNullable<UseMetallomicsDataReturn["data"]>[number]>;
-export type MetallomicsMetadata = MetallomicsSample[];
-
 export type SharedMetallomicsProps = {
-  rows: MetallomicsMetadata;
   metallomicsData: UseMetallomicsDataReturn;
-  selected: MetallomicsMetadata;
-  setSelected: React.Dispatch<React.SetStateAction<MetallomicsMetadata>>;
-  sortedFilteredData: MetallomicsMetadata;
-  syncedTableProps: SyncedTableProps<MetallomicsSample>;
-  autoSort: boolean;
+  sampleTable: SampleTableState<MetallomicsSample>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -28,32 +24,23 @@ const MetallomicsHeatmap = () => {
   const { ref: ucrHeatmapRef, ...ucrHeatmapDownload } = usePlotDownload();
   const metallomicsData = useMetallomicsData({ skip: false });
 
-  const rows: MetallomicsMetadata = metallomicsData.data
-    ? metallomicsData.data.filter((row): row is MetallomicsSample => row !== null)
-    : [];
+  const sampleTable = useSampleTable("metallomics", metallomicsData.data);
 
-  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-    rows,
-    getRowId: (row) => row.sample_id,
-  });
-  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ ome: "metallomics", rows, tableProps });
-
-  const SharedMetallomicsProps: SharedMetallomicsProps = {
-    rows,
-    metallomicsData,
-    selected,
-    setSelected,
-    sortedFilteredData,
-    syncedTableProps,
-    autoSort,
-  };
+  const SharedMetallomicsProps: SharedMetallomicsProps = { metallomicsData, sampleTable };
 
   return (
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
       {...TWO_PANE_HEIGHTS}
-      TableComponent={<MetallomicsQuantificationTable {...SharedMetallomicsProps} />}
+      TableComponent={
+        <SampleTable
+          label="Metallomics Quantification"
+          table={sampleTable}
+          loading={metallomicsData.loading}
+          error={metallomicsData.error}
+        />
+      }
       plots={[
         {
           tabTitle: "Base Metals",

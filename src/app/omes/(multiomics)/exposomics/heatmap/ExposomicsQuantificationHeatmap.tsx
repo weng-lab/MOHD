@@ -27,19 +27,11 @@ type MoleculeRowMeta = {
 const valueByPosition = (sample: ExposomicsSample) =>
   new Map(sample.quantification.map((q) => [String(q.position), q.value]));
 
-const ExposomicsQuantificationHeatmap = ({
-  rows,
-  exposomicsData,
-  sortedFilteredData,
-  selected,
-  setSelected,
-  autoSort,
-  ref,
-}: SharedExposomicsProps) => {
+const ExposomicsQuantificationHeatmap = ({ exposomicsData, sampleTable, ref }: SharedExposomicsProps) => {
   const { loading } = exposomicsData;
+  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { samples: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
-
-  const samples: ExposomicsSample[] = sortedFilteredData;
 
   const molecules = Array.from(
     new Map(samples.flatMap((sample) => sample.quantification.map((q) => [q.position, q] as const))).values()

@@ -21,19 +21,11 @@ type CompoundRowMeta = { fullName: string; mode: string; rawValue: number };
 const valueByCompound = (sample: MetabolomicsSample) =>
   new Map(sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q.value]));
 
-const MetabolomicsQuantificationHeatmap = ({
-  rows,
-  metabolomicsData,
-  sortedFilteredData,
-  selected,
-  setSelected,
-  autoSort,
-  ref,
-}: SharedMetabolomicsProps) => {
+const MetabolomicsQuantificationHeatmap = ({ metabolomicsData, sampleTable, ref }: SharedMetabolomicsProps) => {
   const { loading } = metabolomicsData;
+  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { samples: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
-
-  const samples: MetabolomicsSample[] = sortedFilteredData;
 
   const compounds = Array.from(
     new Map(

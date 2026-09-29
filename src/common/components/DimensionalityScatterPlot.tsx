@@ -12,7 +12,6 @@ import {
   type Field,
   type FieldDefinition,
   type SampleGroups,
-  type SampleRow,
 } from "@/common/sampleFields/fields";
 import { passesFilters } from "@/common/sampleFields/groups";
 import { NO_SHAPE, shapeOptions, shapeScale, type ShapeBy } from "@/common/sampleFields/shapes";
@@ -24,10 +23,8 @@ import { dimHidden, spotlight } from "./plotDimming";
 import { shapeOf } from "./pointShapes";
 import PlotTooltip from "./PlotTooltip";
 
-type Sample<T> = T & SampleGroups;
-
 type PointMeta<T> = {
-  sample: Sample<T>;
+  sample: T;
   /** Why the point is faded, if it is: the table's filters, or a selection it isn't part of. */
   faded: "filtered" | "unselected" | null;
 };
@@ -45,7 +42,7 @@ const SELECT_SLOT_PROPS = { select: { MenuProps: { disableScrollLock: true } } }
 const listOf = (names: readonly string[]) =>
   names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 
-export type DimensionalityScatterPlotProps<T extends SampleRow> = {
+export type DimensionalityScatterPlotProps<T extends SampleGroups> = {
   /** The page's table: the samples, and the selection and filters the plot shares with it. */
   table: SampleTableState<T>;
   loading: boolean;
@@ -64,7 +61,7 @@ export type DimensionalityScatterPlotProps<T extends SampleRow> = {
  * chip legends. The table's filters decide what's faded, and the chips edit them; a selection from
  * the table or the plot fades the rest.
  */
-const DimensionalityScatterPlot = <T extends SampleRow>({
+const DimensionalityScatterPlot = <T extends SampleGroups>({
   table,
   loading,
   getX,
@@ -243,7 +240,7 @@ const ShapeSelect = ({ fields, shapeable, value, onChange }: ShapeSelectProps) =
   </TextField>
 );
 
-type LinkedPlotProps<T extends SampleRow> = {
+type LinkedPlotProps<T extends SampleGroups> = {
   /** Every point, the faded ones first - what dimHidden returns. */
   points: Point<PointMeta<T>>[];
   /** The points in focus, which a hovered chip can swell and set apart. */
@@ -273,7 +270,7 @@ type LinkedPlotProps<T extends SampleRow> = {
  * re-renders only this: React Compiler would otherwise rebuild the points on every hover, restarting
  * ScatterPlot's hover animation - see ExplorerPlot.
  */
-const LinkedPlot = <T extends SampleRow>({
+const LinkedPlot = <T extends SampleGroups>({
   points,
   shown,
   onSelectPoints,

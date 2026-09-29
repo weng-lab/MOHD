@@ -19,10 +19,12 @@ export const sampleColumns = <R extends SampleGroups>(
     field: columnOf(key),
     headerName: label,
     type: "singleSelect",
-    valueGetter: (_value, row) => groupOf(key, row),
+    // Only for a sample: grouped, the grid gives each group's own row an empty model, which would
+    // otherwise read as a sample with no value - "Unknown".
+    valueGetter: (_value, row) => (row.sample_id === undefined ? undefined : groupOf(key, row)),
     valueOptions: groupsOf(samples, key).map((value) => ({ value, label: labelOf(key, value) })),
     renderCell: ({ value, formattedValue }) =>
-      isNeutralGroup(value) ? (
+      value === undefined ? null : isNeutralGroup(value) ? (
         <Box component="span" color="text.secondary">
           {formattedValue}
         </Box>

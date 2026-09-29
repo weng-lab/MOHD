@@ -20,19 +20,11 @@ type MoleculeRowMeta = { fullName: string; rawValue: number };
 const valueByMolecule = (sample: LipidomicsSample) =>
   new Map(sample.quantification.map((q) => [q.molecule_name, q.value]));
 
-const LipidomicsQuantificationHeatmap = ({
-  rows,
-  lipidomicsData,
-  sortedFilteredData,
-  selected,
-  setSelected,
-  autoSort,
-  ref,
-}: SharedLipidomicsProps) => {
+const LipidomicsQuantificationHeatmap = ({ lipidomicsData, sampleTable, ref }: SharedLipidomicsProps) => {
   const { loading } = lipidomicsData;
+  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { samples: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
-
-  const samples: LipidomicsSample[] = sortedFilteredData;
 
   const molecules = Array.from(
     new Set(rows.flatMap((sample) => sample.quantification.map((q) => q.molecule_name)))

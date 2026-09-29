@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ColumnDatum } from "@weng-lab/visualization";
-import { MetallomicsSample, SharedMetallomicsProps } from "./page";
+import { SharedMetallomicsProps } from "./page";
+import { MetallomicsSample } from "@/common/hooks/omeHooks/useMetallomicsData";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
 import HeatmapScaleToggle from "@/common/components/OmeQuantification/HeatmapScaleToggle";
 import {
@@ -29,20 +30,16 @@ type MetallomicsQuantificationHeatmapProps = SharedMetallomicsProps & {
 };
 
 const MetallomicsQuantificationHeatmap = ({
-  rows,
   metallomicsData,
-  sortedFilteredData,
-  selected,
-  setSelected,
-  autoSort,
+  sampleTable,
   metalGroup,
   downloadFileName,
   ref,
 }: MetallomicsQuantificationHeatmapProps) => {
   const { loading } = metallomicsData;
+  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { samples: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
-
-  const samples: MetallomicsSample[] = sortedFilteredData;
 
   const metals = Array.from(
     new Set(

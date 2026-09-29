@@ -1,47 +1,65 @@
-import { GridLogicOperator, type GridSortModel } from "@mui/x-data-grid-premium";
-import { useSyncedTable, useTablePlotSync } from "@weng-lab/ui-components";
-import { useMemo } from "react";
-import { NO_FILTERS, useHeldTableState } from "@/common/hooks/useHeldTableState";
+import { GridLogicOperator, type GridFilterModel, type GridSortModel } from "@mui/x-data-grid-premium";
+import { useTablePlotSync } from "@weng-lab/ui-components";
+import { useMemo, useState } from "react";
 import type { OmesDataType } from "@/common/types/globalTypes";
-import { fieldsFor, toSample, type Field, type SampleRow } from "./fields";
+import { fieldsFor, type Field, type SampleGroups } from "./fields";
 import { sampleColumns } from "./sampleColumns";
 import { filtersFromModel, toggleInModel, unshownFilters } from "./tableFilters";
 
 const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
 
+const NO_FILTERS: GridFilterModel = { items: [] };
+
 /** AND alone, so the table's filters can always be read as chips - see filtersFromModel. */
 const FILTER_PANEL = { logicOperators: [GridLogicOperator.And] };
 
 /** What a page has before its query returns: one array, so the table isn't handed a new one each render. */
-const NO_ROWS: readonly never[] = [];
+const NO_ROWS: never[] = [];
 
 /**
- * An ome page's sample table and what its plots share with it: the selection, and the filters,
- * which the plots' chips read and edit and which fade the points the table filters out.
+ * An ome page's table of samples, and what its plot shares with it: the selection, the table's
+ * filters - which fade the points they filter out, and which a scatter plot's chips read and edit -
+ * and, for a heatmap, the samples in the table's order.
+ *
+ * `data` is the page's data hook's, whose rows come with their QC flagged - see toSample and
+ * toQuantificationSample.
  */
-export const useSampleTable = <R extends SampleRow>(ome: OmesDataType, data: readonly R[] | undefined) => {
-  const rows: readonly R[] = data ?? NO_ROWS;
-  // Memoized by hand: React Compiler leaves values passed into hooks alone, and new rows or columns on
-  // every render send the grid back through its row sync, which renders the page again.
+export const useSampleTable = <R extends SampleGroups>(ome: OmesDataType, data: R[] | undefined) => {
+  const samples: R[] = data ?? NO_ROWS;
+  // Memoized by hand: React Compiler won't, as both go on into calls it assumes may change them, with
+  // hooks called in between. New columns on every render would send the grid back through its row
+  // sync, which renders the page again.
   const fields = useMemo(() => fieldsFor(ome), [ome]);
-  const samples = useMemo(() => rows.map(toSample), [rows]);
   const columns = useMemo(() => sampleColumns(fields, samples), [fields, samples]);
-  const { selected, setSelected, tableProps } = useTablePlotSync({ rows: samples, getRowId: (row) => row.sample_id });
-  const { syncedTableProps } = useSyncedTable({ tableProps, columns, initialSort: INITIAL_SORT, isPresorted: false });
-  const { filterModel, setFilterModel, tableProps: heldProps } = useHeldTableState(INITIAL_SORT);
+
+  const { selected, setSelected, sortedFilteredData, autoSort, tableProps } = useTablePlotSync({
+    rows: samples,
+    getRowId: (row) => row.sample_id,
+    initialSort: INITIAL_SORT,
+  });
+
+  // The table's filters, held here as the one source of truth the chips read and edit.
+  const [filterModel, setFilterModel] = useState<GridFilterModel>(NO_FILTERS);
   const filters = filtersFromModel(filterModel, fields, samples);
 
   return {
+    /** Every sample, in the order the data came in. */
     samples,
     fields,
-    /** Spread onto the Table. */
+    /** Spread onto the Table - see SampleTable. */
     tableProps: {
-      ...syncedTableProps,
-      ...heldProps,
-      slotProps: { ...syncedTableProps.slotProps, filterPanel: FILTER_PANEL },
+      ...tableProps,
+      columns,
+      filterModel,
+      onFilterModelChange: setFilterModel,
+      slotProps: { ...tableProps.slotProps, filterPanel: FILTER_PANEL },
     },
     selected,
     setSelected,
+    /** The samples the table's filters leave in, in its order - a heatmap's columns. */
+    inTableOrder: sortedFilteredData,
+    /** Whether the table keeps selected samples at the top, as a heatmap then keeps its columns. */
+    autoSort,
     filters,
     /** A chip clicked, written to the table's filters. */
     toggleFilter: (field: Field, value: string) =>
@@ -52,4 +70,4 @@ export const useSampleTable = <R extends SampleRow>(ome: OmesDataType, data: rea
   };
 };
 
-export type SampleTableState<R extends SampleRow> = ReturnType<typeof useSampleTable<R>>;
+export type SampleTableState<R extends SampleGroups> = ReturnType<typeof useSampleTable<R>>;

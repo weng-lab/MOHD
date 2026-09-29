@@ -2,6 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchRnaMetadataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import { toSample, type SampleGroups } from "@/common/sampleFields/fields";
 
 const GET_RNA_DATA = gql(`
 query fetchRNAMetadata {
@@ -33,7 +34,8 @@ export type UseRNADataParams = {
 };
 
 export type UseRNADataReturn = {
-  data: FetchRnaMetadataQuery["rna_metadata"] | undefined;
+  /** The API's rows, with QC material flagged by its kit - see toSample. */
+  data: (FetchRnaMetadataQuery["rna_metadata"][number] & SampleGroups)[] | undefined;
   loading: boolean;
   error: ErrorLike | undefined;
 };
@@ -44,7 +46,7 @@ export const useRNAData = ({ skip }: UseRNADataParams): UseRNADataReturn => {
   });
 
   return {
-    data: data?.rna_metadata,
+    data: data?.rna_metadata.map(toSample),
     loading,
     error,
   };

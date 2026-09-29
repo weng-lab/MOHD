@@ -1,6 +1,5 @@
 "use client";
-import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
-import ExposomicsQuantificationTable from "./ExposomicsQuantificationTable";
+import { TwoPaneLayout } from "@weng-lab/ui-components";
 import { GridOn } from "@mui/icons-material";
 import ExposomicsQuantificationHeatmap from "./ExposomicsQuantificationHeatmap";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
@@ -9,20 +8,14 @@ import {
   UseExposomicsDataReturn,
   ExposomicsSample,
 } from "@/common/hooks/omeHooks/useExposomicsData";
-import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
+import SampleTable from "@/common/sampleFields/SampleTable";
+import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
-export type ExposomicsMetadata = ExposomicsSample[];
-
 export type SharedExposomicsProps = {
-  rows: ExposomicsMetadata;
   exposomicsData: UseExposomicsDataReturn;
-  selected: ExposomicsMetadata;
-  setSelected: React.Dispatch<React.SetStateAction<ExposomicsMetadata>>;
-  sortedFilteredData: ExposomicsMetadata;
-  syncedTableProps: SyncedTableProps<ExposomicsSample>;
-  autoSort: boolean;
+  sampleTable: SampleTableState<ExposomicsSample>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -30,30 +23,23 @@ const ExposomicsHeatmap = () => {
   const { ref: heatmapRef, ...heatmapDownload } = usePlotDownload();
   const exposomicsData = useExposomicsData({ skip: false });
 
-  const rows: ExposomicsMetadata = exposomicsData.data ?? [];
+  const sampleTable = useSampleTable("exposomics", exposomicsData.data);
 
-  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-    rows,
-    getRowId: (row) => row.sample_id,
-  });
-  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ ome: "exposomics", rows, tableProps });
-
-  const SharedExposomicsProps: SharedExposomicsProps = {
-    rows,
-    exposomicsData,
-    selected,
-    setSelected,
-    sortedFilteredData,
-    syncedTableProps,
-    autoSort,
-  };
+  const SharedExposomicsProps: SharedExposomicsProps = { exposomicsData, sampleTable };
 
   return (
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
       {...TWO_PANE_HEIGHTS}
-      TableComponent={<ExposomicsQuantificationTable {...SharedExposomicsProps} />}
+      TableComponent={
+        <SampleTable
+          label="Exposomics Quantification"
+          table={sampleTable}
+          loading={exposomicsData.loading}
+          error={exposomicsData.error}
+        />
+      }
       plots={[
         {
           tabTitle: "Heatmap",
