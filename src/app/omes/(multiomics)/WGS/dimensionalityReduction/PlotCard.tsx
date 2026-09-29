@@ -60,7 +60,7 @@ export type PlotCardProps<K extends ColorField> = {
    *
    * Taken as a function, and the hover state kept here rather than on the page, because a hover
    * must not re-render whatever builds the points. React Compiler memoizes in scopes and puts
-   * neighbouring values in one together, so hover state beside the point maths gates it: every
+   * neighboring values in one together, so hover state beside the point math gates it: every
    * chip the cursor crosses then rebuilds both cohorts' pointData. ScatterPlot cancels its 120ms
    * hover growth when pointData changes identity mid-animation, which is one stray re-render away
    * from a highlight that never grows - see ExplorerPlot, where that bug was found.
@@ -101,7 +101,7 @@ const PlotCard = <K extends ColorField>({
   //
   // Only a chip swells a group. A hovered point grows alone and names its groups by ringing their
   // chips, as on the dimensionality reduction explorer: a point sits in a group in both the color
-  // and the shape legend, and swelling either one on the plot would favour it over the other.
+  // and the shape legend, and swelling either one on the plot would favor it over the other.
   const [plotHover, setPlotHover] = useState<PlotHover | null>(null);
   const [legendHover, setLegendHover] = useState<LegendHover | null>(null);
 
@@ -195,7 +195,7 @@ const PlotCard = <K extends ColorField>({
           onHover={hover("color")}
         />
         {/*
-        Bottom-aligned, not centred. Both plots render at the smaller of the two containers, so
+        Bottom-aligned, not centered. Both plots render at the smaller of the two containers, so
         the card with the shorter legend has room to spare below its plot. Pinning the plot to
         the bottom puts both x-axes on the same line, which is what makes the two cohorts
         readable side by side.

@@ -164,7 +164,7 @@ export const clampAt = (end: "low" | "high"): RampRange => (end === "low" ? { fr
 export const clampOf = ({ from, to }: RampRange): "low" | "high" | null =>
   from !== to ? null : from === 0 ? "low" : from === 1 ? "high" : null;
 
-/** The window centred on a place along the bar, slid inward at the ends rather than cut short. */
+/** The window centered on a place along the bar, slid inward at the ends rather than cut short. */
 export const rangeAt = (t: number): RampRange => {
   const from = Math.min(Math.max(t - RANGE_WIDTH / 2, 0), 1 - RANGE_WIDTH);
   return { from, to: from + RANGE_WIDTH };

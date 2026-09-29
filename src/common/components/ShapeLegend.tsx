@@ -4,7 +4,7 @@ import PlotLegend, { type LegendGroup } from "./PlotLegend";
 import { shapeOf, type ShapeScale } from "./pointShapes";
 
 export type ShapeLegendProps = {
-  /** The field's name, labelling the row so it isn't mistaken for the color legend. */
+  /** The field's name, labeling the row so it isn't mistaken for the color legend. */
   label: string;
   scale: ShapeScale;
   /** The field's groups, as its color legend would list them. */

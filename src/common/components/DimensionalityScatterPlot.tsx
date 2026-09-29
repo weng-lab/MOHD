@@ -266,7 +266,7 @@ type LinkedPlotProps<T extends SampleGroups> = {
 };
 
 /**
- * The legend and plot, holding the hover between them. Kept apart from the point maths so a hover
+ * The legend and plot, holding the hover between them. Kept apart from the point math so a hover
  * re-renders only this: React Compiler would otherwise rebuild the points on every hover, restarting
  * ScatterPlot's hover animation - see ExplorerPlot.
  */

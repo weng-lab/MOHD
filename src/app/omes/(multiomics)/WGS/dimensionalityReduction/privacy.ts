@@ -34,7 +34,7 @@ export const PRIVACY_BIN = "Binned for Privacy";
 const MIN_GROUP_SIZE = 10;
 
 /**
- * Slate. Distinct from the MOHD fallback pool and from "Unknown"'s light grey,
+ * Slate. Distinct from the MOHD fallback pool and from "Unknown"'s light gray,
  * and kept clear of the reference plot's Africa teal, which the older, bluer
  * slate sat close enough to (~13 ΔE2000) to pair the two by eye.
  */

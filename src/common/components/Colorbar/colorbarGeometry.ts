@@ -11,7 +11,7 @@ export const colorbarDepth = (orientation: ColorbarOrientation) => HISTOGRAM[ori
 
 /**
  * The slanted cut through a capped column, as polygon points: `from` to `to` across the column,
- * centred `at` along it, climbing `rise` with thickness `gap`. `place` maps those onto the screen.
+ * centered `at` along it, climbing `rise` with thickness `gap`. `place` maps those onto the screen.
  */
 export const breakPoints = (
   place: (across: number, up: number) => [number, number],

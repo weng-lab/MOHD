@@ -109,7 +109,7 @@ export const isNeutralGroup = (value: string) => value === QC_GROUP || value ===
 export const groupOf = (field: Field, row: SampleGroups): string => {
   if (row.qc) return QC_GROUP;
   const value = row[ROW_KEYS[field]];
-  // A recorded "unknown" means the same as no value, and its palette grey would read as faded.
+  // A recorded "unknown" means the same as no value, and its palette gray would read as faded.
   return !value || value.toLowerCase() === UNKNOWN_GROUP.toLowerCase() ? UNKNOWN_GROUP : value;
 };
 
@@ -123,12 +123,12 @@ const PALETTES: Record<Field, Record<string, string>> = {
 };
 
 /**
- * For a value no palette knows yet. Blue-grey, so it can't pass for a faded point, though it's only
+ * For a value no palette knows yet. Blue-gray, so it can't pass for a faded point, though it's only
  * ~14 ΔE2000 from NEUTRAL_DARK against ~15 elsewhere. Nothing reaches it today.
  */
 const UNMAPPED_COLOR = "#37474F";
 
-/** The neutral groups take the shared grey scale's two steps, distinct from each other and from a faded point. */
+/** The neutral groups take the shared gray scale's two steps, distinct from each other and from a faded point. */
 export const colorOf = (field: Field, value: string): string => {
   if (value === QC_GROUP) return NEUTRAL_DARK;
   if (value === UNKNOWN_GROUP) return NEUTRAL_MID;

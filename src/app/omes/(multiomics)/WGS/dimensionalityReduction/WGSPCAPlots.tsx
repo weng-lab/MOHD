@@ -31,7 +31,7 @@ const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => ({ value: i, label
  *
  * Rounded here rather than on the server because the decimal has to be a
  * *rendered* one - a PC that lands on 1.0% is the number 1 once rounded, and
- * would otherwise reach the axis as "1%" beside its neighbours' "41.2%".
+ * would otherwise reach the axis as "1%" beside its neighbors' "41.2%".
  */
 const axisLabel = (pc: number, pve: (number | null)[]) => {
   const value = pve[pc];
@@ -248,7 +248,7 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
       {/*
         Three columns so the axis cluster lands over the gutter between the two
         cards, equidistant from both: it drives them both, and nothing about its
-        position should suggest otherwise. The empty third column is what centres
+        position should suggest otherwise. The empty third column is what centers
         it - there is no content for it to hold.
       */}
       <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }} alignItems="center" gap={1}>

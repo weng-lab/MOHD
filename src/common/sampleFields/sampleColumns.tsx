@@ -8,7 +8,7 @@ export const DATASET_COLUMN = { field: "sample_id", headerName: "Dataset" } as c
 /**
  * The Dataset column, then one per field. A field's column holds the chips' groups rather than the
  * raw value, so filtering it and clicking a chip are the same thing: a QC sample reads
- * "QC / Reference" in every column, and a missing value "Unknown" - both muted, as the plot greys them.
+ * "QC / Reference" in every column, and a missing value "Unknown" - both muted, as the plot grays them.
  */
 export const sampleColumns = <R extends SampleGroups>(
   fields: readonly FieldDefinition[],

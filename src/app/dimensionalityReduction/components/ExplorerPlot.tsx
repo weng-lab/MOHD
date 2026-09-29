@@ -78,7 +78,7 @@ const TooltipBody = ({ row, dimmed, feature }: TooltipBodyProps) => (
         const text = value(row);
         return text ? [{ label, value: text }] : [];
       }),
-      // Shown even with no value: it explains why the point is grey.
+      // Shown even with no value: it explains why the point is gray.
       ...(feature
         ? [{ label: feature.name, value: feature.value === null ? "no value" : feature.format(feature.value) }]
         : []),

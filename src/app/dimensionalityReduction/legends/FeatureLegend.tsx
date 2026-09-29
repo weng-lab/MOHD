@@ -31,7 +31,7 @@ export type FeatureLegendProps = {
 
 /**
  * The colorbar for a feature, or a line of text for the states a metric doesn't have - none picked,
- * loading, failed, or not in the data - which would otherwise all look like the same grey plot.
+ * loading, failed, or not in the data - which would otherwise all look like the same gray plot.
  */
 const FeatureLegend = ({
   kind,

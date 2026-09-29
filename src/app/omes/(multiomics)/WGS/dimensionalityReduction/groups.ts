@@ -1,6 +1,6 @@
 /**
  * Grouping for the PCA plots: one field on a row becomes the ordered, counted,
- * labelled and colored list of groups the legend renders and the plot colors by.
+ * labeled and colored list of groups the legend renders and the plot colors by.
  *
  * The per-field tables this reads - which palette and which labels a field gets,
  * and which fallback pool its cohort draws from - are declared in fields.ts. What
@@ -16,8 +16,8 @@ import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";
 import { VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
 /**
- * The dark end of the shared neutral scale, not the light grey this used to be: filtered-out points
- * are now drawn pale grey, and a stack of them landed on the old #C7C7C7 exactly (0.0 ΔE2000).
+ * The dark end of the shared neutral scale, not the light gray this used to be: filtered-out points
+ * are now drawn pale gray, and a stack of them landed on the old #C7C7C7 exactly (0.0 ΔE2000).
  *
  * The dark end rather than the middle one because the privacy bin's slate is already there, 7
  * ΔE2000 away, and the two share the reported race/ethnicity legend. Moving the bin instead would
@@ -72,7 +72,7 @@ export type GroupInfo = {
   members?: string[];
 };
 
-/** Normalises a raw field value to the group label used by buildGroups. */
+/** Normalizes a raw field value to the group label used by buildGroups. */
 export const groupValue = (raw: unknown): string =>
   raw === null || raw === undefined || raw === "" ? "Unknown" : String(raw);
 
@@ -80,7 +80,7 @@ export const groupValue = (raw: unknown): string =>
  * A field value as the reader should see it - "AFR" reaches the legend as
  * "African". Display only: the value itself stays the group's identity.
  *
- * Takes the raw value rather than a normalised one so the tooltip, which reads
+ * Takes the raw value rather than a normalized one so the tooltip, which reads
  * straight off a row, can use the same lookup the legend does.
  */
 export const displayValue = (key: ColorField, raw: unknown): string => {
@@ -143,7 +143,7 @@ export const buildGroups = <T>(
     label: displayValue(key, value),
     count: counts.get(value) ?? 0,
     members: value === PRIVACY_BIN ? binMembers : undefined,
-    // The palette wins even for "Unknown" - the status map names its own grey.
+    // The palette wins even for "Unknown" - the status map names its own gray.
     // The bin is answered before the qualitative fallback so it takes its own
     // color without advancing the cursor past a real category's.
     color:

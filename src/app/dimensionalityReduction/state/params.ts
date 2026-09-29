@@ -25,7 +25,7 @@ import { NO_SHAPE, isShapeBy, shapeFieldsFor, type ShapeBy } from "@/common/samp
 export type ExplorerState = {
   ome: ExplorerOme;
   method: Method;
-  /** PC on each axis, 1-based as it is labelled. Kept through a switch to UMAP and back. */
+  /** PC on each axis, 1-based as it is labeled. Kept through a switch to UMAP and back. */
   x: number;
   y: number;
   color: ColorBy;
@@ -120,7 +120,7 @@ const parseRange = (raw: string | null): [number, number] | null => {
   return bounds?.length === 2 && bounds.every(Number.isFinite) && bounds[0] < bounds[1] ? [bounds[0], bounds[1]] : null;
 };
 
-/** Reads a state out of search params. Anything unrecognised falls back to its default rather than failing. */
+/** Reads a state out of search params. Anything unrecognized falls back to its default rather than failing. */
 export const parseState = (params: ReadableParams): ExplorerState => {
   const color = params.get("color");
   const shape = params.get("shape");
