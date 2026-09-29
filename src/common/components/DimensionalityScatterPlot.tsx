@@ -304,6 +304,8 @@ const LinkedPlot = <T extends SampleGroups>({
           pointData={spotlight(points, highlighted)}
           loading={loading}
           selectable
+          // Pan first, so a drag moves around the plot; the toolbar switches to lasso selection.
+          initialState={{ controls: { selectionType: "pan" } }}
           onSelectionChange={onSelectPoints}
           onPointClicked={onTogglePoint}
           hoveredPoints={highlighted ?? undefined}
