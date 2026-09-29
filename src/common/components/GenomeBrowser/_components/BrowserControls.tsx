@@ -22,6 +22,7 @@ export default function BrowserControls({
   trackStore,
   collections,
   mohdTrackInfoById,
+  includeOmeSort,
   initialTrackIds,
   defaultTrackIds,
   maxTracks,
@@ -31,6 +32,7 @@ export default function BrowserControls({
   trackStore: TrackStoreInstance;
   collections: TrackCollection[];
   mohdTrackInfoById: Map<string, MohdTrackInfo>;
+  includeOmeSort: boolean;
   initialTrackIds: readonly string[] | undefined;
   defaultTrackIds: readonly string[];
   maxTracks: number;
@@ -78,6 +80,7 @@ export default function BrowserControls({
       />
       <MohdSortDialog
         trackInfoById={mohdTrackInfoById}
+        includeOmeSort={includeOmeSort}
         trackStore={trackStore}
         open={sortOpen}
         onClose={() => setSortOpen(false)}

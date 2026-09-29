@@ -73,6 +73,7 @@ export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKe
           trackStore={useTrackStore}
           collections={collections}
           mohdTrackInfoById={mohdTrackInfoById}
+          includeOmeSort={!mohdOme}
           initialTrackIds={restoredTrackIds}
           defaultTrackIds={initialSelectedIds}
           maxTracks={MAX_TRACKS}
