@@ -16,6 +16,9 @@ export default function OmeAppletsPopover({ anchorEl, currentOme, onClose }: Ome
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
       onClose={onClose}
+      // Leaves the page its scrollbar, which the lock swaps for a blank strip, shifting the layout;
+      // the panel follows its button when the page scrolls instead.
+      disableScrollLock
       anchorOrigin={{
         vertical: "bottom",
         horizontal: "right",

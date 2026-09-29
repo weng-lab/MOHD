@@ -2,6 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchExposomicsDataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import { toQuantificationSample } from "@/common/sampleFields/fields";
 
 const GET_EXPOSOMICS_DATA = gql(`
 query fetchExposomicsData {
@@ -41,6 +42,8 @@ export type ExposomicsMoleculeValue = {
 
 export type ExposomicsSample = {
   sample_id: string;
+  /** QC or reference material rather than a participant's sample - see toQuantificationSample. */
+  qc: boolean;
   site: string;
   status: string;
   sex: string;
@@ -64,24 +67,26 @@ const toExposomicsSamples = (data: FetchExposomicsDataQuery | undefined): Exposo
 
   return data.exposomics_quantification
     .filter((row): row is NonNullable<FetchExposomicsDataQuery["exposomics_quantification"][number]> => row !== null)
-    .map((row) => ({
-      sample_id: row.sample_id,
-      site: row.site ?? "",
-      status: row.status ?? "",
-      sex: row.sex ?? "",
-      quantification: molecules.map((molecule, index) => ({
-        position: molecule.position,
-        molecule_name: molecule.molecule_name ?? "",
-        molecule_list: molecule.molecule_list ?? "",
-        precursor_mz: molecule.precursor_mz ?? null,
-        precursor_ion_type: molecule.precursor_ion_type ?? "",
-        smiles: molecule.smiles ?? "",
-        formula: molecule.formula ?? "",
-        inchikey: molecule.inchikey ?? "",
-        num_detected_samples: molecule.num_detected_samples ?? null,
-        value: row.quant_values?.[index] ?? null,
-      })),
-    }));
+    .map((row) =>
+      toQuantificationSample({
+        sample_id: row.sample_id,
+        site: row.site ?? "",
+        status: row.status ?? "",
+        sex: row.sex ?? "",
+        quantification: molecules.map((molecule, index) => ({
+          position: molecule.position,
+          molecule_name: molecule.molecule_name ?? "",
+          molecule_list: molecule.molecule_list ?? "",
+          precursor_mz: molecule.precursor_mz ?? null,
+          precursor_ion_type: molecule.precursor_ion_type ?? "",
+          smiles: molecule.smiles ?? "",
+          formula: molecule.formula ?? "",
+          inchikey: molecule.inchikey ?? "",
+          num_detected_samples: molecule.num_detected_samples ?? null,
+          value: row.quant_values?.[index] ?? null,
+        })),
+      })
+    );
 };
 
 export const useExposomicsData = ({ skip }: UseExposomicsDataParams): UseExposomicsDataReturn => {

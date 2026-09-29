@@ -2,6 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchMetabolomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import { toQuantificationSample } from "@/common/sampleFields/fields";
 
 const GET_METABOLOMICS_QUANTIFICATION = gql(`
 query fetchMetabolomicsQuantification {
@@ -29,6 +30,8 @@ export type MetabolomicsCompoundValue = {
 
 export type MetabolomicsSample = {
   sample_id: string;
+  /** QC or reference material rather than a participant's sample - see toQuantificationSample. */
+  qc: boolean;
   site: string;
   status: string;
   sex: string;
@@ -58,18 +61,20 @@ const toMetabolomicsSamples = (
       (row): row is NonNullable<FetchMetabolomicsQuantificationQuery["metabolomics_quantification"][number]> =>
         row !== null
     )
-    .map((row) => ({
-      sample_id: row.sample_id,
-      site: row.site ?? "",
-      status: row.status ?? "",
-      sex: row.sex ?? "",
-      age_bin: row.age_bin,
-      quantification: compounds.map((compound, index) => ({
-        compound: compound.compound,
-        mode: compound.mode,
-        value: row.quant_values?.[index] ?? null,
-      })),
-    }));
+    .map((row) =>
+      toQuantificationSample({
+        sample_id: row.sample_id,
+        site: row.site ?? "",
+        status: row.status ?? "",
+        sex: row.sex ?? "",
+        age_bin: row.age_bin,
+        quantification: compounds.map((compound, index) => ({
+          compound: compound.compound,
+          mode: compound.mode,
+          value: row.quant_values?.[index] ?? null,
+        })),
+      })
+    );
 };
 
 export const useMetabolomicsQuantification = ({

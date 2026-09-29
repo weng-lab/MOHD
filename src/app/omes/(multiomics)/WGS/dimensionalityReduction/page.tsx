@@ -15,7 +15,7 @@ import WGSPCAPlots from "./WGSPCAPlots";
  * pixel is 1.1e-4 and a 1e-5 step falls well inside it - the rendered plot is
  * pixel-identical until about 11x zoom. Rounding here takes ~71KB off the
  * gzipped page, a third of its total weight, and costs 26 of the 3,400
- * reference samples a coordinate they shared with a neighbour anyway.
+ * reference samples a coordinate they shared with a neighbor anyway.
  */
 const PC_DECIMALS = 5;
 
@@ -46,7 +46,7 @@ const getPCAData = async (): Promise<PCAData> => {
   for (const row of rows) {
     // The API returns pc1..pc10 as separate fields; an array indexes far more
     // cleanly against the axis selects on the client. Rounded on the way in so
-    // the trimmed values are what gets cached and serialised - see PC_DECIMALS.
+    // the trimmed values are what gets cached and serialized - see PC_DECIMALS.
     const pcs = Array.from({ length: PC_COUNT }, (_, i) =>
       Number((row[`pc${i + 1}` as keyof typeof row] as number).toFixed(PC_DECIMALS))
     );

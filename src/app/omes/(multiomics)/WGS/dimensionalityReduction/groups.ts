@@ -1,6 +1,6 @@
 /**
  * Grouping for the PCA plots: one field on a row becomes the ordered, counted,
- * labelled and colored list of groups the legend renders and the plot colors by.
+ * labeled and colored list of groups the legend renders and the plot colors by.
  *
  * The per-field tables this reads - which palette and which labels a field gets,
  * and which fallback pool its cohort draws from - are declared in fields.ts. What
@@ -9,11 +9,21 @@
  * exists it reads off the color.
  */
 
+import { NEUTRAL_DARK } from "@/common/components/plotDimming";
+import { shapeScaleOf, type ShapeScale } from "@/common/components/pointShapes";
 import { FIELD_LABELS, FIELD_PALETTES, fallbackPalette, type ColorField, type Palette } from "./fields";
 import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";
 import { VALUE_LABEL_OVERRIDES } from "@/common/colors";
 
-const UNKNOWN_COLOR = "#C7C7C7";
+/**
+ * The dark end of the shared neutral scale, not the light gray this used to be: filtered-out points
+ * are now drawn pale gray, and a stack of them landed on the old #C7C7C7 exactly (0.0 ΔE2000).
+ *
+ * The dark end rather than the middle one because the privacy bin's slate is already there, 7
+ * ΔE2000 away, and the two share the reported race/ethnicity legend. Moving the bin instead would
+ * walk back the reason it is slate at all - see PRIVACY_BIN_COLOR.
+ */
+const UNKNOWN_COLOR = NEUTRAL_DARK;
 
 /** Sequential ramp (YlOrBr-like), interpolated for however many bands exist. */
 const RAMP: [number, number, number][] = [
@@ -62,7 +72,7 @@ export type GroupInfo = {
   members?: string[];
 };
 
-/** Normalises a raw field value to the group label used by buildGroups. */
+/** Normalizes a raw field value to the group label used by buildGroups. */
 export const groupValue = (raw: unknown): string =>
   raw === null || raw === undefined || raw === "" ? "Unknown" : String(raw);
 
@@ -70,7 +80,7 @@ export const groupValue = (raw: unknown): string =>
  * A field value as the reader should see it - "AFR" reaches the legend as
  * "African". Display only: the value itself stays the group's identity.
  *
- * Takes the raw value rather than a normalised one so the tooltip, which reads
+ * Takes the raw value rather than a normalized one so the tooltip, which reads
  * straight off a row, can use the same lookup the legend does.
  */
 export const displayValue = (key: ColorField, raw: unknown): string => {
@@ -133,7 +143,7 @@ export const buildGroups = <T>(
     label: displayValue(key, value),
     count: counts.get(value) ?? 0,
     members: value === PRIVACY_BIN ? binMembers : undefined,
-    // The palette wins even for "Unknown" - the status map names its own grey.
+    // The palette wins even for "Unknown" - the status map names its own gray.
     // The bin is answered before the qualitative fallback so it takes its own
     // color without advancing the cursor past a real category's.
     color:
@@ -148,4 +158,29 @@ export const buildGroups = <T>(
               sequentialColor(i, bands.length)
             : fallback[cursor++ % fallback.length]),
   }));
+};
+
+/** The same groups, in the same order and colors, counted over the rows another legend's filter leaves in. */
+export const recount = <T>(groups: GroupInfo[], rows: T[], key: keyof T & ColorField): GroupInfo[] => {
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const value = groupValue(row[key]);
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+  return groups.map((group) => ({ ...group, count: counts.get(group.value) ?? 0 }));
+};
+
+/**
+ * Which shape each of a field's values takes, or null where there are more values than shapes.
+ * Alphabetical rather than by count, so a value keeps its shape as a release fills out - and each
+ * site, status and sex takes the same shape here as on the other dimensionality reduction plots.
+ * The privacy bin comes after them, so whether a release has one can't move the others; "Unknown"
+ * has no value, and stays a circle.
+ */
+export const shapeScaleFor = <T>(rows: T[], key: keyof T & ColorField): ShapeScale | null => {
+  const values = new Set(rows.map((row) => groupValue(row[key])));
+  return shapeScaleOf([
+    ...[...values].filter((value) => value !== "Unknown" && value !== PRIVACY_BIN).sort((a, b) => a.localeCompare(b)),
+    ...(values.has(PRIVACY_BIN) ? [PRIVACY_BIN] : []),
+  ]);
 };

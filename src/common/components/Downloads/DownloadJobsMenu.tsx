@@ -118,7 +118,7 @@ function statusLabel(job: DownloadJob, isExpired: boolean): string {
   return STATUS_LABEL[job.status];
 }
 
-/** Failure is worth colouring even once expired; anything unsettled stays muted. */
+/** Failure is worth coloring even once expired; anything unsettled stays muted. */
 function statusColor(job: DownloadJob, isExpired: boolean): string {
   if (job.status === "failed") return "error";
   return isExpired || isJobActive(job) ? "text.secondary" : "success.main";

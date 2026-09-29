@@ -24,7 +24,7 @@ export default function About() {
           </Typography>
           <Box mb={1}>
             <Typography display={"inline"} variant="body1">
-              If you&apos;re experiencing an error/bug, feel free to&nbsp;
+              If you&apos;re experiencing an error/bug, feel free to{" "}
             </Typography>
             <Link
               display={"inline"}

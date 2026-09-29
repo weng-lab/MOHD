@@ -10,6 +10,8 @@
  * cannot be colored by them.
  */
 
+import { NEUTRAL_MID } from "@/common/components/plotDimming";
+
 /** 1000G+HGDP super populations. */
 export const SUPERPOP_LABELS: Record<string, string> = {
   AFR: "African",
@@ -22,7 +24,7 @@ export const SUPERPOP_LABELS: Record<string, string> = {
 };
 
 /**
- * gnomAD populations. A separate vocabulary rather than a relabelling of the one
+ * gnomAD populations. A separate vocabulary rather than a relabeling of the one
  * above: `fin` and `nfe` split EUR between them, and `oth` appears under all
  * seven super populations. That last is why it reads "Remaining", following
  * gnomAD v4 - it is the bucket for samples that matched no group, and "Other"
@@ -86,10 +88,15 @@ export const SUPERPOP_COLORS: Record<string, string> = {
  * `oth` ("Remaining") is neutral rather than any continental color - it is the
  * bucket for samples that matched no group, and lending it one group's hue would
  * say something false about what is in it. It is the one place a resemblance
- * across the two plots is wanted rather than avoided: it sits in the same grey
+ * across the two plots is wanted rather than avoided: it sits in the same gray
  * family as the MOHD legend's "Unknown" and its privacy bin, because all three
  * mean "no named group here" and nothing is implied by reading them alike. They
  * never share a legend, so only the cross-plot resemblance is in question.
+ *
+ * It takes the middle step of the shared neutral scale rather than a gray of its
+ * own, which its old #9AA0A6 had stopped being: filtered-out points are drawn
+ * pale gray now, and a stack of them came within 12 ΔE2000 of it. From the
+ * middle step the nearest reference color is Africa's teal, 20 away.
  */
 export const GNOMAD_POP_COLORS: Record<string, string> = {
   afr: SUPERPOP_COLORS.AFR,
@@ -98,6 +105,6 @@ export const GNOMAD_POP_COLORS: Record<string, string> = {
   fin: "#0E8F7A",
   mid: SUPERPOP_COLORS.MID,
   nfe: SUPERPOP_COLORS.EUR,
-  oth: "#9AA0A6",
+  oth: NEUTRAL_MID,
   sas: SUPERPOP_COLORS.CSA,
 };

@@ -1,9 +1,16 @@
+import { useState } from "react";
 import { ColumnDatum } from "@weng-lab/visualization";
-import { MetallomicsSample, SharedMetallomicsProps } from "./page";
+import { SharedMetallomicsProps } from "./page";
+import { MetallomicsSample } from "@/common/hooks/omeHooks/useMetallomicsData";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
+import HeatmapScaleToggle from "@/common/components/OmeQuantification/HeatmapScaleToggle";
+import {
+  buildHeatmapColorScale,
+  HeatmapScaleMode,
+  valuesByRow,
+  Z_SCORED_MODES,
+} from "@/common/components/OmeQuantification/heatmapColorScale";
 import PlotTooltip from "@/common/components/PlotTooltip";
-import { zScoreByRow } from "@/common/components/OmeQuantification/zScoreByRow";
-import { symmetricColorDomain } from "@/common/components/OmeQuantification/symmetricColorDomain";
 import { MISSING_LABEL } from "@/common/colors";
 
 export type MetalGroup = "base" | "ucr";
@@ -23,19 +30,16 @@ type MetallomicsQuantificationHeatmapProps = SharedMetallomicsProps & {
 };
 
 const MetallomicsQuantificationHeatmap = ({
-  rows,
   metallomicsData,
-  sortedFilteredData,
-  selected,
-  setSelected,
-  autoSort,
+  sampleTable,
   metalGroup,
   downloadFileName,
   ref,
 }: MetallomicsQuantificationHeatmapProps) => {
   const { loading } = metallomicsData;
-
-  const samples: MetallomicsSample[] = sortedFilteredData;
+  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { samples: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
+  const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const metals = Array.from(
     new Set(
@@ -47,55 +51,30 @@ const MetallomicsQuantificationHeatmap = ({
     )
   ).sort();
 
-  // Scored against the full dataset, not the filtered/displayed columns, so filtering
-  // the table doesn't shift the color scale - or collapse it to 0 when down to one column.
-  const valueByMetalPerRow = rows.map(
-    (sample) =>
-      new Map(
-        sample.quantification
-          .filter((q): q is NonNullable<typeof q> => q !== null && isInGroup(q.metal, metalGroup))
-          .map((q) => [q.metal, q.value])
-      )
-  );
-
-  const zScoreByMetal = new Map(
-    metals.map((metal) => [
-      metal,
-      zScoreByRow(valueByMetalPerRow.map((valueByMetal) => valueByMetal.get(metal) ?? null)),
-    ])
-  );
-
-  const heatmapData: ColumnDatum<MetallomicsSample, MetalRowMeta>[] = samples.map((sample) => {
-    const valueByMetal = new Map(
+  const valueByMetal = (sample: MetallomicsSample) =>
+    new Map(
       sample.quantification
         .filter((q): q is NonNullable<typeof q> => q !== null && isInGroup(q.metal, metalGroup))
         .map((q) => [q.metal, q.value])
     );
-    return {
-      columnName: sample.sample_id,
-      metadata: sample,
-      rows: metals.map((metal) => {
-        const rawValue = valueByMetal.get(metal) ?? null;
-        return {
-          rowName: metal,
-          count: rawValue === null ? null : zScoreByMetal.get(metal)!(rawValue),
-          metadata: rawValue === null ? undefined : { rawValue },
-        };
-      }),
-    };
-  });
 
-  // Domain also comes from the full dataset, not just the displayed columns, so the
-  // legend's scale doesn't shift as the table is filtered.
-  const colorDomain = symmetricColorDomain(
-    rows.map((sample, i) => ({
-      columnName: sample.sample_id,
-      rows: metals.map((metal) => {
-        const rawValue = valueByMetalPerRow[i].get(metal) ?? null;
-        return { rowName: metal, count: rawValue === null ? null : zScoreByMetal.get(metal)!(rawValue) };
-      }),
-    }))
-  );
+  const valueByMetalPerSample = samples.map(valueByMetal);
+
+  const scale = buildHeatmapColorScale(scaleMode, valuesByRow(metals, rows.map(valueByMetal)), "metal");
+
+  const heatmapData: ColumnDatum<MetallomicsSample, MetalRowMeta>[] = samples.map((sample, sampleIndex) => ({
+    columnName: sample.sample_id,
+    metadata: sample,
+    rows: metals.map((metal) => {
+      const rawValue = valueByMetalPerSample[sampleIndex].get(metal) ?? null;
+      return {
+        rowName: metal,
+        // Unclamped where a colorbar can move the range: the heatmap holds colors at its ends itself.
+        count: rawValue === null ? null : (scale.colorbar?.value ?? scale.toCount)(metal, rawValue),
+        metadata: rawValue === null ? undefined : { rawValue },
+      };
+    }),
+  }));
 
   return (
     <OmeHeatmapShell
@@ -107,18 +86,29 @@ const MetallomicsQuantificationHeatmap = ({
       autoSort={autoSort}
       yLabel="Metal"
       downloadFileName={downloadFileName}
-      colorDomain={colorDomain}
+      colors={scale.colors}
+      colorDomain={scale.colorDomain}
+      colorbar={scale.colorbar}
+      total={rows.length}
+      controls={<HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />}
       ref={ref}
-      tooltipBody={(bin) => (
-        <PlotTooltip
-          title={bin.datum.columnName}
-          rows={[
-            { label: "Age", value: (bin.datum.metadata as MetallomicsSample | undefined)?.age_bin ?? MISSING_LABEL },
-            { label: "Metal", value: bin.bin.rowName },
-            { label: "Value", value: (bin.bin.metadata as MetalRowMeta | undefined)?.rawValue ?? "No data" },
-          ]}
-        />
-      )}
+      tooltipBody={(bin, domain) => {
+        const rowMeta = bin.bin.metadata as MetalRowMeta | undefined;
+        const sample = bin.datum.metadata as MetallomicsSample | undefined;
+        return (
+          <PlotTooltip
+            title={bin.datum.columnName}
+            rows={[
+              { label: "Age", value: sample?.age_bin ?? MISSING_LABEL },
+              { label: "Metal", value: bin.bin.rowName },
+              { label: "Value", value: rowMeta?.rawValue ?? "No data" },
+              ...(rowMeta
+                ? [{ label: "Color", value: scale.describe(bin.bin.rowName, rowMeta.rawValue, domain) }]
+                : []),
+            ]}
+          />
+        );
+      }}
     />
   );
 };

@@ -1,216 +1,338 @@
-import { Point, ScatterPlot, ChartProps, DownloadPlotHandle } from "@weng-lab/visualization";
-import { useState } from "react";
-import { MISSING_LABEL, getCategoricalLabel, getCategoricalColor, VALUE_LABEL_OVERRIDES } from "@/common/colors";
-import { age_bin_color_map, AGE_UNKNOWN_LABEL } from "@/common/ageBins";
-import { Stack, SelectChangeEvent, Box } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { ColorBySelect } from "@/common/components/ColorBySelect";
-import UMAPLegend from "@/common/components/UMAPLegend";
-import PlotTooltip, { PlotTooltipRow } from "@/common/components/PlotTooltip";
+"use client";
 
-export type DimensionalityReductionMeta = {
-  sample_id: string;
-  sex: string;
-  status: string;
-  site: string;
-  protocol?: string;
-  /** Binned by the API - raw age is never returned to the client. */
-  age_bin?: string | null;
+import { Box, Button, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { ScatterPlot, type DownloadPlotHandle, type Point } from "@weng-lab/visualization";
+import { useState, type ReactNode, type Ref } from "react";
+import {
+  colorOf,
+  groupOf,
+  isNeutralGroup,
+  labelOf,
+  type Field,
+  type FieldDefinition,
+  type SampleGroups,
+} from "@/common/sampleFields/fields";
+import { passesFilters } from "@/common/sampleFields/groups";
+import { NO_SHAPE, shapeOptions, shapingOf, type ShapeBy } from "@/common/sampleFields/shapes";
+import FieldLegends, { type GroupHover } from "@/common/sampleFields/FieldLegends";
+import type { SampleTableState } from "@/common/sampleFields/useSampleTable";
+import PaneFigure from "./PaneFigure";
+import { PlotHeaderTitle } from "./PlotHeader";
+import { HEADER_SELECT_SX } from "./plotHeaderSx";
+import { dimHidden, spotlight } from "./plotDimming";
+import { shapeOf } from "./pointShapes";
+import PlotTooltip from "./PlotTooltip";
+
+type PointMeta<T> = {
+  sample: T;
+  /** Why the point is faded, if it is: the table's filters, or a selection it isn't part of. */
+  faded: "filtered" | "unselected" | null;
 };
 
-export type DimensionalityScatterPlotProps<
-  T extends DimensionalityReductionMeta,
-  S extends boolean | undefined,
-  Z extends boolean | undefined,
-> = {
-  data: T[] | undefined;
+const FADED_NOTES = {
+  filtered: "Hidden by the current filters",
+  unselected: "Not in the current selection",
+};
+
+const MINIMAP = { position: { right: 50, bottom: 50 } };
+
+const SELECT_SLOT_PROPS = { select: { MenuProps: { disableScrollLock: true } } };
+
+/** "Sex", "Sex and search", "Sex, Dataset and search". */
+const listOf = (names: readonly string[]) =>
+  names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+
+export type DimensionalityScatterPlotProps<T extends SampleGroups> = {
+  /** The page's table: the samples, and the selection and filters the plot shares with it. */
+  table: SampleTableState<T>;
   loading: boolean;
-  selected: T[];
-  setSelected: React.Dispatch<React.SetStateAction<T[]>>;
   getX: (row: T) => number | null | undefined;
   getY: (row: T) => number | null | undefined;
   leftAxisLabel: string;
   bottomAxisLabel: string;
   downloadFileName: string;
-  hasProtocol?: boolean;
-  hasAge?: boolean;
-  axisSelectors?: React.ReactNode;
-  ref?: React.Ref<DownloadPlotHandle>;
-} & Partial<ChartProps<T, S, Z>>;
-
-const map = {
-  position: {
-    right: 50,
-    bottom: 50,
-  },
+  /** More controls for the header, after color and shape - a PCA's axes. */
+  axisSelectors?: ReactNode;
+  ref?: Ref<DownloadPlotHandle>;
 };
 
-const TooltipBody = ({
-  point,
-  hasProtocol,
-  hasAge,
-}: {
-  point: Point<DimensionalityReductionMeta>;
-  hasProtocol: boolean;
-  hasAge: boolean;
-}) => {
-  const rows: PlotTooltipRow[] = [
-    { label: "Status", value: getCategoricalLabel("status", point.metaData?.status) },
-    { label: "Site", value: getCategoricalLabel("site", point.metaData?.site) },
-    {
-      label: "Sex",
-      value: point.metaData?.sex
-        ? (VALUE_LABEL_OVERRIDES[point.metaData.sex] ??
-          point.metaData.sex.charAt(0).toUpperCase() + point.metaData.sex.slice(1))
-        : MISSING_LABEL,
-    },
-  ];
-  if (hasProtocol) {
-    rows.push({
-      label: "Protocol",
-      value: getCategoricalLabel("protocol", point.metaData?.protocol).replaceAll(" method", ""),
-    });
-  }
-  if (hasAge) {
-    rows.push({ label: "Age", value: point.metaData?.age_bin ?? MISSING_LABEL });
-  }
-
-  return <PlotTooltip title={point.metaData?.sample_id} rows={rows} />;
-};
-
-const DimensionalityScatterPlot = <
-  T extends DimensionalityReductionMeta,
-  S extends true,
-  Z extends boolean | undefined,
->({
-  data,
+/**
+ * An ome's PCA or UMAP beside its table, colored and shaped by the explorer's fields with the same
+ * chip legends. The table's filters decide what's faded, and the chips edit them; a selection from
+ * the table or the plot fades the rest.
+ */
+const DimensionalityScatterPlot = <T extends SampleGroups>({
+  table,
   loading,
-  selected,
-  setSelected,
   getX,
   getY,
   leftAxisLabel,
   bottomAxisLabel,
   downloadFileName,
-  hasProtocol = false,
-  hasAge = false,
   axisSelectors,
   ref,
-  ...rest
-}: DimensionalityScatterPlotProps<T, S, Z>) => {
-  const [colorScheme, setColorScheme] = useState<"sex" | "status" | "site" | "protocol" | "age">("site");
-  const theme = useTheme();
+}: DimensionalityScatterPlotProps<T>) => {
+  const [color, setColor] = useState<Field>("site");
+  const [shape, setShape] = useState<ShapeBy>(NO_SHAPE);
 
-  const handleColorSchemeChange = (event: SelectChangeEvent) => {
-    setColorScheme(event.target.value as "sex" | "status" | "site" | "protocol" | "age");
+  const { samples, fields, filters, selected, setSelected } = table;
+
+  const shapeable = shapeOptions(fields, samples);
+  const shaping = shapingOf(shape, shapeable, samples);
+
+  // Filters no legend row shows, named so the reader knows why points are faded.
+  const unshown = table.unshownFilters(shaping ? [color, shaping.key] : [color]);
+
+  const selectedIds = new Set(selected.map(({ sample_id }) => sample_id));
+
+  const plotted = samples.flatMap((sample): Point<PointMeta<T>>[] => {
+    const x = getX(sample);
+    const y = getY(sample);
+    if (x == null || y == null) return [];
+    const isSelected = selectedIds.has(sample.sample_id);
+    const faded = !passesFilters(sample, filters)
+      ? "filtered"
+      : selectedIds.size > 0 && !isSelected
+        ? "unselected"
+        : null;
+    return [
+      {
+        x,
+        y,
+        r: isSelected && !faded ? 6 : 4,
+        color: colorOf(color, groupOf(color, sample)),
+        // Undefined where nothing is shaped, leaving the default to the plot.
+        shape: shaping ? shapeOf(shaping.scale, groupOf(shaping.key, sample)) : undefined,
+        metaData: { sample, faded },
+      },
+    ];
+  });
+
+  // Neutral groups first, so they're drawn beneath the rest.
+  const isNeutral = ({ metaData }: Point<PointMeta<T>>) => isNeutralGroup(groupOf(color, metaData!.sample));
+  const { points, shown } = dimHidden(
+    [...plotted.filter(isNeutral), ...plotted.filter((point) => !isNeutral(point))],
+    (point) => point.metaData!.faded === null
+  );
+
+  const selectPoints = (picked: Point<PointMeta<T>>[]) => {
+    // A filtered-out sample stays out of play; the rest are faded only by the selection being added to.
+    const added = picked
+      .filter(({ metaData }) => metaData!.faded !== "filtered")
+      .map(({ metaData }) => metaData!.sample);
+    setSelected([...selected, ...added.filter(({ sample_id }) => !selectedIds.has(sample_id))]);
   };
 
-  const selectedIds = new Set(selected.map((y) => y.sample_id));
-  const isHighlighted = (x: T) => selectedIds.has(x.sample_id);
-
-  const scatterData: Point<T>[] = !data
-    ? []
-    : data.reduce<Point<T>[]>((acc, x) => {
-        const xValue = getX(x);
-        const yValue = getY(x);
-        if (xValue == null || yValue == null) return acc;
-
-        const highlighted = isHighlighted(x);
-
-        const getColor = () => {
-          if (highlighted || selected.length === 0) {
-            if (colorScheme === "sex") {
-              return getCategoricalColor("sex", getCategoricalLabel("sex", x.sex));
-            } else if (colorScheme === "status") {
-              return getCategoricalColor("status", getCategoricalLabel("status", x.status));
-            } else if (colorScheme === "site") {
-              return getCategoricalColor("site", getCategoricalLabel("site", x.site));
-            } else if (colorScheme === "protocol") {
-              return getCategoricalColor("protocol", getCategoricalLabel("protocol", x.protocol));
-            } else if (colorScheme === "age") {
-              return age_bin_color_map[x.age_bin ?? AGE_UNKNOWN_LABEL];
-            }
-          } else return "#CCCCCC";
-        };
-
-        acc.push({
-          x: xValue,
-          y: yValue,
-          r: highlighted ? 6 : 4,
-          color: getColor(),
-          metaData: x,
-        });
-        return acc;
-      }, []);
-
-  const handlePointsSelected = (selectedPoints: Point<T>[]) => {
-    const newlySelected: T[] = [];
-    for (const point of selectedPoints) {
-      if (point.metaData) newlySelected.push(point.metaData);
-    }
-    setSelected([...selected, ...newlySelected]);
+  const togglePoint = ({ metaData }: Point<PointMeta<T>>) => {
+    if (metaData!.faded === "filtered") return;
+    const { sample } = metaData!;
+    setSelected(
+      selectedIds.has(sample.sample_id)
+        ? selected.filter(({ sample_id }) => sample_id !== sample.sample_id)
+        : [...selected, sample]
+    );
   };
 
-  const handlePointSelected = (selectedPoint: Point<T>) => {
-    if (!selectedPoint.metaData) return;
-
-    const id = selectedPoint.metaData.sample_id;
-
-    if (selected.some((x) => x.sample_id === id)) {
-      setSelected(selected.filter((x) => x.sample_id !== id));
-    } else {
-      setSelected([...selected, selectedPoint.metaData]);
-    }
-  };
+  if (plotted.length === 0) return null;
 
   return (
-    <Stack width={"100%"} height={"100%"}>
-      {scatterData && scatterData.length > 0 && (
+    <PaneFigure
+      title={
+        <PlotHeaderTitle
+          title="Samples"
+          // The ones the table's filters leave in, matching the table's own count. A selection fades
+          // the rest without filtering them, so it isn't counted.
+          shown={plotted.filter(({ metaData }) => metaData!.faded !== "filtered").length}
+          total={plotted.length}
+        />
+      }
+      controls={
         <>
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            justifyContent={{ xs: "center", md: "space-between" }}
-            alignItems="center"
-            columnGap={{ xs: 1, md: 0 }}
-            rowGap={1}
-            flexWrap="wrap"
-            mb={1}
+          <TextField
+            select
+            size="small"
+            label="Color by"
+            value={color}
+            onChange={(event) => setColor(event.target.value as Field)}
+            slotProps={SELECT_SLOT_PROPS}
+            sx={HEADER_SELECT_SX}
           >
-            <Stack direction={"row"} alignItems="center" gap={1} flexWrap="wrap">
-              <ColorBySelect
-                colorScheme={colorScheme}
-                handleColorSchemeChange={handleColorSchemeChange}
-                protocol={hasProtocol}
-                age={hasAge}
-              />
-              {axisSelectors}
-            </Stack>
-            <UMAPLegend colorScheme={colorScheme} scatterData={scatterData} />
-          </Stack>
-          <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: 0 }}>
-            <ScatterPlot
-              {...rest}
-              onSelectionChange={handlePointsSelected}
-              onPointClicked={handlePointSelected}
-              controlsHighlight={theme.palette.primary.main}
-              controlsPosition={"right"}
-              pointData={scatterData}
-              selectable
-              loading={loading}
-              miniMap={map}
-              tooltipBody={(point) => <TooltipBody point={point} hasProtocol={hasProtocol} hasAge={hasAge} />}
-              leftAxisLabel={leftAxisLabel}
-              bottomAxisLabel={bottomAxisLabel}
-              ref={ref}
-              downloadFileName={downloadFileName}
-              animation="scale"
-              animationBuffer={0.025}
-              animationGroupSize={50}
-            />
-          </Box>
+            {fields.map(({ key, label }) => (
+              <MenuItem key={key} value={key}>
+                {label}
+              </MenuItem>
+            ))}
+          </TextField>
+          <ShapeSelect shapeable={shapeable} value={shaping?.key ?? NO_SHAPE} onChange={setShape} />
+          {axisSelectors}
         </>
-      )}
-    </Stack>
+      }
+    >
+      <LinkedPlot
+        points={points}
+        shown={shown}
+        onSelectPoints={selectPoints}
+        onTogglePoint={togglePoint}
+        tooltipFields={fields}
+        leftAxisLabel={leftAxisLabel}
+        bottomAxisLabel={bottomAxisLabel}
+        loading={loading}
+        downloadFileName={downloadFileName}
+        plotRef={ref}
+        renderLegend={({ hovered, legendHover, onLegendHover }) => (
+          <>
+            <FieldLegends
+              rows={samples}
+              filters={filters}
+              color={{ key: color, label: fields.find(({ key }) => key === color)?.label ?? color }}
+              shape={shaping}
+              onToggle={table.toggleFilter}
+              ringed={(field) =>
+                hovered ? groupOf(field, hovered) : legendHover?.field === field ? legendHover.value : null
+              }
+              onHover={onLegendHover}
+            />
+            {unshown.length > 0 && (
+              <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
+                <Typography variant="caption" color="text.secondary">
+                  Also filtered in the table by {listOf(unshown)}.
+                </Typography>
+                <Button size="small" onClick={table.clearFilters} sx={{ py: 0 }}>
+                  Clear all filters
+                </Button>
+              </Stack>
+            )}
+          </>
+        )}
+      />
+    </PaneFigure>
+  );
+};
+
+type ShapeSelectProps = {
+  /** The fields that can be shaped by, the only ones listed: age, with its order, and any with too many values are left out. */
+  shapeable: readonly FieldDefinition[];
+  value: ShapeBy;
+  onChange: (value: ShapeBy) => void;
+};
+
+const ShapeSelect = ({ shapeable, value, onChange }: ShapeSelectProps) => (
+  <TextField
+    select
+    size="small"
+    label="Shape by"
+    value={value}
+    onChange={(event) => onChange(event.target.value as ShapeBy)}
+    slotProps={SELECT_SLOT_PROPS}
+    sx={HEADER_SELECT_SX}
+  >
+    <MenuItem value={NO_SHAPE}>None</MenuItem>
+    {shapeable.map(({ key, label }) => (
+      <MenuItem key={key} value={key}>
+        {label}
+      </MenuItem>
+    ))}
+  </TextField>
+);
+
+type LinkedPlotProps<T extends SampleGroups> = {
+  /** Every point, the faded ones first - what dimHidden returns. */
+  points: Point<PointMeta<T>>[];
+  /** The points in focus, which a hovered chip can swell and set apart. */
+  shown: Point<PointMeta<T>>[];
+  onSelectPoints: (points: Point<PointMeta<T>>[]) => void;
+  onTogglePoint: (point: Point<PointMeta<T>>) => void;
+  /** The fields a hover names, in order. */
+  tooltipFields: readonly FieldDefinition[];
+  leftAxisLabel: string;
+  bottomAxisLabel: string;
+  loading: boolean;
+  downloadFileName: string;
+  plotRef?: Ref<DownloadPlotHandle>;
+  /**
+   * The legends, built for the current hover: `hovered` is the sample under the cursor, whose chips
+   * to ring, and `onLegendHover` reports the chip under it.
+   */
+  renderLegend: (hover: {
+    hovered: SampleGroups | null;
+    legendHover: GroupHover | null;
+    onLegendHover: (hover: GroupHover | null) => void;
+  }) => ReactNode;
+};
+
+/**
+ * The legend and plot, holding the hover between them. Kept apart from the point math so a hover
+ * re-renders only this: React Compiler would otherwise rebuild the points on every hover, restarting
+ * ScatterPlot's hover animation - see ExplorerPlot.
+ */
+const LinkedPlot = <T extends SampleGroups>({
+  points,
+  shown,
+  onSelectPoints,
+  onTogglePoint,
+  tooltipFields,
+  leftAxisLabel,
+  bottomAxisLabel,
+  loading,
+  downloadFileName,
+  plotRef,
+  renderLegend,
+}: LinkedPlotProps<T>) => {
+  const theme = useTheme();
+  // Both ways: a hovered point rings its chips, and a hovered chip swells its points.
+  const [plotHover, setPlotHover] = useState<SampleGroups | null>(null);
+  const [legendHover, setLegendHover] = useState<GroupHover | null>(null);
+
+  // A hovered chip's points, from those in focus, with the rest dimmed around them. A chip with none
+  // in focus - one switched off - leaves the plot as it is.
+  const group = legendHover
+    ? shown.filter(({ metaData }) => groupOf(legendHover.field, metaData!.sample) === legendHover.value)
+    : [];
+  const highlighted = group.length > 0 ? group : null;
+
+  return (
+    <>
+      {renderLegend({ hovered: plotHover, legendHover, onLegendHover: setLegendHover })}
+      <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: 0 }}>
+        <ScatterPlot
+          ref={plotRef}
+          pointData={spotlight(points, highlighted)}
+          loading={loading}
+          selectable
+          // Pan first, so a drag moves around the plot; the toolbar switches to lasso selection.
+          initialState={{ controls: { selectionType: "pan" } }}
+          onSelectionChange={onSelectPoints}
+          onPointClicked={onTogglePoint}
+          hoveredPoints={highlighted ?? undefined}
+          onHoveredPointChange={(point) => setPlotHover(point?.metaData?.sample ?? null)}
+          tooltipBody={({ metaData }) => {
+            const { sample, faded } = metaData!;
+            return (
+              <PlotTooltip
+                title={sample.sample_id}
+                // Faded points can win the hit test, so a faded sample says why it's faded.
+                note={faded ? FADED_NOTES[faded] : undefined}
+                rows={
+                  sample.qc
+                    ? [{ label: "Sample", value: "QC / reference" }]
+                    : tooltipFields.map(({ key, label }) => ({ label, value: labelOf(key, groupOf(key, sample)) }))
+                }
+              />
+            );
+          }}
+          controlsHighlight={theme.palette.primary.main}
+          controlsPosition="right"
+          miniMap={MINIMAP}
+          leftAxisLabel={leftAxisLabel}
+          bottomAxisLabel={bottomAxisLabel}
+          downloadFileName={downloadFileName}
+          animation="scale"
+          animationBuffer={0.025}
+          animationGroupSize={50}
+        />
+      </Box>
+    </>
   );
 };
 

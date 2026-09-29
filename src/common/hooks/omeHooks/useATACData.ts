@@ -2,6 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchAtacMetadataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import { toSample, type SampleGroups } from "@/common/sampleFields/fields";
 
 const GET_ATAC_DATA = gql(`
 query fetchATACMetadata {
@@ -34,7 +35,8 @@ export type UseATACDataParams = {
 };
 
 export type UseATACDataReturn = {
-  data: FetchAtacMetadataQuery["atac_metadata"] | undefined;
+  /** The API's rows, with QC material flagged by its kit - see toSample. */
+  data: (FetchAtacMetadataQuery["atac_metadata"][number] & SampleGroups)[] | undefined;
   loading: boolean;
   error: ErrorLike | undefined;
 };
@@ -45,7 +47,7 @@ export const useATACData = ({ skip }: UseATACDataParams): UseATACDataReturn => {
   });
 
   return {
-    data: data?.atac_metadata,
+    data: data?.atac_metadata.map(toSample),
     loading,
     error,
   };
