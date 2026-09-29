@@ -14,15 +14,15 @@ import AutoComplete from "../autocomplete";
 
 const pageLinks: PageInfo[] = [
   {
-    pageName: "Genome Browser",
-    link: "/genomeBrowser",
-  },
-  {
     pageName: "Explore Data",
     subPages: [
       { pageName: "Dimensionality Reduction", link: "/dimensionalityReduction" },
       { pageName: "Clinical & Phenotypic Data", link: "/clinical" },
     ],
+  },
+  {
+    pageName: "Genome Browser",
+    link: "/genomeBrowser",
   },
   {
     pageName: "About",
