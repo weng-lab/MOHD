@@ -120,6 +120,9 @@ const ColorRangeButton = ({ label, onOpen, onClose, ...editor }: ColorRangeButto
         open={anchor !== null}
         anchorEl={anchor}
         onClose={close}
+        // Leaves the page its scrollbar, which the lock swaps for a blank strip; the panel follows its
+        // button when the page scrolls instead.
+        disableScrollLock
         anchorOrigin={{ vertical: "bottom", horizontal: alignRight ? "right" : "left" }}
         transformOrigin={{ vertical: "top", horizontal: alignRight ? "right" : "left" }}
         slotProps={{ paper: { sx: { p: 2, mt: 0.5 } } }}

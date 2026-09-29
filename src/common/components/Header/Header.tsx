@@ -88,7 +88,10 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
   };
 
   return (
-    <AppBar sx={{ position: "sticky", top: 0 }}>
+    // Sticky through the prop rather than sx: left at its default of "fixed", AppBar is tagged mui-fixed, and
+    // MUI's scroll lock - any open Popover, Menu or Dialog - then pads it for the scrollbar it hides on
+    // top of padding the body, pushing the search box that width to the left.
+    <AppBar position="sticky">
       <Stack
         direction={"row"}
         style={{
