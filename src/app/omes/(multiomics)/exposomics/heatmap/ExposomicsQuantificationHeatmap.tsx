@@ -11,6 +11,7 @@ import {
   valuesByRow,
 } from "@/common/components/OmeQuantification/heatmapColorScale";
 import PlotTooltip, { PlotTooltipRow } from "@/common/components/PlotTooltip";
+import { tooltipRowsOf } from "@/common/sampleFields/fields";
 
 const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
 
@@ -30,7 +31,7 @@ const valueByPosition = (sample: ExposomicsSample) =>
 const ExposomicsQuantificationHeatmap = ({ exposomicsData, sampleTable, ref }: SharedExposomicsProps) => {
   const { loading } = exposomicsData;
   // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
-  const { samples: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
+  const { samples: rows, inTableOrder: samples, fields, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const molecules = Array.from(
@@ -82,7 +83,11 @@ const ExposomicsQuantificationHeatmap = ({ exposomicsData, sampleTable, ref }: S
       ref={ref}
       tooltipBody={(bin, domain) => {
         const rowMeta = bin.bin.metadata as MoleculeRowMeta | undefined;
-        const rows: PlotTooltipRow[] = [{ label: "Molecule", value: rowMeta?.fullName ?? bin.bin.rowName }];
+        const sample = bin.datum.metadata as ExposomicsSample | undefined;
+        const rows: PlotTooltipRow[] = [
+          ...(sample ? tooltipRowsOf(fields, sample) : []),
+          { label: "Molecule", value: rowMeta?.fullName ?? bin.bin.rowName },
+        ];
         if (rowMeta?.formula) rows.push({ label: "Formula", value: rowMeta.formula });
         if (rowMeta?.ionType) rows.push({ label: "Ion Type", value: rowMeta.ionType });
         if (rowMeta?.precursorMz != null) rows.push({ label: "Precursor m/z", value: rowMeta.precursorMz });
