@@ -20,7 +20,8 @@ import {
   type Theme,
 } from "@mui/material";
 import type { ReactNode } from "react";
-import { getOmeLabel } from "@/app/omes/omeContent";
+import { getOmeInfoHref, getOmeLabel } from "@/app/omes/omeContent";
+import { LinkComponent } from "@/common/components/LinkComponent";
 import { PANEL_SX } from "./dimensions";
 import { FEATURE_KINDS, isFeatureColor } from "../model/features";
 import { colorOptionsFor, type ColorBy } from "../model/colorBy";
@@ -33,6 +34,7 @@ import { switchOme, toggleHidden, type ExplorerState } from "../state/params";
 import QuantificationSearch from "./QuantificationSearch";
 import { NO_SHAPE, shapeOptions, type ShapeBy } from "@/common/sampleFields/shapes";
 import type { ExplorerData } from "../model/types";
+import { SHOW_UMAP } from "@/common/umap";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
 
@@ -115,6 +117,51 @@ const PcSelect = ({ label, value, other, pve, onChange }: PcSelectProps) => (
   </TextField>
 );
 
+type ReductionSectionProps = {
+  state: ExplorerState;
+  pve: readonly (number | null)[];
+  update: (patch: Partial<ExplorerState>) => void;
+};
+
+/** The method and, for PCA, its axes. Just the axes while UMAP is off site-wide - see SHOW_UMAP. */
+const ReductionSection = ({ state, pve, update }: ReductionSectionProps) => {
+  const { ome, method, x, y } = state;
+  const { umap } = OME_CAPABILITIES[ome];
+
+  return (
+    <Section title={SHOW_UMAP ? "Method" : "Principal components"}>
+      {SHOW_UMAP && (
+        <ToggleButtonGroup
+          exclusive
+          fullWidth
+          size="small"
+          color="primary"
+          value={method}
+          onChange={(_, value: Method | null) => value && update({ method: value })}
+          aria-label="Method"
+        >
+          {METHODS.map((option) => (
+            <ToggleButton key={option} value={option} disabled={option === "UMAP" && !umap}>
+              {option}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      )}
+      {SHOW_UMAP && !umap && (
+        <Typography variant="caption" color="text.secondary">
+          PCA is the only reduction available for {getOmeLabel(ome)}.
+        </Typography>
+      )}
+      {method === "PCA" && (
+        <Stack direction="row" gap={1} mt={0.5}>
+          <PcSelect label="X axis" value={x} other={y} pve={pve} onChange={(pc) => update({ x: pc })} />
+          <PcSelect label="Y axis" value={y} other={x} pve={pve} onChange={(pc) => update({ y: pc })} />
+        </Stack>
+      )}
+    </Section>
+  );
+};
+
 export type ControlPanelProps = {
   state: ExplorerState;
   onChange: (state: ExplorerState) => void;
@@ -129,8 +176,7 @@ export type ControlPanelProps = {
 };
 
 const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) => {
-  const { ome, method, x, y, color, shape, hideQc } = state;
-  const { umap } = OME_CAPABILITIES[ome];
+  const { ome, method, color, shape, hideQc } = state;
   const { fields, metrics, feature } = colorOptionsFor(ome);
   const { pve } = data[ome];
   const features = data[ome].features ?? [];
@@ -171,36 +217,12 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
               </ToggleButton>
             ))}
           </Box>
+          <LinkComponent href={getOmeInfoHref(ome)} variant="caption" sx={{ alignSelf: "flex-start" }}>
+            Go to {getOmeLabel(ome)} page
+          </LinkComponent>
         </Section>
 
-        <Section title="Method">
-          <ToggleButtonGroup
-            exclusive
-            fullWidth
-            size="small"
-            color="primary"
-            value={method}
-            onChange={(_, value: Method | null) => value && update({ method: value })}
-            aria-label="Method"
-          >
-            {METHODS.map((option) => (
-              <ToggleButton key={option} value={option} disabled={option === "UMAP" && !umap}>
-                {option}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-          {!umap && (
-            <Typography variant="caption" color="text.secondary">
-              PCA is the only reduction available for {getOmeLabel(ome)}.
-            </Typography>
-          )}
-          {method === "PCA" && (
-            <Stack direction="row" gap={1} mt={0.5}>
-              <PcSelect label="X axis" value={x} other={y} pve={pve} onChange={(pc) => update({ x: pc })} />
-              <PcSelect label="Y axis" value={y} other={x} pve={pve} onChange={(pc) => update({ y: pc })} />
-            </Stack>
-          )}
-        </Section>
+        <ReductionSection state={state} pve={pve} update={update} />
 
         <Section title="Encoding">
           <TextField

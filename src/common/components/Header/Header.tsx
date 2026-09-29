@@ -1,16 +1,14 @@
 "use client";
-import * as React from "react";
-import { AppBar, Box, Toolbar, Menu, MenuItem, IconButton, Stack, Typography } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { AppBar, Box, Toolbar, IconButton, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
 import { Search } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { LinkComponent } from "../LinkComponent";
 import { useMenuControl } from "./MenuContext";
 import MobileMenu from "./MobileMenu";
+import NavDropdown from "./NavDropdown";
 import { PageInfo } from "./types";
 import AutoComplete from "../autocomplete";
 
@@ -20,8 +18,11 @@ const pageLinks: PageInfo[] = [
     link: "/genomeBrowser",
   },
   {
-    pageName: "Dimensionality Reduction",
-    link: "/dimensionalityReduction",
+    pageName: "Explore Data",
+    subPages: [
+      { pageName: "Dimensionality Reduction", link: "/dimensionalityReduction" },
+      { pageName: "Clinical & Phenotypic Data", link: "/clinical" },
+    ],
   },
   {
     pageName: "About",
@@ -39,53 +40,6 @@ type ResponsiveAppBarProps = {
 
 function Header({ maintenance }: ResponsiveAppBarProps) {
   const { openMenu } = useMenuControl();
-
-  // Hover dropdowns, deals with setting its position
-  const [anchorDropdown0, setAnchorDropdown0] = useState<null | HTMLElement>(null);
-  const [anchorDropdown1, setAnchorDropdown1] = useState<null | HTMLElement>(null);
-
-  // Open Dropdown
-  const handleOpenDropdown = (event: React.MouseEvent<HTMLElement>, dropdownID: number) => {
-    if (dropdownID === 0) {
-      setAnchorDropdown0(event.currentTarget);
-    } else if (dropdownID === 1) {
-      setAnchorDropdown1(event.currentTarget);
-    }
-  };
-
-  // Close Dropdown
-  const handleCloseDropdown = (dropdownID: number) => {
-    if (dropdownID === 0) {
-      setAnchorDropdown0(null);
-    } else if (dropdownID === 1) {
-      setAnchorDropdown1(null);
-    }
-  };
-
-  const handleMouseMoveLink = (event: React.MouseEvent<HTMLElement>, page: PageInfo) => {
-    if (page?.subPages && "dropdownID" in page && page.dropdownID !== undefined) {
-      handleOpenDropdown(event, page.dropdownID);
-    }
-  };
-
-  const handleMouseLeaveLink = (event: React.MouseEvent<HTMLElement>, page: PageInfo) => {
-    if (page?.subPages && "dropdownID" in page) {
-      switch (page.dropdownID) {
-        case 0: {
-          if (anchorDropdown0) {
-            handleCloseDropdown(0);
-          }
-          break;
-        }
-        case 1: {
-          if (anchorDropdown1) {
-            handleCloseDropdown(1);
-          }
-          break;
-        }
-      }
-    }
-  };
 
   return (
     // Sticky through the prop rather than sx: left at its default of "fixed", AppBar is tagged mui-fixed, and
@@ -125,58 +79,24 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
               style={{ objectFit: "contain", objectPosition: "left center" }}
             />
           </Box>
-          {pageLinks.map((page) => (
-            <Box
-              key={page.pageName}
-              display={{ xs: "none", md: "flex" }}
-              alignItems={"center"}
-              onMouseMove={(event) => handleMouseMoveLink(event, page)}
-              onMouseLeave={(event) => handleMouseLeaveLink(event, page)}
-              id="LinkBox"
-              sx={{ mr: 2 }}
-            >
-              <LinkComponent
-                id="Link"
-                display={"flex"}
-                color="black"
-                href={page.link}
-                underline="none"
-                target={page.link.startsWith("http") ? "_blank" : undefined}
-                rel={page.link.startsWith("http") ? "noopener noreferrer" : undefined}
-              >
-                {page.pageName}
-                {page.subPages && <ArrowDropDownIcon />}
-              </LinkComponent>
-              {/* Create popup menu if page has subpages */}
-              {page.subPages && (
-                <Menu
-                  id={`${page.pageName}-dropdown-appbar`}
-                  // This logic would need to change when adding another dropdown
-                  anchorEl={page.dropdownID === 0 ? anchorDropdown0 : anchorDropdown1}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  open={page.dropdownID === 0 ? Boolean(anchorDropdown0) : Boolean(anchorDropdown1)}
-                  onClose={() => page.dropdownID !== undefined && handleCloseDropdown(page.dropdownID)}
-                  slotProps={{
-                    paper: {
-                      onMouseLeave: () => page.dropdownID !== undefined && handleCloseDropdown(page.dropdownID),
-                      sx: { pointerEvents: "auto" },
-                    },
-                  }}
-                  sx={{ pointerEvents: "none", zIndex: 2000 }} //z index of AppBar is 1100 for whatever reason
+          {pageLinks.map((page) =>
+            "subPages" in page ? (
+              <NavDropdown key={page.pageName} pageName={page.pageName} subPages={page.subPages} />
+            ) : (
+              <Box key={page.pageName} display={{ xs: "none", md: "flex" }} alignItems={"center"} sx={{ mr: 2 }}>
+                <LinkComponent
+                  display={"flex"}
+                  color="black"
+                  href={page.link}
+                  underline="none"
+                  target={page.link.startsWith("http") ? "_blank" : undefined}
+                  rel={page.link.startsWith("http") ? "noopener noreferrer" : undefined}
                 >
-                  {page.subPages &&
-                    page.subPages.map((subPage) => (
-                      <LinkComponent key={subPage.pageName} color="#000000" href={subPage.link}>
-                        <MenuItem>{subPage.pageName}</MenuItem>
-                      </LinkComponent>
-                    ))}
-                </Menu>
-              )}
-            </Box>
-          ))}
+                  {page.pageName}
+                </LinkComponent>
+              </Box>
+            )
+          )}
         </Stack>
         <Box
           sx={{

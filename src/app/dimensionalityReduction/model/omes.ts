@@ -1,5 +1,6 @@
 import type { OmesDataType } from "@/common/types/globalTypes";
 import type { FeatureKind } from "./features";
+import { SHOW_UMAP } from "@/common/umap";
 
 /**
  * In switcher order, named as the app's routes name them (?ome=lipidomics, as in /omes/lipidomics)
@@ -17,7 +18,7 @@ export const EXPLORER_OMES = [
 export type ExplorerOme = (typeof EXPLORER_OMES)[number];
 
 export type OmeCapabilities = {
-  /** Whether the ome has a UMAP embedding. Every ome has PCA. */
+  /** Whether the ome has a UMAP embedding. Every ome has PCA. None do while SHOW_UMAP is off. */
   umap: boolean;
   /** Whether the ome has library quality metrics to color by. WGBS has the fields, but all null. */
   metrics: boolean;
@@ -26,9 +27,9 @@ export type OmeCapabilities = {
 };
 
 export const OME_CAPABILITIES: Record<ExplorerOme, OmeCapabilities> = {
-  ATAC: { umap: true, metrics: true, feature: null },
-  RNA: { umap: true, metrics: false, feature: "gene" },
-  WGBS: { umap: true, metrics: false, feature: null },
+  ATAC: { umap: SHOW_UMAP, metrics: true, feature: null },
+  RNA: { umap: SHOW_UMAP, metrics: false, feature: "gene" },
+  WGBS: { umap: SHOW_UMAP, metrics: false, feature: null },
   lipidomics: { umap: false, metrics: false, feature: "lipid" },
   metabolomics: { umap: false, metrics: false, feature: "metabolite" },
   metallomics: { umap: false, metrics: false, feature: "metal" },

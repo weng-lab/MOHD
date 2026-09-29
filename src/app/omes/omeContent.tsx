@@ -87,8 +87,9 @@ export function getOmeIconName(ome: OmesDataType) {
   return ome.toLowerCase().split("-")[0];
 }
 
+/** The ome's page, which redirects to its landing tab - see OME_LANDING_TABS in next.config.ts. */
 export function getOmeInfoHref(ome: OmesDataType) {
-  return OME_TABS[ome]?.[0]?.href ?? `/omes/${ome}/dimensionalityReduction`;
+  return `/omes/${ome}`;
 }
 
 export function getGenomeBrowserHref(ome: OmesDataType) {

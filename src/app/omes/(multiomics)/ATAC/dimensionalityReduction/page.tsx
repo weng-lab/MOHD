@@ -10,6 +10,7 @@ import SampleTable from "@/common/sampleFields/SampleTable";
 import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
+import { SHOW_UMAP } from "@/common/umap";
 
 export type ATACMetadata = NonNullable<UseATACDataReturn["data"]>;
 
@@ -51,12 +52,17 @@ const ATACDimensionalityReduction = () => {
           plotComponent: <ATACDimensionalityPCAPlot ref={pcaRef} {...SharedATACDimenionalityProps} />,
           ...pcaDownload,
         },
-        {
-          tabTitle: "UMAP",
-          icon: <ScatterPlot />,
-          plotComponent: <ATACDimensionalityScatterPlot ref={umapRef} {...SharedATACDimenionalityProps} />,
-          ...umapDownload,
-        },
+        // Off until UMAP comes back - see SHOW_UMAP.
+        ...(SHOW_UMAP
+          ? [
+              {
+                tabTitle: "UMAP",
+                icon: <ScatterPlot />,
+                plotComponent: <ATACDimensionalityScatterPlot ref={umapRef} {...SharedATACDimenionalityProps} />,
+                ...umapDownload,
+              },
+            ]
+          : []),
       ]}
     />
   );

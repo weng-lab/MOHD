@@ -314,6 +314,8 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
                   )}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
                   miniMap={MINIMAP_POSITION}
+                  downloadButton
+                  downloadFileName="MOHD_WGS_PCA_MOHD"
                   {...sync}
                 />
               )}
@@ -345,6 +347,8 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
                   )}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
                   miniMap={MINIMAP_POSITION}
+                  downloadButton
+                  downloadFileName="MOHD_WGS_PCA_1000G_HGDP"
                   {...sync}
                 />
               )}

@@ -95,37 +95,42 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
           <List>
             {pageLinks.map((page) => (
               <Box key={page.pageName} sx={{ mb: 1 }}>
-                <ListItem onClick={handleCloseDrawer}>
-                  <MuiLink
-                    component={Link}
-                    href={page.link}
-                    sx={{
-                      color: "black",
-                      textTransform: "none",
-                      justifyContent: "start",
-                      width: "100%",
-                      fontFamily: "inherit",
-                    }}
-                    underline="none"
-                  >
-                    {page.pageName}
-                  </MuiLink>
-                </ListItem>
-                {page.subPages && (
-                  <List sx={{ pl: 2 }}>
-                    {page.subPages.map((subPage) => (
-                      <ListItem key={subPage.pageName} sx={{ py: 0 }} onClick={handleCloseDrawer}>
-                        <MuiLink
-                          component={Link}
-                          href={subPage.link}
-                          sx={{ color: "gray", textTransform: "none", fontFamily: "inherit" }}
-                          underline="none"
-                        >
-                          {subPage.pageName}
-                        </MuiLink>
-                      </ListItem>
-                    ))}
-                  </List>
+                {"subPages" in page ? (
+                  // A dropdown on desktop, with no page of its own to link to.
+                  <>
+                    <ListItem>{page.pageName}</ListItem>
+                    <List sx={{ pl: 2 }}>
+                      {page.subPages.map((subPage) => (
+                        <ListItem key={subPage.pageName} sx={{ py: 0 }} onClick={handleCloseDrawer}>
+                          <MuiLink
+                            component={Link}
+                            href={subPage.link}
+                            sx={{ color: "gray", textTransform: "none", fontFamily: "inherit" }}
+                            underline="none"
+                          >
+                            {subPage.pageName}
+                          </MuiLink>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </>
+                ) : (
+                  <ListItem onClick={handleCloseDrawer}>
+                    <MuiLink
+                      component={Link}
+                      href={page.link}
+                      sx={{
+                        color: "black",
+                        textTransform: "none",
+                        justifyContent: "start",
+                        width: "100%",
+                        fontFamily: "inherit",
+                      }}
+                      underline="none"
+                    >
+                      {page.pageName}
+                    </MuiLink>
+                  </ListItem>
                 )}
                 <Divider />
               </Box>

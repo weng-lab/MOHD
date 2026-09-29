@@ -42,7 +42,7 @@ const toOmeData = (
   rows: readonly MetadataRow[] = [],
   variance: readonly VarianceRow[] = []
 ): OmeData => {
-  const { metrics } = OME_CAPABILITIES[ome];
+  const { metrics, umap } = OME_CAPABILITIES[ome];
   // Indexed by pc rather than row order, so a reordered or missing row can't shift the rest.
   const pveByPc = new Map(variance.map(({ pc, pve }) => [pc, pve]));
 
@@ -55,8 +55,9 @@ const toOmeData = (
     out.push({
       sample_id: row.sample_id,
       pcs: pcs.map(round),
+      // Left out while UMAP is off, keeping the coordinates out of the payload.
       umap:
-        typeof row.umap_x === "number" && typeof row.umap_y === "number"
+        umap && typeof row.umap_x === "number" && typeof row.umap_y === "number"
           ? [round(row.umap_x), round(row.umap_y)]
           : null,
       qc: isQcKit(row.kit),
