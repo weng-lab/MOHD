@@ -227,6 +227,7 @@ const AdjustableHeatmap = ({
           colorDomain={range}
           highlightRange={sweep && valuesIn(rangeAxis(range), sweep)}
           legendWidth={LEGEND_WIDTH}
+          animationType="fade"
           renderLegend={({ width, height, orientation, overlayContainer }) => {
             // An end label, which highlights its clamp or sweeps its end - see ColorbarEnd. Portaled
             // into the expanded minimap when drawn there, or its count would open behind it.
