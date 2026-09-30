@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import type { BaseSampleMetadata, CatalogDataset, OmeFile } from "@/common/components/Downloads/types";
-import { QC_GROUP } from "@/common/sampleFields/fields";
 
 // The catalog lives on the same service as the bulk-download jobs API,
 // proxied through our own API routes so the auth token stays server-side.
@@ -28,17 +27,6 @@ type Loaded<T extends BaseSampleMetadata> = {
 };
 
 /**
- * The catalog calls the mass-spec omes' controls, and their QC and reference samples, all
- * "Experimental Control". The QC and reference ones are those with no site: checked against the
- * API's kits (2026-09-30), every one of them has no site or sex, and every participant has both.
- * They read "QC / Reference", as on every other table, and the controls "control".
- */
-const EXPERIMENTAL_CONTROL = "Experimental Control";
-
-const withStatusNormalized = <T extends BaseSampleMetadata>(dataset: CatalogDataset<T>): CatalogDataset<T> =>
-  dataset.status === EXPERIMENTAL_CONTROL ? { ...dataset, status: dataset.site ? "control" : QC_GROUP } : dataset;
-
-/**
  * Fetches the dataset + file catalog for an ome from the bulk-download service.
  * One request returns everything the downloads view needs — datasets with their
  * metadata flattened on and their files nested, plus the ome-wide files that
@@ -58,12 +46,7 @@ export function useOmeCatalog<T extends BaseSampleMetadata>(omeKey: string): Cat
       })
       .then((body) => {
         if (cancelled) return;
-        setLoaded({
-          omeKey,
-          datasets: (body.datasets ?? []).map(withStatusNormalized),
-          omeFiles: body.ome_files ?? [],
-          error: false,
-        });
+        setLoaded({ omeKey, datasets: body.datasets ?? [], omeFiles: body.ome_files ?? [], error: false });
       })
       .catch(() => {
         if (cancelled) return;

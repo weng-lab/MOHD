@@ -1,13 +1,17 @@
 /**
  * Base constraint: every ome's dataset metadata has at least these fields.
  * The catalog flattens the ome's metadata columns onto each dataset row, so
- * any extra ome-specific fields (protocol, ...) also live here.
+ * any extra ome-specific fields (protocol, ...) also live here. A field with
+ * no value is null: a QC or reference sample has no site, sex or age, and WGS
+ * has no age at all until the API records it. A QC or reference sample's
+ * status is QC_GROUP.
  */
 export type BaseSampleMetadata = {
   sample_id: string;
-  site: string;
-  status: string;
-  sex: string;
+  site: string | null;
+  status: string | null;
+  sex: string | null;
+  age_bin: string | null;
   [key: string]: unknown;
 };
 
