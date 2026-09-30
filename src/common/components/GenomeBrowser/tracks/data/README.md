@@ -12,6 +12,12 @@ yarn build-mohd-catalog <snapshotDir>
 (`atac_files_gb_updated.tsv`, `rna_files_gb_updated.tsv`,
 `wgbs_files_gb_updated.tsv`). The snapshot itself is not committed.
 
+The manifests carry no age, so the generator also reads each sample's age bin
+from the MOHD API (`<ome>_metadata { sample_id age_bin }`) and joins it on
+sample ID. That needs `MOHD_API_KEY` in `.env.local`, which the yarn script
+loads. A manifest sample the API doesn't have is an error; one the API records
+no age for is a warning, and the sample is written without `ageBin`.
+
 ## Shape
 
 Each file stores the ome's shared file set once, then one row per **sample**:
@@ -21,7 +27,7 @@ Each file stores the ome's shared file set once, then one row per **sample**:
   "ome": "atac",
   "downloadPath": "2_ATAC",
   "files": [{ "suffix": "signal-FC_GRCh38_v0.bigWig", "fileType": "Signal file, fold change …" }],
-  "samples": [{ "id": "MOHD_EA100001", "sex": "female", "site": "CCH", "status": "case", "protocol": "…" }],
+  "samples": [{ "id": "MOHD_EA100001", "sex": "female", "site": "CCH", "status": "case", "protocol": "…", "ageBin": "30-39" }],
 }
 ```
 

@@ -2,11 +2,16 @@
  * Builds the MOHD genome-browser track catalog from the published file manifests.
  *
  * Usage:
- *   node scripts/buildMohdCatalog.mjs [snapshotDir]
+ *   yarn build-mohd-catalog <snapshotDir>
  *
  * `snapshotDir` holds the per-ome TSVs as published by the data team
  * (`<ome>_files_gb_updated.tsv`). Output is one JSON file per ome under
  * src/common/components/GenomeBrowser/tracks/data/.
+ *
+ * The manifests carry no age, so each sample's age bin is read from the MOHD
+ * API and joined on sample ID. That needs MOHD_API_KEY, which the yarn script
+ * loads from .env.local. Only the API's bins are stored - raw age is never
+ * fetched.
  *
  * The manifests list one row per FILE, but every per-file column is derivable:
  * filename is `${sample_id}_${suffix}`, url is `${BASE}/${downloadPath}/${sample_id}/${filename}`,
@@ -28,6 +33,10 @@ import { fileURLToPath } from "node:url";
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT_DIR = join(REPO_ROOT, "src/common/components/GenomeBrowser/tracks/data");
 const BASE_URL = "https://downloads.mohdconsortium.org";
+const MOHD_API_URL = JSON.parse(readFileSync(join(REPO_ROOT, "src/common/config.json"), "utf8")).API.MOHDAPI;
+
+/** The bins the API groups ages into - see src/common/ageBins.ts. */
+const AGE_BINS = new Set(["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"]);
 
 /** Columns every manifest carries, whatever the ome. */
 const SHARED_COLUMNS = ["sample_id", "filename", "file_type", "open_access", "url", "sex", "site", "status"];
@@ -92,7 +101,23 @@ function fileSuffix(row) {
   return row.filename.slice(row.sample_id.length + 1);
 }
 
-function buildOme({ ome, downloadPath, outFile, sampleColumns }, snapshotDir) {
+/** Sample ID -> age bin (or null, where none is recorded) for every sample the API has for the ome. */
+async function fetchAgeBins(ome) {
+  const response = await fetch(MOHD_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.MOHD_API_KEY}` },
+    body: JSON.stringify({ query: `{ ${ome}_metadata { sample_id age_bin } }` }),
+  });
+  const body = await response.json().catch(() => ({}));
+
+  if (!response.ok || body.errors || !body.data) {
+    throw new Error(`${ome}: age query failed (HTTP ${response.status}): ${JSON.stringify(body.errors ?? body)}`);
+  }
+
+  return new Map(body.data[`${ome}_metadata`].map((row) => [row.sample_id, row.age_bin]));
+}
+
+function buildOme({ ome, downloadPath, outFile, sampleColumns }, snapshotDir, ageBins) {
   const rows = parseTsv(join(snapshotDir, `${ome}_files_gb_updated.tsv`), (header) =>
     checkHeader(ome, header, [...new Set([...SHARED_COLUMNS, ...sampleColumns])])
   );
@@ -119,6 +144,7 @@ function buildOme({ ome, downloadPath, outFile, sampleColumns }, snapshotDir) {
   const fileSetKey = JSON.stringify(files);
 
   const samples = [];
+  const ageless = [];
 
   for (const [sampleId, sampleRows] of rowsBySample) {
     const sampleFiles = sampleRows
@@ -136,7 +162,20 @@ function buildOme({ ome, downloadPath, outFile, sampleColumns }, snapshotDir) {
       check(sampleRows[0][column] !== "", `${ome}/${sampleId}: ${column} is empty`);
     }
 
-    samples.push(Object.fromEntries([["id", sampleId], ...sampleColumns.map((c) => [c, sampleRows[0][c]])]));
+    const sample = Object.fromEntries([["id", sampleId], ...sampleColumns.map((c) => [c, sampleRows[0][c]])]);
+
+    // Left off where the API records none, as protocol is on the omes without one.
+    const ageBin = ageBins.get(sampleId);
+    check(ageBins.has(sampleId), `${ome}/${sampleId}: not in the API's ${ome}_metadata, so it has no age`);
+    check(ageBin == null || AGE_BINS.has(ageBin), `${ome}/${sampleId}: unrecognized age bin "${ageBin}"`);
+    if (ageBin == null) ageless.push(sampleId);
+    else sample.ageBin = ageBin;
+
+    samples.push(sample);
+  }
+
+  if (ageless.length > 0) {
+    warnings.push(`${ome}: ${ageless.length} sample(s) with no age recorded: ${ageless.join(", ")}`);
   }
 
   samples.sort((a, b) => a.id.localeCompare(b.id));
@@ -161,9 +200,15 @@ if (!existsSync(snapshotDir)) {
   process.exit(2);
 }
 
-console.log(`Reading manifests from ${snapshotDir}\n`);
+if (!process.env.MOHD_API_KEY) {
+  console.error("MOHD_API_KEY is not set. Run through `yarn build-mohd-catalog`, which loads .env.local.");
+  process.exit(2);
+}
 
-const built = OMES.map((config) => buildOme(config, snapshotDir));
+console.log(`Reading manifests from ${snapshotDir}, ages from ${MOHD_API_URL}\n`);
+
+const ageBinsByOme = await Promise.all(OMES.map(({ ome }) => fetchAgeBins(ome)));
+const built = OMES.map((config, index) => buildOme(config, snapshotDir, ageBinsByOme[index]));
 
 if (problems.length > 0) {
   console.error(`${problems.length} problem(s) found — nothing written:\n`);

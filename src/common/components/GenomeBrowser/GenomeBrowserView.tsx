@@ -6,7 +6,14 @@ import { GenomeBrowser, createBrowserStore, createTrackStore } from "@weng-lab/g
 import BrowserControls from "./_components/BrowserControls";
 import DomainDisplay from "./_components/DomainDisplay";
 import { DEFAULT_BROWSER_STATE } from "./defaultBrowserState";
-import { RULER_TRACK_ID, TRACK_MODULES, createRulerTrack, createTrackCollections, type MohdOme } from "./tracks";
+import {
+  MohdTooltipContext,
+  RULER_TRACK_ID,
+  TRACK_MODULES,
+  createRulerTrack,
+  createTrackCollections,
+  type MohdOme,
+} from "./tracks";
 import { loadTrackIds, saveTrackIds } from "./trackSelectStorage";
 
 const MAX_TRACKS = 30;
@@ -73,13 +80,16 @@ export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKe
           trackStore={useTrackStore}
           collections={collections}
           mohdTrackInfoById={mohdTrackInfoById}
+          mohdOme={mohdOme}
           initialTrackIds={restoredTrackIds}
           defaultTrackIds={initialSelectedIds}
           maxTracks={MAX_TRACKS}
           onCommittedTrackIds={(trackIds) => saveTrackIds(sessionStorageKey, trackIds)}
         />
         <DomainDisplay useBrowserStore={useBrowserStore} />
-        <GenomeBrowser browserStore={useBrowserStore} trackStore={useTrackStore} />
+        <MohdTooltipContext value={mohdTrackInfoById}>
+          <GenomeBrowser browserStore={useBrowserStore} trackStore={useTrackStore} />
+        </MohdTooltipContext>
       </Stack>
     </ScreenApolloWrapper>
   );
