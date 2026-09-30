@@ -6,8 +6,6 @@ query fetchDimensionalityReductionExplorer {
   atac_metadata {
     sample_id
     kit
-    participant_id
-    visit
     condition
     protocol
     tss_enrichment_score
@@ -33,8 +31,6 @@ query fetchDimensionalityReductionExplorer {
   rna_metadata {
     sample_id
     kit
-    participant_id
-    visit
     condition
     protocol
     site
@@ -57,8 +53,6 @@ query fetchDimensionalityReductionExplorer {
   wgbs_metadata {
     sample_id
     kit
-    participant_id
-    visit
     condition
     protocol
     site
@@ -81,8 +75,6 @@ query fetchDimensionalityReductionExplorer {
   lipidomics_metadata {
     sample_id
     kit
-    participant_id
-    visit
     condition
     protocol
     site
@@ -103,8 +95,6 @@ query fetchDimensionalityReductionExplorer {
   metabolomics_metadata {
     sample_id
     kit
-    participant_id
-    visit
     condition
     protocol
     site
@@ -125,8 +115,6 @@ query fetchDimensionalityReductionExplorer {
   metallomics_metadata {
     sample_id
     kit
-    participant_id
-    visit
     condition
     protocol
     site

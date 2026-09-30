@@ -21,9 +21,6 @@ export type ExplorerRow = {
   age_bin: string | null;
   protocol: string | null;
   condition: string | null;
-  kit: string | null;
-  participant_id: string | null;
-  visit: string | null;
   /** Library quality metrics, on ATAC. Absent elsewhere, rather than nulls that would bloat the payload. */
   metrics?: Record<Metric, number | null>;
 };
