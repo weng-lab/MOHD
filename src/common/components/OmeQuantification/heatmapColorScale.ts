@@ -25,7 +25,7 @@ export type HeatmapScaleMode = "zscore" | "rawZscore" | "log";
 /** Named by the formula each is taken on, and whether it's then z-scored. */
 export const HEATMAP_SCALES: Record<HeatmapScaleMode, { formula: string; zScored: boolean }> = {
   zscore: { formula: "log10(value + 1)", zScored: true },
-  rawZscore: { formula: "raw value", zScored: true },
+  rawZscore: { formula: "value", zScored: true },
   log: { formula: "log10(value + 1)", zScored: false },
 };
 
@@ -149,7 +149,7 @@ export const buildHeatmapColorScale = (
       return zScored(toLogValue, "log10(value + 1)");
 
     case "rawZscore":
-      return zScored((value) => value, "its raw values");
+      return zScored((value) => value, "its values");
 
     case "log": {
       const sorted = Float64Array.from(
