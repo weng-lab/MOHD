@@ -11,7 +11,7 @@ import {
   Z_SCORED_MODES,
 } from "@/common/components/OmeQuantification/heatmapColorScale";
 import PlotTooltip from "@/common/components/PlotTooltip";
-import { MISSING_LABEL } from "@/common/colors";
+import { tooltipRowsOf } from "@/common/sampleFields/fields";
 
 const truncateMoleculeName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
 
@@ -22,8 +22,8 @@ const valueByMolecule = (sample: LipidomicsSample) =>
 
 const LipidomicsQuantificationHeatmap = ({ lipidomicsData, sampleTable, ref }: SharedLipidomicsProps) => {
   const { loading } = lipidomicsData;
-  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
-  const { samples: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
+  // Every plotted sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { plotted: rows, inTableOrder: samples, fields, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const molecules = Array.from(
@@ -71,7 +71,7 @@ const LipidomicsQuantificationHeatmap = ({ lipidomicsData, sampleTable, ref }: S
           <PlotTooltip
             title={bin.datum.columnName}
             rows={[
-              { label: "Age", value: sample?.age_bin ?? MISSING_LABEL },
+              ...(sample ? tooltipRowsOf(fields, sample) : []),
               { label: "Molecule", value: rowMeta?.fullName ?? bin.bin.rowName },
               { label: "Value", value: rowMeta?.rawValue ?? "No data" },
               ...(rowMeta

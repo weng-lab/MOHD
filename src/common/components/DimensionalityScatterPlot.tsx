@@ -8,7 +8,7 @@ import {
   colorOf,
   groupOf,
   isNeutralGroup,
-  labelOf,
+  tooltipRowsOf,
   type Field,
   type FieldDefinition,
   type SampleGroups,
@@ -76,7 +76,8 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
   const [color, setColor] = useState<Field>("site");
   const [shape, setShape] = useState<ShapeBy>(NO_SHAPE);
 
-  const { samples, fields, filters, selected, setSelected } = table;
+  // The plotted samples alone, so the legend counts only what can be drawn.
+  const { plotted: samples, fields, filters, selected, setSelected } = table;
 
   const shapeable = shapeOptions(fields, samples);
   const shaping = shapingOf(shape, shapeable, samples);
@@ -313,11 +314,7 @@ const LinkedPlot = <T extends SampleGroups>({
                 title={sample.sample_id}
                 // Faded points can win the hit test, so a faded sample says why it's faded.
                 note={faded ? FADED_NOTES[faded] : undefined}
-                rows={
-                  sample.qc
-                    ? [{ label: "Sample", value: "QC / reference" }]
-                    : tooltipFields.map(({ key, label }) => ({ label, value: labelOf(key, groupOf(key, sample)) }))
-                }
+                rows={tooltipRowsOf(tooltipFields, sample)}
               />
             );
           }}

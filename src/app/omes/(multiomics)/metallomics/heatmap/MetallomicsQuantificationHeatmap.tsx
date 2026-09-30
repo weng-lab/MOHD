@@ -11,7 +11,7 @@ import {
   Z_SCORED_MODES,
 } from "@/common/components/OmeQuantification/heatmapColorScale";
 import PlotTooltip from "@/common/components/PlotTooltip";
-import { MISSING_LABEL } from "@/common/colors";
+import { tooltipRowsOf } from "@/common/sampleFields/fields";
 
 export type MetalGroup = "base" | "ucr";
 
@@ -37,8 +37,8 @@ const MetallomicsQuantificationHeatmap = ({
   ref,
 }: MetallomicsQuantificationHeatmapProps) => {
   const { loading } = metallomicsData;
-  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
-  const { samples: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
+  // Every plotted sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { plotted: rows, inTableOrder: samples, fields, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const metals = Array.from(
@@ -99,7 +99,7 @@ const MetallomicsQuantificationHeatmap = ({
           <PlotTooltip
             title={bin.datum.columnName}
             rows={[
-              { label: "Age", value: sample?.age_bin ?? MISSING_LABEL },
+              ...(sample ? tooltipRowsOf(fields, sample) : []),
               { label: "Metal", value: bin.bin.rowName },
               { label: "Value", value: rowMeta?.rawValue ?? "No data" },
               ...(rowMeta

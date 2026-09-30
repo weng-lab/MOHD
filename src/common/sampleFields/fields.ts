@@ -46,10 +46,12 @@ export const fieldsFor = (ome: OmesDataType): FieldDefinition[] =>
       (key !== "protocol" || VARIED_PROTOCOL_OMES.includes(ome)) && (key !== "age" || !AGELESS_OMES.includes(ome))
   );
 
-/** What a sample's groups are read from: any page's row, with `qc` set by isQcKit. */
+/** What a sample's groups are read from: any page's row, with `qc` and `unplotted` set by toSample. */
 export type SampleGroups = {
   sample_id: string;
   qc: boolean;
+  /** Listed in the table, but left out of every plot - see toSample, unplottedIfEmpty and unplottedIfNoPcs. */
+  unplotted?: boolean;
   site?: string | null;
   status?: string | null;
   sex?: string | null;
@@ -74,19 +76,43 @@ export const fieldOfColumn = (column: string): Field | undefined =>
   FIELDS.find(({ key }) => ROW_KEYS[key] === column)?.key;
 
 /** Kits the API gives QC and reference material rather than a participant's sample. */
-const QC_KITS = new Set(["internal_QC", "external_QC", "reference"]);
+const QC_KITS = new Set(["internal_QC", "external_QC", "reference", "calibration"]);
 
 export const isQcKit = (kit: string | null | undefined) => QC_KITS.has(kit ?? "");
 
 /** A sample as the API returns it, which tells QC material apart only by its kit. */
 export type SampleRow = Omit<SampleGroups, "qc"> & { kit?: string | null };
 
-export const toSample = <R extends SampleRow>(row: R): R & SampleGroups => ({ ...row, qc: isQcKit(row.kit) });
+/**
+ * A sample with no kit is QC or reference material the API can't say more about: checked against
+ * the metabolomics, lipidomics and exposomics metadata (2026-09-30), none has a status, site, sex,
+ * PCs or quantification values. It's labeled QC / Reference with the rest, but not plotted.
+ */
+export const toSample = <R extends SampleRow>(row: R): R & SampleGroups => ({
+  ...row,
+  qc: !row.kit || isQcKit(row.kit),
+  unplotted: !row.kit,
+});
 
 /**
- * A quantification row, which the API returns without a kit. Its QC samples are the ones with no
- * status: checked against each ome's metadata (2026-09-28), every QC-kit sample has none, and every
- * other sample has one.
+ * A quantification sample with no values - some QC samples come back with none - has nothing for a
+ * heatmap to draw, so it's listed in the table but not plotted either.
+ */
+export const unplottedIfEmpty = <R extends SampleGroups & { quantification: { value: number | null }[] }>(row: R): R =>
+  row.quantification.some(({ value }) => value !== null) ? row : { ...row, unplotted: true };
+
+/** Likewise a sample never placed in its ome's PCA, which has no point to draw. */
+export const unplottedIfNoPcs = <R extends SampleGroups & { pc1: number | null }>(row: R): R =>
+  row.pc1 === null ? { ...row, unplotted: true } : row;
+
+/** The samples a plot draws from - see toSample, unplottedIfEmpty and unplottedIfNoPcs. */
+export const plottedOnly = <R extends SampleGroups>(rows: R[]): R[] => rows.filter(({ unplotted }) => !unplotted);
+
+/**
+ * A quantification row, which the API returns without a kit, on metallomics' page, which doesn't read
+ * kits from its metadata. Its QC samples are the ones with no status: checked against each ome's
+ * metadata (2026-09-28), every QC-kit sample has none, and every other sample has one. Metallomics
+ * has no sample without a kit (2026-09-30), so none goes unplotted.
  */
 export const toQuantificationSample = <R extends Omit<SampleGroups, "qc">>(row: R): R & SampleGroups => ({
   ...row,
@@ -130,8 +156,8 @@ const UNMAPPED_COLOR = "#37474F";
 
 /** The neutral groups take the shared gray scale's two steps, distinct from each other and from a faded point. */
 export const colorOf = (field: Field, value: string): string => {
-  if (value === QC_GROUP) return NEUTRAL_DARK;
-  if (value === UNKNOWN_GROUP) return NEUTRAL_MID;
+  if (value === QC_GROUP) return NEUTRAL_MID;
+  if (value === UNKNOWN_GROUP) return NEUTRAL_DARK;
   return PALETTES[field][value] ?? UNMAPPED_COLOR;
 };
 
@@ -151,6 +177,15 @@ export const labelOf = (field: Field, value: string): string => {
       return value;
   }
 };
+
+/**
+ * A sample's groups as every plot's hover lists them, a line per field - or one line for a QC sample,
+ * which would otherwise read "QC / Reference" for every field.
+ */
+export const tooltipRowsOf = (fields: readonly FieldDefinition[], row: SampleGroups) =>
+  row.qc
+    ? [{ label: "Sample", value: "QC / reference" }]
+    : fields.map(({ key, label }) => ({ label, value: labelOf(key, groupOf(key, row)) }));
 
 /** Distinct values: age by band, the rest alphabetically, neutral groups last. Never by count, so order holds across omes. */
 export const sortValues = (field: Field, values: Iterable<string>): string[] => {

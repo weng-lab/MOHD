@@ -58,6 +58,3 @@ export const protocol_color_map = {
   "OPC method": "#00798c",
   "CPT method": "#edae49",
 };
-
-/** What tables and tooltips show for a sample with no value recorded. */
-export const MISSING_LABEL = "Missing";

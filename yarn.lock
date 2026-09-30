@@ -3828,9 +3828,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/ui-components@npm:4.0.0-beta.0":
-  version: 4.0.0-beta.0
-  resolution: "@weng-lab/ui-components@npm:4.0.0-beta.0"
+"@weng-lab/ui-components@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@weng-lab/ui-components@npm:4.0.0"
   peerDependencies:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.0
@@ -3839,13 +3839,13 @@ __metadata:
     "@mui/x-data-grid-premium": ^8.18.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/85d6548134202a6d8d8ba97f675f495522877236303ebf81eedde72f0e416d152489b29101c3c7111e0836162312aeec34cd0324cfd2913b66790da3434d6f39
+  checksum: 10c0/ac3acc1ca9f9f6b9daf509e5482e1465f92e6c763cd4f536ad1954cae62f557cd12886e3a79ab54dae661e089d32116ffe23e205e6e635798acb0218770d32d0
   languageName: node
   linkType: hard
 
-"@weng-lab/visualization@npm:2.6.0-beta.1":
-  version: 2.6.0-beta.1
-  resolution: "@weng-lab/visualization@npm:2.6.0-beta.1"
+"@weng-lab/visualization@npm:2.6.0":
+  version: 2.6.0
+  resolution: "@weng-lab/visualization@npm:2.6.0"
   dependencies:
     "@types/d3-hierarchy": "npm:^3.1.7"
     "@types/d3-shape": "npm:^3.1.8"
@@ -3868,7 +3868,7 @@ __metadata:
     "@visx/visx": ^4.0.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/6a56731b29f9f86d91a8154b3da75285580176414658341ac0957c5db46dc1d7f465cbe9c4a8ec7df7b20f0972369450f30a15cae42971193f5ca14240036edd
+  checksum: 10c0/977af6026c047b2856f654423cbf93f4230df5deec8e31dc0ce9cab6554c3eb9debce35a3f7bf7b9d358902f011e33a988e0ac990b7b0af212d52b03d7eb268d
   languageName: node
   linkType: hard
 
@@ -7785,8 +7785,8 @@ __metadata:
     "@weng-lab/genomebrowser": "npm:2.0.0"
     "@weng-lab/genomebrowser-tracks": "npm:2.0.0"
     "@weng-lab/genomebrowser-ui": "npm:2.1.0"
-    "@weng-lab/ui-components": "npm:4.0.0-beta.0"
-    "@weng-lab/visualization": "npm:2.6.0-beta.1"
+    "@weng-lab/ui-components": "npm:4.0.0"
+    "@weng-lab/visualization": "npm:2.6.0"
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"
     eslint: "npm:^9.38.0"

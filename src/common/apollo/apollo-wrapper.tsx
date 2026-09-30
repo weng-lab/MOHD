@@ -25,7 +25,15 @@ function makeClient() {
   });
 
   return new ApolloClient({
-    cache: new InMemoryCache(),
+    // Keyed by sample, so a heatmap's kits and a PCA's coordinates merge into one row each rather
+    // than each query's list replacing the other's.
+    cache: new InMemoryCache({
+      typePolicies: {
+        MetabolomicsSampleMetadata: { keyFields: ["sample_id"] },
+        LipidomicsSampleMetadata: { keyFields: ["sample_id"] },
+        ExposomicsSampleMetadata: { keyFields: ["sample_id"] },
+      },
+    }),
     link: isServer
       ? ApolloLink.from([
           new SSRMultipartLink({
