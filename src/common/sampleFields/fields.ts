@@ -145,8 +145,8 @@ const UNMAPPED_COLOR = "#37474F";
 
 /** The neutral groups take the shared gray scale's two steps, distinct from each other and from a faded point. */
 export const colorOf = (field: Field, value: string): string => {
-  if (value === QC_GROUP) return NEUTRAL_DARK;
-  if (value === UNKNOWN_GROUP) return NEUTRAL_MID;
+  if (value === QC_GROUP) return NEUTRAL_MID;
+  if (value === UNKNOWN_GROUP) return NEUTRAL_DARK;
   return PALETTES[field][value] ?? UNMAPPED_COLOR;
 };
 
@@ -166,6 +166,15 @@ export const labelOf = (field: Field, value: string): string => {
       return value;
   }
 };
+
+/**
+ * A sample's groups as every plot's hover lists them, a line per field - or one line for a QC sample,
+ * which would otherwise read "QC / Reference" for every field.
+ */
+export const tooltipRowsOf = (fields: readonly FieldDefinition[], row: SampleGroups) =>
+  row.qc
+    ? [{ label: "Sample", value: "QC / reference" }]
+    : fields.map(({ key, label }) => ({ label, value: labelOf(key, groupOf(key, row)) }));
 
 /** Distinct values: age by band, the rest alphabetically, neutral groups last. Never by count, so order holds across omes. */
 export const sortValues = (field: Field, values: Iterable<string>): string[] => {

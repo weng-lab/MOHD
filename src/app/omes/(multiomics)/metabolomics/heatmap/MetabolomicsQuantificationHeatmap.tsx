@@ -11,7 +11,7 @@ import {
   Z_SCORED_MODES,
 } from "@/common/components/OmeQuantification/heatmapColorScale";
 import PlotTooltip from "@/common/components/PlotTooltip";
-import { MISSING_LABEL } from "@/common/colors";
+import { tooltipRowsOf } from "@/common/sampleFields/fields";
 
 const compoundKey = (compound: string, mode: string) => `${compound}::${mode}`;
 const truncateCompoundName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
@@ -24,7 +24,7 @@ const valueByCompound = (sample: MetabolomicsSample) =>
 const MetabolomicsQuantificationHeatmap = ({ metabolomicsData, sampleTable, ref }: SharedMetabolomicsProps) => {
   const { loading } = metabolomicsData;
   // Every plotted sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
-  const { plotted: rows, inTableOrder: samples, selected, setSelected, autoSort } = sampleTable;
+  const { plotted: rows, inTableOrder: samples, fields, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const compounds = Array.from(
@@ -76,7 +76,7 @@ const MetabolomicsQuantificationHeatmap = ({ metabolomicsData, sampleTable, ref 
           <PlotTooltip
             title={bin.datum.columnName}
             rows={[
-              { label: "Age", value: sample?.age_bin ?? MISSING_LABEL },
+              ...(sample ? tooltipRowsOf(fields, sample) : []),
               { label: "Compound", value: rowMeta?.fullName ?? bin.bin.rowName },
               { label: "Mode", value: rowMeta?.mode },
               { label: "Value", value: rowMeta?.rawValue ?? "No data" },
