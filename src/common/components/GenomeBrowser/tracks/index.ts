@@ -1,15 +1,24 @@
+import { bigBedModule } from "@weng-lab/genomebrowser-tracks/bigbed";
+import { bigWigModule } from "@weng-lab/genomebrowser-tracks/bigwig";
 import { geneModule } from "@weng-lab/genomebrowser-tracks/gene";
+import { methylCModule } from "@weng-lab/genomebrowser-tracks/methylc";
 import { rulerModule } from "@weng-lab/genomebrowser-tracks/ruler";
 import { genesCollection } from "./genes";
 import { createMohdCatalog, type MohdOme } from "./mohd";
-import { mohdBigBedModule, mohdBigWigModule, mohdMethylCModule } from "./mohdTooltips";
+import { MohdMethylTooltip, MohdPeakTooltip, MohdSignalTooltip } from "./mohdTooltips";
 
 /**
  * Track modules the browser can render. v2 core ships no track types of its
  * own, so every type used by a collection must be registered here. The MOHD
  * track types are the first-party modules with tooltips that name the sample.
  */
-export const TRACK_MODULES = [mohdBigWigModule, mohdBigBedModule, mohdMethylCModule, geneModule, rulerModule];
+export const TRACK_MODULES = [
+  { ...bigWigModule, tooltipComponent: MohdSignalTooltip } satisfies typeof bigWigModule,
+  { ...bigBedModule, tooltipComponent: MohdPeakTooltip } satisfies typeof bigBedModule,
+  { ...methylCModule, tooltipComponent: MohdMethylTooltip } satisfies typeof methylCModule,
+  geneModule,
+  rulerModule,
+];
 
 export const RULER_TRACK_ID = "ruler";
 
@@ -52,4 +61,4 @@ export function createTrackCollections(mohdOme?: MohdOme) {
 export { GENCODE_BASIC_TRACK_ID, genesCollection } from "./genes";
 export { MOHD_COLLECTION_ID, createMohdCatalog, qualifyMohdTrackId } from "./mohd";
 export type { MohdOme, MohdTrackInfo } from "./mohd";
-export { MohdTooltipContext } from "./mohdTooltips";
+export { MohdTooltipContext } from "./mohdTooltipContext";

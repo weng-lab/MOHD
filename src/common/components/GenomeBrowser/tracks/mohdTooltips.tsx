@@ -1,4 +1,4 @@
-import { createContext, use } from "react";
+import { use } from "react";
 import type { TrackRuntimeContext, TrackTooltipComponent } from "@weng-lab/genomebrowser";
 import { bigBedModule, type BigBedConfig, type BigBedRow } from "@weng-lab/genomebrowser-tracks/bigbed";
 import { bigWigModule, type BigWigConfig } from "@weng-lab/genomebrowser-tracks/bigwig";
@@ -17,17 +17,13 @@ import {
   type TrackTooltipRow,
 } from "@weng-lab/genomebrowser-tracks/shared";
 import { fieldsFor, groupOf, labelOf, type SampleGroups } from "@/common/sampleFields/fields";
-import type { MohdTrackInfo } from "./mohd";
+import { MohdTooltipContext } from "./mohdTooltipContext";
 
 /**
  * Hovering a MOHD track names its sample and the sample's metadata, as a point on the ome's PCA
- * does: the same fields, labeled the same way, under the module's own rows.
- *
- * The browser hands a tooltip only the track's base and config, so the catalog comes in through
- * React context instead - qualified track ID -> its facts. The browser portals its tooltips, which
- * keeps them inside this tree.
+ * does: the same fields, labeled the same way, under the module's own rows. The metadata comes
+ * from the catalog, through MohdTooltipContext.
  */
-export const MohdTooltipContext = createContext<Map<string, MohdTrackInfo> | null>(null);
 
 /** The hovered track's sample as a title and rows, or null for a track outside the catalog. */
 function useSampleTooltip(context: TrackRuntimeContext<unknown>) {
@@ -130,17 +126,5 @@ const MohdMethylTooltip: TrackTooltipComponent<MethylCTooltipItem, MethylCConfig
   );
 };
 
-export const mohdBigWigModule = {
-  ...bigWigModule,
-  tooltipComponent: MohdSignalTooltip,
-} satisfies typeof bigWigModule;
-
-export const mohdBigBedModule = {
-  ...bigBedModule,
-  tooltipComponent: MohdPeakTooltip,
-} satisfies typeof bigBedModule;
-
-export const mohdMethylCModule = {
-  ...methylCModule,
-  tooltipComponent: MohdMethylTooltip,
-} satisfies typeof methylCModule;
+// Only components leave this file, so Fast Refresh can swap it in place - index.ts builds the modules.
+export { MohdMethylTooltip, MohdPeakTooltip, MohdSignalTooltip };
