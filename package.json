@@ -34,7 +34,7 @@
     "@visx/visx": "^4",
     "@weng-lab/genomebrowser": "2.0.0",
     "@weng-lab/genomebrowser-tracks": "2.0.0",
-    "@weng-lab/genomebrowser-ui": "2.0.1",
+    "@weng-lab/genomebrowser-ui": "2.1.0",
     "@weng-lab/ui-components": "4.0.0",
     "@weng-lab/visualization": "2.6.0",
     "next": "16.2.6",
