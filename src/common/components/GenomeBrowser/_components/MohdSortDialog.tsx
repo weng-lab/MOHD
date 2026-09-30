@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { TrackStoreInstance } from "@weng-lab/genomebrowser";
 import { TrackSortDialog, type TrackSortOption } from "@weng-lab/genomebrowser-ui";
+import { AGE_BIN_LABELS } from "@/common/ageBins";
 import { OmesList } from "@/common/types/globalTypes";
 import type { MohdOme, MohdTrackInfo } from "../tracks";
 
@@ -45,6 +46,13 @@ const SITE_OPTION: MohdSortOption = { id: "site", label: "Site", compare: (a, b)
 // Alphabetical order already puts "prefer no answer" after female and male.
 const SEX_OPTION: MohdSortOption = { id: "sex", label: "Sex", compare: (a, b) => a.sex.localeCompare(b.sex) };
 
+const AGE_OPTION: MohdSortOption = {
+  id: "age",
+  label: "Age",
+  // Youngest first, by band; samples with no recorded age sort last.
+  compare: (a, b) => rankIn(AGE_BIN_LABELS, a.ageBin ?? "") - rankIn(AGE_BIN_LABELS, b.ageBin ?? ""),
+};
+
 const PROTOCOL_OPTION: MohdSortOption = {
   id: "protocol",
   label: "Protocol",
@@ -59,7 +67,13 @@ const PROTOCOL_OPTION: MohdSortOption = {
  */
 function getSortOptions(mohdOme: MohdOme | undefined) {
   const defaults = [SAMPLE_ID_OPTION, FILE_TYPE_OPTION, ...(mohdOme ? [] : [OME_OPTION])];
-  const extras = [STATUS_OPTION, SITE_OPTION, SEX_OPTION, ...(!mohdOme || mohdOme === "ATAC" ? [PROTOCOL_OPTION] : [])];
+  const extras = [
+    STATUS_OPTION,
+    SITE_OPTION,
+    SEX_OPTION,
+    AGE_OPTION,
+    ...(!mohdOme || mohdOme === "ATAC" ? [PROTOCOL_OPTION] : []),
+  ];
 
   return { defaults, all: [...defaults, ...extras] };
 }

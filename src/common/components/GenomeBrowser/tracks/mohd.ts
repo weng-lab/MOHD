@@ -44,6 +44,8 @@ type MohdSample = {
   status: string;
   /** ATAC only — the assay's sample-preparation method. */
   protocol?: string;
+  /** Binned by the API ("0-9" ... "80+"); absent where it records no age. */
+  ageBin?: string;
 };
 
 type MohdOmeData = {
@@ -76,6 +78,7 @@ export type MohdTrackInfo = {
   protocol?: string;
   sex: string;
   status: string;
+  ageBin?: string;
   description: string;
   trackCategory: "Signal" | "Annotation" | "Methylation";
   /** Position of this file within its ome's display order, for host-side sorting. */
@@ -156,6 +159,7 @@ function toMetadata(info: MohdTrackInfo) {
     protocol: info.protocol ?? null,
     sex: info.sex,
     status: info.status,
+    ageBin: info.ageBin ?? null,
     description: info.description,
     trackCategory: info.trackCategory,
   };
@@ -180,6 +184,7 @@ function createFileTrack(
     protocol: sample.protocol,
     sex: sample.sex,
     status: sample.status,
+    ageBin: sample.ageBin,
     description: file.fileType,
     trackCategory: isAnnotation ? "Annotation" : "Signal",
     fileRank,
@@ -222,6 +227,7 @@ function createWgbsMethylTrack(data: MohdOmeData, sample: MohdSample): { track: 
     protocol: sample.protocol,
     sex: sample.sex,
     status: sample.status,
+    ageBin: sample.ageBin,
     description: WGBS_DESCRIPTION,
     trackCategory: "Methylation",
     fileRank: 0,
@@ -278,6 +284,7 @@ const MOHD_COLUMNS = [
   { field: "protocol", label: "Protocol", width: 160 },
   { field: "sex", label: "Sex", width: 120 },
   { field: "status", label: "Status", width: 120 },
+  { field: "ageBin", label: "Age", width: 100 },
 ];
 
 const MOHD_VIEWS = [
