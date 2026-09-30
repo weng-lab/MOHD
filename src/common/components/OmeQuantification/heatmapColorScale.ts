@@ -22,11 +22,11 @@ import { zScoreByRow } from "./zScoreByRow";
  */
 export type HeatmapScaleMode = "zscore" | "rawZscore" | "log";
 
-/** Named by formula. */
-export const HEATMAP_SCALE_LABELS: Record<HeatmapScaleMode, string> = {
-  zscore: "Z-score: log10(value + 1)",
-  rawZscore: "Z-score: raw value",
-  log: "log10(value + 1)",
+/** Named by the formula each is taken on, and whether it's then z-scored. */
+export const HEATMAP_SCALES: Record<HeatmapScaleMode, { formula: string; zScored: boolean }> = {
+  zscore: { formula: "log10(value + 1)", zScored: true },
+  rawZscore: { formula: "raw value", zScored: true },
+  log: { formula: "log10(value + 1)", zScored: false },
 };
 
 /** The toggle's options on the mass-spec heatmaps, and on exposomics. */
