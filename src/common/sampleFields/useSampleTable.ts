@@ -3,7 +3,7 @@ import { useTablePlotSync } from "@weng-lab/ui-components";
 import { useMemo, useState } from "react";
 import type { OmesDataType } from "@/common/types/globalTypes";
 import { fieldsFor, plottedOnly, type Field, type SampleGroups } from "./fields";
-import { sampleColumns } from "./sampleColumns";
+import { isSampleSelectable, sampleColumns } from "./sampleColumns";
 import { filtersFromModel, toggleInModel, unshownFilters } from "./tableFilters";
 
 const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
@@ -49,13 +49,15 @@ export const useSampleTable = <R extends SampleGroups>(ome: OmesDataType, data: 
   return {
     /** Every sample, in the order the data came in - the table's rows. */
     samples,
-    /** The samples a plot draws from, in the same order: every one but those toSample leaves unplotted. */
+    /** The samples a plot draws from, in the same order: every one not flagged unplotted. */
     plotted,
     fields,
     /** Spread onto the Table - see SampleTable. */
     tableProps: {
       ...tableProps,
       columns,
+      // An unplotted sample can't be checked, as no plot could show it was.
+      isRowSelectable: isSampleSelectable,
       filterModel,
       onFilterModelChange: setFilterModel,
       slotProps: { ...tableProps.slotProps, filterPanel: FILTER_PANEL },

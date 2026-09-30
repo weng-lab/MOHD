@@ -2,7 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchMetallomicsDataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { toQuantificationSample } from "@/common/sampleFields/fields";
+import { toQuantificationSample, unplottedIfEmpty } from "@/common/sampleFields/fields";
 
 const GET_METALLOMICS_DATA = gql(`
 query fetchMetallomicsData {
@@ -66,7 +66,8 @@ const toMetallomicsSamples = (data: FetchMetallomicsDataQuery | undefined): Meta
           value: row.quant_values?.[index] ?? null,
         })),
       })
-    );
+    )
+    .map(unplottedIfEmpty);
 };
 
 export const useMetallomicsData = ({ skip }: UseMetallomicsDataParams): UseMetallomicsDataReturn => {

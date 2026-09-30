@@ -2,7 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchMetabolomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { toSample } from "@/common/sampleFields/fields";
+import { toSample, unplottedIfEmpty } from "@/common/sampleFields/fields";
 
 const GET_METABOLOMICS_QUANTIFICATION = gql(`
 query fetchMetabolomicsQuantification {
@@ -82,7 +82,8 @@ const toMetabolomicsSamples = (
           value: row.quant_values?.[index] ?? null,
         })),
       })
-    );
+    )
+    .map(unplottedIfEmpty);
 };
 
 export const useMetabolomicsQuantification = ({

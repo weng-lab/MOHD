@@ -50,7 +50,7 @@ export const fieldsFor = (ome: OmesDataType): FieldDefinition[] =>
 export type SampleGroups = {
   sample_id: string;
   qc: boolean;
-  /** Listed in the table, but left out of every plot - see toSample. */
+  /** Listed in the table, but left out of every plot - see toSample, unplottedIfEmpty and unplottedIfNoPcs. */
   unplotted?: boolean;
   site?: string | null;
   status?: string | null;
@@ -94,7 +94,18 @@ export const toSample = <R extends SampleRow>(row: R): R & SampleGroups => ({
   unplotted: !row.kit,
 });
 
-/** The samples a plot draws from - see toSample. */
+/**
+ * A quantification sample with no values - some QC samples come back with none - has nothing for a
+ * heatmap to draw, so it's listed in the table but not plotted either.
+ */
+export const unplottedIfEmpty = <R extends SampleGroups & { quantification: { value: number | null }[] }>(row: R): R =>
+  row.quantification.some(({ value }) => value !== null) ? row : { ...row, unplotted: true };
+
+/** Likewise a sample never placed in its ome's PCA, which has no point to draw. */
+export const unplottedIfNoPcs = <R extends SampleGroups & { pc1: number | null }>(row: R): R =>
+  row.pc1 === null ? { ...row, unplotted: true } : row;
+
+/** The samples a plot draws from - see toSample, unplottedIfEmpty and unplottedIfNoPcs. */
 export const plottedOnly = <R extends SampleGroups>(rows: R[]): R[] => rows.filter(({ unplotted }) => !unplotted);
 
 /**

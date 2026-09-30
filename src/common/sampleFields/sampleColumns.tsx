@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
+import { GRID_CHECKBOX_SELECTION_COL_DEF } from "@mui/x-data-grid-premium";
 import type { TableColDef } from "@weng-lab/ui-components";
 import {
   QC_GROUP,
@@ -14,6 +15,29 @@ import {
 import { groupsOf } from "./groups";
 
 export const DATASET_COLUMN = { field: "sample_id", headerName: "Dataset" } as const;
+
+const UNPLOTTED_NOTE = "This sample has no data to plot";
+
+/** The grid's own selection column, whose disabled checkboxes - an unplotted sample's - say why on hover. */
+const CHECKBOX_COLUMN: TableColDef = {
+  ...GRID_CHECKBOX_SELECTION_COL_DEF,
+  renderCell: (params) => {
+    const checkbox = GRID_CHECKBOX_SELECTION_COL_DEF.renderCell?.(params);
+    return (params.row as SampleGroups).unplotted ? (
+      <Tooltip title={UNPLOTTED_NOTE}>
+        {/* A disabled checkbox fires no hover events, so the tooltip listens on this instead. */}
+        <Box component="span" sx={{ display: "inline-flex" }}>
+          {checkbox}
+        </Box>
+      </Tooltip>
+    ) : (
+      checkbox
+    );
+  },
+};
+
+/** Whether a sample can be checked in the table: one no plot draws couldn't show it was. */
+export const isSampleSelectable = ({ row }: { row: SampleGroups }) => !row.unplotted;
 
 /**
  * What a cell shows: a QC sample's status reads "QC / Reference", muted as the plot grays it, and
@@ -31,13 +55,15 @@ const cellOf = (field: Field, value: string, formattedValue: ReactNode): ReactNo
 };
 
 /**
- * The Dataset column, then one per field. A field's column holds the chips' groups rather than the
- * raw value, so filtering it and clicking a chip are the same thing - see cellOf for how they read.
+ * The selection column, the Dataset column, then one per field. A field's column holds the chips'
+ * groups rather than the raw value, so filtering it and clicking a chip are the same thing - see
+ * cellOf for how they read.
  */
 export const sampleColumns = <R extends SampleGroups>(
   fields: readonly FieldDefinition[],
   samples: readonly R[]
 ): TableColDef<R>[] => [
+  CHECKBOX_COLUMN,
   DATASET_COLUMN,
   ...fields.map(({ key, label }): TableColDef<R> => ({
     field: columnOf(key),

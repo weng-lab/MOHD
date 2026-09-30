@@ -2,7 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchExposomicsDataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { toSample } from "@/common/sampleFields/fields";
+import { toSample, unplottedIfEmpty } from "@/common/sampleFields/fields";
 
 const GET_EXPOSOMICS_DATA = gql(`
 query fetchExposomicsData {
@@ -94,7 +94,8 @@ const toExposomicsSamples = (data: FetchExposomicsDataQuery | undefined): Exposo
           value: row.quant_values?.[index] ?? null,
         })),
       })
-    );
+    )
+    .map(unplottedIfEmpty);
 };
 
 export const useExposomicsData = ({ skip }: UseExposomicsDataParams): UseExposomicsDataReturn => {
