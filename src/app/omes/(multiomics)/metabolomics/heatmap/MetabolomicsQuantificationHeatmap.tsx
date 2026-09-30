@@ -23,8 +23,8 @@ const valueByCompound = (sample: MetabolomicsSample) =>
 
 const MetabolomicsQuantificationHeatmap = ({ metabolomicsData, sampleTable, ref }: SharedMetabolomicsProps) => {
   const { loading } = metabolomicsData;
-  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
-  const { samples: rows, inTableOrder: samples, fields, selected, setSelected, autoSort } = sampleTable;
+  // Every plotted sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { plotted: rows, inTableOrder: samples, fields, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const compounds = Array.from(

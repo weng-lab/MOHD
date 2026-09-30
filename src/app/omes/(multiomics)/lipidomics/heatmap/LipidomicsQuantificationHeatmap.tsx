@@ -22,8 +22,8 @@ const valueByMolecule = (sample: LipidomicsSample) =>
 
 const LipidomicsQuantificationHeatmap = ({ lipidomicsData, sampleTable, ref }: SharedLipidomicsProps) => {
   const { loading } = lipidomicsData;
-  // Every sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
-  const { samples: rows, inTableOrder: samples, fields, selected, setSelected, autoSort } = sampleTable;
+  // Every plotted sample, which each row's scale is fitted to, and the table's, in its order, as the columns.
+  const { plotted: rows, inTableOrder: samples, fields, selected, setSelected, autoSort } = sampleTable;
   const [scaleMode, setScaleMode] = useState<HeatmapScaleMode>("zscore");
 
   const molecules = Array.from(

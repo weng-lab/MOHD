@@ -2,7 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchExposomicsDataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { toQuantificationSample } from "@/common/sampleFields/fields";
+import { toSample, unplottedIfEmpty } from "@/common/sampleFields/fields";
 
 const GET_EXPOSOMICS_DATA = gql(`
 query fetchExposomicsData {
@@ -24,6 +24,10 @@ query fetchExposomicsData {
     sex
     quant_values
   }
+  exposomics_metadata {
+    sample_id
+    kit
+  }
 }
  `);
 
@@ -42,7 +46,7 @@ export type ExposomicsMoleculeValue = {
 
 export type ExposomicsSample = {
   sample_id: string;
-  /** QC or reference material rather than a participant's sample - see toQuantificationSample. */
+  /** QC or reference material rather than a participant's sample - see toSample. */
   qc: boolean;
   site: string;
   status: string;
@@ -65,11 +69,15 @@ const toExposomicsSamples = (data: FetchExposomicsDataQuery | undefined): Exposo
 
   if (!data?.exposomics_quantification) return undefined;
 
+  // Quantification rows come without a kit, which says which samples are QC - see toSample.
+  const kitOf = new Map(data.exposomics_metadata.map(({ sample_id, kit }) => [sample_id, kit]));
+
   return data.exposomics_quantification
     .filter((row): row is NonNullable<FetchExposomicsDataQuery["exposomics_quantification"][number]> => row !== null)
     .map((row) =>
-      toQuantificationSample({
+      toSample({
         sample_id: row.sample_id,
+        kit: kitOf.get(row.sample_id) ?? null,
         site: row.site ?? "",
         status: row.status ?? "",
         sex: row.sex ?? "",
@@ -86,7 +94,8 @@ const toExposomicsSamples = (data: FetchExposomicsDataQuery | undefined): Exposo
           value: row.quant_values?.[index] ?? null,
         })),
       })
-    );
+    )
+    .map(unplottedIfEmpty);
 };
 
 export const useExposomicsData = ({ skip }: UseExposomicsDataParams): UseExposomicsDataReturn => {

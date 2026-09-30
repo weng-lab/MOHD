@@ -2,8 +2,8 @@ import { GridLogicOperator, type GridFilterModel, type GridSortModel } from "@mu
 import { useTablePlotSync } from "@weng-lab/ui-components";
 import { useMemo, useState } from "react";
 import type { OmesDataType } from "@/common/types/globalTypes";
-import { fieldsFor, type Field, type SampleGroups } from "./fields";
-import { sampleColumns } from "./sampleColumns";
+import { fieldsFor, plottedOnly, type Field, type SampleGroups } from "./fields";
+import { isSampleSelectable, sampleColumns } from "./sampleColumns";
 import { filtersFromModel, toggleInModel, unshownFilters } from "./tableFilters";
 
 const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
@@ -22,7 +22,7 @@ const NO_ROWS: never[] = [];
  * and, for a heatmap, the samples in the table's order.
  *
  * `data` is the page's data hook's, whose rows come with their QC flagged - see toSample and
- * toQuantificationSample.
+ * toQuantificationSample. The table lists every row; a plot draws only `plotted`.
  */
 export const useSampleTable = <R extends SampleGroups>(ome: OmesDataType, data: R[] | undefined) => {
   const samples: R[] = data ?? NO_ROWS;
@@ -42,22 +42,30 @@ export const useSampleTable = <R extends SampleGroups>(ome: OmesDataType, data: 
   const [filterModel, setFilterModel] = useState<GridFilterModel>(NO_FILTERS);
   const filters = filtersFromModel(filterModel, fields, samples);
 
+  // By hand, as above: a plot handed new arrays on every render would redraw on every render.
+  const plotted = useMemo(() => plottedOnly(samples), [samples]);
+  const plottedInTableOrder = useMemo(() => plottedOnly(sortedFilteredData), [sortedFilteredData]);
+
   return {
-    /** Every sample, in the order the data came in. */
+    /** Every sample, in the order the data came in - the table's rows. */
     samples,
+    /** The samples a plot draws from, in the same order: every one not flagged unplotted. */
+    plotted,
     fields,
     /** Spread onto the Table - see SampleTable. */
     tableProps: {
       ...tableProps,
       columns,
+      // An unplotted sample can't be checked, as no plot could show it was.
+      isRowSelectable: isSampleSelectable,
       filterModel,
       onFilterModelChange: setFilterModel,
       slotProps: { ...tableProps.slotProps, filterPanel: FILTER_PANEL },
     },
     selected,
     setSelected,
-    /** The samples the table's filters leave in, in its order - a heatmap's columns. */
-    inTableOrder: sortedFilteredData,
+    /** The plotted samples the table's filters leave in, in its order - a heatmap's columns. */
+    inTableOrder: plottedInTableOrder,
     /** Whether the table keeps selected samples at the top, as a heatmap then keeps its columns. */
     autoSort,
     filters,
