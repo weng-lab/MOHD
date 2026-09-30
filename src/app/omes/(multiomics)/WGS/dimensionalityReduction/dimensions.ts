@@ -1,3 +1,5 @@
+import { OME_PAGE_CHROME, omePageHeight } from "@/common/components/OmeDetails/omePageHeight";
+
 /**
  * Layout constants shared by the plots and the skeleton that stands in for them.
  *
@@ -26,12 +28,11 @@ export const AXIS_CLUSTER_SIZE = { width: 301, height: 49 } as const;
 
 /** Vertical chrome above and below the cards at the lg breakpoint, in px. */
 const PAGE_CHROME =
-  16 + // the shell's Stack spacing above this page
+  OME_PAGE_CHROME + // the shell's Stack spacing above this page, and its bottom margin
   16 + // page padding, top
   AXIS_CLUSTER_SIZE.height + // header row: the cluster, which outmeasures the title
   16 + // gap between the header row and the cards
-  16 + // page padding, bottom
-  16; // the shell's bottom margin
+  16; // page padding, bottom
 
 /**
  * Height of a single card.
@@ -46,7 +47,7 @@ const PAGE_CHROME =
  * they stack - a fixed height on the row would then have to hold both, clipping
  * the second into the footer instead of letting the page grow.
  */
-export const PLOT_HEIGHT = `max(calc(100vh - 64px - var(--ome-header-height, 66px) - ${PAGE_CHROME}px), 460px)`;
+export const PLOT_HEIGHT = omePageHeight(PAGE_CHROME, 460);
 
 /** Sizing applied to each card, and to the skeleton standing in for it. */
 export const CARD_SX = {

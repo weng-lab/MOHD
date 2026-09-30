@@ -1,6 +1,5 @@
 "use client";
-import { SyncedTableProps, TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
-import LipidomicsQuantificationTable from "./LipidomicsQuantificationTable";
+import { TwoPaneLayout } from "@weng-lab/ui-components";
 import { GridOn } from "@mui/icons-material";
 import LipidomicsQuantificationHeatmap from "./LipidomicsQuantificationHeatmap";
 import { DownloadPlotHandle } from "@weng-lab/visualization";
@@ -9,19 +8,14 @@ import {
   UseLipidomicsQuantificationReturn,
   LipidomicsSample,
 } from "@/common/hooks/omeHooks/useLipidomicsQuantification";
-import { useOmeQuantificationTable } from "@/common/components/OmeQuantification/OmeQuantificationTable";
+import SampleTable from "@/common/sampleFields/SampleTable";
+import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
-
-export type LipidomicsMetadata = LipidomicsSample[];
+import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
 export type SharedLipidomicsProps = {
-  rows: LipidomicsMetadata;
   lipidomicsData: UseLipidomicsQuantificationReturn;
-  selected: LipidomicsMetadata;
-  setSelected: React.Dispatch<React.SetStateAction<LipidomicsMetadata>>;
-  sortedFilteredData: LipidomicsMetadata;
-  syncedTableProps: SyncedTableProps<LipidomicsSample>;
-  autoSort: boolean;
+  sampleTable: SampleTableState<LipidomicsSample>;
   ref?: React.RefObject<DownloadPlotHandle | null>;
 };
 
@@ -29,30 +23,23 @@ const LipidomicsHeatmap = () => {
   const { ref: heatmapRef, ...heatmapDownload } = usePlotDownload();
   const lipidomicsData = useLipidomicsQuantification({ skip: false });
 
-  const rows: LipidomicsMetadata = lipidomicsData.data ?? [];
+  const sampleTable = useSampleTable("lipidomics", lipidomicsData.data);
 
-  const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-    rows,
-    getRowId: (row) => row.sample_id,
-  });
-  const { syncedTableProps, autoSort } = useOmeQuantificationTable({ rows, tableProps });
-
-  const SharedLipidomicsProps: SharedLipidomicsProps = {
-    rows,
-    lipidomicsData,
-    selected,
-    setSelected,
-    sortedFilteredData,
-    syncedTableProps,
-    autoSort,
-  };
+  const SharedLipidomicsProps: SharedLipidomicsProps = { lipidomicsData, sampleTable };
 
   return (
     <TwoPaneLayout
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
-      rowHeight="max(60vh, 700px)"
-      TableComponent={<LipidomicsQuantificationTable {...SharedLipidomicsProps} />}
+      {...TWO_PANE_HEIGHTS}
+      TableComponent={
+        <SampleTable
+          label="Lipidomics Quantification"
+          table={sampleTable}
+          loading={lipidomicsData.loading}
+          error={lipidomicsData.error}
+        />
+      }
       plots={[
         {
           tabTitle: "Heatmap",

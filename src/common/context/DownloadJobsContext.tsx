@@ -189,7 +189,7 @@ export function DownloadJobsProvider({ children }: { children: ReactNode }) {
 
   // One timer per in-flight job, owned by this effect rather than started
   // imperatively — whenever the pollable set changes (a job finishes, fails, is
-  // cancelled, or is retried under a new id) the old timers are torn down and
+  // canceled, or is retried under a new id) the old timers are torn down and
   // only the still-running ids get a fresh one.
   const pollableIds = jobs.flatMap((j) => (isPollable(j) ? [j.id] : [])).join(",");
 

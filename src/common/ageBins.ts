@@ -6,7 +6,7 @@ export const AGE_BIN_LABELS = [
   `${AGE_BIN_EDGES[AGE_BIN_EDGES.length - 1]}+`,
 ];
 
-export const AGE_UNKNOWN_LABEL = "unknown";
+const AGE_UNKNOWN_LABEL = "unknown";
 
 // Classic rainbow/jet-style spectral ramp (young -> old): blue -> teal -> green -> yellow -> orange -> red.
 const AGE_GRADIENT_STOPS: [number, number, number][] = [
@@ -35,7 +35,7 @@ function interpolateGradient(stops: [number, number, number][], t: number): [num
   ];
 }
 
-export const AGE_BIN_RAMP = AGE_BIN_LABELS.map((_, i) => {
+const AGE_BIN_RAMP = AGE_BIN_LABELS.map((_, i) => {
   const t = AGE_BIN_LABELS.length === 1 ? 0 : i / (AGE_BIN_LABELS.length - 1);
   const [r, g, b] = interpolateGradient(AGE_GRADIENT_STOPS, t);
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;

@@ -2,6 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchMetallomicsDataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import { toQuantificationSample } from "@/common/sampleFields/fields";
 
 const GET_METALLOMICS_DATA = gql(`
 query fetchMetallomicsData {
@@ -27,6 +28,8 @@ export type MetallomicsMetalValue = {
 
 export type MetallomicsSample = {
   sample_id: string;
+  /** QC or reference material rather than a participant's sample - see toQuantificationSample. */
+  qc: boolean;
   site: string;
   status: string;
   sex: string;
@@ -51,17 +54,19 @@ const toMetallomicsSamples = (data: FetchMetallomicsDataQuery | undefined): Meta
 
   return data.metallomics_quantification
     .filter((row): row is NonNullable<FetchMetallomicsDataQuery["metallomics_quantification"][number]> => row !== null)
-    .map((row) => ({
-      sample_id: row.sample_id,
-      site: row.site ?? "",
-      status: row.status ?? "",
-      sex: row.sex ?? "",
-      age_bin: row.age_bin,
-      quantification: metals.map((metal, index) => ({
-        metal: metal.metal,
-        value: row.quant_values?.[index] ?? null,
-      })),
-    }));
+    .map((row) =>
+      toQuantificationSample({
+        sample_id: row.sample_id,
+        site: row.site ?? "",
+        status: row.status ?? "",
+        sex: row.sex ?? "",
+        age_bin: row.age_bin,
+        quantification: metals.map((metal, index) => ({
+          metal: metal.metal,
+          value: row.quant_values?.[index] ?? null,
+        })),
+      })
+    );
 };
 
 export const useMetallomicsData = ({ skip }: UseMetallomicsDataParams): UseMetallomicsDataReturn => {

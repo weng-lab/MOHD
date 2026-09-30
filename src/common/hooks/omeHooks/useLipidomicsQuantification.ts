@@ -2,6 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchLipidomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import { toQuantificationSample } from "@/common/sampleFields/fields";
 
 const GET_LIPIDOMICS_QUANTIFICATION = gql(`
 query fetchLipidomicsQuantification {
@@ -27,6 +28,8 @@ export type LipidomicsMoleculeValue = {
 
 export type LipidomicsSample = {
   sample_id: string;
+  /** QC or reference material rather than a participant's sample - see toQuantificationSample. */
+  qc: boolean;
   site: string;
   status: string;
   sex: string;
@@ -53,17 +56,19 @@ const toLipidomicsSamples = (data: FetchLipidomicsQuantificationQuery | undefine
     .filter(
       (row): row is NonNullable<FetchLipidomicsQuantificationQuery["lipidomics_quantification"][number]> => row !== null
     )
-    .map((row) => ({
-      sample_id: row.sample_id,
-      site: row.site ?? "",
-      status: row.status ?? "",
-      sex: row.sex ?? "",
-      age_bin: row.age_bin,
-      quantification: molecules.map((molecule, index) => ({
-        molecule_name: molecule.molecule_name,
-        value: row.quant_values?.[index] ?? null,
-      })),
-    }));
+    .map((row) =>
+      toQuantificationSample({
+        sample_id: row.sample_id,
+        site: row.site ?? "",
+        status: row.status ?? "",
+        sex: row.sex ?? "",
+        age_bin: row.age_bin,
+        quantification: molecules.map((molecule, index) => ({
+          molecule_name: molecule.molecule_name,
+          value: row.quant_values?.[index] ?? null,
+        })),
+      })
+    );
 };
 
 export const useLipidomicsQuantification = ({

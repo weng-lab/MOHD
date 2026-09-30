@@ -3,6 +3,8 @@
 import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { ScatterPlot, ScatterPlotSync, getSharedDomains, type Point } from "@weng-lab/visualization";
 import { useRef, useState } from "react";
+import { dimHidden, spotlight } from "@/common/components/plotDimming";
+import { shapeOf } from "@/common/components/pointShapes";
 import { PLOT_HEIGHT } from "./dimensions";
 import {
   MOHD_COLOR_OPTIONS,
@@ -12,13 +14,14 @@ import {
   type MohdColorField,
   type ReferenceColorField,
 } from "./fields";
-import { buildGroups, displayValue, groupValue, type GroupInfo } from "./groups";
-import PlotCard from "./PlotCard";
+import { buildGroups, displayValue, groupValue, recount, shapeScaleFor, type GroupInfo } from "./groups";
+import PlotCard, { type LegendHover, type LegendRow } from "./PlotCard";
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { useSharedPlotSize } from "./useSharedPlotSize";
 import { PC_COUNT, type MohdRow, type ReferenceRow } from "./types";
 
-type Meta<T> = { row: T; group: string };
+/** A point's groups on the fields coloring and shaping it. `shapeGroup` is null while nothing shapes the plot. */
+type Meta<T> = { row: T; group: string; shapeGroup: string | null };
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => ({ value: i, label: `PC${i + 1}` }));
 
@@ -28,37 +31,140 @@ const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => ({ value: i, label
  *
  * Rounded here rather than on the server because the decimal has to be a
  * *rendered* one - a PC that lands on 1.0% is the number 1 once rounded, and
- * would otherwise reach the axis as "1%" beside its neighbours' "41.2%".
+ * would otherwise reach the axis as "1%" beside its neighbors' "41.2%".
  */
 const axisLabel = (pc: number, pve: (number | null)[]) => {
   const value = pve[pc];
   return value === null || value === undefined ? `PC${pc + 1}` : `PC${pc + 1} (${value.toFixed(1)}%)`;
 };
 
-/** Builds plot points for one cohort, coloring each by its group. */
-const toPoints = <T extends { sample_id: string; pcs: number[] }>(
+/** One cohort's encoding: the fields coloring and shaping its plot, and the values switched off in either legend. */
+type CohortView<K extends ColorField> = {
+  colorBy: K;
+  shapeBy: K | null;
+  /** By field, for the fields in a legend only - see encode. */
+  hidden: Partial<Record<K, ReadonlySet<string>>>;
+};
+
+/** A new color or shape field. A field leaving the legends takes its filter with it: no chip would be left to show it. */
+const encode = <K extends ColorField>(
+  view: CohortView<K>,
+  change: Partial<Pick<CohortView<K>, "colorBy" | "shapeBy">>
+): CohortView<K> => {
+  const next = { ...view, ...change };
+  const hidden: CohortView<K>["hidden"] = {};
+  for (const key of [next.colorBy, next.shapeBy]) if (key !== null && view.hidden[key]) hidden[key] = view.hidden[key];
+  return { ...next, hidden };
+};
+
+const toggleHidden = <K extends ColorField>(view: CohortView<K>, key: K, value: string): CohortView<K> => {
+  const next = new Set(view.hidden[key]);
+  if (!next.delete(value)) next.add(value);
+  return { ...view, hidden: { ...view.hidden, [key]: next } };
+};
+
+/**
+ * One cohort's legends and points, colored by its group and shaped by its other field if any.
+ *
+ * "Unknown" is laid out first so it draws beneath the named groups. It is the darkest thing on
+ * either plot now that it takes the neutral scale's dark end, and nothing about a sample having no
+ * value should put it in front of the ones that do.
+ */
+const encodeCohort = <T extends { sample_id: string; pcs: number[] }, K extends keyof T & ColorField>(
   rows: T[],
-  key: keyof T & ColorField,
-  groups: GroupInfo[],
+  view: CohortView<K>,
+  onChange: (view: CohortView<K>) => void,
+  options: readonly ColorOption<K>[],
   xPc: number,
-  yPc: number
-): Point<Meta<T>>[] => {
-  const colors = new Map(groups.map((g) => [g.value, g.color]));
-  return rows.map((row) => {
-    const group = groupValue(row[key]);
+  yPc: number,
+  /** Categories folded into the privacy bin - see buildGroups. */
+  binMembers?: string[]
+) => {
+  const { colorBy, hidden } = view;
+  const scale = view.shapeBy && shapeScaleFor(rows, view.shapeBy);
+  const shapeBy = scale ? view.shapeBy : null;
+  const labelOf = (key: K) => options.find((option) => option.key === key)?.label ?? key;
+
+  const colorGroups = buildGroups(rows, colorBy, binMembers);
+  const colors = new Map(colorGroups.map((g) => [g.value, g.color]));
+  const points: Point<Meta<T>>[] = rows.map((row) => {
+    const group = groupValue(row[colorBy]);
+    const shapeGroup = shapeBy && groupValue(row[shapeBy]);
     return {
       x: row.pcs[xPc],
       y: row.pcs[yPc],
       r: 3,
       color: colors.get(group),
-      metaData: { row, group },
+      shape: shapeBy ? shapeOf(scale, shapeGroup) : undefined,
+      metaData: { row, group, shapeGroup },
     };
   });
+
+  const passesColor = ({ metaData }: Point<Meta<T>>) => !hidden[colorBy]?.has(metaData!.group);
+  const passesShape = ({ metaData }: Point<Meta<T>>) =>
+    metaData!.shapeGroup === null || !(shapeBy && hidden[shapeBy]?.has(metaData!.shapeGroup));
+  const rowsPassing = (passes: (point: Point<Meta<T>>) => boolean) =>
+    points.filter(passes).map(({ metaData }) => metaData!.row);
+
+  // Each legend counts the samples the other's filter leaves in, as the explorer's legends do.
+  const legendRow = (key: K, groups: GroupInfo[], counted: T[]): LegendRow => ({
+    label: labelOf(key),
+    groups: recount(groups, counted, key),
+    hidden: hidden[key] ?? new Set(),
+    onToggle: (value) => onChange(toggleHidden(view, key, value)),
+  });
+  const color = legendRow(colorBy, colorGroups, !shapeBy || shapeBy === colorBy ? rows : rowsPassing(passesShape));
+  const shape =
+    shapeBy && scale
+      ? { ...legendRow(shapeBy, buildGroups(rows, shapeBy, binMembers), rowsPassing(passesColor)), scale }
+      : null;
+
+  return {
+    points: [
+      ...points.filter(({ metaData }) => metaData!.group === "Unknown"),
+      ...points.filter(({ metaData }) => metaData!.group !== "Unknown"),
+    ],
+    isShown: (point: Point<Meta<T>>) => passesColor(point) && passesShape(point),
+    color,
+    shape,
+    shapeBy,
+    canShape: (key: K) =>
+      options.find((option) => option.key === key)?.shapeable !== false && shapeScaleFor(rows, key) !== null,
+  };
 };
 
-const Tooltip = <T,>({ row, options }: { row: T; options: readonly ColorOption<keyof T & ColorField>[] }) => (
+/**
+ * The points of a hovered chip's group, from those in focus, so hovering the chip of a group that is
+ * toggled off highlights nothing - it is on the plot, but as background. Null with none to highlight.
+ */
+const hoveredGroup = <T,>(shown: Point<Meta<T>>[], hover: LegendHover | null) => {
+  const group = hover
+    ? shown.filter(
+        ({ metaData }) => (hover.legend === "color" ? metaData!.group : metaData!.shapeGroup) === hover.value
+      )
+    : [];
+  return group.length > 0 ? group : null;
+};
+
+/** A cohort's plot props for the chip under the cursor: its group highlighted, and the rest dimmed around it. */
+const highlightFor = <T,>(all: Point<Meta<T>>[], shown: Point<Meta<T>>[], hover: LegendHover | null) => {
+  const group = hoveredGroup(shown, hover);
+  return { pointData: spotlight(all, group), hoveredPoints: group ?? undefined };
+};
+
+const Tooltip = <T,>({
+  row,
+  options,
+  dimmed,
+}: {
+  row: T;
+  options: readonly ColorOption<keyof T & ColorField>[];
+  dimmed: boolean;
+}) => (
   <PlotTooltip
     title={String((row as { sample_id: string }).sample_id)}
+    // Dimmed points can win the hit test, so a dimmed sample says it's hidden.
+    note={dimmed ? "Hidden by the current filters" : undefined}
     rows={options.map(({ key, label }) => ({ label, value: displayValue(key, row[key]) }))}
   />
 );
@@ -101,19 +207,19 @@ const MINIMAP_POSITION = { position: { right: 50, bottom: 50 } };
 const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsProps) => {
   const [xPc, setXPc] = useState(0);
   const [yPc, setYPc] = useState(1);
-  const [refKey, setRefKey] = useState<ReferenceColorField>("superpop");
-  const [mohdKey, setMohdKey] = useState<MohdColorField>("reported_race_ethnicity");
-  const [hiddenRef, setHiddenRef] = useState<ReadonlySet<string>>(new Set());
-  const [hiddenMohd, setHiddenMohd] = useState<ReadonlySet<string>>(new Set());
-  // The highlight runs both ways. plotHover* is the group under the cursor in the
-  // plot, published by ScatterPlot, and rings the matching chip. legendHover* is the
-  // chip under the cursor, and is handed back to the plot as hoveredPoints so its
-  // group swells. Only one can be set at a time - reaching a chip means leaving the
-  // plot - but they are kept apart so neither can feed the other back into itself.
-  const [plotHoverRef, setPlotHoverRef] = useState<string | null>(null);
-  const [plotHoverMohd, setPlotHoverMohd] = useState<string | null>(null);
-  const [legendHoverRef, setLegendHoverRef] = useState<string | null>(null);
-  const [legendHoverMohd, setLegendHoverMohd] = useState<string | null>(null);
+  const [refView, setRefView] = useState<CohortView<ReferenceColorField>>({
+    colorBy: "superpop",
+    shapeBy: null,
+    hidden: {},
+  });
+  const [mohdView, setMohdView] = useState<CohortView<MohdColorField>>({
+    colorBy: "reported_race_ethnicity",
+    shapeBy: null,
+    hidden: {},
+  });
+  // Note what this component deliberately does not hold: the hover. It lives in PlotCard, which
+  // hands it back to the plot below - see that component for why the points must not be built
+  // beside it.
 
   // One size drives both plots - see useSharedPlotSize for why they can't size
   // themselves here.
@@ -121,32 +227,18 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
   const mohdPlotRef = useRef<HTMLDivElement>(null);
   const plotSize = useSharedPlotSize(refPlotRef, mohdPlotRef);
 
-  const refGroups = buildGroups(reference, refKey);
-  const mohdGroups = buildGroups(mohd, mohdKey, binnedRaceEthnicity);
+  const refCohort = encodeCohort(reference, refView, setRefView, REFERENCE_COLOR_OPTIONS, xPc, yPc);
+  const mohdCohort = encodeCohort(mohd, mohdView, setMohdView, MOHD_COLOR_OPTIONS, xPc, yPc, binnedRaceEthnicity);
 
-  const refPoints = toPoints(reference, refKey, refGroups, xPc, yPc);
-  const mohdPoints = toPoints(mohd, mohdKey, mohdGroups, xPc, yPc);
-
-  // Domains come from every point, not just the visible ones, so toggling a
+  // Domains come from every point, not just the ones in focus, so toggling a
   // group off doesn't rescale the axes underneath the remaining points.
-  const domains = getSharedDomains(refPoints, mohdPoints);
+  const domains = getSharedDomains(refCohort.points, mohdCohort.points);
 
-  const visibleRef = refPoints.filter((p) => !hiddenRef.has(p.metaData!.group));
-  const visibleMohd = mohdPoints.filter((p) => !hiddenMohd.has(p.metaData!.group));
-
-  // Drawn from the visible points rather than all of them, so hovering the chip of a
-  // group that is toggled off highlights nothing - there is none of it on the plot.
-  const hoveredRefPoints = legendHoverRef ? visibleRef.filter((p) => p.metaData!.group === legendHoverRef) : undefined;
-  const hoveredMohdPoints = legendHoverMohd
-    ? visibleMohd.filter((p) => p.metaData!.group === legendHoverMohd)
-    : undefined;
-
-  const toggle = (setHidden: (fn: (prev: ReadonlySet<string>) => ReadonlySet<string>) => void) => (value: string) =>
-    setHidden((prev) => {
-      const next = new Set(prev);
-      if (!next.delete(value)) next.add(value);
-      return next;
-    });
+  // A group switched off is faded into the background rather than taken off the plot: where a
+  // sample falls in a PCA is a statement about the samples around it, and dropping points takes
+  // away the very comparison the two cohorts are here to make.
+  const { points: refAll, shown: refShown } = dimHidden(refCohort.points, refCohort.isShown);
+  const { points: mohdAll, shown: mohdShown } = dimHidden(mohdCohort.points, mohdCohort.isShown);
 
   const xLabel = axisLabel(xPc, pve);
   const yLabel = axisLabel(yPc, pve);
@@ -156,7 +248,7 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
       {/*
         Three columns so the axis cluster lands over the gutter between the two
         cards, equidistant from both: it drives them both, and nothing about its
-        position should suggest otherwise. The empty third column is what centres
+        position should suggest otherwise. The empty third column is what centers
         it - there is no content for it to hold.
       */}
       <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }} alignItems="center" gap={1}>
@@ -198,64 +290,68 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
           <Stack direction={{ xs: "column", lg: "row" }} gap={2} height={{ lg: PLOT_HEIGHT }}>
             <PlotCard
               title="MOHD"
-              count={mohd.length}
+              shown={mohdShown.length}
+              total={mohdAll.length}
               options={MOHD_COLOR_OPTIONS}
-              colorBy={mohdKey}
-              onColorByChange={(key) => {
-                setMohdKey(key);
-                setHiddenMohd(new Set());
-              }}
-              groups={mohdGroups}
-              highlighted={plotHoverMohd ?? legendHoverMohd}
-              onHover={setLegendHoverMohd}
-              hidden={hiddenMohd}
-              onToggle={toggle(setHiddenMohd)}
+              colorBy={mohdView.colorBy}
+              onColorByChange={(colorBy) => setMohdView(encode(mohdView, { colorBy }))}
+              shapeBy={mohdCohort.shapeBy}
+              onShapeByChange={(shapeBy) => setMohdView(encode(mohdView, { shapeBy }))}
+              canShape={mohdCohort.canShape}
+              color={mohdCohort.color}
+              shape={mohdCohort.shape}
               plotRef={mohdPlotRef}
             >
-              <ScatterPlot
-                pointData={visibleMohd}
-                loading={false}
-                bottomAxisLabel={xLabel}
-                leftAxisLabel={yLabel}
-                controlsPosition="right"
-                tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} />}
-                hoveredPoints={hoveredMohdPoints}
-                onHoveredPointChange={(p) => setPlotHoverMohd(p?.metaData?.group ?? null)}
-                miniMap={MINIMAP_POSITION}
-                groupPointsAnchor="group"
-                {...sync}
-              />
+              {({ legendHover, onPlotHover }) => (
+                <ScatterPlot
+                  {...highlightFor(mohdAll, mohdShown, legendHover)}
+                  loading={false}
+                  bottomAxisLabel={xLabel}
+                  leftAxisLabel={yLabel}
+                  controlsPosition="right"
+                  tooltipBody={(p) => (
+                    <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} dimmed={!mohdCohort.isShown(p)} />
+                  )}
+                  onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
+                  miniMap={MINIMAP_POSITION}
+                  downloadButton
+                  downloadFileName="MOHD_WGS_PCA_MOHD"
+                  {...sync}
+                />
+              )}
             </PlotCard>
 
             <PlotCard
               title="1000G+HGDP"
-              count={reference.length}
+              shown={refShown.length}
+              total={refAll.length}
               options={REFERENCE_COLOR_OPTIONS}
-              colorBy={refKey}
-              onColorByChange={(key) => {
-                setRefKey(key);
-                setHiddenRef(new Set());
-              }}
-              groups={refGroups}
-              highlighted={plotHoverRef ?? legendHoverRef}
-              onHover={setLegendHoverRef}
-              hidden={hiddenRef}
-              onToggle={toggle(setHiddenRef)}
+              colorBy={refView.colorBy}
+              onColorByChange={(colorBy) => setRefView(encode(refView, { colorBy }))}
+              shapeBy={refCohort.shapeBy}
+              onShapeByChange={(shapeBy) => setRefView(encode(refView, { shapeBy }))}
+              canShape={refCohort.canShape}
+              color={refCohort.color}
+              shape={refCohort.shape}
               plotRef={refPlotRef}
             >
-              <ScatterPlot
-                pointData={visibleRef}
-                loading={false}
-                bottomAxisLabel={xLabel}
-                leftAxisLabel={yLabel}
-                controlsPosition="right"
-                tooltipBody={(p) => <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} />}
-                hoveredPoints={hoveredRefPoints}
-                onHoveredPointChange={(p) => setPlotHoverRef(p?.metaData?.group ?? null)}
-                miniMap={MINIMAP_POSITION}
-                groupPointsAnchor="group"
-                {...sync}
-              />
+              {({ legendHover, onPlotHover }) => (
+                <ScatterPlot
+                  {...highlightFor(refAll, refShown, legendHover)}
+                  loading={false}
+                  bottomAxisLabel={xLabel}
+                  leftAxisLabel={yLabel}
+                  controlsPosition="right"
+                  tooltipBody={(p) => (
+                    <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} dimmed={!refCohort.isShown(p)} />
+                  )}
+                  onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
+                  miniMap={MINIMAP_POSITION}
+                  downloadButton
+                  downloadFileName="MOHD_WGS_PCA_1000G_HGDP"
+                  {...sync}
+                />
+              )}
             </PlotCard>
           </Stack>
         )}

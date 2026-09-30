@@ -2,6 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchWgbsMetadataQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import { toSample, type SampleGroups } from "@/common/sampleFields/fields";
 
 const GET_WGBS_DATA = gql(`
 query fetchWGBSMetadata {
@@ -33,7 +34,8 @@ export type UseWGBSDataParams = {
 };
 
 export type UseWGBSDataReturn = {
-  data: FetchWgbsMetadataQuery["wgbs_metadata"] | undefined;
+  /** The API's rows, with QC material flagged by its kit - see toSample. */
+  data: (FetchWgbsMetadataQuery["wgbs_metadata"][number] & SampleGroups)[] | undefined;
   loading: boolean;
   error: ErrorLike | undefined;
 };
@@ -44,7 +46,7 @@ export const useWGBSData = ({ skip }: UseWGBSDataParams): UseWGBSDataReturn => {
   });
 
   return {
-    data: data?.wgbs_metadata,
+    data: data?.wgbs_metadata.map(toSample),
     loading,
     error,
   };
