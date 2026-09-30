@@ -2,7 +2,7 @@ import { gql } from "@/common/types/generated/gql";
 import { FetchMetabolomicsQuantificationQuery } from "@/common/types/generated/graphql";
 import type { ErrorLike } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { toQuantificationSample } from "@/common/sampleFields/fields";
+import { toSample } from "@/common/sampleFields/fields";
 
 const GET_METABOLOMICS_QUANTIFICATION = gql(`
 query fetchMetabolomicsQuantification {
@@ -19,6 +19,10 @@ query fetchMetabolomicsQuantification {
     compound
     mode
   }
+  metabolomics_metadata {
+    sample_id
+    kit
+  }
 }
  `);
 
@@ -30,7 +34,7 @@ export type MetabolomicsCompoundValue = {
 
 export type MetabolomicsSample = {
   sample_id: string;
-  /** QC or reference material rather than a participant's sample - see toQuantificationSample. */
+  /** QC or reference material rather than a participant's sample - see toSample. */
   qc: boolean;
   site: string;
   status: string;
@@ -56,14 +60,18 @@ const toMetabolomicsSamples = (
 
   if (!data?.metabolomics_quantification) return undefined;
 
+  // Quantification rows come without a kit, which says which samples are QC - see toSample.
+  const kitOf = new Map(data.metabolomics_metadata.map(({ sample_id, kit }) => [sample_id, kit]));
+
   return data.metabolomics_quantification
     .filter(
       (row): row is NonNullable<FetchMetabolomicsQuantificationQuery["metabolomics_quantification"][number]> =>
         row !== null
     )
     .map((row) =>
-      toQuantificationSample({
+      toSample({
         sample_id: row.sample_id,
+        kit: kitOf.get(row.sample_id) ?? null,
         site: row.site ?? "",
         status: row.status ?? "",
         sex: row.sex ?? "",

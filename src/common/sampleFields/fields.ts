@@ -46,10 +46,12 @@ export const fieldsFor = (ome: OmesDataType): FieldDefinition[] =>
       (key !== "protocol" || VARIED_PROTOCOL_OMES.includes(ome)) && (key !== "age" || !AGELESS_OMES.includes(ome))
   );
 
-/** What a sample's groups are read from: any page's row, with `qc` set by isQcKit. */
+/** What a sample's groups are read from: any page's row, with `qc` and `unplotted` set by toSample. */
 export type SampleGroups = {
   sample_id: string;
   qc: boolean;
+  /** Listed in the table, but left out of every plot - see toSample. */
+  unplotted?: boolean;
   site?: string | null;
   status?: string | null;
   sex?: string | null;
@@ -74,19 +76,32 @@ export const fieldOfColumn = (column: string): Field | undefined =>
   FIELDS.find(({ key }) => ROW_KEYS[key] === column)?.key;
 
 /** Kits the API gives QC and reference material rather than a participant's sample. */
-const QC_KITS = new Set(["internal_QC", "external_QC", "reference"]);
+const QC_KITS = new Set(["internal_QC", "external_QC", "reference", "calibration"]);
 
 export const isQcKit = (kit: string | null | undefined) => QC_KITS.has(kit ?? "");
 
 /** A sample as the API returns it, which tells QC material apart only by its kit. */
 export type SampleRow = Omit<SampleGroups, "qc"> & { kit?: string | null };
 
-export const toSample = <R extends SampleRow>(row: R): R & SampleGroups => ({ ...row, qc: isQcKit(row.kit) });
+/**
+ * A sample with no kit is QC or reference material the API can't say more about: checked against
+ * the metabolomics, lipidomics and exposomics metadata (2026-09-30), none has a status, site, sex,
+ * PCs or quantification values. It's labeled QC / Reference with the rest, but not plotted.
+ */
+export const toSample = <R extends SampleRow>(row: R): R & SampleGroups => ({
+  ...row,
+  qc: !row.kit || isQcKit(row.kit),
+  unplotted: !row.kit,
+});
+
+/** The samples a plot draws from - see toSample. */
+export const plottedOnly = <R extends SampleGroups>(rows: R[]): R[] => rows.filter(({ unplotted }) => !unplotted);
 
 /**
- * A quantification row, which the API returns without a kit. Its QC samples are the ones with no
- * status: checked against each ome's metadata (2026-09-28), every QC-kit sample has none, and every
- * other sample has one.
+ * A quantification row, which the API returns without a kit, on metallomics' page, which doesn't read
+ * kits from its metadata. Its QC samples are the ones with no status: checked against each ome's
+ * metadata (2026-09-28), every QC-kit sample has none, and every other sample has one. Metallomics
+ * has no sample without a kit (2026-09-30), so none goes unplotted.
  */
 export const toQuantificationSample = <R extends Omit<SampleGroups, "qc">>(row: R): R & SampleGroups => ({
   ...row,

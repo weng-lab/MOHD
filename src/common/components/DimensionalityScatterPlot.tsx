@@ -76,7 +76,8 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
   const [color, setColor] = useState<Field>("site");
   const [shape, setShape] = useState<ShapeBy>(NO_SHAPE);
 
-  const { samples, fields, filters, selected, setSelected } = table;
+  // The plotted samples alone, so the legend counts only what can be drawn.
+  const { plotted: samples, fields, filters, selected, setSelected } = table;
 
   const shapeable = shapeOptions(fields, samples);
   const shaping = shapingOf(shape, shapeable, samples);
