@@ -7,7 +7,7 @@ import { spotlight } from "@/common/components/plotDimming";
 import { PLOT_HEADER_SX } from "@/common/components/plotHeaderSx";
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { CARD_SX } from "./dimensions";
-import { FIELDS, groupOf, labelOf, type Field } from "@/common/sampleFields/fields";
+import { FIELDS, groupOf, labelOf, tooltipRowsOf, type Field } from "@/common/sampleFields/fields";
 import { METRICS } from "../model/metrics";
 import type { ExplorerRow } from "../model/types";
 
@@ -70,10 +70,7 @@ const TooltipBody = ({ row, dimmed, feature }: TooltipBodyProps) => (
     // Dimmed points can win the hit test, so a dimmed sample says it's hidden.
     note={dimmed ? "Hidden by the current filters" : undefined}
     rows={[
-      // One line for a QC sample, which would otherwise read "QC / Reference" for every field.
-      ...(row.qc
-        ? [{ label: "Sample", value: "QC / reference" }]
-        : TOOLTIP_FIELDS.map(({ key, label }) => ({ label, value: labelOf(key, groupOf(key, row)) }))),
+      ...tooltipRowsOf(TOOLTIP_FIELDS, row),
       ...TOOLTIP_DETAILS.flatMap(({ label, value }) => {
         const text = value(row);
         return text ? [{ label, value: text }] : [];
