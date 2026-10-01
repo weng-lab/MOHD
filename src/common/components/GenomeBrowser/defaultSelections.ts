@@ -44,20 +44,20 @@ function wgbsTrackIds(sampleId: string) {
   return [qualifyMohdTrackId(sampleId)];
 }
 
+// Default sample per ome, shown on first load of its Genome Browser tab and, together, of the
+// all-omes Genome Browser.
+const ATAC_DEFAULT_SAMPLE_ID = "MOHD_EA100004";
+const RNA_DEFAULT_SAMPLE_ID = "MOHD_ER100004";
+const WGBS_DEFAULT_SAMPLE_ID = "MOHD_EB100004";
+
 export const TRACK_SELECT_SESSION_KEY = sessionKey();
 
-// Default samples shown on first load of the all-omes Genome Browser: one per ome.
 export const DEFAULT_SELECTED_TRACK_IDS: readonly string[] = [
   ...GENE_TRACK_IDS,
-  ...atacTrackIds("MOHD_EA100004"),
-  ...rnaTrackIds("MOHD_ER100004"),
-  ...wgbsTrackIds("MOHD_EB100004"),
+  ...atacTrackIds(ATAC_DEFAULT_SAMPLE_ID),
+  ...rnaTrackIds(RNA_DEFAULT_SAMPLE_ID),
+  ...wgbsTrackIds(WGBS_DEFAULT_SAMPLE_ID),
 ];
-
-// Default sample shown on first load of each ome's Genome Browser tab.
-const ATAC_DEFAULT_SAMPLE_ID = "MOHD_EA100001";
-const WGBS_DEFAULT_SAMPLE_ID = "MOHD_EB100001";
-const RNA_DEFAULT_SAMPLE_ID = "MOHD_ER100001";
 
 export const ATAC_TRACK_SELECT_SESSION_KEY = sessionKey("atac");
 
