@@ -76,6 +76,14 @@ export default function MolecularDataLanding() {
           backgroundPosition: { xs: "center top", md: "top right" },
           backgroundSize: { xs: "cover", md: "contain" },
           backgroundColor: "primary.main",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            backgroundColor: "rgba(0, 61, 56, 0.80)",
+            display: { xs: "block", md: "none" },
+            zIndex: 1,
+          },
         }}
         color="white"
       >
@@ -84,15 +92,13 @@ export default function MolecularDataLanding() {
           sx={{
             position: "relative",
             zIndex: 2,
-            justifyContent: {xs: "flex-start", md: "center"},
+            justifyContent: { xs: "flex-start", md: "center" },
             px: { xs: 3, sm: 4, md: 8, lg: 10 },
             py: 5,
             minHeight: { xs: "100dvh", md: "auto" },
           }}
         >
-          <Typography
-            variant="h3"
-          >
+          <Typography variant="h4" fontWeight={600}>
             Molecular Data
           </Typography>
           <Box
@@ -128,11 +134,7 @@ export default function MolecularDataLanding() {
                 maxWidth: 760,
               }}
             >
-              <OmeInfoCard
-                selectedOme={displayedOme}
-                isVisible={isCardVisible}
-                onClose={() => handleSelectOme(null)}
-              />
+              <OmeInfoCard selectedOme={displayedOme} isVisible={isCardVisible} onClose={() => handleSelectOme(null)} />
             </Box>
           )}
         </Stack>
@@ -147,11 +149,7 @@ export default function MolecularDataLanding() {
               py: { md: 4 },
             }}
           >
-            <OmeInfoCard
-              selectedOme={displayedOme}
-              isVisible={isCardVisible}
-              onClose={() => handleSelectOme(null)}
-            />
+            <OmeInfoCard selectedOme={displayedOme} isVisible={isCardVisible} onClose={() => handleSelectOme(null)} />
           </Box>
         ) : null}
       </Box>

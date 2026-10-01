@@ -1,21 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import Config from "@/common/config.json";
+import { proxyRequest } from "@/common/apiProxy";
 
 export async function POST(request: NextRequest) {
-  const body = await request.text();
-
-  const response = await fetch(Config.API.MOHDAPI, {
+  return proxyRequest({
+    url: Config.API.MOHDAPI,
+    token: process.env.MOHD_API_KEY!,
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",      
-      "api-key": process.env.MOHD_API_KEY!,
-    },
-    body,
-  });
-
-  const data = await response.text();
-  return new NextResponse(data, {
-    status: response.status,
-    headers: { "Content-Type": "application/json" },
+    request,
   });
 }

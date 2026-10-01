@@ -12,8 +12,7 @@ export function AnimatedNumber({ value, duration = 1000 }: AnimatedNumberProps) 
   useEffect(() => {
     let animationFrame: number;
 
-    const decimals =
-      value % 1 !== 0 ? value.toString().split(".")[1]?.length ?? 0 : 0;
+    const decimals = value % 1 !== 0 ? (value.toString().split(".")[1]?.length ?? 0) : 0;
 
     const step = (timestamp: number) => {
       if (!startTimestamp.current) startTimestamp.current = timestamp;

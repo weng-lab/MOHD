@@ -1,0 +1,284 @@
+import { BulkDownloadFormat } from "@/common/hooks/useBulkDownloadJob";
+
+export type CommandPlatform = "unix" | "windows";
+
+/**
+ * One copyable line. A plan carries several only where they must not be pasted
+ * as a block — the inspect-first script flow would otherwise run the script in
+ * the same paste that downloads it, which is the thing it exists to avoid.
+ */
+export type CommandStep = {
+  command: string;
+  /** Shown above the command; explains what this step is for. */
+  caption?: string;
+};
+
+export type CommandPlan = {
+  steps: CommandStep[];
+  /**
+   * A second, equivalent route on the same platform — Git Bash beside WSL.
+   * Kept apart from `steps` because these are a choice, not a sequence: running
+   * both would download everything twice.
+   */
+  alternative?: { label: string; steps: CommandStep[] };
+  /** Set when the platform cannot run this job's format natively. */
+  note?: string;
+};
+
+/**
+ * The Windows label names the shell, not just the OS: these commands use
+ * `mkdir -Force`, `Out-Null` and `if ($?)`, none of which cmd.exe understands.
+ */
+export const PLATFORM_LABELS: Record<CommandPlatform, string> = {
+  unix: "Linux & macOS",
+  windows: "Windows PowerShell",
+};
+
+export const FORMAT_DESCRIPTIONS: Record<BulkDownloadFormat, string> = {
+  zip: "ZIP archive",
+  tarball: "tar.gz archive",
+  script: "shell script",
+  aria2: "aria2 manifest",
+};
+
+const EXTENSIONS: Record<BulkDownloadFormat, string> = {
+  zip: ".zip",
+  tarball: ".tar.gz",
+  script: ".sh",
+  // Deliberately not a bare ".txt" — the service refuses to treat one as an
+  // artifact, so that a stray text file in its archive dir is swept as junk
+  // rather than rehydrated into a job.
+  aria2: ".aria2.txt",
+};
+
+/** Matches on "Windows" rather than "win" — "Darwin" contains the latter. */
+export function detectPlatform(): CommandPlatform {
+  if (typeof navigator === "undefined") return "unix";
+  return /windows/i.test(navigator.userAgent) ? "windows" : "unix";
+}
+
+/**
+ * The artifact's filename. The service sends it on every finished job, and its
+ * shape (<ome>-<token><ext>, base62 and dashes) is safe to drop into a shell
+ * unescaped. The fallback covers jobs already in localStorage from before the
+ * field was populated: download_url is always <archive base>/<filename>, so the
+ * last path segment is the same string rather than a guess at it.
+ */
+export function artifactName(format: BulkDownloadFormat, url: string, filename?: string): string {
+  if (filename) return filename;
+  const lastSegment = url.split("?")[0].split("/").pop();
+  return lastSegment || `download${EXTENSIONS[format]}`;
+}
+
+/** The archive name minus its extension — used as the extraction directory. */
+function extractionDir(filename: string, format: BulkDownloadFormat): string {
+  const ext = EXTENSIONS[format];
+  return filename.endsWith(ext) ? filename.slice(0, -ext.length) : filename;
+}
+
+const quote = (value: string) => `"${value}"`;
+
+export function buildCommandPlan(args: {
+  format: BulkDownloadFormat;
+  url: string;
+  filename: string;
+  platform: CommandPlatform;
+  /** Script jobs only: split the one-liner so the script can be read before it runs. */
+  inspectFirst?: boolean;
+}): CommandPlan {
+  const { format, url, filename, platform, inspectFirst = false } = args;
+  const dir = extractionDir(filename, format);
+
+  if (format === "script") {
+    // The script reads DOWNLOAD_ROOT from its environment, so pointing it at the
+    // artifact's own name lands files in ./<name>/ exactly as the archive
+    // commands do. Left at the script's "mohd_data" default, two script
+    // downloads would silently merge into one directory.
+    const root = `DOWNLOAD_ROOT=${quote(dir)}`;
+
+    // The script is saved to a file before it runs rather than piped straight
+    // into bash, because re-running it is how an interrupted download resumes:
+    // it skips files that are already complete and picks partial ones up where
+    // they stopped. The artifact is deleted once its job expires, so a piped
+    // one-liner stops working well before a multi-terabyte transfer finishes —
+    // and it fails quietly, because bash reading an empty stdin exits 0.
+    //
+    // The separator is `;` rather than `&&` so that a later re-run still runs
+    // the copy it already has once the fetch starts 404ing. That is safe because
+    // a failed `curl -f` writes nothing, leaving the local script intact; and
+    // with no local script the run leg fails loudly on its own.
+    //
+    // Git Bash is a real bash and ships its own curl, so it runs these unchanged
+    // — which is why the Windows tab offers them verbatim as its alternative
+    // rather than building a third variant.
+    const bashSteps: CommandStep[] = inspectFirst
+      ? [
+          {
+            command: `curl -fsSL ${quote(url)} -o ${quote(filename)}`,
+            caption: "Download the script",
+          },
+          {
+            command: `${root} bash ${quote(filename)}`,
+            caption: `Run the script with bash; files land in ./${dir}`,
+          },
+        ]
+      : [
+          {
+            command: `curl -fsSL ${quote(url)} -o ${quote(filename)}; ${root} bash ${quote(filename)}`,
+            caption: `Download and run the script; files land in ./${dir}. Re-run the same command to resume.`,
+          },
+        ];
+
+    if (platform === "windows") {
+      // The `wsl` prefix is not about locating a bash — a machine with WSL
+      // usually has one on PATH already. It is that the command is POSIX and
+      // PowerShell cannot parse it: an assignment ahead of a command reads as a
+      // command named `DOWNLOAD_ROOT=…`, and a bare `;` would split the line
+      // into two PowerShell statements. Running the whole thing inside
+      // `wsl bash -c '…'` keeps PowerShell away from both. So this is not
+      // interchangeable with a bare `bash …`, which would need PowerShell's own
+      // `$env:DOWNLOAD_ROOT=…;` form instead.
+      //
+      // It is also a reason not to go back to piping the script into bash:
+      // piping between two native programs under Windows PowerShell 5.1 rejoins
+      // the script's lines with CRLF, which bash answers with `$'\r': command
+      // not found`.
+      //
+      // The assignment must sit inside the -c string for the same reason `wsl
+      // VAR=x cmd` fails: a leading assignment is shell syntax, not something
+      // exec understands, so WSL would hunt for a binary named "VAR=x".
+      //
+      // Only the run step needs WSL. The download step uses native curl.exe, so
+      // the script can still be fetched and read on a machine where WSL is not
+      // set up yet — exactly when someone wants to look before installing.
+      const wslSteps: CommandStep[] = inspectFirst
+        ? [
+            {
+              command: `curl.exe -fsSL ${quote(url)} -o ${quote(filename)}`,
+              caption: "Download the script",
+            },
+            {
+              command: `wsl bash -c '${root} bash ${quote(filename)}'`,
+              caption: `Run the script under WSL; files land in ./${dir}`,
+            },
+          ]
+        : [
+            {
+              command: `wsl bash -c 'curl -fsSL ${quote(url)} -o ${quote(filename)}; ${root} bash ${quote(filename)}'`,
+              caption: `Download and run the script under WSL; files land in ./${dir}. Re-run the same command to resume.`,
+            },
+          ];
+
+      return {
+        steps: wslSteps,
+        alternative: { label: "Or from a Git Bash prompt", steps: bashSteps },
+        note: "Running a shell script in PowerShell requires WSL or Git Bash",
+      };
+    }
+
+    return { steps: bashSteps };
+  }
+
+  if (format === "aria2") {
+    // aria2 reads its manifest from a file, so unlike the script there is no
+    // pipe-straight-in form to steer away from — fetching then running is
+    // inherent. The two stay on one line for the reason the script's do: `;`
+    // rather than `&&` means a re-run still runs the manifest already on disk
+    // once the artifact has expired and the fetch starts 404ing.
+    //
+    // The flags, and why each is here rather than left at its default:
+    //   -c                          resume a partial file instead of restarting it
+    //   --auto-file-renaming=false  the default renames a download whose name is
+    //                               already taken to <name>.1.<ext>, so a re-run
+    //                               would fetch everything a second time
+    //                               alongside the first rather than skip it
+    //   -x 4                        connections per file; the default is 1, and
+    //                               this is the flag the whole option exists for
+    //   --max-tries/--retry-wait    aria2 waits 0s between tries by default, so
+    //                               a transient 503 would burn all ten at once
+    //   --lowest-speed-limit        the stall guard, matching the script's
+    //                               MIN_SPEED: a connection that stays open but
+    //                               stops moving never raises an error by itself
+    //   --save-session              writes whatever did not finish as a manifest
+    //                               of its own — carrying dir= and out= through,
+    //                               so `aria2c -i <that file>` retries exactly
+    //                               those files into the right places. It sits
+    //                               beside the manifest rather than inside the
+    //                               download directory, because aria2 creates
+    //                               that directory lazily: if every file fails,
+    //                               it never exists, and aria2 gives up with
+    //                               "Failed to serialize session" precisely when
+    //                               the record matters most.
+    //   --check-integrity=true      a no-op today — it verifies the per-file
+    //                               checksums the manifest does not carry yet.
+    //                               Included so the command someone saves now
+    //                               does not have to change on the day it does.
+    const flags = [
+      "-c",
+      "--auto-file-renaming=false",
+      "-x 4",
+      "--max-tries=10",
+      "--retry-wait=5",
+      "--lowest-speed-limit=1K",
+      `--save-session=${quote(`${dir}-failed.txt`)}`,
+      "--check-integrity=true",
+    ].join(" ");
+
+    // No WSL leg and no Git Bash alternative, unlike the script: aria2c is a
+    // native Windows binary and takes its destination as a flag rather than an
+    // environment assignment, so PowerShell runs the same command with only
+    // curl.exe standing in for curl.
+    const fetch = platform === "windows" ? "curl.exe" : "curl";
+
+    return {
+      steps: [
+        {
+          command: `${fetch} -fsSL ${quote(url)} -o ${quote(filename)}; aria2c -i ${quote(filename)} -d ${quote(dir)} ${flags}`,
+          caption: `Download the manifest and fetch the files with aria2; they land in ./${dir}. Re-run the same command to resume.`,
+        },
+      ],
+    };
+  }
+
+  // The archive is deleted once extracted, so a multi-gigabyte selection does
+  // not sit on disk twice. Both forms delete only on a successful extraction:
+  // `&&` gives that for free, but PowerShell's `;` is unconditional — hence the
+  // `if ($?)` guard, without which a failed extraction would bin the archive and
+  // force a re-download of up to the full 20 GB limit. A failed *download*
+  // short-circuits either form, leaving the partial file for `curl -C -`.
+  const caption = `Downloads and extracts into ./${dir}, then removes the archive`;
+
+  if (platform === "windows") {
+    // Windows ships bsdtar, which reads zip as well as tar.gz — so one tool
+    // covers both formats and Expand-Archive stays out of it, being markedly
+    // slower on large archives under Windows PowerShell 5.1.
+    //
+    // -z names the gzip filter, so it is passed for tar.gz and withheld for
+    // zip. bsdtar sniffs the format and tolerates -z on a zip regardless, but
+    // the flag would then describe compression the file does not have — and
+    // that leniency is bsdtar's own, not something GNU tar shares should the
+    // command get carried to a Linux shell.
+    const extract = format === "tarball" ? "-xzf" : "-xf";
+    return {
+      steps: [
+        {
+          command: `curl.exe -fL ${quote(url)} -o ${quote(filename)}; mkdir -Force ${quote(dir)} | Out-Null; tar ${extract} ${quote(filename)} -C ${quote(dir)}; if ($?) { Remove-Item ${quote(filename)} }`,
+          caption,
+        },
+      ],
+    };
+  }
+
+  // unzip creates the destination itself; tar requires it to exist already.
+  return {
+    steps: [
+      {
+        command:
+          format === "zip"
+            ? `curl -fL ${quote(url)} -o ${quote(filename)} && unzip ${quote(filename)} -d ${quote(dir)} && rm ${quote(filename)}`
+            : `curl -fL ${quote(url)} -o ${quote(filename)} && mkdir -p ${quote(dir)} && tar -xzf ${quote(filename)} -C ${quote(dir)} && rm ${quote(filename)}`,
+        caption,
+      },
+    ],
+  };
+}

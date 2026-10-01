@@ -1,0 +1,170 @@
+import { gql } from "@/common/types/generated/gql";
+
+/** Every ome the explorer offers, in one round trip, with the mass-spec omes' feature names for the picker. */
+export const GET_DIMENSIONALITY_REDUCTION = gql(`
+query fetchDimensionalityReductionExplorer {
+  atac_metadata {
+    sample_id
+    kit
+    condition
+    protocol
+    tss_enrichment_score
+    frip_score
+    reads_mapped
+    site
+    status
+    sex
+    age_bin
+    pc1
+    pc2
+    pc3
+    pc4
+    pc5
+    pc6
+    pc7
+    pc8
+    pc9
+    pc10
+    umap_x
+    umap_y
+  }
+  rna_metadata {
+    sample_id
+    kit
+    condition
+    protocol
+    site
+    status
+    sex
+    age_bin
+    pc1
+    pc2
+    pc3
+    pc4
+    pc5
+    pc6
+    pc7
+    pc8
+    pc9
+    pc10
+    umap_x
+    umap_y
+  }
+  wgbs_metadata {
+    sample_id
+    kit
+    condition
+    protocol
+    site
+    status
+    sex
+    age_bin
+    pc1
+    pc2
+    pc3
+    pc4
+    pc5
+    pc6
+    pc7
+    pc8
+    pc9
+    pc10
+    umap_x
+    umap_y
+  }
+  lipidomics_metadata {
+    sample_id
+    kit
+    condition
+    protocol
+    site
+    status
+    sex
+    age_bin
+    pc1
+    pc2
+    pc3
+    pc4
+    pc5
+    pc6
+    pc7
+    pc8
+    pc9
+    pc10
+  }
+  metabolomics_metadata {
+    sample_id
+    kit
+    condition
+    protocol
+    site
+    status
+    sex
+    age_bin
+    pc1
+    pc2
+    pc3
+    pc4
+    pc5
+    pc6
+    pc7
+    pc8
+    pc9
+    pc10
+  }
+  metallomics_metadata {
+    sample_id
+    kit
+    condition
+    protocol
+    site
+    status
+    sex
+    age_bin
+    pc1
+    pc2
+    pc3
+    pc4
+    pc5
+    pc6
+    pc7
+    pc8
+    pc9
+    pc10
+  }
+  atac_variance: pca_variance(ome: ATAC) {
+    pc
+    pve
+  }
+  rna_variance: pca_variance(ome: RNA) {
+    pc
+    pve
+  }
+  wgbs_variance: pca_variance(ome: WGBS) {
+    pc
+    pve
+  }
+  lipidomics_variance: pca_variance(ome: Lipidomics) {
+    pc
+    pve
+  }
+  metabolomics_variance: pca_variance(ome: Metabolomics) {
+    pc
+    pve
+  }
+  metallomics_variance: pca_variance(ome: Metallomics) {
+    pc
+    pve
+  }
+  lipidomics_molecules {
+    molecule_name
+  }
+  metabolomics_compounds {
+    compound
+    mode
+  }
+  metallomics_metals {
+    metal
+  }
+}
+`);

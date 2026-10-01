@@ -1,36 +1,22 @@
 "use client";
-import WGSDownloadsTable from "./WGSDownloadsTable";
-import { Sex, Site, Status } from "@/common/types/globalTypes";
-import OmeDownloadLayout from "@/common/components/Downloads/OmeDownloadLayout";
-import { useWGSData } from "@/common/hooks/omeHooks/useWGSData";
-import { useOmeDownloadFiles } from "@/common/hooks/useOmeDownloadFiles";
+import OmeDualPaneDownloads, { type OmeDownloadsConfig } from "@/common/components/Downloads/OmeDualPaneDownloads";
+import type { BaseSampleMetadata } from "@/common/components/Downloads/types";
 
-const WGSDownloads = () => {
+type WGSRow = BaseSampleMetadata;
 
-    const WGSData = useWGSData({ skip: false });
-    const { data: downloadFiles, loading } = useOmeDownloadFiles("WGS");
+const config: OmeDownloadsConfig<WGSRow> = {
+  omeKey: "wgs",
+  displayName: "WGS",
+  noOpenAccess: true,
+  datasetFilters: [
+    { field: "site", label: "Site" },
+    { field: "status", label: "Status" },
+    { field: "sex", label: "Sex" },
+    // Empty until wgs_metadata records age_bin: the catalog serves it as null for every WGS dataset.
+    { field: "age_bin", label: "Age" },
+  ],
+};
 
-    const rows = WGSData.data ?? [];
+const WgsDownloads = () => <OmeDualPaneDownloads config={config} />;
 
-    return (
-        <OmeDownloadLayout
-            rows={rows}
-            downloadFiles={downloadFiles}
-            getFilterFields={(row) => ({
-                site: row.site as Site,
-                status: row.status as Status,
-                sex: row.sex as Sex,
-            })}
-            renderTable={(filteredRows, filteredDownloadFiles) => (
-                <WGSDownloadsTable
-                    rows={filteredRows}
-                    WGSData={WGSData}
-                    files={filteredDownloadFiles}
-                    loadingFiles={loading}
-                />
-            )}
-        />
-    )
-}
-
-export default WGSDownloads;
+export default WgsDownloads;

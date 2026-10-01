@@ -20,15 +20,22 @@ export const theme = createTheme({
     },
     secondary: {
       main: "#ca5702",
-      light: "#e17b2e"
+      light: "#e17b2e",
     },
     surface: {
       main: "#e8fffd",
-      light: "#f6faf9"
+      light: "#f6faf9",
     },
   },
   typography: {
-    fontFamily: "var(--font-montserrat), sans-serif",
+    fontFamily: "var(--font-work-sans), sans-serif",
+    h1: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h2: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h3: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h4: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h5: { fontFamily: "var(--font-montserrat), sans-serif" },
+    h6: { fontFamily: "var(--font-montserrat), sans-serif" },
+    button: { fontFamily: "var(--font-montserrat), sans-serif" },
   },
   components: {
     MuiButton: {

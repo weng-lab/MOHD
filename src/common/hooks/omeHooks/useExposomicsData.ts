@@ -1,27 +1,101 @@
 import { gql } from "@/common/types/generated/gql";
-import { FetchExposomicsMetadataQuery } from "@/common/types/generated/graphql";
-import { ApolloError, useQuery } from "@apollo/client";
+import { FetchExposomicsDataQuery } from "@/common/types/generated/graphql";
+import type { ErrorLike } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
+import { toSample, unplottedIfEmpty } from "@/common/sampleFields/fields";
 
 const GET_EXPOSOMICS_DATA = gql(`
-query fetchExposomicsMetadata {
-  exposomics_metadata {
-    kit
+query fetchExposomicsData {
+  exposomics_molecules {
+    position
+    molecule_list
+    molecule_name
+    precursor_mz
+    precursor_ion_type
+    smiles
+    formula
+    inchikey
+    num_detected_samples
+  }
+  exposomics_quantification {
     sample_id
-    sex
     site
     status
+    sex
+    quant_values
+  }
+  exposomics_metadata {
+    sample_id
+    kit
   }
 }
  `);
 
+export type ExposomicsMoleculeValue = {
+  position: number;
+  molecule_name: string;
+  molecule_list: string;
+  precursor_mz: number | null;
+  precursor_ion_type: string;
+  smiles: string;
+  formula: string;
+  inchikey: string;
+  num_detected_samples: number | null;
+  value: number | null;
+};
+
+export type ExposomicsSample = {
+  sample_id: string;
+  /** QC or reference material rather than a participant's sample - see toSample. */
+  qc: boolean;
+  site: string;
+  status: string;
+  sex: string;
+  quantification: ExposomicsMoleculeValue[];
+};
+
 export type UseExposomicsDataParams = {
-  skip?: boolean
+  skip?: boolean;
 };
 
 export type UseExposomicsDataReturn = {
-  data: FetchExposomicsMetadataQuery["exposomics_metadata"] | undefined;
+  data: ExposomicsSample[] | undefined;
   loading: boolean;
-  error: ApolloError | undefined;
+  error: ErrorLike | undefined;
+};
+
+const toExposomicsSamples = (data: FetchExposomicsDataQuery | undefined): ExposomicsSample[] | undefined => {
+  const molecules = [...(data?.exposomics_molecules ?? [])].sort((a, b) => a.position - b.position);
+
+  if (!data?.exposomics_quantification) return undefined;
+
+  // Quantification rows come without a kit, which says which samples are QC - see toSample.
+  const kitOf = new Map(data.exposomics_metadata.map(({ sample_id, kit }) => [sample_id, kit]));
+
+  return data.exposomics_quantification
+    .filter((row): row is NonNullable<FetchExposomicsDataQuery["exposomics_quantification"][number]> => row !== null)
+    .map((row) =>
+      toSample({
+        sample_id: row.sample_id,
+        kit: kitOf.get(row.sample_id) ?? null,
+        site: row.site ?? "",
+        status: row.status ?? "",
+        sex: row.sex ?? "",
+        quantification: molecules.map((molecule, index) => ({
+          position: molecule.position,
+          molecule_name: molecule.molecule_name ?? "",
+          molecule_list: molecule.molecule_list ?? "",
+          precursor_mz: molecule.precursor_mz ?? null,
+          precursor_ion_type: molecule.precursor_ion_type ?? "",
+          smiles: molecule.smiles ?? "",
+          formula: molecule.formula ?? "",
+          inchikey: molecule.inchikey ?? "",
+          num_detected_samples: molecule.num_detected_samples ?? null,
+          value: row.quant_values?.[index] ?? null,
+        })),
+      })
+    )
+    .map(unplottedIfEmpty);
 };
 
 export const useExposomicsData = ({ skip }: UseExposomicsDataParams): UseExposomicsDataReturn => {
@@ -30,7 +104,7 @@ export const useExposomicsData = ({ skip }: UseExposomicsDataParams): UseExposom
   });
 
   return {
-    data: data?.exposomics_metadata,
+    data: toExposomicsSamples(data),
     loading,
     error,
   };

@@ -4,93 +4,126 @@ import { OmesDataType } from "@/common/types/globalTypes";
 import { useGrowOnScroll } from "@/common/hooks/useGrowOnScroll";
 
 type OmeHeaderStat = {
-    label: string;
-    value: string;
+  label: string;
+  value: string;
 };
 
 const HEADER_STATS: Partial<Record<OmesDataType, OmeHeaderStat[]>> = {
-    ATAC: [
-        // { label: "Samples", value: "128" },
-        // { label: "Peaks", value: "45.2K" },
-        // { label: "Reads", value: "2.1M" },
-        { label: "Experiments", value: "128" },
-        { label: "Participants", value: "180" },
-        { label: "Timepoints", value: "200" },
-    ],
+  WGS: [
+    { label: "Experiments", value: "915" },
+    { label: "Participants", value: "915" },
+    { label: "Snapshot", value: "1" },
+  ],
+  WGBS: [
+    { label: "Experiments", value: "915" },
+    { label: "Participants", value: "915" },
+    { label: "Snapshot", value: "1" },
+  ],
+  ATAC: [
+    { label: "Experiments", value: "492" },
+    { label: "Participants", value: "473" },
+    { label: "Snapshot", value: "1" },
+  ],
+  RNA: [
+    { label: "Experiments", value: "922" },
+    { label: "Participants", value: "922" },
+    { label: "Snapshot", value: "1" },
+  ],
+  metabolomics: [
+    { label: "Experiments", value: "1,210" },
+    { label: "Participants", value: "930" },
+    { label: "Snapshot", value: "1" },
+  ],
+  lipidomics: [
+    { label: "Experiments", value: "1,211" },
+    { label: "Participants", value: "930" },
+    { label: "Snapshot", value: "1" },
+  ],
+  exposomics: [
+    { label: "Experiments", value: "690" },
+    { label: "Participants", value: "600" },
+    { label: "Snapshot", value: "1" },
+  ],
+  metallomics: [
+    { label: "Experiments", value: "612" },
+    { label: "Participants", value: "612" },
+    { label: "Snapshot", value: "1" },
+  ],
 };
 
 export function OmeHeaderInfoCards({ ome }: { ome: OmesDataType }) {
-    const stats = HEADER_STATS[ome] ?? [];
-    const { visible, refs } = useGrowOnScroll(stats.length);
-    const theme = useTheme();
-    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+  const stats = HEADER_STATS[ome] ?? [];
+  const { visible, refs } = useGrowOnScroll(stats.length);
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
-    if (stats.length === 0) {
-        return null;
-    }
+  if (stats.length === 0) {
+    return null;
+  }
 
-    return (
-        <Stack direction="row" alignItems="center" spacing={{xs: 0, md: 2}} sx={{ minWidth: 0 }}>
-            <Divider
-                orientation="vertical"
-                flexItem
-                sx={{
-                    borderColor: "rgba(255, 255, 255, 0.2)",
-                    height: 28,
-                    alignSelf: "center",
-                    display: { xs: "none", md: "block" },
-                }}
-            />
+  return (
+    <Stack direction="row" alignItems="center" spacing={{ xs: 0, md: 2 }} sx={{ minWidth: 0 }}>
+      <Divider
+        orientation="vertical"
+        flexItem
+        sx={{
+          borderColor: "rgba(255, 255, 255, 0.2)",
+          height: 28,
+          alignSelf: "center",
+          display: { xs: "none", md: "block" },
+        }}
+      />
+      <Stack
+        direction="row"
+        flexWrap="wrap"
+        alignItems="center"
+        useFlexGap
+        sx={{
+          minWidth: 0,
+          columnGap: 1,
+          rowGap: 1,
+          width: "100%",
+        }}
+      >
+        {stats.map((stat, index) => (
+          <Grow in={visible[index]} timeout={500 + index * 140} key={stat.label}>
             <Stack
-                direction="row"
-                flexWrap="wrap"
-                alignItems="center"
-                useFlexGap
-                sx={{
-                    minWidth: 0,
-                    columnGap: 1,
-                    rowGap: 1,
-                }}
+              ref={(el) => {
+                refs.current[index] = el;
+              }}
+              data-index={index}
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              sx={{
+                px: { xs: 0.5, md: 1.25 },
+                py: 0.5,
+                borderRadius: 1.5,
+                bgcolor: "rgba(255, 255, 255, 0.08)",
+                border: "1px solid rgba(255, 255, 255, 0.06)",
+              }}
             >
-                {stats.map((stat, index) => (
-                    <Grow in={visible[index]} timeout={500 + index * 140} key={stat.label}>
-                        <Stack
-                            ref={(el) => {
-                                refs.current[index] = el;
-                            }}
-                            data-index={index}
-                            direction="row"
-                            alignItems="center"
-                            spacing={1}
-                            sx={{
-                                px: { xs: 0.5, md: 1.25 },
-                                py: 0.5,
-                                borderRadius: 1.5,
-                                bgcolor: "rgba(255, 255, 255, 0.08)",
-                                border: "1px solid rgba(255, 255, 255, 0.06)",
-                            }}
-                        >
-                            <Typography
-                                variant={isXs ? "caption" : "body2"}
-                                sx={{
-                                    color: "rgba(255, 255, 255, 0.72)",
-                                }}
-                            >
-                                {stat.label}
-                            </Typography>
-                            <Typography
-                                variant={isXs ? "caption" : "body1"}
-                                sx={{
-                                    color: "white",
-                                    fontWeight: 700,
-                                }}
-                            >
-                                {stat.value}
-                            </Typography>
-                        </Stack>
-                    </Grow>
-                ))}
+              <Typography
+                variant={isXs ? "caption" : "body2"}
+                sx={{
+                  color: "rgba(255, 255, 255, 0.72)",
+                }}
+              >
+                {stat.label}
+              </Typography>
+              <Typography
+                variant={isXs ? "caption" : "body1"}
+                sx={{
+                  color: "white",
+                  fontWeight: 700,
+                }}
+              >
+                {stat.value}
+              </Typography>
             </Stack>
-        </Stack>
-    );
+          </Grow>
+        ))}
+      </Stack>
+    </Stack>
+  );
 }

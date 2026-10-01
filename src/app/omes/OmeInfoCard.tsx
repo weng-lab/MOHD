@@ -5,13 +5,7 @@ import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { OmesDataType } from "@/common/types/globalTypes";
 import { OME_COLORS } from "@/common/colors";
-import {
-  OME_DESCRIPTIONS,
-  // getGenomeBrowserHref,
-  getOmeIconName,
-  getOmeInfoHref,
-  getOmeLabel,
-} from "./omeContent";
+import { OME_DESCRIPTIONS, getGenomeBrowserHref, getOmeIconName, getOmeInfoHref, getOmeLabel } from "./omeContent";
 
 type OmeInfoCardProps = {
   selectedOme: OmesDataType;
@@ -21,7 +15,8 @@ type OmeInfoCardProps = {
 
 export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfoCardProps) {
   const selectedColor = OME_COLORS[selectedOme.toLowerCase()] ?? "#3f7f79";
-  // const genomeBrowserHref = getGenomeBrowserHref(selectedOme);
+  // null for the omes with no genome-browser-displayable data, which hides the button entirely.
+  const genomeBrowserHref = getGenomeBrowserHref(selectedOme);
 
   return (
     <Box
@@ -30,7 +25,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
         zIndex: 1,
         width: "100%",
         maxWidth: 1000,
-        minHeight: 500,
+        minHeight: 300,
         display: "flex",
         flexDirection: "column",
         opacity: isVisible ? 1 : 0,
@@ -38,8 +33,7 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
         transition: "opacity 320ms ease, transform 320ms ease",
         borderRadius: 3,
         border: "1px solid rgba(255,255,255,0.28)",
-        background:
-          "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(242,249,248,0.68) 100%)",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.90) 0%, rgba(242,249,248,0.85) 100%)",
         boxShadow: "0 24px 60px rgba(0, 0, 0, 0.16)",
         backdropFilter: "blur(16px)",
         color: "text.primary",
@@ -74,27 +68,24 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
                   }}
                 />
               </Box>
-                <Stack>
-              <Box>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: "rgba(20, 39, 37, 0.96)",
-                    textTransform:
-                      selectedOme === "WGS" || selectedOme === "WGBS" ? "uppercase" : "none",
-                  }}
-                >
-                  {getOmeLabel(selectedOme)}
-                </Typography>
-              </Box>
-              {(selectedOme === "WGS" || selectedOme === "WGBS") && (
-                <Typography
-                  variant="h5"
-                >
-                  {selectedOme === "WGBS" ? "(Whole Genome Bisulfate Sequencing)" : "(Whole Genome Sequencing)"}
-                </Typography>
-              )}
-            </Stack>
+              <Stack>
+                <Box>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      color: "rgba(20, 39, 37, 0.96)",
+                      textTransform: selectedOme === "WGS" || selectedOme === "WGBS" ? "uppercase" : "none",
+                    }}
+                  >
+                    {getOmeLabel(selectedOme)}
+                  </Typography>
+                </Box>
+                {(selectedOme === "WGS" || selectedOme === "WGBS") && (
+                  <Typography variant="h5">
+                    {selectedOme === "WGBS" ? "(Whole Genome Bisulfite Sequencing)" : "(Whole Genome Sequencing)"}
+                  </Typography>
+                )}
+              </Stack>
             </Stack>
             <IconButton
               aria-label="Close selected OME"
@@ -119,30 +110,48 @@ export default function OmeInfoCard({ selectedOme, isVisible, onClose }: OmeInfo
             {OME_DESCRIPTIONS[selectedOme] ?? "Description coming soon."}
           </Typography>
         </Stack>
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent={"space-between"}>
-          <Button
-            // component={genomeBrowserHref ? Link : "button"}
-            // href={genomeBrowserHref ?? undefined}
-            variant="contained"
-            // disabled={!genomeBrowserHref}
+        {selectedOme === "proteomics" ? (
+          <Typography
+            variant="body2"
             sx={{
-              minWidth: 170,
-              backgroundColor: "secondary.main"
+              color: "rgba(33, 53, 51, 0.7)",
+              fontStyle: "italic",
+              mt: 2,
             }}
           >
-            Genome Browser
-          </Button>
-          <Button
-            component={Link}
-            href={getOmeInfoHref(selectedOme)}
-            variant="outlined"
-            sx={{
-              minWidth: 170,
-            }}
+            Available May 2027
+          </Typography>
+        ) : (
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent={{ xs: "flex-start", sm: "space-between" }}
+            gap={{ xs: 1, sm: 0 }}
+            mt={2}
           >
-            Go to {getOmeLabel(selectedOme)} page
-          </Button>
-        </Stack>
+            <Button
+              component={genomeBrowserHref ? Link : "button"}
+              href={genomeBrowserHref ?? undefined}
+              variant="contained"
+              disabled={!genomeBrowserHref}
+              sx={{
+                minWidth: 170,
+                backgroundColor: "secondary.main",
+              }}
+            >
+              Genome Browser
+            </Button>
+            <Button
+              component={Link}
+              href={getOmeInfoHref(selectedOme)}
+              variant="outlined"
+              sx={{
+                minWidth: 170,
+              }}
+            >
+              Go to {getOmeLabel(selectedOme)} page
+            </Button>
+          </Stack>
+        )}
       </Stack>
     </Box>
   );

@@ -1,0 +1,71 @@
+import { useEffect, useState } from "react";
+import type { BaseSampleMetadata, CatalogDataset, OmeFile } from "@/common/components/Downloads/types";
+
+// The catalog lives on the same service as the bulk-download jobs API,
+// proxied through our own API routes so the auth token stays server-side.
+const BASE_URL = "/api/bulk-download";
+
+type CatalogState<T extends BaseSampleMetadata> = {
+  datasets: CatalogDataset<T>[];
+  omeFiles: OmeFile[];
+  loading: boolean;
+  error: boolean;
+};
+
+type DatasetsResponse<T extends BaseSampleMetadata> = {
+  datasets: CatalogDataset<T>[];
+  /** Optional so a response from a service that predates the field still loads. */
+  ome_files?: OmeFile[];
+};
+
+// What the last completed fetch resolved to, tagged with the ome it was for.
+type Loaded<T extends BaseSampleMetadata> = {
+  omeKey: string;
+  datasets: CatalogDataset<T>[];
+  omeFiles: OmeFile[];
+  error: boolean;
+};
+
+/**
+ * Fetches the dataset + file catalog for an ome from the bulk-download service.
+ * One request returns everything the downloads view needs — datasets with their
+ * metadata flattened on and their files nested, plus the ome-wide files that
+ * belong to no single dataset — replacing the old two-fetch (GraphQL metadata +
+ * GraphQL file list) client-side merge.
+ */
+export function useOmeCatalog<T extends BaseSampleMetadata>(omeKey: string): CatalogState<T> {
+  const [loaded, setLoaded] = useState<Loaded<T> | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch(`${BASE_URL}/omes/${omeKey}/datasets`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json() as Promise<DatasetsResponse<T>>;
+      })
+      .then((body) => {
+        if (cancelled) return;
+        setLoaded({ omeKey, datasets: body.datasets ?? [], omeFiles: body.ome_files ?? [], error: false });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLoaded({ omeKey, datasets: [], omeFiles: [], error: true });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [omeKey]);
+
+  // Loading is derived, not stored: any time the last resolved fetch isn't for
+  // the current ome (initial mount, or an in-flight ome switch) we're loading.
+  // This avoids a synchronous setState inside the effect.
+  const current = loaded?.omeKey === omeKey ? loaded : null;
+  return {
+    datasets: current?.datasets ?? [],
+    omeFiles: current?.omeFiles ?? [],
+    loading: current === null,
+    error: current?.error ?? false,
+  };
+}

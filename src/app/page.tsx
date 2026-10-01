@@ -34,14 +34,7 @@ export default function Home() {
               borderRadius: 99,
             }}
           >
-            <Image
-              src="/logo.png"
-              alt="logo"
-              height={150}
-              width={150}
-              priority
-              id="header-helix"
-            />
+            <Image src="/logo.png" alt="logo" height={150} width={150} priority id="header-helix" />
           </Box>
           <Stack alignItems="center" flexWrap={"wrap"} textAlign={"center"}>
             <Typography variant="h4" fontWeight={500}>
@@ -52,7 +45,7 @@ export default function Home() {
             </Typography>
           </Stack>
           <Typography variant="body1" textAlign={"center"} color="rgba(255,255,255,0.60)">
-            Explore our extensive omics data 10,000 samples across 1,800 participants.
+            Explore our extensive omics data 6,967 samples across 956 participants.
           </Typography>
         </Box>
       </Box>

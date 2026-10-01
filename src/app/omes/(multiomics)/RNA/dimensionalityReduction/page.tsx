@@ -1,67 +1,71 @@
 "use client";
-import { TwoPaneLayout, useTablePlotSync } from "@weng-lab/ui-components";
-import { ScatterPlot } from "@mui/icons-material"
-import { useMemo } from "react"
-import { DownloadPlotHandle } from "@weng-lab/visualization"
+import { TwoPaneLayout } from "@weng-lab/ui-components";
+import { ScatterPlot } from "@mui/icons-material";
+import { DownloadPlotHandle } from "@weng-lab/visualization";
 import { useRNAData, UseRNADataReturn } from "@/common/hooks/omeHooks/useRNAData";
-import RNADimensionalityScatterPlot from "./RNAUMAP"
-import RNADimensionalityTable from "./RNADimensionalityTable"
-import usePlotDownload from "@/common/hooks/usePlotDownload";
+import RNADimensionalityScatterPlot from "./RNAUMAP";
+import RNADimensionalityPCAPlot from "./RNAPCA";
 
-export type RNAMetadata =
-    NonNullable<UseRNADataReturn["data"]>;
+import SampleTable from "@/common/sampleFields/SampleTable";
+import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
+import usePlotDownload from "@/common/hooks/usePlotDownload";
+import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
+import { SHOW_UMAP } from "@/common/umap";
+
+export type RNAMetadata = NonNullable<UseRNADataReturn["data"]>;
 
 export type SharedRNADimenionalityProps = {
-    rows: RNAMetadata;
-    RNAData: UseRNADataReturn;
-    selected: RNAMetadata;
-    setSelected: React.Dispatch<React.SetStateAction<RNAMetadata>>;
-    sortedFilteredData: RNAMetadata;
-    tableProps: ReturnType<typeof useTablePlotSync<RNAMetadata[number]>>["tableProps"];
-    ref?: React.RefObject<DownloadPlotHandle | null>;
-}
+  RNAData: UseRNADataReturn;
+  sampleTable: SampleTableState<RNAMetadata[number]>;
+  ref?: React.RefObject<DownloadPlotHandle | null>;
+};
 
 const RNADimensionalityReduction = () => {
-    const { ref: umapRef, ...umapDownload } = usePlotDownload();
-    const RNAData = useRNAData({ skip: false });
+  const { ref: umapRef, ...umapDownload } = usePlotDownload();
+  const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
+  const RNAData = useRNAData({ skip: false });
 
-    const rows: RNAMetadata = useMemo(() => {
-        if (!RNAData.data) return [];
-        return RNAData.data;
-    }, [RNAData]);
+  const sampleTable = useSampleTable("RNA", RNAData.data);
 
-    const { selected, setSelected, sortedFilteredData, tableProps } = useTablePlotSync({
-        rows,
-        getRowId: (row) => row.sample_id,
-    });
+  const SharedRNADimenionalityProps: SharedRNADimenionalityProps = {
+    RNAData,
+    sampleTable,
+  };
 
-    const SharedRNADimenionalityProps: SharedRNADimenionalityProps = useMemo(
-        () => ({
-            rows,
-            RNAData,
-            selected,
-            setSelected,
-            sortedFilteredData,
-            tableProps,
-        }),
-        [RNAData, rows, selected, setSelected, sortedFilteredData, tableProps]
-    );
-
-    return (
-        <TwoPaneLayout
-            direction={{ xs: "column", lg: "row" }}
-            rowHeight="max(60vh, 700px)"
-            TableComponent={<RNADimensionalityTable {...SharedRNADimenionalityProps} />}
-            plots={[
-                {
-                    tabTitle: "UMAP",
-                    icon: <ScatterPlot />,
-                    plotComponent: <RNADimensionalityScatterPlot ref={umapRef} {...SharedRNADimenionalityProps} />,
-                    ...umapDownload,
-                },
-            ]}
+  return (
+    <TwoPaneLayout
+      showTabLabels
+      direction={{ xs: "column", lg: "row" }}
+      {...TWO_PANE_HEIGHTS}
+      TableComponent={
+        <SampleTable
+          label="RNA-seq Dimensionality Reduction"
+          table={sampleTable}
+          loading={RNAData.loading}
+          error={RNAData.error}
         />
-    )
-}
+      }
+      plots={[
+        {
+          tabTitle: "PCA",
+          icon: <ScatterPlot />,
+          plotComponent: <RNADimensionalityPCAPlot ref={pcaRef} {...SharedRNADimenionalityProps} />,
+          ...pcaDownload,
+        },
+        // Off until UMAP comes back - see SHOW_UMAP.
+        ...(SHOW_UMAP
+          ? [
+              {
+                tabTitle: "UMAP",
+                icon: <ScatterPlot />,
+                plotComponent: <RNADimensionalityScatterPlot ref={umapRef} {...SharedRNADimenionalityProps} />,
+                ...umapDownload,
+              },
+            ]
+          : []),
+      ]}
+    />
+  );
+};
 
 export default RNADimensionalityReduction;

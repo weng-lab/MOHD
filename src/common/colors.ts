@@ -10,14 +10,51 @@ export const OME_COLORS: Record<string, string> = {
   wgs: "#59acd8",
 };
 
-export const status_color_map = {'case' : '#e41a1c', 'control' : '#377eb8', 'unknown' : 'lightgray'}
+export const status_color_map = {
+  case: "#e41a1c",
+  control: "#377eb8",
+  unknown: "lightgray",
+  "high risk": "#F5761A",
+  "low risk": "#FEE12B",
+};
 
-export const site_color_map = {'CCH' : '#BF3831',
-               'CKD' : '#79B4F0', 
-               'EXP' : '#159875',
-               'MOM' : '#CDA0E8', 
-               'UIC' : '#31487D'}
+export const site_color_map = {
+  CCH: "#BF3831",
+  CCHC: "#BF3831",
 
-export const sex_color_map = {female: "#9d5ca3", male: "#62A35C"}
+  CKD: "#79B4F0",
+  "Columbia-CKD": "#79B4F0",
 
-export const protocol_color_map = {"Buffy Coat method": "#d1495b", "OPC method": "#00798c", "CPT method": "#edae49"}
+  EXP: "#159875",
+  "EXPAND-Asthma": "#159875",
+
+  MOM: "#CDA0E8",
+  "MOM-Health": "#CDA0E8",
+
+  LEO: "#F5AB54",
+
+  UIC: "#31487D",
+  "UIC-DKD": "#31487D",
+
+  LEON: "#D0944E",
+};
+
+export const BAR_PLOT_COLORS = ["#4193d4", "#38938a", "#73338f", "#c9803f", "#cd6156"];
+
+export const sex_color_map = { female: "#9d5ca3", male: "#62A35C", prefer_not_to_answer: "lightsteelblue" };
+
+/**
+ * Display overrides for raw values whose on-screen wording should read the same
+ * everywhere in the app, regardless of which component renders them - currently
+ * just the "prefer not to answer" survey code, which APIs return as
+ * prefer_not_to_answer.
+ */
+export const VALUE_LABEL_OVERRIDES: Record<string, string> = {
+  prefer_not_to_answer: "Prefer no answer",
+};
+
+export const protocol_color_map = {
+  "Buffy Coat method": "#d1495b",
+  "OPC method": "#00798c",
+  "CPT method": "#edae49",
+};

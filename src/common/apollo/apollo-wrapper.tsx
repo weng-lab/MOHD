@@ -2,35 +2,60 @@
 
 import { ReactNode } from "react";
 import { ApolloLink, HttpLink } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import {
   ApolloNextAppProvider,
   InMemoryCache,
   SSRMultipartLink,
   ApolloClient,
-} from "@apollo/experimental-nextjs-app-support";
-
+} from "@apollo/client-integration-nextjs";
+import Config from "../config.json";
 
 // See https://www.apollographql.com/blog/using-apollo-client-with-next-js-13-releasing-an-official-library-to-support-the-app-router
 
-export function makeClient() {
+function makeClient() {
+  const isServer = typeof window === "undefined";
   const httpLink = new HttpLink({
-    uri: "/api/mohd-graphql",
+    uri: isServer ? Config.API.MOHDAPI : "/api/mohd-graphql",
+    headers: isServer
+      ? {
+          Authorization: "Bearer " + process.env.MOHD_API_KEY!,
+        }
+      : undefined,
   });
 
   return new ApolloClient({
-    cache: new InMemoryCache(),
-    link:
-      typeof window === "undefined"
-        ? ApolloLink.from([
-            new SSRMultipartLink({
-              stripDefer: true,
-            }),
-            httpLink,
-          ])
-        : httpLink,
+    // Keyed by sample, so a heatmap's kits and a PCA's coordinates merge into one row each rather
+    // than each query's list replacing the other's.
+    cache: new InMemoryCache({
+      typePolicies: {
+        MetabolomicsSampleMetadata: { keyFields: ["sample_id"] },
+        LipidomicsSampleMetadata: { keyFields: ["sample_id"] },
+        ExposomicsSampleMetadata: { keyFields: ["sample_id"] },
+      },
+    }),
+    link: isServer
+      ? ApolloLink.from([
+          new SSRMultipartLink({
+            stripDefer: true,
+          }),
+          httpLink,
+        ])
+      : httpLink,
   });
 }
 
 export function ApolloWrapper({ children }: { children: ReactNode }) {
   return <ApolloNextAppProvider makeClient={makeClient}>{children}</ApolloNextAppProvider>;
+}
+
+const screenApolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: "/api/screen-graphql",
+  }),
+});
+
+export function ScreenApolloWrapper({ children }: { children: ReactNode }) {
+  return <ApolloProvider client={screenApolloClient}>{children}</ApolloProvider>;
 }

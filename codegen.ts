@@ -6,12 +6,12 @@ const config: CodegenConfig = {
     {
       [Config.API.MOHDAPI]: {
         headers: {          
-          "api-key": process.env.MOHD_API_KEY!,
+           Authorization: "Bearer " + process.env.MOHD_API_KEY!,
         },
       },
     },
   ],
-  documents: ["src/**/*.{ts,tsx}"],
+  documents: ["src/**/*.{ts,tsx}", "!src/common/components/GenomeBrowser/_components/DomainDisplay.tsx"],
   generates: {
     "./src/common/types/generated/": {
       preset: "client",

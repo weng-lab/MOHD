@@ -3,6 +3,11 @@ import { Typography, Box, Grid, Link as MuiLink, Stack } from "@mui/material";
 import Image from "next/image";
 import { LinkComponent } from "./LinkComponent";
 
+// Evaluated once at module load rather than per render: reading the clock during
+// render is request-time data, which cacheComponents refuses to prerender.
+// react-doctor-disable-next-line react-doctor/no-impure-call-at-module-scope -- intentional, see above
+const COPYRIGHT_YEAR = new Date().getFullYear();
+
 export default function Footer() {
   const sections = [
     {
@@ -19,21 +24,12 @@ export default function Footer() {
       links: [
         { name: "SCREEN", href: "https://screen.wenglab.org/" },
         { name: "PsychSCREEN", href: "https://psychscreen.wenglab.org/psychscreen" },
-        { name: "igSCREEN", href: "https://igscreen.vercel.app/" },
         { name: "Factorbook", href: "https://www.factorbook.org/" },
       ],
     },
     {
-      title: "Data",
-      links: [
-        { name: "Downloads", href: "/downloads" },
-      ],
-    },
-    {
       title: "Help",
-      links: [
-        { name: "Contact Us/Feedback", href: "/help" },
-      ],
+      links: [{ name: "Contact Us/Feedback", href: "/help" }],
     },
   ];
 
@@ -44,7 +40,6 @@ export default function Footer() {
       sx={{
         width: "100%",
         backgroundColor: (theme) => theme.palette.primary.main,
-        zIndex: (theme) => theme.zIndex.appBar,
         color: "#fff",
         paddingX: 6,
         paddingY: 2,
@@ -73,7 +68,7 @@ export default function Footer() {
               <MuiLink color="inherit" href="https://sites.google.com/view/moore-lab/">
                 Moore Lab
               </MuiLink>{" "}
-              {new Date().getFullYear()}.
+              {COPYRIGHT_YEAR}.
             </Typography>
           </Stack>
         </Grid>
