@@ -11,6 +11,7 @@ const config: OmeDownloadsConfig<WGBSRow> = {
     { field: "site", label: "Site" },
     { field: "status", label: "Status" },
     { field: "sex", label: "Sex" },
+    { field: "age_bin", label: "Age" },
   ],
 };
 

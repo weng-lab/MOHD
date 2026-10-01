@@ -12,6 +12,8 @@ const config: OmeDownloadsConfig<WGSRow> = {
     { field: "site", label: "Site" },
     { field: "status", label: "Status" },
     { field: "sex", label: "Sex" },
+    // Empty until wgs_metadata records age_bin: the catalog serves it as null for every WGS dataset.
+    { field: "age_bin", label: "Age" },
   ],
 };
 

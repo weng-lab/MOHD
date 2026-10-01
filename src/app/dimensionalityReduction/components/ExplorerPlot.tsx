@@ -45,9 +45,6 @@ const TOOLTIP_FIELDS = FIELDS.filter(({ key }) => key !== "protocol");
 const TOOLTIP_DETAILS: { label: string; value: (row: ExplorerRow) => string | null }[] = [
   { label: "Condition", value: (row) => row.condition },
   { label: "Protocol", value: (row) => row.protocol && labelOf("protocol", row.protocol) },
-  { label: "Kit", value: (row) => row.kit },
-  { label: "Participant", value: (row) => row.participant_id },
-  { label: "Visit", value: (row) => row.visit },
   ...METRICS.map(({ key, label, format }) => ({
     label,
     value: (row: ExplorerRow) => {

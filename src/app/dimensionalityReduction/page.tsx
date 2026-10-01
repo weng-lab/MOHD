@@ -15,8 +15,6 @@ const PC_KEYS = ["pc1", "pc2", "pc3", "pc4", "pc5", "pc6", "pc7", "pc8", "pc9", 
 type MetadataRow = {
   sample_id: string;
   kit?: string | null;
-  participant_id?: string | null;
-  visit?: string | null;
   condition?: string | null;
   protocol?: string | null;
   site?: string | null;
@@ -67,9 +65,6 @@ const toOmeData = (
       age_bin: row.age_bin ?? null,
       protocol: row.protocol ?? null,
       condition: row.condition ?? null,
-      kit: row.kit ?? null,
-      participant_id: row.participant_id ?? null,
-      visit: row.visit ?? null,
       // Spread in, since an undefined key would still be written into the payload.
       ...(metrics && {
         metrics: {

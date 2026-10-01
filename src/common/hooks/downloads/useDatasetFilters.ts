@@ -7,6 +7,7 @@ import {
   withFieldFilter,
 } from "@/common/components/Downloads/filterModel";
 import type { BaseSampleMetadata, CatalogDataset, FilterFieldConfig } from "@/common/components/Downloads/types";
+import { fieldOfColumn, sortValues } from "@/common/sampleFields/fields";
 
 export type DatasetFiltersState<T extends BaseSampleMetadata> = {
   datasetFilterModel: GridFilterModel;
@@ -35,9 +36,11 @@ export function useDatasetFilters<T extends BaseSampleMetadata>(
 
   const filterFields = datasetFilters.map((f) => f.field);
 
+  // A sample field's options are ordered as on every other table (age by band, QC / Reference
+  // last); any other field's stay in the order they first appear.
   const datasetOptionsMap: Record<string, string[]> = {};
   for (const field of filterFields) {
-    datasetOptionsMap[field] = [
+    const values = [
       ...new Set(
         datasets.flatMap((d) => {
           const value = String(d[field as keyof T] ?? "");
@@ -45,6 +48,8 @@ export function useDatasetFilters<T extends BaseSampleMetadata>(
         })
       ),
     ];
+    const sampleField = fieldOfColumn(field);
+    datasetOptionsMap[field] = sampleField ? sortValues(sampleField, values) : values;
   }
 
   const datasetSelectedValues: Record<string, string[]> = {};
