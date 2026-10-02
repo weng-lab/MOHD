@@ -16,9 +16,11 @@ export const OME_PAGE_CHROME = 16 + 16;
 /**
  * The window's height under the headers, less `chrome` px of spacing around the content, so the
  * content ends at the window's bottom with the page scrolled to the top. Floored at `min` px, where
- * scrolling is the better trade than a plot too short to read.
+ * scrolling is the better trade than a plot too short to read. `above` takes off anything else that
+ * sits over the content, as a CSS length - a measured height variable, say.
  */
-export const omePageHeight = (chrome: number, min: number) => `max(calc(${UNDER_HEADERS} - ${chrome}px), ${min}px)`;
+export const omePageHeight = (chrome: number, min: number, above?: string) =>
+  `max(calc(${UNDER_HEADERS} - ${chrome}px${above ? ` - ${above}` : ""}), ${min}px)`;
 
 /**
  * How much shorter than the window each pane is held once they stack. On a phone the table and the
@@ -28,12 +30,15 @@ export const omePageHeight = (chrome: number, min: number) => `max(calc(${UNDER_
  */
 const STACKED_RESERVE = 96;
 
+/** The floor on a pane's height side by side, in px. */
+export const ROW_PANE_MIN = 560;
+
 /**
  * TwoPaneLayout's pane heights on an ome page. Side by side, the table and plot end at the window's
  * bottom, as the WGS and explorer plots do. Stacked, each is a strip short of it - see
  * STACKED_RESERVE.
  */
 export const TWO_PANE_HEIGHTS = {
-  rowHeight: omePageHeight(OME_PAGE_CHROME, 560),
+  rowHeight: omePageHeight(OME_PAGE_CHROME, ROW_PANE_MIN),
   columnHeight: omePageHeight(OME_PAGE_CHROME + STACKED_RESERVE, 460),
 } as const;

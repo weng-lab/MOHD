@@ -10,6 +10,13 @@ import BulkDownloadChip from "./BulkDownloadChip";
 import { LinkComponent } from "@/common/components/LinkComponent";
 import { ANVIL_URL } from "@/common/downloads";
 import type { BaseSampleMetadata, FilterFieldConfig } from "@/common/components/Downloads/types";
+import {
+  OME_PAGE_CHROME,
+  ROW_PANE_MIN,
+  TWO_PANE_HEIGHTS,
+  omePageHeight,
+} from "@/common/components/OmeDetails/omePageHeight";
+import { useMeasuredHeightVar } from "@/common/hooks/useMeasuredHeightVar";
 
 /**
  * Configuration object each ome page provides to this component. Dataset + file
@@ -37,6 +44,25 @@ export type OmeDownloadsConfig<T extends BaseSampleMetadata> = {
    * a restricted-access banner. The dataset/file tables and filters stay.
    */
   noOpenAccess?: boolean;
+};
+
+/**
+ * The bar over the panes - the restricted-access banner, if any, and the filters. Its height varies, as
+ * the banner wraps and the filters open in place, so it's measured rather than subtracted as a constant.
+ * A column flex so the filters' bottom margin is counted in that height instead of collapsing out of it.
+ */
+const BAR_ID = "downloads-bar";
+const BAR_HEIGHT_VAR = "--downloads-bar-height";
+
+/**
+ * Side by side, the panes take the window under the headers less the bar, so they end at the window's
+ * bottom with the page scrolled to the top - the other ome pages' floor applies. Before the bar is first
+ * measured, its height with the filters shut and no banner stands in. Stacked, each pane is the usual
+ * strip short of the window, whatever sits above it.
+ */
+const PANE_HEIGHTS = {
+  rowHeight: omePageHeight(OME_PAGE_CHROME, ROW_PANE_MIN, `var(${BAR_HEIGHT_VAR}, 58px)`),
+  columnHeight: TWO_PANE_HEIGHTS.columnHeight,
 };
 
 // --- Main component ---
@@ -100,35 +126,39 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({ config }: Ome
     bulkEnabled: !noOpenAccess,
   });
 
+  useMeasuredHeightVar(`#${BAR_ID}`, BAR_HEIGHT_VAR);
+
   return (
     <Box>
-      {noOpenAccess && (
-        <Alert severity="warning" sx={{ mb: 1 }}>
-          This ome&apos;s files are all restricted. Please visit{" "}
-          <LinkComponent href={ANVIL_URL} openInNewTab showExternalIcon>
-            the MOHD page on AnVIL
-          </LinkComponent>{" "}
-          to register for access to restricted files.
-        </Alert>
-      )}
-      <DownloadFiltersPanel
-        datasetFilters={config.datasetFilters}
-        datasetOptionsMap={datasetOptionsMap}
-        datasetSelectedValues={datasetSelectedValues}
-        onDatasetToggle={handleDatasetToggleChange}
-        datasetFilterModel={datasetFilterModel}
-        onResetDatasetFilters={() => setDatasetFilterModel({ items: [] })}
-        fileTypeOptions={fileTypeOptions}
-        fileSelectedValues={fileSelectedValues}
-        onFileTypeChange={handleFileTypeSelectChange}
-        fileFilterModel={fileFilterModel}
-        onResetFileFilters={() => setFileFilterModel({ items: [] })}
-      />
+      <Box id={BAR_ID} display="flex" flexDirection="column">
+        {noOpenAccess && (
+          <Alert severity="warning" sx={{ mb: 1 }}>
+            This ome&apos;s files are all restricted. Please visit{" "}
+            <LinkComponent href={ANVIL_URL} openInNewTab showExternalIcon>
+              the MOHD page on AnVIL
+            </LinkComponent>{" "}
+            to register for access to restricted files.
+          </Alert>
+        )}
+        <DownloadFiltersPanel
+          datasetFilters={config.datasetFilters}
+          datasetOptionsMap={datasetOptionsMap}
+          datasetSelectedValues={datasetSelectedValues}
+          onDatasetToggle={handleDatasetToggleChange}
+          datasetFilterModel={datasetFilterModel}
+          onResetDatasetFilters={() => setDatasetFilterModel({ items: [] })}
+          fileTypeOptions={fileTypeOptions}
+          fileSelectedValues={fileSelectedValues}
+          onFileTypeChange={handleFileTypeSelectChange}
+          fileFilterModel={fileFilterModel}
+          onResetFileFilters={() => setFileFilterModel({ items: [] })}
+        />
+      </Box>
       <ResizablePanes
         direction={{ xs: "column", lg: "row" }}
         min={15}
         max={85}
-        rowHeight="800px"
+        {...PANE_HEIGHTS}
         first={
           <DatasetsPane
             datasets={datasets}
