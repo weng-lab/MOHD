@@ -34,8 +34,8 @@ export const REFERENCE_COLOR_OPTIONS = [
 ] as const satisfies readonly ColorOption<keyof ReferenceRow>[];
 
 export const MOHD_COLOR_OPTIONS = [
-  { key: "case_status", label: "Case Status" },
-  { key: "sex_at_birth", label: "Sex at Birth" },
+  { key: "case_status", label: "Status" },
+  { key: "sex_at_birth", label: "Sex" },
   { key: "site", label: "Site" },
   { key: "recruited_condition", label: "Recruited Condition" },
   { key: "reported_race_ethnicity", label: "Reported Race/Ethnicity" },
