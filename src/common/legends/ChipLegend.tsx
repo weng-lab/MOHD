@@ -2,6 +2,7 @@
 
 import { Box, Chip, Stack, Tooltip, Typography } from "@mui/material";
 import type { PointShape } from "@weng-lab/visualization";
+import type { ReactNode } from "react";
 import ShapeGlyph from "./ShapeGlyph";
 
 /** One chip: a group of points the plot draws in one color. */
@@ -14,11 +15,11 @@ export type LegendGroup = {
   count: number;
   /** The group's point shape, where the plot is shaped by the same field. Otherwise a plain dot. */
   shape?: PointShape;
-  /** For a privacy group folding small categories together, the categories, named on hover and never counted. */
-  members?: string[];
+  /** Shown on hover, for a group whose label doesn't say everything - one folding several categories together, say. */
+  tooltip?: ReactNode;
 };
 
-export type PlotLegendProps = {
+export type ChipLegendProps = {
   groups: LegendGroup[];
   /** Group values currently filtered out; the caller decides what that does to the points (see dimHidden). */
   hidden: ReadonlySet<string>;
@@ -35,7 +36,7 @@ export type PlotLegendProps = {
  * Clickable legend - ScatterPlot has no categorical legend of its own, so groups are toggled here
  * and the caller decides what a toggle does to its points.
  */
-const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover, label: rowLabel }: PlotLegendProps) => (
+const ChipLegend = ({ groups, hidden, onToggle, highlighted, onHover, label: rowLabel }: ChipLegendProps) => (
   // Natural height (nine groups at most wraps to a few rows); flexShrink: 0 keeps the plot from squeezing it.
   <Stack direction="row" flexWrap="wrap" alignItems="center" gap={0.5} flexShrink={0}>
     {rowLabel && (
@@ -43,7 +44,7 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover, label: row
         {rowLabel}
       </Typography>
     )}
-    {groups.map(({ value, label, color, count, members, shape }) => {
+    {groups.map(({ value, label, color, count, tooltip, shape }) => {
       const off = hidden.has(value);
       const on = value === highlighted;
       const chip = (
@@ -88,27 +89,9 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover, label: row
         />
       );
 
-      // A folded group names its categories, without counts. MUI composes the
-      // chip's hover handlers with the tooltip's, so the highlight still fires.
-      return members?.length ? (
-        <Tooltip
-          key={value}
-          arrow
-          title={
-            <>
-              <Typography variant="caption" component="p">
-                Combined to protect participant privacy:
-              </Typography>
-              <Box component="ul" sx={{ m: 0, mt: 0.5, pl: 2 }}>
-                {members.map((member) => (
-                  <Typography key={member} component="li" variant="caption">
-                    {member}
-                  </Typography>
-                ))}
-              </Box>
-            </>
-          }
-        >
+      // MUI composes the chip's hover handlers with the tooltip's, so the highlight still fires.
+      return tooltip ? (
+        <Tooltip key={value} arrow title={tooltip}>
           {chip}
         </Tooltip>
       ) : (
@@ -118,4 +101,4 @@ const PlotLegend = ({ groups, hidden, onToggle, highlighted, onHover, label: row
   </Stack>
 );
 
-export default PlotLegend;
+export default ChipLegend;

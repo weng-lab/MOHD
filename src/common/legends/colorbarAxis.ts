@@ -170,7 +170,7 @@ export const rangeAt = (t: number): RampRange => {
   return { from, to: from + RANGE_WIDTH };
 };
 
-/** The middle 90%, 96% and 98% of the values, and all of them. 96% is the default the colorbars start at. */
+/** The middle 90%, 96% and 98% of the values, and all of them. */
 export const percentilePresets = (sorted: Sorted): RangePreset[] => [
   { label: "5–95%", range: [percentile(sorted, 5), percentile(sorted, 95)] },
   { label: "2–98%", range: [percentile(sorted, 2), percentile(sorted, 98)] },
@@ -222,27 +222,12 @@ export const formatShare = (count: number, total: number) => {
 };
 
 /**
- * The sequential scale: the original embedding explorer applet's, stops as it has them, so a sample
- * reads the same color in both. Its order is carried by hue, not lightness: the yellow stop is the
- * lightest.
+ * The middle of the values, with `clip` percent trimmed off each end, so a few extreme values don't
+ * wash out the rest. Values beyond take the end colors.
  */
-export const SEQUENTIAL_RAMP = [
-  { at: 0, color: "#2541b2" },
-  { at: 0.34, color: "#35a6a0" },
-  { at: 0.68, color: "#f6d55c" },
-  { at: 1, color: "#d8422c" },
-] as const;
-
-/**
- * Percentile trimmed off each end before a sequential ramp is stretched across values: ATAC's reads
- * mapped reaches 113M against a 99th percentile of 62M. Values beyond an end take its color.
- */
-export const CLIP_PERCENTILE = 2;
-
-/** Where a sequential ramp's colors stop until the reader moves them: the middle 96% of the values. */
-export const defaultRange = (sorted: Sorted): ColorRange => [
-  percentile(sorted, CLIP_PERCENTILE),
-  percentile(sorted, 100 - CLIP_PERCENTILE),
+export const percentileRange = (sorted: Sorted, clip: number): ColorRange => [
+  percentile(sorted, clip),
+  percentile(sorted, 100 - clip),
 ];
 
 /**

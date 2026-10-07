@@ -1,15 +1,13 @@
 import { formatValue, formatValueBound, fromLogValue, toLogValue } from "@/common/quantification";
+import { CLIP_PERCENTILE, SEQUENTIAL_RAMP, defaultRange } from "@/common/colorRamp";
 import {
-  CLIP_PERCENTILE,
-  SEQUENTIAL_RAMP,
-  defaultRange,
   percentilePresets,
   reachOf,
   symmetricPresets,
   type ColorRange,
   type RampKind,
   type RangePreset,
-} from "@/common/components/Colorbar/colorbarAxis";
+} from "@/common/legends";
 import { zScoreByRow } from "./zScoreByRow";
 
 /**

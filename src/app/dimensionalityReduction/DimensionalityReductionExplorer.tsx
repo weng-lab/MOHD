@@ -2,7 +2,7 @@
 
 import { getSharedDomains, type Point } from "@weng-lab/visualization";
 import { getOmeLabel } from "@/app/omes/omeContent";
-import type { RampRange } from "@/common/components/Colorbar/colorbarAxis";
+import type { RampRange } from "@/common/legends";
 import { dimHidden } from "@/common/components/plotDimming";
 import { shapeOf } from "@/common/components/pointShapes";
 import { toLogValue } from "@/common/quantification";

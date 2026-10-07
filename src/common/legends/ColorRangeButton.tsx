@@ -3,8 +3,20 @@
 import TuneIcon from "@mui/icons-material/Tune";
 import { Badge, Button, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
 import { createContext, use, useEffect, useRef, useState, type ReactNode } from "react";
-import { sameRange } from "./colorbarAxis";
+import { sameRange, type ColorRange, type RangePreset } from "./colorbarAxis";
 import ColorRangeEditor, { type ColorRangeEditorProps } from "./ColorRangeEditor";
+
+/** What moving a colorbar's range needs beyond what the colorbar already has. */
+export type ColorRangeControl = {
+  defaultRange: ColorRange;
+  /** The lowest and highest value any sample has, shown or not: how far the editor's bar reaches. */
+  extent: ColorRange;
+  presets: RangePreset[];
+  /** Fired on every step of a drag, and for a preset or a reset. */
+  onChange: (range: ColorRange) => void;
+  /** Fired as the editor closes, to save the range it was left at - see ColorRangeButton. */
+  onClose?: () => void;
+};
 
 /** The panel's props: the editor's, and what the panel says about the scale above it. */
 type PanelProps = ColorRangeEditorProps & {

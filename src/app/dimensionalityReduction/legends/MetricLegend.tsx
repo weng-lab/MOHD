@@ -2,32 +2,19 @@
 
 import { Box, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import ColorbarEnd from "@/common/components/Colorbar/ColorbarEnd";
-import ColorbarGraphic from "@/common/components/Colorbar/ColorbarGraphic";
-import { colorbarDepth } from "@/common/components/Colorbar/colorbarGeometry";
-import ColorRangeButton from "@/common/components/Colorbar/ColorRangeButton";
-import SteadyText from "@/common/components/Colorbar/SteadyText";
+import { CLIP_PERCENTILE, SEQUENTIAL_RAMP } from "@/common/colorRamp";
 import {
+  ColorbarEnd,
+  ColorbarGraphic,
+  ColorRangeButton,
+  SteadyText,
+  colorbarDepth,
   type ColorRange,
+  type ColorRangeControl,
   type RampRange,
-  type RangePreset,
-  CLIP_PERCENTILE,
-  SEQUENTIAL_RAMP,
-} from "@/common/components/Colorbar/colorbarAxis";
+} from "@/common/legends";
 import { NEUTRAL_MID } from "@/common/components/plotDimming";
 import { metricColor, type ContinuousDefinition, type MetricScale } from "../model/metrics";
-
-/** What moving the colors' range needs beyond what the legend already has. */
-export type ColorRangeControl = {
-  defaultRange: ColorRange;
-  /** The lowest and highest value any sample has. */
-  extent: ColorRange;
-  presets: RangePreset[];
-  /** Fired on every step of a drag, and for a preset or a reset. */
-  onChange: (range: ColorRange) => void;
-  /** Fired as the editor closes, to save the range it was left at - see ColorRangeButton. */
-  onClose?: () => void;
-};
 
 export type MetricLegendProps = {
   /** A library metric, or anything else continuous the plot is colored by. */

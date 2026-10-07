@@ -1,6 +1,6 @@
 "use client";
 
-import PlotLegend, { type LegendGroup } from "./PlotLegend";
+import { ChipLegend, type LegendGroup } from "@/common/legends";
 import { shapeOf, type ShapeScale } from "./pointShapes";
 
 export type ShapeLegendProps = {
@@ -24,7 +24,7 @@ const GLYPH_INK = "currentColor";
  * do, and list every group the color legend would: those the scale doesn't name are circles.
  */
 const ShapeLegend = ({ label, scale, groups, hidden, onToggle, highlighted, onHover }: ShapeLegendProps) => (
-  <PlotLegend
+  <ChipLegend
     label={label}
     groups={groups.map((group) => ({ ...group, shape: shapeOf(scale, group.value), color: GLYPH_INK }))}
     hidden={hidden}

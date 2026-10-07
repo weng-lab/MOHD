@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { defaultRange, percentilePresets, sameRange, type ColorRange } from "@/common/components/Colorbar/colorbarAxis";
+import { defaultRange } from "@/common/colorRamp";
+import { percentilePresets, sameRange, type ColorRange, type ColorRangeControl } from "@/common/legends";
 import { fromLogValue, toLogValue } from "@/common/quantification";
-import type { ColorRangeControl } from "../legends/MetricLegend";
 import { isMetric, scaleOver, type MetricScale } from "../model/metrics";
 import type { ExplorerState } from "./params";
 

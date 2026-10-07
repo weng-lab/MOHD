@@ -1,7 +1,7 @@
 "use client";
 
 import { CircularProgress, Stack, Typography } from "@mui/material";
-import type { RampRange } from "@/common/components/Colorbar/colorbarAxis";
+import type { ColorRangeControl, RampRange } from "@/common/legends";
 import {
   FEATURE_KINDS,
   featureDefinition,
@@ -9,7 +9,7 @@ import {
   type FeatureKind,
   type FeatureValues,
 } from "../model/features";
-import MetricLegend, { type ColorRangeControl } from "./MetricLegend";
+import MetricLegend from "./MetricLegend";
 import type { MetricScale } from "../model/metrics";
 
 export type FeatureLegendProps = {

@@ -1,8 +1,8 @@
 "use client";
 
-import PlotLegend from "@/common/components/PlotLegend";
 import ShapeLegend from "@/common/components/ShapeLegend";
 import { shapeOf } from "@/common/components/pointShapes";
+import { ChipLegend } from "@/common/legends";
 import { QC_GROUP, type Field, type SampleGroups } from "./fields";
 import { legendGroups, type Filters } from "./groups";
 import type { Shaping } from "./shapes";
@@ -49,7 +49,7 @@ const FieldLegends = ({ rows, filters, color, shape, onToggle, ringed, onHover }
         />
       )}
       {color && (
-        <PlotLegend
+        <ChipLegend
           // Named only beneath a shape row, to tell the two apart.
           label={shapeRow ? color.label : undefined}
           groups={legendGroups(rows, color.key, filters).map((group) =>
