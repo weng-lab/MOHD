@@ -1,5 +1,6 @@
 /**
- * Builds the MOHD genome-browser track catalog from the published file manifests.
+ * Builds the MOHD genome-browser track catalog from the published file manifests
+ * and the MOHD API.
  *
  * Usage:
  *   yarn build-mohd-catalog <snapshotDir>
@@ -8,10 +9,15 @@
  * (`<ome>_files_gb_updated.tsv`). Output is one JSON file per ome under
  * src/common/components/GenomeBrowser/tracks/data/.
  *
- * The manifests carry no age, so each sample's age bin is read from the MOHD
- * API and joined on sample ID. That needs MOHD_API_KEY, which the yarn script
- * loads from .env.local. Only the API's bins are stored - raw age is never
- * fetched.
+ * The manifests say which files each sample has; the API says who the sample
+ * is. Its sex, site, status, protocol (ATAC only) and age bin are read from the
+ * API's `<ome>_metadata` and joined on sample ID, so the catalog agrees with
+ * every other page. The manifests carry sex, site, status and protocol too, but
+ * they're published less often than the API is corrected - the Sep 2026
+ * snapshot still had three participants' case/control status the API had since
+ * changed - so those columns are ignored. Only the API's age bins are stored -
+ * raw age is never fetched. The API needs MOHD_API_KEY, which the yarn script
+ * loads from .env.local.
  *
  * The manifests list one row per FILE, but every per-file column is derivable:
  * filename is `${sample_id}_${suffix}`, url is `${BASE}/${downloadPath}/${sample_id}/${filename}`,
@@ -36,21 +42,24 @@ const BASE_URL = "https://downloads.mohdconsortium.org";
 const MOHD_API_URL = JSON.parse(readFileSync(join(REPO_ROOT, "src/common/config.json"), "utf8")).API.MOHDAPI;
 
 /** The bins the API groups ages into - see src/common/ageBins.ts. */
-const AGE_BINS = new Set(["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"]);
+const AGE_BINS = new Set(["8-12", "13-17", "18-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"]);
 
-/** Columns every manifest carries, whatever the ome. */
-const SHARED_COLUMNS = ["sample_id", "filename", "file_type", "open_access", "url", "sex", "site", "status"];
+/** The manifest columns the catalog is built from, whatever the ome. */
+const FILE_COLUMNS = ["sample_id", "filename", "file_type", "open_access", "url"];
 
-/** Download path and per-sample metadata columns, per ome. */
+/** Sample metadata the manifests also carry, which is read from the API instead - see the top of this file. */
+const IGNORED_COLUMNS = ["sex", "site", "status", "protocol"];
+
+/** Download path and the sample metadata read from the API, per ome. */
 const OMES = [
   {
     ome: "atac",
     downloadPath: "2_ATAC",
     outFile: "mohdAtac.json",
-    sampleColumns: ["sex", "site", "status", "protocol"],
+    sampleFields: ["sex", "site", "status", "protocol"],
   },
-  { ome: "rna", downloadPath: "3_RNA", outFile: "mohdRna.json", sampleColumns: ["sex", "site", "status"] },
-  { ome: "wgbs", downloadPath: "1_WGBS", outFile: "mohdWgbs.json", sampleColumns: ["sex", "site", "status"] },
+  { ome: "rna", downloadPath: "3_RNA", outFile: "mohdRna.json", sampleFields: ["sex", "site", "status"] },
+  { ome: "wgbs", downloadPath: "1_WGBS", outFile: "mohdWgbs.json", sampleFields: ["sex", "site", "status"] },
 ];
 
 const problems = [];
@@ -66,15 +75,15 @@ function check(condition, message) {
  * below, and silently omits the field from the emitted JSON. Compare the header
  * up front instead, and say exactly what moved.
  */
-function checkHeader(ome, header, expected) {
+function checkHeader(ome, header) {
   const actual = new Set(header);
-  const missing = expected.filter((column) => !actual.has(column));
-  const extra = header.filter((column) => !expected.includes(column));
+  const missing = FILE_COLUMNS.filter((column) => !actual.has(column));
+  const extra = header.filter((column) => !FILE_COLUMNS.includes(column) && !IGNORED_COLUMNS.includes(column));
 
   check(
     missing.length === 0,
     `${ome}: manifest is missing expected column(s): ${missing.join(", ")}. ` +
-      `Header is: ${header.join(", ")}. Update SHARED_COLUMNS/sampleColumns if the rename is intentional.`
+      `Header is: ${header.join(", ")}. Update FILE_COLUMNS if the rename is intentional.`
   );
 
   if (extra.length > 0) {
@@ -101,26 +110,24 @@ function fileSuffix(row) {
   return row.filename.slice(row.sample_id.length + 1);
 }
 
-/** Sample ID -> age bin (or null, where none is recorded) for every sample the API has for the ome. */
-async function fetchAgeBins(ome) {
+/** Sample ID -> the sample's metadata row, for every sample the API has for the ome. */
+async function fetchMetadata({ ome, sampleFields }) {
   const response = await fetch(MOHD_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.MOHD_API_KEY}` },
-    body: JSON.stringify({ query: `{ ${ome}_metadata { sample_id age_bin } }` }),
+    body: JSON.stringify({ query: `{ ${ome}_metadata { sample_id ${sampleFields.join(" ")} age_bin } }` }),
   });
   const body = await response.json().catch(() => ({}));
 
   if (!response.ok || body.errors || !body.data) {
-    throw new Error(`${ome}: age query failed (HTTP ${response.status}): ${JSON.stringify(body.errors ?? body)}`);
+    throw new Error(`${ome}: metadata query failed (HTTP ${response.status}): ${JSON.stringify(body.errors ?? body)}`);
   }
 
-  return new Map(body.data[`${ome}_metadata`].map((row) => [row.sample_id, row.age_bin]));
+  return new Map(body.data[`${ome}_metadata`].map((row) => [row.sample_id, row]));
 }
 
-function buildOme({ ome, downloadPath, outFile, sampleColumns }, snapshotDir, ageBins) {
-  const rows = parseTsv(join(snapshotDir, `${ome}_files_gb_updated.tsv`), (header) =>
-    checkHeader(ome, header, [...new Set([...SHARED_COLUMNS, ...sampleColumns])])
-  );
+function buildOme({ ome, downloadPath, outFile, sampleFields }, snapshotDir, metadata) {
+  const rows = parseTsv(join(snapshotDir, `${ome}_files_gb_updated.tsv`), (header) => checkHeader(ome, header));
   const rowsBySample = new Map();
 
   for (const row of rows) {
@@ -156,17 +163,18 @@ function buildOme({ ome, downloadPath, outFile, sampleColumns }, snapshotDir, ag
       `${ome}/${sampleId}: file set differs from the ome's file set — the shared-file-set assumption no longer holds`
     );
 
-    for (const column of sampleColumns) {
-      const distinct = new Set(sampleRows.map((row) => row[column]));
-      check(distinct.size === 1, `${ome}/${sampleId}: ${column} varies across its files (${[...distinct].join(", ")})`);
-      check(sampleRows[0][column] !== "", `${ome}/${sampleId}: ${column} is empty`);
+    const apiRow = metadata.get(sampleId);
+    check(apiRow !== undefined, `${ome}/${sampleId}: not in the API's ${ome}_metadata, so it has no metadata`);
+    if (!apiRow) continue;
+
+    for (const field of sampleFields) {
+      check(apiRow[field] != null && apiRow[field] !== "", `${ome}/${sampleId}: the API records no ${field}`);
     }
 
-    const sample = Object.fromEntries([["id", sampleId], ...sampleColumns.map((c) => [c, sampleRows[0][c]])]);
+    const sample = Object.fromEntries([["id", sampleId], ...sampleFields.map((field) => [field, apiRow[field]])]);
 
     // Left off where the API records none, as protocol is on the omes without one.
-    const ageBin = ageBins.get(sampleId);
-    check(ageBins.has(sampleId), `${ome}/${sampleId}: not in the API's ${ome}_metadata, so it has no age`);
+    const ageBin = apiRow.age_bin;
     check(ageBin == null || AGE_BINS.has(ageBin), `${ome}/${sampleId}: unrecognized age bin "${ageBin}"`);
     if (ageBin == null) ageless.push(sampleId);
     else sample.ageBin = ageBin;
@@ -205,10 +213,10 @@ if (!process.env.MOHD_API_KEY) {
   process.exit(2);
 }
 
-console.log(`Reading manifests from ${snapshotDir}, ages from ${MOHD_API_URL}\n`);
+console.log(`Reading files from the manifests in ${snapshotDir}, sample metadata from ${MOHD_API_URL}\n`);
 
-const ageBinsByOme = await Promise.all(OMES.map(({ ome }) => fetchAgeBins(ome)));
-const built = OMES.map((config, index) => buildOme(config, snapshotDir, ageBinsByOme[index]));
+const metadataByOme = await Promise.all(OMES.map(fetchMetadata));
+const built = OMES.map((config, index) => buildOme(config, snapshotDir, metadataByOme[index]));
 
 if (problems.length > 0) {
   console.error(`${problems.length} problem(s) found — nothing written:\n`);

@@ -60,28 +60,28 @@
       "sex": "female",
       "site": "CKD",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100007",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100008",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100009",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100010",
@@ -228,7 +228,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100031",
@@ -333,14 +333,14 @@
       "sex": "female",
       "site": "CKD",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100046",
       "sex": "male",
       "site": "CKD",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100047",
@@ -466,98 +466,98 @@
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100065",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100066",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100067",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100068",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100069",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100070",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100071",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100072",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100073",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100074",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100075",
       "sex": "male",
       "site": "EXP",
-      "status": "control",
-      "ageBin": "10-19"
+      "status": "case",
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100076",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100077",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100078",
@@ -578,14 +578,14 @@
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100081",
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100083",
@@ -802,7 +802,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100114",
@@ -837,7 +837,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100119",
@@ -865,7 +865,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100123",
@@ -1040,7 +1040,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100148",
@@ -1068,7 +1068,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100152",
@@ -1145,7 +1145,7 @@
       "sex": "male",
       "site": "CKD",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100163",
@@ -1180,7 +1180,7 @@
       "sex": "female",
       "site": "CKD",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100168",
@@ -1201,7 +1201,7 @@
       "sex": "female",
       "site": "CKD",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100171",
@@ -1257,14 +1257,14 @@
       "sex": "female",
       "site": "CKD",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100179",
       "sex": "female",
       "site": "CKD",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100180",
@@ -1306,7 +1306,7 @@
       "sex": "male",
       "site": "CKD",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100186",
@@ -1467,175 +1467,175 @@
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100211",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100212",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100213",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100214",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100215",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100216",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100217",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100218",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100219",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100220",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100221",
       "sex": "female",
       "site": "EXP",
-      "status": "control",
-      "ageBin": "10-19"
+      "status": "case",
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100222",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100223",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100224",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100225",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100226",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100227",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100228",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100229",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100230",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100232",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100233",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100234",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100235",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100236",
@@ -1754,14 +1754,14 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100254",
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100255",
@@ -2153,7 +2153,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100311",
@@ -2188,7 +2188,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100316",
@@ -2349,63 +2349,63 @@
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100339",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100340",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100341",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100342",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100343",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100344",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100345",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100346",
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100347",
@@ -2419,7 +2419,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100349",
@@ -2636,7 +2636,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100381",
@@ -2657,14 +2657,14 @@
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100384",
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100385",
@@ -2853,119 +2853,119 @@
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100412",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100413",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100414",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100415",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100416",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100417",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100418",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100419",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100420",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100421",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100422",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100423",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100425",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100426",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100428",
       "sex": "male",
       "site": "LEO",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100429",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100430",
@@ -2986,14 +2986,14 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100433",
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100434",
@@ -3203,7 +3203,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100466",
@@ -3259,7 +3259,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100474",
@@ -3280,7 +3280,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100477",
@@ -3350,7 +3350,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100487",
@@ -3364,7 +3364,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100489",
@@ -3378,7 +3378,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100491",
@@ -3469,147 +3469,147 @@
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100505",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100506",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100507",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100508",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100509",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100510",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100511",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100512",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100513",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100514",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100515",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100516",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100517",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100518",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100519",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100520",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100521",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100522",
       "sex": "female",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100523",
       "sex": "female",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100524",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100525",
@@ -3622,14 +3622,14 @@
       "sex": "male",
       "site": "LEO",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100527",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100528",
@@ -3664,7 +3664,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100533",
@@ -3689,7 +3689,7 @@
     },
     {
       "id": "MOHD_EB100536",
-      "sex": "prefer no answer",
+      "sex": "prefer_not_to_answer",
       "site": "MOM",
       "status": "low risk",
       "ageBin": "30-39"
@@ -3713,14 +3713,14 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100540",
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100541",
@@ -3867,7 +3867,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100562",
@@ -3895,7 +3895,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100566",
@@ -3923,7 +3923,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100570",
@@ -3937,7 +3937,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100572",
@@ -3965,7 +3965,7 @@
       "sex": "male",
       "site": "CKD",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100576",
@@ -4000,84 +4000,84 @@
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100582",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100583",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100584",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100585",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100586",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100587",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100588",
       "sex": "female",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100589",
       "sex": "male",
       "site": "LEO",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100590",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100591",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100593",
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100594",
@@ -4112,7 +4112,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100599",
@@ -4126,7 +4126,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100601",
@@ -4371,7 +4371,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100637",
@@ -4385,7 +4385,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100639",
@@ -4399,7 +4399,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100641",
@@ -4420,14 +4420,14 @@
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100644",
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100645",
@@ -4532,140 +4532,140 @@
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100660",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100661",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100662",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100663",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100664",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100665",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100666",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100667",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100668",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100669",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100670",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100671",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100672",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100673",
       "sex": "male",
       "site": "LEO",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100674",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100675",
       "sex": "male",
       "site": "LEO",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100676",
       "sex": "female",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100677",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100679",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100680",
@@ -4714,7 +4714,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100687",
@@ -4742,14 +4742,14 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100691",
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100692",
@@ -4987,7 +4987,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100726",
@@ -5015,7 +5015,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100730",
@@ -5050,14 +5050,14 @@
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100736",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100738",
@@ -5085,14 +5085,14 @@
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100742",
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100745",
@@ -5211,7 +5211,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100762",
@@ -5225,14 +5225,14 @@
       "sex": "female",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100764",
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100765",
@@ -5281,14 +5281,14 @@
       "sex": "male",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100772",
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100773",
@@ -5344,7 +5344,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100781",
@@ -5400,7 +5400,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100789",
@@ -5435,7 +5435,7 @@
       "sex": "female",
       "site": "CCH",
       "status": "control",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100794",
@@ -5449,7 +5449,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100796",
@@ -5470,7 +5470,7 @@
       "sex": "male",
       "site": "CCH",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100799",
@@ -5589,238 +5589,238 @@
       "sex": "male",
       "site": "CKD",
       "status": "case",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100816",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100818",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100819",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100820",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100821",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100822",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100823",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100824",
       "sex": "female",
       "site": "EXP",
-      "status": "case",
-      "ageBin": "10-19"
+      "status": "control",
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100825",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100826",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100827",
       "sex": "male",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100828",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100829",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100830",
       "sex": "female",
       "site": "EXP",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100831",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100832",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100835",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100836",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100837",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100838",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100839",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100840",
       "sex": "male",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100841",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100842",
       "sex": "female",
       "site": "EXP",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100843",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100844",
       "sex": "female",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100846",
       "sex": "female",
       "site": "LEO",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100847",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100848",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100849",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100851",
       "sex": "female",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100852",
       "sex": "male",
       "site": "LEO",
       "status": "control",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100853",
       "sex": "male",
       "site": "LEO",
       "status": "case",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EB100854",
@@ -5841,21 +5841,21 @@
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100857",
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100858",
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100859",
@@ -5883,7 +5883,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100863",
@@ -5946,7 +5946,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100873",
@@ -5967,7 +5967,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100876",
@@ -6016,7 +6016,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100885",
@@ -6037,7 +6037,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "low risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100888",
@@ -6051,7 +6051,7 @@
       "sex": "female",
       "site": "MOM",
       "status": "high risk",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EB100890",
