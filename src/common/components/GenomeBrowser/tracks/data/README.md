@@ -12,11 +12,16 @@ yarn build-mohd-catalog <snapshotDir>
 (`atac_files_gb_updated.tsv`, `rna_files_gb_updated.tsv`,
 `wgbs_files_gb_updated.tsv`). The snapshot itself is not committed.
 
-The manifests carry no age, so the generator also reads each sample's age bin
-from the MOHD API (`<ome>_metadata { sample_id age_bin }`) and joins it on
-sample ID. That needs `MOHD_API_KEY` in `.env.local`, which the yarn script
-loads. A manifest sample the API doesn't have is an error; one the API records
-no age for is a warning, and the sample is written without `ageBin`.
+The manifests are read for the file set only. Each sample's metadata - sex,
+site, status, protocol (ATAC only) and age bin - comes from the MOHD API
+(`<ome>_metadata`), joined on sample ID, so the browser agrees with every other
+page. The manifests carry sex, site, status and protocol columns too, but are
+published less often than the API is corrected, so the generator ignores them.
+The API needs `MOHD_API_KEY` in `.env.local`, which the yarn script loads.
+
+A manifest sample the API doesn't have, or one it records no sex, site, status
+or (ATAC) protocol for, is an error. One it records no age for is a warning, and
+the sample is written without `ageBin`.
 
 ## Shape
 

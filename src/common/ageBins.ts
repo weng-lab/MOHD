@@ -1,10 +1,10 @@
-const AGE_BIN_EDGES = [10, 20, 30, 40, 50, 60, 70, 80];
-
-export const AGE_BIN_LABELS = [
-  `0-${AGE_BIN_EDGES[0] - 1}`,
-  ...AGE_BIN_EDGES.slice(0, -1).map((edge, i) => `${edge}-${AGE_BIN_EDGES[i + 1] - 1}`),
-  `${AGE_BIN_EDGES[AGE_BIN_EDGES.length - 1]}+`,
-];
+/**
+ * The API's age_bin values, youngest first, spelled exactly as it returns them. The bins under 30 are
+ * uneven because the consortium sets them, so they're listed rather than derived from edges. A value
+ * missing here has no color and sorts after "80+" in every legend: when the API's bins change, so must this,
+ * and so must AGE_BINS in scripts/buildMohdCatalog.mjs, which plain node can't import from here.
+ */
+export const AGE_BIN_LABELS = ["8-12", "13-17", "18-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"];
 
 const AGE_UNKNOWN_LABEL = "unknown";
 

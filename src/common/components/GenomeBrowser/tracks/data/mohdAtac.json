@@ -82,7 +82,7 @@
       "site": "CKD",
       "status": "control",
       "protocol": "Buffy Coat method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100011",
@@ -90,7 +90,7 @@
       "site": "CKD",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100014",
@@ -98,7 +98,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100017",
@@ -106,7 +106,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100020",
@@ -194,7 +194,7 @@
       "site": "MOM",
       "status": "low risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100041",
@@ -346,7 +346,7 @@
       "site": "CKD",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100069",
@@ -354,7 +354,7 @@
       "site": "CKD",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100070",
@@ -506,7 +506,7 @@
       "site": "CKD",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100089",
@@ -538,7 +538,7 @@
       "site": "CKD",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100093",
@@ -570,7 +570,7 @@
       "site": "CKD",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100097",
@@ -618,7 +618,7 @@
       "site": "CKD",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100104",
@@ -626,7 +626,7 @@
       "site": "CKD",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100105",
@@ -658,7 +658,7 @@
       "site": "CKD",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100109",
@@ -866,7 +866,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100138",
@@ -874,7 +874,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100139",
@@ -1066,7 +1066,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100173",
@@ -1074,7 +1074,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100177",
@@ -1202,7 +1202,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100223",
@@ -1274,7 +1274,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100232",
@@ -1314,7 +1314,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100237",
@@ -1394,7 +1394,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100251",
@@ -1402,7 +1402,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100252",
@@ -1410,15 +1410,15 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100253",
       "sex": "female",
       "site": "EXP",
-      "status": "control",
+      "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100254",
@@ -1426,7 +1426,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100255",
@@ -1434,7 +1434,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100258",
@@ -1442,7 +1442,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100260",
@@ -1450,7 +1450,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100261",
@@ -1458,7 +1458,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100262",
@@ -1466,7 +1466,7 @@
       "site": "MOM",
       "status": "low risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100263",
@@ -1474,7 +1474,7 @@
       "site": "MOM",
       "status": "low risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100267",
@@ -1538,7 +1538,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100304",
@@ -1570,7 +1570,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100323",
@@ -1658,7 +1658,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100335",
@@ -1666,7 +1666,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100336",
@@ -1674,7 +1674,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100337",
@@ -1682,7 +1682,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100338",
@@ -1690,7 +1690,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100339",
@@ -1698,7 +1698,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100340",
@@ -1706,7 +1706,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100342",
@@ -1714,7 +1714,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100343",
@@ -1770,7 +1770,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100351",
@@ -1778,7 +1778,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100352",
@@ -1786,15 +1786,15 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100353",
       "sex": "male",
       "site": "EXP",
-      "status": "control",
+      "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100356",
@@ -1802,7 +1802,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100357",
@@ -1810,7 +1810,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100358",
@@ -1818,7 +1818,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100360",
@@ -1826,7 +1826,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100361",
@@ -1834,7 +1834,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100362",
@@ -1906,7 +1906,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100372",
@@ -1962,7 +1962,7 @@
       "site": "CKD",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100379",
@@ -2034,7 +2034,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100389",
@@ -2042,7 +2042,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100391",
@@ -2050,7 +2050,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100392",
@@ -2058,7 +2058,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100393",
@@ -2066,7 +2066,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100394",
@@ -2074,7 +2074,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100395",
@@ -2082,7 +2082,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100397",
@@ -2090,7 +2090,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100399",
@@ -2098,7 +2098,7 @@
       "site": "LEO",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100400",
@@ -2106,7 +2106,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100401",
@@ -2114,7 +2114,7 @@
       "site": "LEO",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100402",
@@ -2122,7 +2122,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100403",
@@ -2170,7 +2170,7 @@
       "site": "MOM",
       "status": "high risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100414",
@@ -2290,7 +2290,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100430",
@@ -2346,7 +2346,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100437",
@@ -2386,7 +2386,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100442",
@@ -2410,7 +2410,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100445",
@@ -2418,7 +2418,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100446",
@@ -2426,7 +2426,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100447",
@@ -2506,7 +2506,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100459",
@@ -2530,7 +2530,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100463",
@@ -2538,7 +2538,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100464",
@@ -2554,7 +2554,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100466",
@@ -2698,7 +2698,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100485",
@@ -2706,7 +2706,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100486",
@@ -2714,7 +2714,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100487",
@@ -2722,7 +2722,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100488",
@@ -2730,7 +2730,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100489",
@@ -2738,7 +2738,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100490",
@@ -2746,7 +2746,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100493",
@@ -2754,7 +2754,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100494",
@@ -2762,7 +2762,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100495",
@@ -2770,7 +2770,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100496",
@@ -2778,7 +2778,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100497",
@@ -2786,7 +2786,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100498",
@@ -2794,7 +2794,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100499",
@@ -2802,7 +2802,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100500",
@@ -2810,7 +2810,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100501",
@@ -2818,7 +2818,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100503",
@@ -2826,7 +2826,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100504",
@@ -2834,7 +2834,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100505",
@@ -2842,7 +2842,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100506",
@@ -2850,7 +2850,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100507",
@@ -2858,7 +2858,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100508",
@@ -2866,7 +2866,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100509",
@@ -2874,7 +2874,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100510",
@@ -2882,7 +2882,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100511",
@@ -2890,7 +2890,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100512",
@@ -2898,7 +2898,7 @@
       "site": "LEO",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100513",
@@ -2906,7 +2906,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100514",
@@ -2914,7 +2914,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100515",
@@ -2929,7 +2929,7 @@
       "site": "LEO",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100517",
@@ -2937,7 +2937,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100518",
@@ -2945,7 +2945,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100519",
@@ -2953,7 +2953,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100521",
@@ -2969,7 +2969,7 @@
       "site": "MOM",
       "status": "high risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100524",
@@ -2993,7 +2993,7 @@
       "site": "MOM",
       "status": "high risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100527",
@@ -3029,7 +3029,7 @@
     },
     {
       "id": "MOHD_EA100531",
-      "sex": "prefer no answer",
+      "sex": "prefer_not_to_answer",
       "site": "MOM",
       "status": "low risk",
       "protocol": "CPT method",
@@ -3073,7 +3073,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100540",
@@ -3161,7 +3161,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100551",
@@ -3177,7 +3177,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100553",
@@ -3193,7 +3193,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100556",
@@ -3217,7 +3217,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100559",
@@ -3233,7 +3233,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100561",
@@ -3257,7 +3257,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100564",
@@ -3281,7 +3281,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100567",
@@ -3289,7 +3289,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100569",
@@ -3465,7 +3465,7 @@
       "site": "CKD",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100591",
@@ -3473,7 +3473,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100592",
@@ -3481,7 +3481,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100593",
@@ -3489,7 +3489,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100595",
@@ -3497,7 +3497,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100597",
@@ -3505,7 +3505,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100598",
@@ -3513,7 +3513,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100599",
@@ -3521,7 +3521,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100601",
@@ -3529,7 +3529,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100602",
@@ -3537,7 +3537,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100603",
@@ -3545,7 +3545,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100604",
@@ -3553,7 +3553,7 @@
       "site": "LEO",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100605",
@@ -3561,7 +3561,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100606",
@@ -3569,7 +3569,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100608",
@@ -3577,7 +3577,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100610",
@@ -3585,7 +3585,7 @@
       "site": "MOM",
       "status": "high risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100611",
@@ -3593,7 +3593,7 @@
       "site": "MOM",
       "status": "high risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100612",
@@ -3609,7 +3609,7 @@
       "site": "MOM",
       "status": "low risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100614",
@@ -3673,7 +3673,7 @@
       "site": "MOM",
       "status": "low risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100636",
@@ -3689,7 +3689,7 @@
       "site": "MOM",
       "status": "low risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100639",
@@ -3809,7 +3809,7 @@
       "site": "CCH",
       "status": "case",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100659",
@@ -3817,7 +3817,7 @@
       "site": "CCH",
       "status": "control",
       "protocol": "CPT method",
-      "ageBin": "10-19"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100660",
@@ -3825,7 +3825,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100661",
@@ -3833,7 +3833,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100662",
@@ -3841,7 +3841,7 @@
       "site": "EXP",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100664",
@@ -3849,7 +3849,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100665",
@@ -3857,7 +3857,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100666",
@@ -3865,7 +3865,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100667",
@@ -3873,7 +3873,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "0-9"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100668",
@@ -3881,7 +3881,7 @@
       "site": "EXP",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100669",
@@ -3889,7 +3889,7 @@
       "site": "LEO",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100670",
@@ -3897,7 +3897,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100671",
@@ -3905,7 +3905,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "8-12"
     },
     {
       "id": "MOHD_EA100673",
@@ -3913,7 +3913,7 @@
       "site": "LEO",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "10-19"
+      "ageBin": "13-17"
     },
     {
       "id": "MOHD_EA100676",
@@ -3929,7 +3929,7 @@
       "site": "MOM",
       "status": "high risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100680",
@@ -3937,7 +3937,7 @@
       "site": "MOM",
       "status": "high risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     },
     {
       "id": "MOHD_EA100681",
@@ -3953,7 +3953,7 @@
       "site": "MOM",
       "status": "high risk",
       "protocol": "CPT method",
-      "ageBin": "20-29"
+      "ageBin": "18-29"
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { OME_PAGE_CHROME, omePageHeight } from "@/common/components/OmeDetails/omePageHeight";
+import { OME_PAGE_CHROME, omePageHeight, stackedOmePageHeight } from "@/common/components/OmeDetails/omePageHeight";
 
 /**
  * Layout constants shared by the plots and the skeleton that stands in for them.
@@ -43,14 +43,18 @@ const PAGE_CHROME =
  * scrolled the whole shell rather than just this page. The floor keeps the
  * plots usable on short screens, where scrolling is the right trade.
  *
- * Applied to the row when the cards sit side by side, and to each card once
- * they stack - a fixed height on the row would then have to hold both, clipping
- * the second into the footer instead of letting the page grow.
+ * Applied to the row when the cards sit side by side, and (as
+ * STACKED_PLOT_HEIGHT) to each card once they stack - a fixed height on the row
+ * would then have to hold both, clipping the second into the footer instead of
+ * letting the page grow.
  */
 export const PLOT_HEIGHT = omePageHeight(PAGE_CHROME, 460);
+
+/** PLOT_HEIGHT for a stacked card, held clear of a phone browser's toolbars - see stackedOmePageHeight. */
+const STACKED_PLOT_HEIGHT = stackedOmePageHeight(PAGE_CHROME, 460);
 
 /** Sizing applied to each card, and to the skeleton standing in for it. */
 export const CARD_SX = {
   flex: { xs: "0 0 auto", lg: 1 },
-  height: { xs: PLOT_HEIGHT, lg: "auto" },
+  height: { xs: STACKED_PLOT_HEIGHT, lg: "auto" },
 } as const;
