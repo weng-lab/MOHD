@@ -25,3 +25,9 @@ export const breakPoints = (
   ]
     .map(([x, y]) => `${x},${y}`)
     .join(" ");
+
+/** Room between a bar and the end label beside it. */
+export const LABEL_GAP = 8;
+
+/** Room above and below a standing bar for its end labels, in a font this size. */
+export const labelSpace = (fontSize: number) => fontSize + 7;
