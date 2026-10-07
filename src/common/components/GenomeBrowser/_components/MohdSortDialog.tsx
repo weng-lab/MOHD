@@ -43,7 +43,7 @@ const STATUS_OPTION: MohdSortOption = {
 
 const SITE_OPTION: MohdSortOption = { id: "site", label: "Site", compare: (a, b) => a.site.localeCompare(b.site) };
 
-// Alphabetical order already puts "prefer no answer" after female and male.
+// Alphabetical order already puts prefer_not_to_answer after female and male.
 const SEX_OPTION: MohdSortOption = { id: "sex", label: "Sex", compare: (a, b) => a.sex.localeCompare(b.sex) };
 
 const AGE_OPTION: MohdSortOption = {

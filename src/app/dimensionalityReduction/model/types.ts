@@ -17,7 +17,7 @@ export type ExplorerRow = {
   site: string | null;
   status: string | null;
   sex: string | null;
-  /** Binned by the API ("0-9" ... "80+"). Raw age is sensitive and never fetched. */
+  /** Binned by the API ("8-12" ... "80+"). Raw age is sensitive and never fetched. */
   age_bin: string | null;
   protocol: string | null;
   condition: string | null;

@@ -4,8 +4,11 @@
  * window on a laptop - and far shorter than it on a large monitor.
  */
 
-/** The window under the app bar and the ome header, both of which stay put as the page scrolls. */
-const UNDER_HEADERS = "100vh - var(--header-height, 64px) - var(--ome-header-height, 66px)";
+/** `viewport` under the app bar and the ome header, both of which stay put as the page scrolls. */
+const underHeaders = (viewport: string) => `${viewport} - var(--header-height, 64px) - var(--ome-header-height, 66px)`;
+
+const pageHeight = (viewport: string, chrome: number, min: number, above?: string) =>
+  `max(calc(${underHeaders(viewport)} - ${chrome}px${above ? ` - ${above}` : ""}), ${min}px)`;
 
 /**
  * OmeDetailsLayout's own spacing around a page, in px: its Stack's spacing above the page, and its
@@ -19,8 +22,14 @@ export const OME_PAGE_CHROME = 16 + 16;
  * scrolling is the better trade than a plot too short to read. `above` takes off anything else that
  * sits over the content, as a CSS length - a measured height variable, say.
  */
-export const omePageHeight = (chrome: number, min: number, above?: string) =>
-  `max(calc(${UNDER_HEADERS} - ${chrome}px${above ? ` - ${above}` : ""}), ${min}px)`;
+export const omePageHeight = (chrome: number, min: number, above?: string) => pageHeight("100vh", chrome, min, above);
+
+/**
+ * omePageHeight for content stacked on a phone, sized off the window with the browser's toolbars showing
+ * (svh) rather than hidden (100vh), so the strip left to scroll the page by doesn't lose their height while
+ * they're out. The two are equal on desktop.
+ */
+export const stackedOmePageHeight = (chrome: number, min: number) => pageHeight("100svh", chrome, min);
 
 /**
  * How much shorter than the window each pane is held once they stack. On a phone the table and the
@@ -40,5 +49,5 @@ export const ROW_PANE_MIN = 560;
  */
 export const TWO_PANE_HEIGHTS = {
   rowHeight: omePageHeight(OME_PAGE_CHROME, ROW_PANE_MIN),
-  columnHeight: omePageHeight(OME_PAGE_CHROME + STACKED_RESERVE, 460),
+  columnHeight: stackedOmePageHeight(OME_PAGE_CHROME + STACKED_RESERVE, 460),
 } as const;
