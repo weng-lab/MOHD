@@ -1,7 +1,7 @@
 /** ATAC-seq library quality metrics: continuous, so they color along a ramp rather than by group. */
 
 import { SEQUENTIAL_RAMP } from "@/common/colorRamp";
-import { colorAt, type ColorRange } from "@/common/legends";
+import { colorAt, rangeAxis, type ColorRange } from "@/common/legends";
 import { NEUTRAL_MID } from "@/common/components/plotDimming";
 
 /** In the order the color select lists them. `key` is what a link carries (?color=frip). */
@@ -28,31 +28,8 @@ export const isMetric = (value: string | null): value is Metric => METRICS.some(
 
 export const metricDefinition = (metric: Metric): MetricDefinition => METRICS.find(({ key }) => key === metric)!;
 
-export type MetricScale = {
-  /** The values the two ends of the ramp stand for. */
-  low: number;
-  high: number;
-  /** Whether any sample lies beyond each end, and so shares its color. */
-  clippedLow: boolean;
-  clippedHigh: boolean;
-};
-
-/** The scale for colors spanning `range`, over a metric's values sorted ascending. */
-export const scaleOver = (sorted: ArrayLike<number>, [low, high]: ColorRange): MetricScale => ({
-  low,
-  high,
-  clippedLow: sorted[0] < low,
-  clippedHigh: sorted[sorted.length - 1] > high,
-});
-
-/** Where a value sits along the ramp, from 0 at `low` to 1 at `high`, held at the ends. */
-export const metricPosition = (scale: MetricScale, value: number) => {
-  const span = scale.high - scale.low;
-  return span > 0 ? Math.min(Math.max((value - scale.low) / span, 0), 1) : 0.5;
-};
-
-/** A value's color on the ramp, or the missing neutral for no value. */
-export const metricColor = (scale: MetricScale | null, value: number | null): string => {
-  if (scale === null || value === null) return NEUTRAL_MID;
-  return colorAt(SEQUENTIAL_RAMP, metricPosition(scale, value));
+/** A value's color on the ramp spanning `range`, held at its ends, or the missing neutral for no value. */
+export const metricColor = (range: ColorRange | null, value: number | null): string => {
+  if (range === null || value === null) return NEUTRAL_MID;
+  return colorAt(SEQUENTIAL_RAMP, rangeAxis(range).toT(value));
 };

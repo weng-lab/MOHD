@@ -8,19 +8,24 @@ import {
   ColorbarGraphic,
   ColorRangeButton,
   SteadyText,
+  clampedEnds,
   colorbarDepth,
   type ColorRange,
   type ColorRangeControl,
   type RampRange,
 } from "@/common/legends";
 import { NEUTRAL_MID } from "@/common/components/plotDimming";
-import { metricColor, type ContinuousDefinition, type MetricScale } from "../model/metrics";
+import { metricColor, type ContinuousDefinition } from "../model/metrics";
 
 export type MetricLegendProps = {
   /** A library metric, or anything else continuous the plot is colored by. */
   metric: ContinuousDefinition;
-  scale: MetricScale | null;
-  /** Every sample in focus with a value, sorted ascending, in the scale's units: what the histogram counts. */
+  /** Where the colors stop, fitted to every sample. Null while no sample has a value. */
+  range: ColorRange | null;
+  /**
+   * Every sample in focus with a value, sorted ascending, in the range's units: what the histogram
+   * counts, and whether an end label reads "≤" or "≥".
+   */
   values: ArrayLike<number>;
   /** Samples in focus with no value for it, which take the missing neutral. */
   missing: number;
@@ -48,7 +53,7 @@ const BAR_LENGTH = 160;
  */
 const MetricLegend = ({
   metric: { label, format, formatValue },
-  scale,
+  range,
   values,
   missing,
   hovered,
@@ -57,17 +62,18 @@ const MetricLegend = ({
   onSweep,
   control,
 }: MetricLegendProps) => {
-  const range: ColorRange | null = scale && [scale.low, scale.high];
+  // Said of the samples in focus, since a hidden one is drawn gray whatever its value.
+  const clamped = range && clampedEnds(values, range);
   // While the range editor is open, the end labels hold their width - see SteadyText.
   const [editing, setEditing] = useState(false);
 
   // An end label highlights its clamp, or sweeps its end of the bar where there's none - see ColorbarEnd.
   const end = (side: "low" | "high", text: string) =>
-    scale &&
-    range && (
+    range &&
+    clamped && (
       <ColorbarEnd
         end={side}
-        clamped={side === "low" ? scale.clippedLow : scale.clippedHigh}
+        clamped={clamped[side]}
         range={range}
         values={values}
         noun="sample"
@@ -84,15 +90,15 @@ const MetricLegend = ({
 
   return (
     <Stack direction="row" alignItems="center" flexWrap="wrap" columnGap={2} rowGap={0.5} minHeight={24} flexShrink={0}>
-      {scale &&
-        range &&
+      {range &&
+        clamped &&
         // Every sample has the same value, so there's no range for a bar to show.
-        (scale.low === scale.high ? (
+        (range[0] === range[1] ? (
           <Stack direction="row" alignItems="center" gap={0.75}>
             <Box
-              sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: metricColor(scale, scale.low), flexShrink: 0 }}
+              sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: metricColor(range, range[0]), flexShrink: 0 }}
             />
-            <Typography variant="caption">{format(scale.low)} in every sample</Typography>
+            <Typography variant="caption">{format(range[0])} in every sample</Typography>
           </Stack>
         ) : (
           <Stack direction="row" alignItems="center" gap={0.5}>
@@ -101,12 +107,12 @@ const MetricLegend = ({
               and the end labels sit on it.
             */}
             <Stack direction="row" alignItems="baseline" gap={1}>
-              {end("low", `${scale.clippedLow ? "≤ " : ""}${format(scale.low)}`)}
+              {end("low", `${clamped.low ? "≤ " : ""}${format(range[0])}`)}
               <svg
                 width={BAR_LENGTH}
                 height={colorbarDepth("horizontal")}
                 role="img"
-                aria-label={`${label} color scale, from blue at ${format(scale.low)} to red at ${format(scale.high)}`}
+                aria-label={`${label} color scale, from blue at ${format(range[0])} to red at ${format(range[1])}`}
                 style={{ display: "block", overflow: "visible" }}
               >
                 <ColorbarGraphic
@@ -123,7 +129,7 @@ const MetricLegend = ({
                   marker={hovered}
                 />
               </svg>
-              {end("high", `${scale.clippedHigh ? "≥ " : ""}${format(scale.high)}`)}
+              {end("high", `${clamped.high ? "≥ " : ""}${format(range[1])}`)}
             </Stack>
             {control && (
               <ColorRangeButton

@@ -16,6 +16,7 @@ export type { ColorRangeButtonProps, ColorRangeControl } from "./ColorRangeButto
 export { default as SteadyText } from "./SteadyText";
 export { colorbarDepth } from "./colorbarGeometry";
 export {
+  clampedEnds,
   colorAt,
   evenStops,
   formatRange,
@@ -25,7 +26,7 @@ export {
   rangeAxis,
   reachOf,
   sameRange,
+  sweptValues,
   symmetricPresets,
-  valuesIn,
 } from "./colorbarAxis";
 export type { ColorRange, RampKind, RampRange, RampStop, RangePreset } from "./colorbarAxis";

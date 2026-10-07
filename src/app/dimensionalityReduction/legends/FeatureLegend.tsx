@@ -1,7 +1,7 @@
 "use client";
 
 import { CircularProgress, Stack, Typography } from "@mui/material";
-import type { ColorRangeControl, RampRange } from "@/common/legends";
+import type { ColorRange, ColorRangeControl, RampRange } from "@/common/legends";
 import {
   FEATURE_KINDS,
   featureDefinition,
@@ -10,18 +10,17 @@ import {
   type FeatureValues,
 } from "../model/features";
 import MetricLegend from "./MetricLegend";
-import type { MetricScale } from "../model/metrics";
 
 export type FeatureLegendProps = {
   kind: FeatureKind;
   feature: FeatureValues;
-  /** Across log10(value + 1), which is what the colorbar's ends are written back out of. */
-  scale: MetricScale | null;
-  /** In log10, as the scale is - see MetricLegend. */
+  /** In log10(value + 1), which is what the colorbar's ends are written back out of. */
+  range: ColorRange | null;
+  /** In log10, as the range is - see MetricLegend. */
   values: ArrayLike<number>;
   /** Samples in focus the feature has no value for. */
   missing: number;
-  /** The hovered sample's value, in log10 as the scale is. */
+  /** The hovered sample's value, in log10 as the range is. */
   hovered: number | null;
   /** The colorbar's own hover and range control, passed through - see MetricLegend. */
   sweep: RampRange | null;
@@ -36,7 +35,7 @@ export type FeatureLegendProps = {
 const FeatureLegend = ({
   kind,
   feature,
-  scale,
+  range,
   values,
   missing,
   hovered,
@@ -49,7 +48,7 @@ const FeatureLegend = ({
       <MetricLegend
         metric={featureDefinition(kind, feature)}
         transform={featureTransform(kind)}
-        scale={scale}
+        range={range}
         values={values}
         missing={missing}
         hovered={hovered}

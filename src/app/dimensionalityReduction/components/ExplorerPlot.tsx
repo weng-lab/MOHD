@@ -4,6 +4,7 @@ import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { ScatterPlot, type Point } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
 import { spotlight } from "@/common/components/plotDimming";
+import type { ColorRange, RampRange } from "@/common/legends";
 import { PLOT_HEADER_SX } from "@/common/components/plotHeaderSx";
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { CARD_SX } from "./dimensions";
@@ -13,9 +14,11 @@ import type { ExplorerRow } from "../model/types";
 
 /**
  * The part of a legend under the cursor: a chip, with its field since the color and shape legends
- * can both show, or a stretch of the colorbar in the units of each point's `rampPosition`.
+ * can both show, or a stretch of the colorbar - `sweep` to draw on the bar, and `within`, the values
+ * it takes in, in the units of each point's `rampValue`.
  */
-export type LegendHover = { kind: "group"; field: Field; value: string } | { kind: "range"; from: number; to: number };
+export type LegendHover =
+  { kind: "group"; field: Field; value: string } | { kind: "range"; sweep: RampRange; within: ColorRange };
 
 /** A feature coloring the plot, as the hover names it and writes its values. */
 export type PlotFeature = { name: string; format: (value: number) => string };
@@ -30,10 +33,10 @@ export type PointMeta = {
    */
   featureValue: number | null;
   /**
-   * Where the sample's color sits on the ramp, 0 to 1, held at the ends: what a colorbar sweep
-   * matches against. Null while a field colors the plot, or with no value.
+   * The sample's value on the ramp coloring the plot, in the ramp's units (log10(value + 1) for a
+   * feature): what a colorbar sweep matches against. Null while a field colors the plot, or with no value.
    */
-  rampPosition: number | null;
+  rampValue: number | null;
 };
 
 const MINIMAP = { position: { right: 50, bottom: 50 } };
@@ -135,8 +138,9 @@ const ExplorerPlot = ({
       : legendHover.kind === "group"
         ? shown.filter((point) => groupOf(legendHover.field, point.metaData!.row) === legendHover.value)
         : shown.filter(({ metaData }) => {
-            const position = metaData!.rampPosition;
-            return position !== null && position >= legendHover.from && position <= legendHover.to;
+            const value = metaData!.rampValue;
+            const [low, high] = legendHover.within;
+            return value !== null && value >= low && value <= high;
           });
   // The rest dimmed around them. A colorbar window dims everything outside it even while empty, as
   // the heatmap's sweep does; a chip with nothing in focus - one switched off - leaves the plot be.

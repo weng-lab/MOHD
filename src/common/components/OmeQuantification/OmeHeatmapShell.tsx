@@ -7,10 +7,10 @@ import {
   ColorRangeButton,
   SteadyText,
   colorbarDepth,
+  clampedEnds,
   evenStops,
   formatRange,
-  rangeAxis,
-  valuesIn,
+  sweptValues,
   type ColorRange,
   type RampRange,
   type RampStop,
@@ -188,8 +188,9 @@ const AdjustableHeatmap = ({
   const range = adjusted?.mode === colorbar.mode ? adjusted.range : defaultRange;
   const { kind, format } = colorbar;
 
+  // Said of the cells on screen; the editor reaches every cell's value, shown or not.
+  const clamped = clampedEnds(values, range);
   const [low, high] = range;
-  const extent: ColorRange = [values[0], values[values.length - 1]];
 
   return (
     <PaneFigure
@@ -208,7 +209,7 @@ const AdjustableHeatmap = ({
             kind={kind}
             range={range}
             defaultRange={defaultRange}
-            extent={extent}
+            extent={colorbar.extent}
             values={values}
             presets={colorbar.presets}
             format={format}
@@ -225,7 +226,7 @@ const AdjustableHeatmap = ({
         <Heatmap
           {...heatmap}
           colorDomain={range}
-          highlightRange={sweep && valuesIn(rangeAxis(range), sweep)}
+          highlightRange={sweep && sweptValues(range, sweep)}
           legendWidth={LEGEND_WIDTH}
           animationType="fade"
           renderLegend={({ width, height, orientation, overlayContainer }) => {
@@ -234,7 +235,7 @@ const AdjustableHeatmap = ({
             const endLabel = (end: "low" | "high", position: SVGProps<SVGTextElement>) => (
               <ColorbarEnd
                 end={end}
-                clamped={end === "high" ? extent[1] > high : extent[0] < low}
+                clamped={clamped[end]}
                 range={range}
                 values={values}
                 noun="cell"
@@ -245,8 +246,8 @@ const AdjustableHeatmap = ({
               >
                 <text {...LABEL_TEXT} {...position}>
                   {end === "high"
-                    ? `${extent[1] > high ? "≥ " : ""}${format(high)}`
-                    : `${extent[0] < low ? "≤ " : ""}${format(low)}`}
+                    ? `${clamped.high ? "≥ " : ""}${format(high)}`
+                    : `${clamped.low ? "≤ " : ""}${format(low)}`}
                 </text>
               </ColorbarEnd>
             );

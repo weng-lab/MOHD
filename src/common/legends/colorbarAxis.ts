@@ -135,6 +135,18 @@ export const valuesIn = (axis: BarAxis, { from, to }: RampRange): ColorRange => 
   to >= 1 ? Infinity : axis.fromT(to),
 ];
 
+/**
+ * The values a sweep of a colorbar spanning `range` takes in, as [low, high] inclusive: what a plot
+ * highlights for it. The sweep's tooltip counts the same range.
+ */
+export const sweptValues = (range: ColorRange, sweep: RampRange): ColorRange => valuesIn(rangeAxis(range), sweep);
+
+/** Whether values lie past each end of a range and so take its end color: what "≤" and "≥" say. */
+export const clampedEnds = (sorted: Sorted, [low, high]: ColorRange) => ({
+  low: sorted.length > 0 && sorted[0] < low,
+  high: sorted.length > 0 && sorted[sorted.length - 1] > high,
+});
+
 /** How many values lie in a range, and the lowest and highest of them - the true ones, past any clamp. */
 export const summarize = (sorted: Sorted, [low, high]: ColorRange) => {
   const first = lowerBound(sorted, low);
@@ -243,7 +255,7 @@ export const describeSweep = (
   noun: string,
   formatValue: (value: number) => string
 ) => {
-  const inside = summarize(values, valuesIn(rangeAxis(range), sweep));
+  const inside = summarize(values, sweptValues(range, sweep));
   if (inside.count === 0) return `No ${noun}s here`;
   const [lowest, highest] = [formatValue(inside.lowest!), formatValue(inside.highest!)];
   const clamp = clampOf(sweep);
