@@ -11,7 +11,7 @@
  *           name as the data spells it (Metformin, TG(52:2) [SIM]); kept whatever colors the plot
  *   shape   none | site | status | sex | protocol - not age, which has too many bins to shape by
  *   hide    repeated; "field:value" fades one value's samples, "qc" fades the QC ones
- *           e.g. ?hide=site:LEO&hide=age:80%2B&hide=qc
+ *           e.g. ?hide=site:LEON&hide=age:80%2B&hide=qc
  *   range   low,high - where a metric's or feature's colors stop, in the data's own units (reads,
  *           TPM), to four significant figures: ?range=5.87,31.27
  */
