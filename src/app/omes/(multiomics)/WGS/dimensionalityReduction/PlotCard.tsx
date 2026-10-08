@@ -6,7 +6,7 @@ import PlotHeader, { PlotHeaderTitle } from "@/common/components/PlotHeader";
 import { HEADER_SELECT_SX } from "@/common/components/plotHeaderSx";
 import ShapeLegend from "@/common/components/ShapeLegend";
 import { shapeOf, type ShapeScale } from "@/common/components/pointShapes";
-import { ChipLegend, type LegendGroup } from "@/common/legends";
+import { ChipLegend, type LegendGroup } from "@weng-lab/visualization";
 import { CARD_SX } from "./dimensions";
 import type { ColorField, ColorOption } from "./fields";
 import type { GroupInfo } from "./groups";

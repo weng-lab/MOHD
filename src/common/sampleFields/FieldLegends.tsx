@@ -2,7 +2,7 @@
 
 import ShapeLegend from "@/common/components/ShapeLegend";
 import { shapeOf } from "@/common/components/pointShapes";
-import { ChipLegend } from "@/common/legends";
+import { ChipLegend } from "@weng-lab/visualization";
 import { QC_GROUP, type Field, type SampleGroups } from "./fields";
 import { legendGroups, type Filters } from "./groups";
 import type { Shaping } from "./shapes";

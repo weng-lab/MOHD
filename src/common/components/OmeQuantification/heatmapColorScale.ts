@@ -7,7 +7,7 @@ import {
   type ColorRange,
   type RampKind,
   type RangePreset,
-} from "@/common/legends";
+} from "@weng-lab/visualization";
 import { zScoreByRow } from "./zScoreByRow";
 
 /**

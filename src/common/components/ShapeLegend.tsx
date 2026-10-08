@@ -1,6 +1,6 @@
 "use client";
 
-import { ChipLegend, type LegendGroup } from "@/common/legends";
+import { ChipLegend, type LegendGroup } from "@weng-lab/visualization";
 import { shapeOf, type ShapeScale } from "./pointShapes";
 
 export type ShapeLegendProps = {

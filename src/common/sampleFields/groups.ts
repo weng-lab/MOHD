@@ -1,6 +1,6 @@
 /** Grouping samples by a field: what shows under the filters, and the chips a legend lists. */
 
-import type { LegendGroup } from "@/common/legends";
+import type { LegendGroup } from "@weng-lab/visualization";
 import { QC_GROUP, colorOf, groupOf, labelOf, sortValues, type Field, type SampleGroups } from "./fields";
 
 /** Everything that decides whether a sample shows. */

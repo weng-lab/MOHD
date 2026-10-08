@@ -1,7 +1,7 @@
 /** ATAC-seq library quality metrics: continuous, so they color along a ramp rather than by group. */
 
 import { SEQUENTIAL_RAMP } from "@/common/colorRamp";
-import { colorAt, rangeAxis, type ColorRange } from "@/common/legends";
+import { colorAt, rangeAxis, type ColorRange } from "@weng-lab/visualization";
 import { NEUTRAL_MID } from "@/common/components/plotDimming";
 
 /** In the order the color select lists them. `key` is what a link carries (?color=frip). */

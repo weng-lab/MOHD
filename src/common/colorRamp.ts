@@ -1,6 +1,6 @@
 /** MOHD's sequential ramp and where it starts, shared by the explorer's colorbar and the exposomics heatmap. */
 
-import { percentileRange, type ColorRange } from "@/common/legends";
+import { percentileRange, type ColorRange } from "@weng-lab/visualization";
 
 /**
  * The sequential scale: the original embedding explorer applet's, stops as it has them, so a sample

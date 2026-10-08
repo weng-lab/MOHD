@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { defaultRange } from "@/common/colorRamp";
-import { percentilePresets, sameRange, type ColorRange, type ColorRangeControl } from "@/common/legends";
+import { percentilePresets, sameRange, type ColorRange, type ColorRangeControl } from "@weng-lab/visualization";
 import { fromLogValue, toLogValue } from "@/common/quantification";
 import { isMetric } from "../model/metrics";
 import type { ExplorerState } from "./params";

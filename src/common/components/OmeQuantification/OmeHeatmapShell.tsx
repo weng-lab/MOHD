@@ -1,18 +1,21 @@
-import { Heatmap, ColumnDatum, HeatmapProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { Stack, Box, CircularProgress, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useState, type ReactElement, type ReactNode } from "react";
 import {
   Colorbar,
   ColorRangeButton,
+  Heatmap,
   SteadyText,
   evenStops,
   formatRange,
   sweptValues,
   type ColorRange,
+  type ColumnDatum,
+  type DownloadPlotHandle,
+  type HeatmapProps,
   type RampRange,
   type RampStop,
-} from "@/common/legends";
+} from "@weng-lab/visualization";
 import { captionLabelStyle } from "../captionLabelStyle";
 import PaneFigure from "../PaneFigure";
 import { PlotHeaderTitle } from "../PlotHeader";

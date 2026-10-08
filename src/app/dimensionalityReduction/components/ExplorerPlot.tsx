@@ -1,10 +1,9 @@
 "use client";
 
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
-import { ScatterPlot, type Point } from "@weng-lab/visualization";
+import { ScatterPlot, type ColorRange, type Point, type RampRange } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
 import { spotlight } from "@/common/components/plotDimming";
-import type { ColorRange, RampRange } from "@/common/legends";
 import { PLOT_HEADER_SX } from "@/common/components/plotHeaderSx";
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { CARD_SX } from "./dimensions";

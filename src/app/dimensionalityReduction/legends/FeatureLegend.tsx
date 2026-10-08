@@ -1,7 +1,7 @@
 "use client";
 
 import { CircularProgress, Stack, Typography } from "@mui/material";
-import type { ColorRange, ColorRangeControl, RampRange } from "@/common/legends";
+import type { ColorRange, ColorRangeControl, RampRange } from "@weng-lab/visualization";
 import {
   FEATURE_KINDS,
   featureDefinition,

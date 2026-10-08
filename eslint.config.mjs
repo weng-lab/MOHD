@@ -87,41 +87,4 @@ export default defineConfig([
       "react/prop-types": "off",
     },
   },
-  {
-    // The app reaches the legends only through their index, which lists what
-    // @weng-lab/visualization will export once they move there.
-    files: ["src/**"],
-    ignores: ["src/common/legends/**"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: ["@/common/legends/*"],
-              message: "Import from @/common/legends: its index is what the library will export.",
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    // The legends themselves move into the library as they are, so nothing in
-    // them may import from the app.
-    files: ["src/common/legends/**"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: ["@/*", "../*"],
-              message: "src/common/legends is headed for @weng-lab/visualization: import only packages and files beside it.",
-            },
-          ],
-        },
-      ],
-    },
-  },
 ]);
