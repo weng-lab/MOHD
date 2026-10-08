@@ -19,12 +19,12 @@ export const status_color_map = {
 };
 
 export const site_color_map = {
-  CCH: "#BF3831",
-  CKD: "#79B4F0",
-  EXP: "#159875",
-  MOM: "#CDA0E8",
-  LEO: "#F5AB54",
-  UIC: "#31487D",
+  "BHRC-CCHC": "#BF3831",
+  "Columbia-CKD": "#79B4F0",
+  "EXPAND-Asthma": "#159875",
+  "MOM-Health": "#CDA0E8",
+  LEON: "#F5AB54",
+  "UIC-DKD": "#31487D",
 };
 
 export const BAR_PLOT_COLORS = ["#4193d4", "#38938a", "#73338f", "#c9803f", "#cd6156"];

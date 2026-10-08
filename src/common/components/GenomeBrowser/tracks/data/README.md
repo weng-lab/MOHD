@@ -32,7 +32,7 @@ Each file stores the ome's shared file set once, then one row per **sample**:
   "ome": "atac",
   "downloadPath": "2_ATAC",
   "files": [{ "suffix": "signal-FC_GRCh38_v0.bigWig", "fileType": "Signal file, fold change …" }],
-  "samples": [{ "id": "MOHD_EA100001", "sex": "female", "site": "CCH", "status": "case", "protocol": "…", "ageBin": "30-39" }],
+  "samples": [{ "id": "MOHD_EA100001", "sex": "female", "site": "BHRC-CCHC", "status": "case", "protocol": "…", "ageBin": "30-39" }],
 }
 ```
 
