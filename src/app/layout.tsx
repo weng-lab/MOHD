@@ -1,24 +1,12 @@
 import { CssBaseline } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
-import { Montserrat, Work_Sans } from "next/font/google";
+import { montserrat, workSans } from "./fonts";
 import { theme } from "./theme";
 import ClientAppWrapper from "@/common/components/ClientAppWrapper";
 import { MenuControlProvider } from "@/common/components/Header/MenuContext";
 import MuiXLicense from "@/common/components/MuiXLicense";
 import { ApolloWrapper } from "@/common/apollo/apollo-wrapper";
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  variable: "--font-montserrat",
-  display: "swap",
-});
-
-const workSans = Work_Sans({
-  subsets: ["latin"],
-  variable: "--font-work-sans",
-  display: "swap",
-});
 
 export const metadata = {
   title: "MOHD Data Portal",

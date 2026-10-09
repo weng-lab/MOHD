@@ -1,9 +1,7 @@
 "use client";
 
-import { getSharedDomains, type Point } from "@weng-lab/visualization";
+import { getSharedDomains, sweptValues, type Point, type RampRange } from "@weng-lab/visualization";
 import { getOmeLabel } from "@/app/omes/omeContent";
-import type { RampRange } from "@/common/components/Colorbar/colorbarAxis";
-import { dimHidden } from "@/common/components/plotDimming";
 import { shapeOf } from "@/common/components/pointShapes";
 import { toLogValue } from "@/common/quantification";
 import FieldLegends from "@/common/sampleFields/FieldLegends";
@@ -25,7 +23,7 @@ import FeatureLegend from "./legends/FeatureLegend";
 import MetricLegend from "./legends/MetricLegend";
 import { colorLabel, isContinuous } from "./model/colorBy";
 import { FEATURE_KINDS, featureLabel, isFeatureColor } from "./model/features";
-import { isMetric, metricColor, metricDefinition, metricPosition } from "./model/metrics";
+import { isMetric, metricColor, metricDefinition } from "./model/metrics";
 import { OME_CAPABILITIES, pcLabel } from "./model/omes";
 import { allRows, rowsFor } from "./model/rows";
 import type { ExplorerData, ExplorerRow } from "./model/types";
@@ -75,20 +73,18 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   const allValues = isContinuous(color)
     ? Float64Array.from(data[ome].rows.flatMap((row) => continuousValue(row) ?? [])).sort()
     : new Float64Array();
-  const { scale, control: rangeControl } = useColorRange(state, setState, allValues);
+  const { range, control: rangeControl } = useColorRange(state, setState, allValues);
 
-  /** A row's color, and for a ramp its position on it, which a colorbar sweep matches against. */
+  const rampFill = metricColor(range);
+
+  /** A row's color, and for a ramp its value on it, which a colorbar sweep matches against. */
   const paint = (row: ExplorerRow) => {
     if (isContinuous(color)) {
       const value = continuousValue(row);
-      return {
-        fill: metricColor(scale, value),
-        neutral: value === null,
-        rampPosition: scale && value !== null ? metricPosition(scale, value) : null,
-      };
+      return { fill: rampFill(value), neutral: value === null, rampValue: value };
     }
     const group = groupOf(color, row);
-    return { fill: colorOf(color, group), neutral: isNeutralGroup(group), rampPosition: null };
+    return { fill: colorOf(color, group), neutral: isNeutralGroup(group), rampValue: null };
   };
 
   const painted = rows.map((row) => ({
@@ -101,8 +97,8 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   }));
 
   // Neutral groups first, so they're drawn beneath the rest.
-  const plotted = [...painted.filter(({ neutral }) => neutral), ...painted.filter(({ neutral }) => !neutral)].map(
-    ({ row, fill, shape, featureValue, rampPosition }): Point<PointMeta> => {
+  const points = [...painted.filter(({ neutral }) => neutral), ...painted.filter(({ neutral }) => !neutral)].map(
+    ({ row, fill, shape, featureValue, rampValue }): Point<PointMeta> => {
       const [px, py] = method === "UMAP" && row.umap ? row.umap : [row.pcs[x - 1], row.pcs[y - 1]];
       return {
         x: px,
@@ -110,16 +106,16 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
         r: 4,
         color: fill,
         shape,
-        metaData: { row, shown: passesFilters(row, filters), featureValue, rampPosition },
+        // Filtered samples are dimmed rather than dropped: a sample's place only means something beside the rest.
+        dimmed: !passesFilters(row, filters),
+        metaData: { row, featureValue, rampValue },
       };
     }
   );
+  const shown = points.filter(({ dimmed }) => !dimmed);
 
   // From every point, so filtering never rescales the axes.
-  const domains = plotted.length > 0 ? getSharedDomains(plotted) : undefined;
-
-  // Filtered samples are dimmed rather than dropped: a sample's place only means something beside the rest.
-  const { points, shown } = dimHidden(plotted, (point) => point.metaData!.shown);
+  const domains = points.length > 0 ? getSharedDomains(points) : undefined;
 
   // The samples in focus, for the colorbar's histogram.
   const shownValues = Float64Array.from(shown.flatMap(({ metaData }) => continuousValue(metaData!.row) ?? [])).sort();
@@ -166,14 +162,19 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                 : legendHover?.kind === "group" && legendHover.field === field
                   ? legendHover.value
                   : null;
-            const sweep = legendHover?.kind === "range" ? legendHover : null;
+            const sweep = legendHover?.kind === "range" ? legendHover.sweep : null;
             const onSweep = (next: RampRange | null) =>
-              onLegendHover(next === null ? null : { kind: "range", ...next });
+              onLegendHover(
+                next === null || range === null
+                  ? null
+                  : { kind: "range", sweep: next, within: sweptValues(range, next) }
+              );
             return (
               <>
                 <FieldLegends
                   rows={rows}
                   filters={filters}
+                  listed={(row) => passesFilters(row, filters)}
                   color={isField(color) ? { key: color, label: colorLabel(ome, color) } : null}
                   shape={shaping}
                   onToggle={(field, value) =>
@@ -188,7 +189,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                       <FeatureLegend
                         kind={featureKind}
                         feature={feature}
-                        scale={scale}
+                        range={range}
                         values={shownValues}
                         missing={shown.filter(({ metaData }) => metaData!.featureValue === null).length}
                         hovered={hoveredValue === undefined ? null : toLogValue(hoveredValue)}
@@ -200,7 +201,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                   : isMetric(color) && (
                       <MetricLegend
                         metric={metricDefinition(color)}
-                        scale={scale}
+                        range={range}
                         values={shownValues}
                         missing={
                           shown.filter(({ metaData }) => (metaData!.row.metrics?.[color] ?? null) === null).length

@@ -17,8 +17,9 @@ export type PlotSize = { width: number; height: number };
  *
  * The plots also share one zoom through ScatterPlotSync, whose transform is in
  * pixels: the library requires both plots be the same size, and the legends
- * above them wrap to different numbers of rows, so their containers aren't. The
- * smaller of the two governs, which keeps the two views aligned.
+ * above them can take different numbers of rows (a shape row on one card only),
+ * so their containers aren't. The smaller of the two governs, which keeps the
+ * two views aligned.
  */
 export const useSharedPlotSize = (
   a: RefObject<HTMLElement | null>,

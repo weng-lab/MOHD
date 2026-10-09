@@ -3,7 +3,6 @@
 import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { ScatterPlot, ScatterPlotSync, getSharedDomains, type Point } from "@weng-lab/visualization";
 import { useRef, useState } from "react";
-import { dimHidden, spotlight } from "@/common/components/plotDimming";
 import { shapeOf } from "@/common/components/pointShapes";
 import { PLOT_HEIGHT } from "./dimensions";
 import {
@@ -119,12 +118,18 @@ const encodeCohort = <T extends { sample_id: string; pcs: number[] }, K extends 
       ? { ...legendRow(shapeBy, buildGroups(rows, shapeBy, binMembers), rowsPassing(passesColor)), scale }
       : null;
 
+  // A group switched off is faded into the background rather than taken off the plot: where a
+  // sample falls in a PCA is a statement about the samples around it, and dropping points takes
+  // away the very comparison the two cohorts are here to make.
+  const placed = [
+    ...points.filter(({ metaData }) => metaData!.group === "Unknown"),
+    ...points.filter(({ metaData }) => metaData!.group !== "Unknown"),
+  ].map((point) => ({ ...point, dimmed: !(passesColor(point) && passesShape(point)) }));
+
   return {
-    points: [
-      ...points.filter(({ metaData }) => metaData!.group === "Unknown"),
-      ...points.filter(({ metaData }) => metaData!.group !== "Unknown"),
-    ],
-    isShown: (point: Point<Meta<T>>) => passesColor(point) && passesShape(point),
+    points: placed,
+    /** The points in focus, which a hovered chip can spotlight. */
+    shown: placed.filter(({ dimmed }) => !dimmed),
     color,
     shape,
     shapeBy,
@@ -135,7 +140,7 @@ const encodeCohort = <T extends { sample_id: string; pcs: number[] }, K extends 
 
 /**
  * The points of a hovered chip's group, from those in focus, so hovering the chip of a group that is
- * toggled off highlights nothing - it is on the plot, but as background. Null with none to highlight.
+ * toggled off highlights nothing - it is on the plot, but as background. Undefined with none to highlight.
  */
 const hoveredGroup = <T,>(shown: Point<Meta<T>>[], hover: LegendHover | null) => {
   const group = hover
@@ -143,13 +148,7 @@ const hoveredGroup = <T,>(shown: Point<Meta<T>>[], hover: LegendHover | null) =>
         ({ metaData }) => (hover.legend === "color" ? metaData!.group : metaData!.shapeGroup) === hover.value
       )
     : [];
-  return group.length > 0 ? group : null;
-};
-
-/** A cohort's plot props for the chip under the cursor: its group highlighted, and the rest dimmed around it. */
-const highlightFor = <T,>(all: Point<Meta<T>>[], shown: Point<Meta<T>>[], hover: LegendHover | null) => {
-  const group = hoveredGroup(shown, hover);
-  return { pointData: spotlight(all, group), hoveredPoints: group ?? undefined };
+  return group.length > 0 ? group : undefined;
 };
 
 const Tooltip = <T,>({
@@ -163,7 +162,7 @@ const Tooltip = <T,>({
 }) => (
   <PlotTooltip
     title={String((row as { sample_id: string }).sample_id)}
-    // Dimmed points can win the hit test, so a dimmed sample says it's hidden.
+    // A dimmed point can still be hovered where nothing in focus is near, so it says it's hidden.
     note={dimmed ? "Hidden by the current filters" : undefined}
     rows={options.map(({ key, label }) => ({ label, value: displayValue(key, row[key]) }))}
   />
@@ -234,12 +233,6 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
   // group off doesn't rescale the axes underneath the remaining points.
   const domains = getSharedDomains(refCohort.points, mohdCohort.points);
 
-  // A group switched off is faded into the background rather than taken off the plot: where a
-  // sample falls in a PCA is a statement about the samples around it, and dropping points takes
-  // away the very comparison the two cohorts are here to make.
-  const { points: refAll, shown: refShown } = dimHidden(refCohort.points, refCohort.isShown);
-  const { points: mohdAll, shown: mohdShown } = dimHidden(mohdCohort.points, mohdCohort.isShown);
-
   const xLabel = axisLabel(xPc, pve);
   const yLabel = axisLabel(yPc, pve);
 
@@ -282,7 +275,7 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
         The shared size goes here rather than on each plot. ScatterPlotSync forwards its own
         width and height to both children, so a {...sync} spread after {...plotSize} on a plot
         overwrites the shared size with undefined and sends each plot back to measuring its own
-        container - which only diverges once the two legends wrap to different heights, and then
+        container - which only diverges once the two legends differ in height, and then
         the synced zoom drifts because its transform is in pixels.
       */}
       <ScatterPlotSync {...domains} {...plotSize}>
@@ -290,8 +283,8 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
           <Stack direction={{ xs: "column", lg: "row" }} gap={2} height={{ lg: PLOT_HEIGHT }}>
             <PlotCard
               title="MOHD"
-              shown={mohdShown.length}
-              total={mohdAll.length}
+              shown={mohdCohort.shown.length}
+              total={mohdCohort.points.length}
               options={MOHD_COLOR_OPTIONS}
               colorBy={mohdView.colorBy}
               onColorByChange={(colorBy) => setMohdView(encode(mohdView, { colorBy }))}
@@ -304,13 +297,15 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
             >
               {({ legendHover, onPlotHover }) => (
                 <ScatterPlot
-                  {...highlightFor(mohdAll, mohdShown, legendHover)}
+                  pointData={mohdCohort.points}
+                  hoveredPoints={hoveredGroup(mohdCohort.shown, legendHover)}
+                  spotlight
                   loading={false}
                   bottomAxisLabel={xLabel}
                   leftAxisLabel={yLabel}
                   controlsPosition="right"
                   tooltipBody={(p) => (
-                    <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} dimmed={!mohdCohort.isShown(p)} />
+                    <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} dimmed={p.dimmed ?? false} />
                   )}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
                   miniMap={MINIMAP_POSITION}
@@ -323,8 +318,8 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
 
             <PlotCard
               title="1000G+HGDP"
-              shown={refShown.length}
-              total={refAll.length}
+              shown={refCohort.shown.length}
+              total={refCohort.points.length}
               options={REFERENCE_COLOR_OPTIONS}
               colorBy={refView.colorBy}
               onColorByChange={(colorBy) => setRefView(encode(refView, { colorBy }))}
@@ -337,13 +332,15 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
             >
               {({ legendHover, onPlotHover }) => (
                 <ScatterPlot
-                  {...highlightFor(refAll, refShown, legendHover)}
+                  pointData={refCohort.points}
+                  hoveredPoints={hoveredGroup(refCohort.shown, legendHover)}
+                  spotlight
                   loading={false}
                   bottomAxisLabel={xLabel}
                   leftAxisLabel={yLabel}
                   controlsPosition="right"
                   tooltipBody={(p) => (
-                    <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} dimmed={!refCohort.isShown(p)} />
+                    <Tooltip row={p.metaData!.row} options={REFERENCE_COLOR_OPTIONS} dimmed={p.dimmed ?? false} />
                   )}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
                   miniMap={MINIMAP_POSITION}

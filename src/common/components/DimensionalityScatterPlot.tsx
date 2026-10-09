@@ -13,14 +13,12 @@ import {
   type FieldDefinition,
   type SampleGroups,
 } from "@/common/sampleFields/fields";
-import { passesFilters } from "@/common/sampleFields/groups";
 import { NO_SHAPE, shapeOptions, shapingOf, type ShapeBy } from "@/common/sampleFields/shapes";
 import FieldLegends, { type GroupHover } from "@/common/sampleFields/FieldLegends";
 import type { SampleTableState } from "@/common/sampleFields/useSampleTable";
 import PaneFigure from "./PaneFigure";
 import { PlotHeaderTitle } from "./PlotHeader";
 import { HEADER_SELECT_SX } from "./plotHeaderSx";
-import { dimHidden, spotlight } from "./plotDimming";
 import { shapeOf } from "./pointShapes";
 import PlotTooltip from "./PlotTooltip";
 
@@ -77,7 +75,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
   const [shape, setShape] = useState<ShapeBy>(NO_SHAPE);
 
   // The plotted samples alone, so the legend counts only what can be drawn.
-  const { plotted: samples, fields, filters, selected, setSelected } = table;
+  const { plotted: samples, fields, filters, isListed, selected, setSelected } = table;
 
   const shapeable = shapeOptions(fields, samples);
   const shaping = shapingOf(shape, shapeable, samples);
@@ -92,11 +90,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
     const y = getY(sample);
     if (x == null || y == null) return [];
     const isSelected = selectedIds.has(sample.sample_id);
-    const faded = !passesFilters(sample, filters)
-      ? "filtered"
-      : selectedIds.size > 0 && !isSelected
-        ? "unselected"
-        : null;
+    const faded = !isListed(sample) ? "filtered" : selectedIds.size > 0 && !isSelected ? "unselected" : null;
     return [
       {
         x,
@@ -105,6 +99,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
         color: colorOf(color, groupOf(color, sample)),
         // Undefined where nothing is shaped, leaving the default to the plot.
         shape: shaping ? shapeOf(shaping.scale, groupOf(shaping.key, sample)) : undefined,
+        dimmed: faded !== null,
         metaData: { sample, faded },
       },
     ];
@@ -112,10 +107,8 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
 
   // Neutral groups first, so they're drawn beneath the rest.
   const isNeutral = ({ metaData }: Point<PointMeta<T>>) => isNeutralGroup(groupOf(color, metaData!.sample));
-  const { points, shown } = dimHidden(
-    [...plotted.filter(isNeutral), ...plotted.filter((point) => !isNeutral(point))],
-    (point) => point.metaData!.faded === null
-  );
+  const points = [...plotted.filter(isNeutral), ...plotted.filter((point) => !isNeutral(point))];
+  const shown = points.filter(({ dimmed }) => !dimmed);
 
   const selectPoints = (picked: Point<PointMeta<T>>[]) => {
     // A filtered-out sample stays out of play; the rest are faded only by the selection being added to.
@@ -186,6 +179,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
             <FieldLegends
               rows={samples}
               filters={filters}
+              listed={isListed}
               color={{ key: color, label: fields.find(({ key }) => key === color)?.label ?? color }}
               shape={shaping}
               onToggle={table.toggleFilter}
@@ -238,7 +232,7 @@ const ShapeSelect = ({ shapeable, value, onChange }: ShapeSelectProps) => (
 );
 
 type LinkedPlotProps<T extends SampleGroups> = {
-  /** Every point, the faded ones first - what dimHidden returns. */
+  /** Every point, the faded ones `dimmed`. */
   points: Point<PointMeta<T>>[];
   /** The points in focus, which a hovered chip can swell and set apart. */
   shown: Point<PointMeta<T>>[];
@@ -285,12 +279,12 @@ const LinkedPlot = <T extends SampleGroups>({
   const [plotHover, setPlotHover] = useState<SampleGroups | null>(null);
   const [legendHover, setLegendHover] = useState<GroupHover | null>(null);
 
-  // A hovered chip's points, from those in focus, with the rest dimmed around them. A chip with none
-  // in focus - one switched off - leaves the plot as it is.
+  // A hovered chip's points, from those in focus, spotlit with the rest dimmed around them. A chip with
+  // none in focus - one switched off - leaves the plot as it is.
   const group = legendHover
     ? shown.filter(({ metaData }) => groupOf(legendHover.field, metaData!.sample) === legendHover.value)
     : [];
-  const highlighted = group.length > 0 ? group : null;
+  const spotlit = group.length > 0 ? group : undefined;
 
   return (
     <>
@@ -298,21 +292,22 @@ const LinkedPlot = <T extends SampleGroups>({
       <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: 0 }}>
         <ScatterPlot
           ref={plotRef}
-          pointData={spotlight(points, highlighted)}
+          pointData={points}
           loading={loading}
           selectable
           // Pan first, so a drag moves around the plot; the toolbar switches to lasso selection.
           initialState={{ controls: { selectionType: "pan" } }}
           onSelectionChange={onSelectPoints}
           onPointClicked={onTogglePoint}
-          hoveredPoints={highlighted ?? undefined}
+          hoveredPoints={spotlit}
+          spotlight
           onHoveredPointChange={(point) => setPlotHover(point?.metaData?.sample ?? null)}
           tooltipBody={({ metaData }) => {
             const { sample, faded } = metaData!;
             return (
               <PlotTooltip
                 title={sample.sample_id}
-                // Faded points can win the hit test, so a faded sample says why it's faded.
+                // A faded point can still be hovered where nothing in focus is near, so it says why.
                 note={faded ? FADED_NOTES[faded] : undefined}
                 rows={tooltipRowsOf(tooltipFields, sample)}
               />

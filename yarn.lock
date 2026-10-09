@@ -3828,9 +3828,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/ui-components@npm:4.0.0":
-  version: 4.0.0
-  resolution: "@weng-lab/ui-components@npm:4.0.0"
+"@weng-lab/ui-components@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@weng-lab/ui-components@npm:4.1.0"
   peerDependencies:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.0
@@ -3839,13 +3839,13 @@ __metadata:
     "@mui/x-data-grid-premium": ^8.18.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/ac3acc1ca9f9f6b9daf509e5482e1465f92e6c763cd4f536ad1954cae62f557cd12886e3a79ab54dae661e089d32116ffe23e205e6e635798acb0218770d32d0
+  checksum: 10c0/4d11d5d7094bf614dd642cce9594ef19d8651cfcb14247fb293c3518adca47d6d2fbaebd1906179ac271640897c81c97d51e0787b40009abac5523ad88240b63
   languageName: node
   linkType: hard
 
-"@weng-lab/visualization@npm:2.6.0":
-  version: 2.6.0
-  resolution: "@weng-lab/visualization@npm:2.6.0"
+"@weng-lab/visualization@npm:2.7.0":
+  version: 2.7.0
+  resolution: "@weng-lab/visualization@npm:2.7.0"
   dependencies:
     "@types/d3-hierarchy": "npm:^3.1.7"
     "@types/d3-shape": "npm:^3.1.8"
@@ -3868,7 +3868,7 @@ __metadata:
     "@visx/visx": ^4.0.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/977af6026c047b2856f654423cbf93f4230df5deec8e31dc0ce9cab6554c3eb9debce35a3f7bf7b9d358902f011e33a988e0ac990b7b0af212d52b03d7eb268d
+  checksum: 10c0/a138668d5786bf00aae0aa2c9347e7176b096d7cd7cb592d2f6c7bbf022bbe2900579522e36b028aa83f87c4e65481441c1edd0bc1f97de9da1dae9d2769caac
   languageName: node
   linkType: hard
 
@@ -7785,8 +7785,8 @@ __metadata:
     "@weng-lab/genomebrowser": "npm:2.0.0"
     "@weng-lab/genomebrowser-tracks": "npm:2.0.0"
     "@weng-lab/genomebrowser-ui": "npm:2.1.0"
-    "@weng-lab/ui-components": "npm:4.0.0"
-    "@weng-lab/visualization": "npm:2.6.0"
+    "@weng-lab/ui-components": "npm:4.1.0"
+    "@weng-lab/visualization": "npm:2.7.0"
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"
     eslint: "npm:^9.38.0"

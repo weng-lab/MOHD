@@ -1,20 +1,20 @@
-import { Heatmap, ColumnDatum, HeatmapProps, DownloadPlotHandle } from "@weng-lab/visualization";
 import { Stack, Box, CircularProgress, Typography } from "@mui/material";
-import { useState, type ReactElement, type ReactNode, type SVGProps } from "react";
-import ColorbarEnd from "../Colorbar/ColorbarEnd";
-import ColorbarGraphic from "../Colorbar/ColorbarGraphic";
-import { colorbarDepth } from "../Colorbar/colorbarGeometry";
-import ColorRangeButton from "../Colorbar/ColorRangeButton";
-import SteadyText from "../Colorbar/SteadyText";
+import { useTheme } from "@mui/material/styles";
+import { useState, type ReactElement, type ReactNode } from "react";
 import {
+  Colorbar,
+  ColorRangeButton,
+  Heatmap,
   evenStops,
-  formatRange,
-  rangeAxis,
-  valuesIn,
+  sweptValues,
   type ColorRange,
+  type ColumnDatum,
+  type DownloadPlotHandle,
+  type HeatmapProps,
   type RampRange,
   type RampStop,
-} from "../Colorbar/colorbarAxis";
+} from "@weng-lab/visualization";
+import { captionLabelStyle } from "../captionLabelStyle";
 import PaneFigure from "../PaneFigure";
 import { PlotHeaderTitle } from "../PlotHeader";
 import type { HeatmapColorbar } from "./heatmapColorScale";
@@ -134,15 +134,8 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
   );
 };
 
-/**
- * The legend column's width: room for "≤ −16.4" in the library's 11px legend font, which is wider
- * than the bar. Also the room either end label has, lying down across the expanded minimap.
- */
+/** The legend column's width: room for "≤ −16.4" in the theme's caption, which is wider than the bar. */
 const LEGEND_WIDTH = 64;
-/** Room above and below the bar for its end labels. */
-const LABEL_SPACE = 18;
-/** The library's own legend text, so the colorbar matches the axes it sits beside, and downloads the same. */
-const LABEL_TEXT = { fontSize: 11, fontFamily: "sans-serif", fill: "#4d4f52" } as const;
 
 type AdjustableHeatmapProps = {
   heatmap: Omit<HeatmapProps, "colorDomain" | "tooltipBody" | "renderLegend" | "legendWidth" | "highlightRange">;
@@ -183,13 +176,9 @@ const AdjustableHeatmap = ({
   // default rather than reading this range in the wrong ones; switching back finds it as it was left.
   const [adjusted, setAdjusted] = useState<{ mode: string; range: ColorRange } | null>(null);
   const [sweep, setSweep] = useState<RampRange | null>(null);
-  // Whether the range editor is open, while which the button's range holds its width - see SteadyText.
-  const [editing, setEditing] = useState(false);
   const range = adjusted?.mode === colorbar.mode ? adjusted.range : defaultRange;
   const { kind, format } = colorbar;
-
-  const [low, high] = range;
-  const extent: ColorRange = [values[0], values[values.length - 1]];
+  const labelStyle = captionLabelStyle(useTheme());
 
   return (
     <PaneFigure
@@ -198,25 +187,18 @@ const AdjustableHeatmap = ({
         <>
           {controls}
           <ColorRangeButton
-            // One span, so the space after "Colors" survives the button's flexbox.
-            label={
-              <span>
-                Colors <SteadyText text={formatRange(kind, range, format)} hold={editing} />
-              </span>
-            }
+            label="Colors"
             stops={stops}
             kind={kind}
             range={range}
             defaultRange={defaultRange}
-            extent={extent}
+            extent={colorbar.extent}
             values={values}
             presets={colorbar.presets}
             format={format}
             noun="cell"
             notes={colorbar.notes}
             onChange={(next) => setAdjusted({ mode: colorbar.mode, range: next })}
-            onOpen={() => setEditing(true)}
-            onClose={() => setEditing(false)}
           />
         </>
       }
@@ -225,70 +207,25 @@ const AdjustableHeatmap = ({
         <Heatmap
           {...heatmap}
           colorDomain={range}
-          highlightRange={sweep && valuesIn(rangeAxis(range), sweep)}
+          highlightRange={sweep && sweptValues(range, sweep)}
           legendWidth={LEGEND_WIDTH}
           animationType="fade"
-          renderLegend={({ width, height, orientation, overlayContainer }) => {
-            // An end label, which highlights its clamp or sweeps its end - see ColorbarEnd. Portaled
-            // into the expanded minimap when drawn there, or its count would open behind it.
-            const endLabel = (end: "low" | "high", position: SVGProps<SVGTextElement>) => (
-              <ColorbarEnd
-                end={end}
-                clamped={end === "high" ? extent[1] > high : extent[0] < low}
-                range={range}
-                values={values}
-                noun="cell"
-                formatValue={colorbar.formatValue ?? format}
-                onSweep={setSweep}
-                placement={orientation === "vertical" ? "left" : "top"}
-                overlayContainer={overlayContainer}
-              >
-                <text {...LABEL_TEXT} {...position}>
-                  {end === "high"
-                    ? `${extent[1] > high ? "≥ " : ""}${format(high)}`
-                    : `${extent[0] < low ? "≤ " : ""}${format(low)}`}
-                </text>
-              </ColorbarEnd>
-            );
-            const graphic = (length: number) => (
-              <ColorbarGraphic
-                orientation={orientation}
-                length={length}
-                stops={stops}
-                range={range}
-                values={values}
-                format={format}
-                formatValue={colorbar.formatValue}
-                noun="cell"
-                sweep={sweep}
-                onSweep={setSweep}
-                overlayContainer={overlayContainer}
-              />
-            );
-
-            if (orientation === "vertical") {
-              const length = Math.max(height - 2 * LABEL_SPACE, 40);
-              return (
-                <g>
-                  {endLabel("high", { x: 0, y: 12 })}
-                  <g transform={`translate(0,${LABEL_SPACE})`}>{graphic(length)}</g>
-                  {endLabel("low", { x: 0, y: LABEL_SPACE + length + 14 })}
-                </g>
-              );
-            }
-            // Across the top of the expanded minimap: the labels either side of the bar, sitting on
-            // its bottom edge, as the explorer's colorbar has them.
-            const length = Math.max(width - 2 * LEGEND_WIDTH, 40);
-            const top = height / 2 - colorbarDepth("horizontal") / 2;
-            const barBottom = top + colorbarDepth("horizontal");
-            return (
-              <g>
-                {endLabel("low", { x: LEGEND_WIDTH - 6, y: barBottom, textAnchor: "end" })}
-                <g transform={`translate(${LEGEND_WIDTH},${top})`}>{graphic(length)}</g>
-                {endLabel("high", { x: LEGEND_WIDTH + length + 6, y: barBottom })}
-              </g>
-            );
-          }}
+          // Beside the grid, and across the expanded minimap; the frame's overlayContainer takes its
+          // tooltips into the minimap's popup, or they'd open behind it.
+          renderLegend={(frame) => (
+            <Colorbar
+              {...frame}
+              stops={stops}
+              range={range}
+              values={values}
+              format={format}
+              formatValue={colorbar.formatValue}
+              noun="cell"
+              sweep={sweep}
+              onSweep={setSweep}
+              labelStyle={labelStyle}
+            />
+          )}
           tooltipBody={(bin) => tooltipBody(bin, range)}
         />
       </Box>

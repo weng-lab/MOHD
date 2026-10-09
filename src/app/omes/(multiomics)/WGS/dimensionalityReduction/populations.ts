@@ -10,7 +10,7 @@
  * cannot be colored by them.
  */
 
-import { NEUTRAL_MID } from "@/common/components/plotDimming";
+import { NEUTRAL_MID } from "@/common/neutralColors";
 
 /** 1000G+HGDP super populations. */
 export const SUPERPOP_LABELS: Record<string, string> = {

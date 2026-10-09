@@ -11,7 +11,7 @@ import {
   status_color_map,
   VALUE_LABEL_OVERRIDES,
 } from "@/common/colors";
-import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/components/plotDimming";
+import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/neutralColors";
 import type { OmesDataType } from "@/common/types/globalTypes";
 
 /**

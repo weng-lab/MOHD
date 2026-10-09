@@ -4,12 +4,13 @@ import { Box, MenuItem, Paper, Stack, TextField } from "@mui/material";
 import { useState, type ReactNode, type RefObject } from "react";
 import PlotHeader, { PlotHeaderTitle } from "@/common/components/PlotHeader";
 import { HEADER_SELECT_SX } from "@/common/components/plotHeaderSx";
-import PlotLegend from "@/common/components/PlotLegend";
 import ShapeLegend from "@/common/components/ShapeLegend";
 import { shapeOf, type ShapeScale } from "@/common/components/pointShapes";
+import { ChipLegend, type LegendGroup } from "@weng-lab/visualization";
 import { CARD_SX } from "./dimensions";
 import type { ColorField, ColorOption } from "./fields";
 import type { GroupInfo } from "./groups";
+import PrivacyBinNote from "./PrivacyBinNote";
 
 /** The shape select's value for no shape encoding. No field is named this. */
 const NO_SHAPE = "none";
@@ -22,6 +23,13 @@ export type LegendRow = {
   hidden: ReadonlySet<string>;
   onToggle: (value: string) => void;
 };
+
+/** A row's groups as chips: the privacy bin names the categories it folds together on hover. */
+const chipGroups = (groups: GroupInfo[]): LegendGroup[] =>
+  groups.map(({ members, ...group }) => ({
+    ...group,
+    tooltip: members?.length ? <PrivacyBinNote members={members} /> : undefined,
+  }));
 
 /** A chip under the cursor, and which legend it's in. */
 export type LegendHover = { legend: "color" | "shape"; value: string };
@@ -175,25 +183,26 @@ const PlotCard = <K extends ColorField>({
           <ShapeLegend
             label={shapeRow.label}
             scale={shapeRow.scale}
-            groups={shapeRow.groups}
+            groups={chipGroups(shapeRow.groups)}
             hidden={shapeRow.hidden}
             onToggle={shapeRow.onToggle}
             highlighted={ringed("shape")}
             onHover={hover("shape")}
           />
         )}
-        <PlotLegend
+        <ChipLegend
           // Named only beneath a shape row, to tell the two apart.
           label={shapeRow ? color.label : undefined}
           groups={
             shape && !shapeRow
-              ? color.groups.map((group) => ({ ...group, shape: shapeOf(shape.scale, group.value) }))
-              : color.groups
+              ? chipGroups(color.groups).map((group) => ({ ...group, shape: shapeOf(shape.scale, group.value) }))
+              : chipGroups(color.groups)
           }
           hidden={color.hidden}
           onToggle={color.onToggle}
           highlighted={ringed("color")}
           onHover={hover("color")}
+          scrollable
         />
         {/*
         Bottom-aligned, not centered. Both plots render at the smaller of the two containers, so
