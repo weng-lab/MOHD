@@ -174,6 +174,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
                 <FieldLegends
                   rows={rows}
                   filters={filters}
+                  listed={(row) => passesFilters(row, filters)}
                   color={isField(color) ? { key: color, label: colorLabel(ome, color) } : null}
                   shape={shaping}
                   onToggle={(field, value) =>

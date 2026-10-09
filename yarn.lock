@@ -3828,9 +3828,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@weng-lab/ui-components@npm:4.0.0":
-  version: 4.0.0
-  resolution: "@weng-lab/ui-components@npm:4.0.0"
+"@weng-lab/ui-components@npm:4.1.0-beta.0":
+  version: 4.1.0-beta.0
+  resolution: "@weng-lab/ui-components@npm:4.1.0-beta.0"
   peerDependencies:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.0
@@ -3839,13 +3839,13 @@ __metadata:
     "@mui/x-data-grid-premium": ^8.18.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/ac3acc1ca9f9f6b9daf509e5482e1465f92e6c763cd4f536ad1954cae62f557cd12886e3a79ab54dae661e089d32116ffe23e205e6e635798acb0218770d32d0
+  checksum: 10c0/f7c0560874525721768789ec55f8a84f0bc82f2ee1fc5bb9a4d9795ab537e8f64f74ee2d193e366cdb6236a2c97834870975d827ef939ae4afbd37fe7dc1c472
   languageName: node
   linkType: hard
 
-"@weng-lab/visualization@file:../web-components/packages/visualization::locator=mohd%40workspace%3A.":
-  version: 2.7.0
-  resolution: "@weng-lab/visualization@file:../web-components/packages/visualization#../web-components/packages/visualization::hash=b586ec&locator=mohd%40workspace%3A."
+"@weng-lab/visualization@npm:2.7.0-beta.0":
+  version: 2.7.0-beta.0
+  resolution: "@weng-lab/visualization@npm:2.7.0-beta.0"
   dependencies:
     "@types/d3-hierarchy": "npm:^3.1.7"
     "@types/d3-shape": "npm:^3.1.8"
@@ -3868,7 +3868,7 @@ __metadata:
     "@visx/visx": ^4.0.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/8819d856b08ddd4d505525bf972677fa26d49803736cda5581128ccab129da294b2f20eb07e0225ff529ac56e5cbb4b23d8b0b90b39f935848a6bb420fea0556
+  checksum: 10c0/767e2a86b2bc48aa4a131e1b1e70eceb94feb8ca39c10e7dd6bd6dedf83bf631faad13ba79f34d5d24f6deb3363fee72ef79d3001886f80cb5e2aeadc4f62335
   languageName: node
   linkType: hard
 
@@ -7785,8 +7785,8 @@ __metadata:
     "@weng-lab/genomebrowser": "npm:2.0.0"
     "@weng-lab/genomebrowser-tracks": "npm:2.0.0"
     "@weng-lab/genomebrowser-ui": "npm:2.1.0"
-    "@weng-lab/ui-components": "npm:4.0.0"
-    "@weng-lab/visualization": "file:../web-components/packages/visualization"
+    "@weng-lab/ui-components": "npm:4.1.0-beta.0"
+    "@weng-lab/visualization": "npm:2.7.0-beta.0"
     babel-plugin-react-compiler: "npm:1.0.0"
     dotenv-cli: "npm:^11.0.0"
     eslint: "npm:^9.38.0"

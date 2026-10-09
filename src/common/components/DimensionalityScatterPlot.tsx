@@ -13,7 +13,6 @@ import {
   type FieldDefinition,
   type SampleGroups,
 } from "@/common/sampleFields/fields";
-import { passesFilters } from "@/common/sampleFields/groups";
 import { NO_SHAPE, shapeOptions, shapingOf, type ShapeBy } from "@/common/sampleFields/shapes";
 import FieldLegends, { type GroupHover } from "@/common/sampleFields/FieldLegends";
 import type { SampleTableState } from "@/common/sampleFields/useSampleTable";
@@ -76,7 +75,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
   const [shape, setShape] = useState<ShapeBy>(NO_SHAPE);
 
   // The plotted samples alone, so the legend counts only what can be drawn.
-  const { plotted: samples, fields, filters, selected, setSelected } = table;
+  const { plotted: samples, fields, filters, isListed, selected, setSelected } = table;
 
   const shapeable = shapeOptions(fields, samples);
   const shaping = shapingOf(shape, shapeable, samples);
@@ -91,11 +90,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
     const y = getY(sample);
     if (x == null || y == null) return [];
     const isSelected = selectedIds.has(sample.sample_id);
-    const faded = !passesFilters(sample, filters)
-      ? "filtered"
-      : selectedIds.size > 0 && !isSelected
-        ? "unselected"
-        : null;
+    const faded = !isListed(sample) ? "filtered" : selectedIds.size > 0 && !isSelected ? "unselected" : null;
     return [
       {
         x,
@@ -184,6 +179,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
             <FieldLegends
               rows={samples}
               filters={filters}
+              listed={isListed}
               color={{ key: color, label: fields.find(({ key }) => key === color)?.label ?? color }}
               shape={shaping}
               onToggle={table.toggleFilter}
