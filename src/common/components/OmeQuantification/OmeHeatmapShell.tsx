@@ -5,9 +5,7 @@ import {
   Colorbar,
   ColorRangeButton,
   Heatmap,
-  SteadyText,
   evenStops,
-  formatRange,
   sweptValues,
   type ColorRange,
   type ColumnDatum,
@@ -178,8 +176,6 @@ const AdjustableHeatmap = ({
   // default rather than reading this range in the wrong ones; switching back finds it as it was left.
   const [adjusted, setAdjusted] = useState<{ mode: string; range: ColorRange } | null>(null);
   const [sweep, setSweep] = useState<RampRange | null>(null);
-  // Whether the range editor is open, while which the button's range holds its width - see SteadyText.
-  const [editing, setEditing] = useState(false);
   const range = adjusted?.mode === colorbar.mode ? adjusted.range : defaultRange;
   const { kind, format } = colorbar;
   const labelStyle = captionLabelStyle(useTheme());
@@ -191,12 +187,7 @@ const AdjustableHeatmap = ({
         <>
           {controls}
           <ColorRangeButton
-            // One span, so the space after "Colors" survives the button's flexbox.
-            label={
-              <span>
-                Colors <SteadyText text={formatRange(kind, range, format)} hold={editing} />
-              </span>
-            }
+            label="Colors"
             stops={stops}
             kind={kind}
             range={range}
@@ -208,8 +199,6 @@ const AdjustableHeatmap = ({
             noun="cell"
             notes={colorbar.notes}
             onChange={(next) => setAdjusted({ mode: colorbar.mode, range: next })}
-            onOpen={() => setEditing(true)}
-            onClose={() => setEditing(false)}
           />
         </>
       }

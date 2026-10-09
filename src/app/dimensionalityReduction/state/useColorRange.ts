@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { defaultRange } from "@/common/colorRamp";
-import { percentilePresets, sameRange, type ColorRange, type ColorRangeControl } from "@weng-lab/visualization";
+import { sameRange, type ColorRange, type ColorRangeControl } from "@weng-lab/visualization";
 import { fromLogValue, toLogValue } from "@/common/quantification";
 import { isMetric } from "../model/metrics";
 import type { ExplorerState } from "./params";
@@ -32,10 +32,9 @@ export const useColorRange = (
 
   return {
     range: draftRange ?? savedRange ?? initialRange,
+    // The editor reaches across `values` and offers its percentile presets, by default.
     control: {
       defaultRange: initialRange,
-      extent: [values[0], values[values.length - 1]],
-      presets: percentilePresets(values),
       onChange: (range) => setDraft({ range, over: state }),
       onClose: () => {
         if (!draftRange) return;

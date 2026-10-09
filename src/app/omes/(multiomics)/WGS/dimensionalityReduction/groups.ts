@@ -9,7 +9,7 @@
  * exists it reads off the color.
  */
 
-import { NEUTRAL_DARK } from "@/common/components/plotDimming";
+import { NEUTRAL_DARK } from "@/common/neutralColors";
 import { shapeScaleOf, type ShapeScale } from "@/common/components/pointShapes";
 import { FIELD_LABELS, FIELD_PALETTES, fallbackPalette, type ColorField, type Palette } from "./fields";
 import { PRIVACY_BIN, PRIVACY_BIN_COLOR } from "./privacy";

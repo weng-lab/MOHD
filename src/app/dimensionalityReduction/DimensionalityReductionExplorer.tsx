@@ -2,7 +2,6 @@
 
 import { getSharedDomains, sweptValues, type Point, type RampRange } from "@weng-lab/visualization";
 import { getOmeLabel } from "@/app/omes/omeContent";
-import { dimHidden } from "@/common/components/plotDimming";
 import { shapeOf } from "@/common/components/pointShapes";
 import { toLogValue } from "@/common/quantification";
 import FieldLegends from "@/common/sampleFields/FieldLegends";
@@ -76,11 +75,13 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
     : new Float64Array();
   const { range, control: rangeControl } = useColorRange(state, setState, allValues);
 
+  const rampFill = metricColor(range);
+
   /** A row's color, and for a ramp its value on it, which a colorbar sweep matches against. */
   const paint = (row: ExplorerRow) => {
     if (isContinuous(color)) {
       const value = continuousValue(row);
-      return { fill: metricColor(range, value), neutral: value === null, rampValue: value };
+      return { fill: rampFill(value), neutral: value === null, rampValue: value };
     }
     const group = groupOf(color, row);
     return { fill: colorOf(color, group), neutral: isNeutralGroup(group), rampValue: null };
@@ -96,7 +97,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
   }));
 
   // Neutral groups first, so they're drawn beneath the rest.
-  const plotted = [...painted.filter(({ neutral }) => neutral), ...painted.filter(({ neutral }) => !neutral)].map(
+  const points = [...painted.filter(({ neutral }) => neutral), ...painted.filter(({ neutral }) => !neutral)].map(
     ({ row, fill, shape, featureValue, rampValue }): Point<PointMeta> => {
       const [px, py] = method === "UMAP" && row.umap ? row.umap : [row.pcs[x - 1], row.pcs[y - 1]];
       return {
@@ -105,16 +106,16 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
         r: 4,
         color: fill,
         shape,
-        metaData: { row, shown: passesFilters(row, filters), featureValue, rampValue },
+        // Filtered samples are dimmed rather than dropped: a sample's place only means something beside the rest.
+        dimmed: !passesFilters(row, filters),
+        metaData: { row, featureValue, rampValue },
       };
     }
   );
+  const shown = points.filter(({ dimmed }) => !dimmed);
 
   // From every point, so filtering never rescales the axes.
-  const domains = plotted.length > 0 ? getSharedDomains(plotted) : undefined;
-
-  // Filtered samples are dimmed rather than dropped: a sample's place only means something beside the rest.
-  const { points, shown } = dimHidden(plotted, (point) => point.metaData!.shown);
+  const domains = points.length > 0 ? getSharedDomains(points) : undefined;
 
   // The samples in focus, for the colorbar's histogram.
   const shownValues = Float64Array.from(shown.flatMap(({ metaData }) => continuousValue(metaData!.row) ?? [])).sort();

@@ -31,6 +31,7 @@ const ShapeLegend = ({ label, scale, groups, hidden, onToggle, highlighted, onHo
     onToggle={onToggle}
     highlighted={highlighted}
     onHover={onHover}
+    scrollable
   />
 );
 

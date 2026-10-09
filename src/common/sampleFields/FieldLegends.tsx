@@ -59,6 +59,7 @@ const FieldLegends = ({ rows, filters, color, shape, onToggle, ringed, onHover }
           onToggle={(value) => onToggle(color.key, value)}
           highlighted={ringed(color.key)}
           onHover={hover(color.key)}
+          scrollable
         />
       )}
     </>

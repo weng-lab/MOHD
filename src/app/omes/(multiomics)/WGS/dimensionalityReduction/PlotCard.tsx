@@ -202,6 +202,7 @@ const PlotCard = <K extends ColorField>({
           onToggle={color.onToggle}
           highlighted={ringed("color")}
           onHover={hover("color")}
+          scrollable
         />
         {/*
         Bottom-aligned, not centered. Both plots render at the smaller of the two containers, so

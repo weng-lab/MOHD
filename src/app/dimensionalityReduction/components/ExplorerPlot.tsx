@@ -3,7 +3,6 @@
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { ScatterPlot, type ColorRange, type Point, type RampRange } from "@weng-lab/visualization";
 import { useState, type ReactNode } from "react";
-import { spotlight } from "@/common/components/plotDimming";
 import { PLOT_HEADER_SX } from "@/common/components/plotHeaderSx";
 import PlotTooltip from "@/common/components/PlotTooltip";
 import { CARD_SX } from "./dimensions";
@@ -24,8 +23,6 @@ export type PlotFeature = { name: string; format: (value: number) => string };
 
 export type PointMeta = {
   row: ExplorerRow;
-  /** Whether the sample passes the filters and keeps its color, rather than being dimmed - see dimHidden. */
-  shown: boolean;
   /**
    * The sample's value for the feature coloring the plot, in the data's units. Carried per point
    * since features are fetched separately from the rows. Null where there's no value or no feature.
@@ -66,7 +63,7 @@ type TooltipBodyProps = {
 const TooltipBody = ({ row, dimmed, feature }: TooltipBodyProps) => (
   <PlotTooltip
     title={row.sample_id}
-    // Dimmed points can win the hit test, so a dimmed sample says it's hidden.
+    // A dimmed point can still be hovered where nothing in focus is near, so it says it's hidden.
     note={dimmed ? "Hidden by the current filters" : undefined}
     rows={[
       ...tooltipRowsOf(TOOLTIP_FIELDS, row),
@@ -87,7 +84,7 @@ export type ExplorerPlotProps = {
   subtitle: string;
   /** Remounts the plot, resetting its zoom, for a new ome, method or pair of axes. */
   viewKey: string;
-  /** Every point on the plot, the dimmed ones first - what dimHidden returns. */
+  /** Every point on the plot, those the filters leave out `dimmed`. */
   points: Point<PointMeta>[];
   /** The subset that passes the filters and keeps its color, in the order it came in. */
   shown: Point<PointMeta>[];
@@ -141,10 +138,10 @@ const ExplorerPlot = ({
             const [low, high] = legendHover.within;
             return value !== null && value >= low && value <= high;
           });
-  // The rest dimmed around them. A colorbar window dims everything outside it even while empty, as
-  // the heatmap's sweep does; a chip with nothing in focus - one switched off - leaves the plot be.
-  const highlighted =
-    hoveredPoints && (hoveredPoints.length > 0 || legendHover?.kind === "range") ? hoveredPoints : null;
+  // Spotlit, with the rest dimmed around them. A colorbar window dims everything outside it even while
+  // empty, as the heatmap's sweep does; a chip with nothing in focus - one switched off - leaves the plot be.
+  const spotlit =
+    hoveredPoints && (hoveredPoints.length > 0 || legendHover?.kind === "range") ? hoveredPoints : undefined;
 
   return (
     <Paper
@@ -179,7 +176,7 @@ const ExplorerPlot = ({
         <Box flex={1} minHeight={0} position="relative">
           <ScatterPlot
             key={viewKey}
-            pointData={spotlight(points, highlighted)}
+            pointData={points}
             loading={false}
             {...domains}
             bottomAxisLabel={xLabel}
@@ -187,11 +184,12 @@ const ExplorerPlot = ({
             tooltipBody={(point) => (
               <TooltipBody
                 row={point.metaData!.row}
-                dimmed={!point.metaData!.shown}
+                dimmed={point.dimmed ?? false}
                 feature={feature && { ...feature, value: point.metaData!.featureValue }}
               />
             )}
-            hoveredPoints={hoveredPoints}
+            hoveredPoints={spotlit}
+            spotlight
             onHoveredPointChange={(point) => setPlotHover(point?.metaData?.row ?? null)}
             // No groupPointsAnchor: it could only swell one of the color and shape groups; the chips show both.
             controlsPosition={"right"}

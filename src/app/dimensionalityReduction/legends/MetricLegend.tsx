@@ -3,7 +3,7 @@
 import { useTheme } from "@mui/material/styles";
 import { CLIP_PERCENTILE, SEQUENTIAL_RAMP } from "@/common/colorRamp";
 import { captionLabelStyle } from "@/common/components/captionLabelStyle";
-import { NEUTRAL_MID } from "@/common/components/plotDimming";
+import { NEUTRAL_MID } from "@/common/neutralColors";
 import { ColorbarLegend, type ColorRange, type ColorRangeControl, type RampRange } from "@weng-lab/visualization";
 import type { ContinuousDefinition } from "../model/metrics";
 

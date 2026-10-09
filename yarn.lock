@@ -3844,8 +3844,8 @@ __metadata:
   linkType: hard
 
 "@weng-lab/visualization@file:../web-components/packages/visualization::locator=mohd%40workspace%3A.":
-  version: 2.6.0
-  resolution: "@weng-lab/visualization@file:../web-components/packages/visualization#../web-components/packages/visualization::hash=8e66aa&locator=mohd%40workspace%3A."
+  version: 2.7.0
+  resolution: "@weng-lab/visualization@file:../web-components/packages/visualization#../web-components/packages/visualization::hash=b586ec&locator=mohd%40workspace%3A."
   dependencies:
     "@types/d3-hierarchy": "npm:^3.1.7"
     "@types/d3-shape": "npm:^3.1.8"
@@ -3868,7 +3868,7 @@ __metadata:
     "@visx/visx": ^4.0.0
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 10c0/3d721f98360034231429ed39370390dd42f74b5a60f2fa224000bb796667319c53dbe60d096e44688614d93ca0d9ebc2d05195737af7be499729af75bf93acbd
+  checksum: 10c0/8819d856b08ddd4d505525bf972677fa26d49803736cda5581128ccab129da294b2f20eb07e0225ff529ac56e5cbb4b23d8b0b90b39f935848a6bb420fea0556
   languageName: node
   linkType: hard
 

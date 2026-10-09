@@ -1,8 +1,8 @@
 /** ATAC-seq library quality metrics: continuous, so they color along a ramp rather than by group. */
 
 import { SEQUENTIAL_RAMP } from "@/common/colorRamp";
-import { colorAt, rangeAxis, type ColorRange } from "@weng-lab/visualization";
-import { NEUTRAL_MID } from "@/common/components/plotDimming";
+import { rampColor, type ColorRange } from "@weng-lab/visualization";
+import { NEUTRAL_MID } from "@/common/neutralColors";
 
 /** In the order the color select lists them. `key` is what a link carries (?color=frip). */
 export const METRICS = [
@@ -28,8 +28,8 @@ export const isMetric = (value: string | null): value is Metric => METRICS.some(
 
 export const metricDefinition = (metric: Metric): MetricDefinition => METRICS.find(({ key }) => key === metric)!;
 
-/** A value's color on the ramp spanning `range`, held at its ends, or the missing neutral for no value. */
-export const metricColor = (range: ColorRange | null, value: number | null): string => {
-  if (range === null || value === null) return NEUTRAL_MID;
-  return colorAt(SEQUENTIAL_RAMP, rangeAxis(range).toT(value));
+/** Colors a value on the ramp spanning `range`, held at its ends, or in the missing neutral for no value. */
+export const metricColor = (range: ColorRange | null) => {
+  const onRamp = range && rampColor(SEQUENTIAL_RAMP, range);
+  return (value: number | null): string => (onRamp === null || value === null ? NEUTRAL_MID : onRamp(value));
 };
