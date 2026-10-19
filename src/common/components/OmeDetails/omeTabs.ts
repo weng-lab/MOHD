@@ -78,6 +78,8 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
     { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/lipidomics/downloads" },
   ],
   exposomics: [
+    // Kept out of routing, not just off the tabs, while exposomics data is sensitive: rename its
+    // folder back to heatmap/ to restore it.
     // { value: "heatmap", label: "Heatmap", icon: heatmapIcon, href: "/omes/exposomics/heatmap" },
     { value: "downloads", label: "Downloads", icon: downloadIcon, href: "/omes/exposomics/downloads" },
   ],

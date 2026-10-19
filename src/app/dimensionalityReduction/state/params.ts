@@ -19,7 +19,8 @@
 import { isFeatureId } from "../model/features";
 import { isColorBy, isContinuous, offersColor, type ColorBy } from "../model/colorBy";
 import { isField, type Field } from "@/common/sampleFields/fields";
-import { OME_CAPABILITIES, PC_COUNT, findOme, type ExplorerOme, type Method } from "../model/omes";
+import { PC_COUNT } from "@/common/components/pcAxis";
+import { OME_CAPABILITIES, findOme, type ExplorerOme, type Method } from "../model/omes";
 import { NO_SHAPE, isShapeBy, shapeFieldsFor, type ShapeBy } from "@/common/sampleFields/shapes";
 
 export type ExplorerState = {

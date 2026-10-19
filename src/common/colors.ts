@@ -10,12 +10,19 @@ export const OME_COLORS: Record<string, string> = {
   wgs: "#59acd8",
 };
 
+/**
+ * Case and control are a red/blue pair. The risk tiers are one purple at two lightnesses, darker
+ * for higher risk: an ordered scale of their own, kept off the red-orange-yellow run, where they
+ * used to read as a continuation of case. Pending, whose status isn't settled yet, is a green that
+ * belongs to neither. Checked as a scatter plot palette (every pair, not only neighbors): at least
+ * 11.7 ΔE (OKLab ×100) apart under protanopia and deuteranopia, and 20.9 with full color vision.
+ */
 export const status_color_map = {
   case: "#e41a1c",
   control: "#377eb8",
-  unknown: "lightgray",
-  "high risk": "#F5761A",
-  "low risk": "#FEE12B",
+  "high risk": "#7a2e8b",
+  "low risk": "#da8aec",
+  pending: "#5cb572",
 };
 
 export const site_color_map = {

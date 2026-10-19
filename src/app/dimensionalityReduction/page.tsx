@@ -5,7 +5,8 @@ import DimensionalityReductionExplorer from "./DimensionalityReductionExplorer";
 import ExplorerSkeleton from "./components/ExplorerSkeleton";
 import { sortFeatures } from "./model/features";
 import { isQcKit } from "@/common/sampleFields/fields";
-import { OME_CAPABILITIES, PC_COUNT, type ExplorerOme } from "./model/omes";
+import { PC_COUNT } from "@/common/components/pcAxis";
+import { OME_CAPABILITIES, type ExplorerOme } from "./model/omes";
 import { GET_DIMENSIONALITY_REDUCTION } from "./data/queries";
 import type { ExplorerData, ExplorerRow, OmeData } from "./model/types";
 

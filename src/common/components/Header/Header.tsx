@@ -9,15 +9,16 @@ import { LinkComponent } from "../LinkComponent";
 import { useMenuControl } from "./MenuContext";
 import MobileMenu from "./MobileMenu";
 import NavDropdown from "./NavDropdown";
-import { PageInfo } from "./types";
+import { isExternalLink, PageInfo } from "./types";
 import AutoComplete from "../autocomplete";
 
 const pageLinks: PageInfo[] = [
   {
     pageName: "Explore Data",
     subPages: [
-      { pageName: "Dimensionality Reduction", link: "/dimensionalityReduction" },
+      { pageName: "Molecular Data", link: "/omes" },
       { pageName: "Clinical & Phenotypic Data", link: "/clinical" },
+      { pageName: "Dimensionality Reduction", link: "/dimensionalityReduction" },
     ],
   },
   {
@@ -86,11 +87,12 @@ function Header({ maintenance }: ResponsiveAppBarProps) {
               <Box key={page.pageName} display={{ xs: "none", md: "flex" }} alignItems={"center"} sx={{ mr: 2 }}>
                 <LinkComponent
                   display={"flex"}
+                  alignItems={"center"}
                   color="black"
                   href={page.link}
                   underline="none"
-                  target={page.link.startsWith("http") ? "_blank" : undefined}
-                  rel={page.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                  openInNewTab={isExternalLink(page.link)}
+                  showExternalIcon={isExternalLink(page.link)}
                 >
                   {page.pageName}
                 </LinkComponent>

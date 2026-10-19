@@ -42,12 +42,3 @@ export const findOme = (value: string | null): ExplorerOme | undefined =>
 export const METHODS = ["PCA", "UMAP"] as const;
 
 export type Method = (typeof METHODS)[number];
-
-/** Number of principal components the API exposes per ome. */
-export const PC_COUNT = 10;
-
-/** "PC1 (22.2%)", or "PC1" where the API has no variance for it. The API's pve is already a percentage. */
-export const pcLabel = (pc: number, pve: readonly (number | null)[]) => {
-  const value = pve[pc - 1];
-  return value === null || value === undefined ? `PC${pc}` : `PC${pc} (${value.toFixed(1)}%)`;
-};

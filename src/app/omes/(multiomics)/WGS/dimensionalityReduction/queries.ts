@@ -18,8 +18,6 @@ query fetchWGSPCA {
     superpop
     sex
     project
-    age_bin
-    case_status
     sex_at_birth
     site
     recruited_condition

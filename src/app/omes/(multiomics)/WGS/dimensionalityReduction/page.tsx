@@ -4,7 +4,8 @@ import { query } from "@/common/apollo/client";
 import PCASkeleton from "./PCASkeleton";
 import { binReportedRace } from "./privacy";
 import { GET_WGS_PCA } from "./queries";
-import { PC_COUNT, type MohdRow, type PCAData, type ReferenceRow } from "./types";
+import { PC_COUNT } from "@/common/components/pcAxis";
+import type { MohdRow, PCAData, ReferenceRow } from "./types";
 import WGSPCAPlots from "./WGSPCAPlots";
 
 /**
@@ -52,15 +53,13 @@ const getPCAData = async (): Promise<PCAData> => {
     );
 
     if (row.cohort === "MOHD") {
+      // No sample ID: see MohdRow.
       mohd.push({
-        sample_id: row.sample_id,
         pcs,
-        case_status: row.case_status ?? null,
         sex_at_birth: row.sex_at_birth ?? null,
         site: row.site ?? null,
         recruited_condition: row.recruited_condition ?? null,
         reported_race_ethnicity: row.reported_race_ethnicity ?? null,
-        age_bin: row.age_bin ?? null,
       });
     } else {
       reference.push({
@@ -73,6 +72,12 @@ const getPCAData = async (): Promise<PCAData> => {
       });
     }
   }
+
+  // The API returns the MOHD rows in sample ID order, as the WGS downloads page
+  // lists those IDs, so leaving the IDs out would hide nothing: the nth row would
+  // still be the nth ID. Ordered by their own coordinates instead, the rows give
+  // away no more than the points do.
+  mohd.sort((a, b) => a.pcs[0] - b.pcs[0] || a.pcs[1] - b.pcs[1]);
 
   // Folded here rather than in the browser: a category of one has to stay out of
   // the cache and the RSC payload, not just off the legend. It also keeps the

@@ -5,6 +5,7 @@ import type { Dispatch, SetStateAction } from "react";
 import type { GridFilterModel } from "@mui/x-data-grid-premium";
 import { formatBytes } from "@/common/downloads";
 import type { BaseSampleMetadata, CatalogDataset, OmeFile } from "@/common/components/Downloads/types";
+import { INITIAL_SAMPLE_SORT } from "@/common/sampleFields/sampleColumns";
 
 type DatasetsPaneProps = {
   datasets: CatalogDataset<BaseSampleMetadata>[];
@@ -91,7 +92,7 @@ export default function DatasetsPane({
           filterModel={filterModel}
           onFilterModelChange={onFilterModelChange}
           initialState={{
-            sorting: { sortModel: [{ field: "sample_id", sort: "asc" }] },
+            sorting: { sortModel: INITIAL_SAMPLE_SORT },
           }}
         />
       </Box>

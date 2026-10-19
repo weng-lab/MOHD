@@ -23,6 +23,8 @@ import type {
 } from "@/common/components/Downloads/types";
 import type { OmeDownloadsConfig } from "@/common/components/Downloads/OmeDualPaneDownloads";
 import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
+import { QC_GROUP, fieldOfColumn } from "@/common/sampleFields/fields";
+import { sampleFieldColumn } from "@/common/sampleFields/sampleColumns";
 
 export type { BulkDownloadDatasetItem, BulkDownloadFileItem } from "@/common/components/Downloads/selectionSummary";
 
@@ -137,16 +139,25 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   // Column definitions.
   const datasetColumns: TableColDef<T>[] = [
     { field: "sample_id", headerName: "Dataset", flex: 1, minWidth: 120 },
-    ...datasetFilters.map((f) => ({
-      field: f.field,
-      headerName: f.label,
-      type: "singleSelect" as const,
-      valueOptions: datasetFiltersState.datasetOptionsMap[f.field].map((value) => ({
-        value,
-        label: VALUE_LABEL_OVERRIDES[value] ?? value,
-      })),
-      filterOperators: customSingleSelectOperators,
-    })),
+    ...datasetFilters.map((f) => {
+      const sampleField = fieldOfColumn(f.field);
+      return {
+        field: f.field,
+        headerName: f.label,
+        type: "singleSelect" as const,
+        valueOptions: datasetFiltersState.datasetOptionsMap[f.field].map((value) => ({
+          value,
+          label: VALUE_LABEL_OVERRIDES[value] ?? value,
+        })),
+        filterOperators: customSingleSelectOperators,
+        ...(sampleField && {
+          // A QC sample's status is its only field the catalog fills in. Grouped under it in every
+          // column, as on the ome pages, it sorts and reads as it does there.
+          valueGetter: (value: unknown, row: T) => (row.status === QC_GROUP ? QC_GROUP : value),
+          ...sampleFieldColumn(sampleField),
+        }),
+      };
+    }),
   ];
 
   const fileColumns: TableColDef<CatalogFile>[] = [

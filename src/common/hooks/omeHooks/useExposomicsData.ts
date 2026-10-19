@@ -27,6 +27,7 @@ query fetchExposomicsData {
   exposomics_metadata {
     sample_id
     kit
+    age_bin
   }
 }
  `);
@@ -51,6 +52,8 @@ export type ExposomicsSample = {
   site: string;
   status: string;
   sex: string;
+  /** Binned by the API ("8-12" ... "80+"). Raw age is sensitive and never fetched. */
+  age_bin: string | null;
   quantification: ExposomicsMoleculeValue[];
 };
 
@@ -69,18 +72,20 @@ const toExposomicsSamples = (data: FetchExposomicsDataQuery | undefined): Exposo
 
   if (!data?.exposomics_quantification) return undefined;
 
-  // Quantification rows come without a kit, which says which samples are QC - see toSample.
-  const kitOf = new Map(data.exposomics_metadata.map(({ sample_id, kit }) => [sample_id, kit]));
+  // Quantification rows come without the kit, which says which samples are QC (see toSample), or the age.
+  const metadataOf = new Map(data.exposomics_metadata.map((row) => [row.sample_id, row]));
 
   return data.exposomics_quantification
     .filter((row): row is NonNullable<FetchExposomicsDataQuery["exposomics_quantification"][number]> => row !== null)
-    .map((row) =>
-      toSample({
+    .map((row) => {
+      const metadata = metadataOf.get(row.sample_id);
+      return toSample({
         sample_id: row.sample_id,
-        kit: kitOf.get(row.sample_id) ?? null,
+        kit: metadata?.kit ?? null,
         site: row.site ?? "",
         status: row.status ?? "",
         sex: row.sex ?? "",
+        age_bin: metadata?.age_bin ?? null,
         quantification: molecules.map((molecule, index) => ({
           position: molecule.position,
           molecule_name: molecule.molecule_name ?? "",
@@ -93,8 +98,8 @@ const toExposomicsSamples = (data: FetchExposomicsDataQuery | undefined): Exposo
           num_detected_samples: molecule.num_detected_samples ?? null,
           value: row.quant_values?.[index] ?? null,
         })),
-      })
-    )
+      });
+    })
     .map(unplottedIfEmpty);
 };
 

@@ -24,7 +24,8 @@ import MetricLegend from "./legends/MetricLegend";
 import { colorLabel, isContinuous } from "./model/colorBy";
 import { FEATURE_KINDS, featureLabel, isFeatureColor } from "./model/features";
 import { isMetric, metricColor, metricDefinition } from "./model/metrics";
-import { OME_CAPABILITIES, pcLabel } from "./model/omes";
+import { pcLabel } from "@/common/components/pcAxis";
+import { OME_CAPABILITIES } from "./model/omes";
 import { allRows, rowsFor } from "./model/rows";
 import type { ExplorerData, ExplorerRow } from "./model/types";
 import { toggleHidden } from "./state/params";
@@ -147,8 +148,8 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
           points={points}
           shown={shown}
           domains={domains}
-          xLabel={pca ? pcLabel(x, pve) : "UMAP-1"}
-          yLabel={pca ? pcLabel(y, pve) : "UMAP-2"}
+          xLabel={pca ? pcLabel(x, pve[x - 1]) : "UMAP-1"}
+          yLabel={pca ? pcLabel(y, pve[y - 1]) : "UMAP-2"}
           feature={
             featureKind && feature.name ? { name: feature.name, format: FEATURE_KINDS[featureKind].format } : null
           }
