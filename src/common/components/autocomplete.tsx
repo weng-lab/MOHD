@@ -2,9 +2,10 @@
 import { GenomeSearch, GenomeSearchProps, Result, StaticListOption } from "@weng-lab/ui-components";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import OpenInScreen from "./OpenInScreen";
+import SearchResultDialog from "./SearchResultDialog";
 import { getOmeInfoHref } from "@/app/omes/omeContent";
 import { OmesDataType } from "@/common/types/globalTypes";
+import { genomeBrowserHref, padGeneRegion } from "@/common/components/GenomeBrowser/regionParam";
 
 export type AutoCompleteProps = Partial<GenomeSearchProps> & {
   closeDrawer?: () => void;
@@ -104,13 +105,21 @@ function makeResultLink(result: Result) {
   return url;
 }
 
+/** Where a result opens in MOHD's genome browser, or null when it doesn't. Only genes, for now. */
+function makeGenomeBrowserLink(result: Result) {
+  return result.type === "Gene" && result.domain ? genomeBrowserHref(padGeneRegion(result.domain)) : null;
+}
+
 /**
  * Redirects the user to the a new page based on the search result
  * @param props - The props for the GenomeSearch component
  */
 export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProps) {
   const router = useRouter();
-  const [pendingScreenResult, setPendingScreenResult] = useState<Result | null>(null);
+  // Kept after the dialog closes, so its contents don't empty out while it fades away.
+  const [pendingResult, setPendingResult] = useState<Result | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const genomeBrowserLink = pendingResult && makeGenomeBrowserLink(pendingResult);
 
   const handleSearchSubmit = (r: Result) => {
     const link = makeResultLink(r);
@@ -119,22 +128,32 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
       closeDrawer();
     }
     if (r.type !== "Ome") {
-      setPendingScreenResult(r);
+      setPendingResult(r);
+      setDialogOpen(true);
     } else {
       router.push(link, { scroll: false });
     }
   };
 
   const handleCloseDialog = () => {
-    setPendingScreenResult(null);
+    setDialogOpen(false);
   };
 
-  const handleConfirmScreenNavigation = () => {
-    if (!pendingScreenResult) {
+  const handleOpenInScreen = () => {
+    if (!pendingResult) {
       return;
     }
 
-    window.open(makeResultLink(pendingScreenResult), "_blank", "noopener,noreferrer");
+    window.open(makeResultLink(pendingResult), "_blank", "noopener,noreferrer");
+    handleCloseDialog();
+  };
+
+  const handleOpenInGenomeBrowser = () => {
+    if (!genomeBrowserLink) {
+      return;
+    }
+
+    router.push(genomeBrowserLink);
     handleCloseDialog();
   };
 
@@ -208,11 +227,12 @@ export default function AutoComplete({ closeDrawer, ...props }: AutoCompleteProp
         openOnFocus
         {...props}
       />
-      <OpenInScreen
-        open={pendingScreenResult !== null}
-        result={pendingScreenResult ?? null}
+      <SearchResultDialog
+        open={dialogOpen}
+        result={pendingResult}
         onClose={handleCloseDialog}
-        onConfirm={handleConfirmScreenNavigation}
+        onOpenInScreen={handleOpenInScreen}
+        onOpenInGenomeBrowser={genomeBrowserLink ? handleOpenInGenomeBrowser : undefined}
       />
     </>
   );

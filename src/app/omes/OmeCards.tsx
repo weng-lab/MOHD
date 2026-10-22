@@ -13,21 +13,27 @@ type OmeCardsCircleProps = {
 const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
   const { visible: omesVisible, refs: omeRefs } = useGrowOnScroll(OmesList.length);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  // Circles on phones; the labeled cards from sm up, whether or not the page has room beside them.
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <Box
       sx={{
         display: "grid",
         gridTemplateColumns: {
-          xs: "repeat(3, minmax(0, 1fr))",
-          sm: "repeat(3, minmax(0, 1fr))",
-          md: "repeat(2, minmax(0, 1fr))",
-          lg: "repeat(3, minmax(0, 1fr))",
+          // Capped at about a row's height, so the circles keep the same spacing across as down instead
+          // of spreading out on wide phones. Room enough for the widest label.
+          xs: "repeat(3, minmax(0, 120px))",
+          // As many columns as fit cards of at least 180px, the most a card needs for its icon beside its
+          // longest unbreakable word ("Metabolomics"): two or three, at any width.
+          sm: "repeat(auto-fill, minmax(180px, 1fr))",
         },
-        gap: { xs: 1.5, md: 2 },
+        // Centers the capped circle columns; the cards' 1fr columns leave no room to center in.
+        justifyContent: { xs: "center", sm: "normal" },
+        gap: { xs: 1.5, sm: 2 },
         width: "100%",
-        maxWidth: 760,
+        // Cards only, so the circles center on the page rather than in a narrower box.
+        maxWidth: { sm: 760 },
         mt: 1,
       }}
     >
@@ -40,7 +46,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
           <Grow
             in={omesVisible[index]}
             timeout={500 + index * 120}
-            style={{ transformOrigin: "left center" }}
+            style={{ transformOrigin: isMobile ? "center" : "left center" }}
             key={ome}
           >
             <Box
@@ -49,7 +55,7 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                 flexDirection: "column",
                 alignItems: "center",
                 width: "100%",
-                gap: { xs: 1, md: 0 },
+                gap: { xs: 1, sm: 0 },
               }}
             >
               <Box
@@ -62,15 +68,15 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                 onClick={() => onSelect(ome)}
                 sx={{
                   display: "flex",
-                  flexDirection: { xs: "column", md: "row" },
+                  flexDirection: { xs: "column", sm: "row" },
                   alignItems: "center",
-                  justifyContent: { xs: "center", md: "flex-start" },
+                  justifyContent: { xs: "center", sm: "flex-start" },
                   gap: 1.5,
-                  height: { xs: 88, md: 70 },
+                  height: { xs: 88, sm: 70 },
                   width: "100%",
-                  maxWidth: { xs: 88, md: "none" },
-                  p: { xs: 1, md: 1 },
-                  borderRadius: { xs: "50%", md: 1.5 },
+                  maxWidth: { xs: 88, sm: "none" },
+                  p: 1,
+                  borderRadius: { xs: "50%", sm: 1.5 },
                   backgroundColor: isSelected ? "surface.main" : "white",
                   border: isSelected ? "3px solid" : "1px solid",
                   borderColor: isSelected ? "primary.light" : "rgba(12, 64, 60, 0.12)",
@@ -100,8 +106,8 @@ const OmeCardsCircle = ({ onSelect, selectedOme }: OmeCardsCircleProps) => {
                 <Box
                   className="ome-icon"
                   sx={{
-                    width: { xs: 80, md: 40 },
-                    height: { xs: 80, md: 40 },
+                    width: { xs: 80, sm: 40 },
+                    height: { xs: 80, sm: 40 },
                     flexShrink: 0,
                     borderRadius: 99,
                     backgroundImage: `url(/OmeIcons/NoBgrnd/${iconName}.png)`,
