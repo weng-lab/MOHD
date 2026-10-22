@@ -204,8 +204,6 @@ export type WGSPCAPlotsProps = {
   binnedRaceEthnicity: string[];
 };
 
-const MINIMAP_POSITION = { position: { right: 50, bottom: 50 } };
-
 const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsProps) => {
   const [xPc, setXPc] = useState(0);
   const [yPc, setYPc] = useState(1);
@@ -311,7 +309,6 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
                     <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} dimmed={p.dimmed ?? false} />
                   )}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
-                  miniMap={MINIMAP_POSITION}
                   downloadButton
                   downloadFileName="MOHD_WGS_PCA_MOHD"
                   {...sync}
@@ -351,7 +348,6 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
                     />
                   )}
                   onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
-                  miniMap={MINIMAP_POSITION}
                   downloadButton
                   downloadFileName="MOHD_WGS_PCA_1000G_HGDP"
                   {...sync}

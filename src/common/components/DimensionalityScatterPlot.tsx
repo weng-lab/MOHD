@@ -33,8 +33,6 @@ const FADED_NOTES = {
   unselected: "Not in the current selection",
 };
 
-const MINIMAP = { position: { right: 50, bottom: 50 } };
-
 const SELECT_SLOT_PROPS = { select: { MenuProps: { disableScrollLock: true } } };
 
 /** "Sex", "Sex and search", "Sex, Dataset and search". */
@@ -315,7 +313,6 @@ const LinkedPlot = <T extends SampleGroups>({
           }}
           controlsHighlight={theme.palette.primary.main}
           controlsPosition="right"
-          miniMap={MINIMAP}
           leftAxisLabel={leftAxisLabel}
           bottomAxisLabel={bottomAxisLabel}
           downloadFileName={downloadFileName}
