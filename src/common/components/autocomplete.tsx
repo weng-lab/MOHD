@@ -105,9 +105,20 @@ function makeResultLink(result: Result) {
   return url;
 }
 
-/** Where a result opens in MOHD's genome browser, or null when it doesn't. Only genes, for now. */
+/**
+ * Where a result opens in MOHD's genome browser, or null when it doesn't. Genes get room either side;
+ * coordinates open exactly as typed. cCREs, SNPs and studies go to SCREEN only.
+ */
 function makeGenomeBrowserLink(result: Result) {
-  return result.type === "Gene" && result.domain ? genomeBrowserHref(padGeneRegion(result.domain)) : null;
+  if (!result.domain) return null;
+  switch (result.type) {
+    case "Gene":
+      return genomeBrowserHref(padGeneRegion(result.domain));
+    case "Coordinate":
+      return genomeBrowserHref(result.domain);
+    default:
+      return null;
+  }
 }
 
 /**
