@@ -1,15 +1,10 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import type { GridFilterModel } from "@mui/x-data-grid-premium";
-import {
-  hasActiveFilter,
-  passesFilter,
-  selectedValuesForField,
-  withFieldFilter,
-} from "@/common/components/Downloads/filterModel";
+import { hasActiveFilter, selectedValuesForField, withFieldFilter } from "@/common/components/Downloads/filterModel";
 import type { BaseSampleMetadata, CatalogDataset, FilterFieldConfig } from "@/common/components/Downloads/types";
 import { fieldOfColumn, sortValues } from "@/common/sampleFields/fields";
 
-export type DatasetFiltersState<T extends BaseSampleMetadata> = {
+export type DatasetFiltersState = {
   datasetFilterModel: GridFilterModel;
   setDatasetFilterModel: Dispatch<SetStateAction<GridFilterModel>>;
   /** field -> the distinct values present in the data (the filter's options) */
@@ -18,12 +13,13 @@ export type DatasetFiltersState<T extends BaseSampleMetadata> = {
   datasetSelectedValues: Record<string, string[]>;
   handleDatasetToggleChange: (field: string, value: string[] | null) => void;
   hasActiveDatasetFilter: boolean;
-  visibleDatasets: CatalogDataset<T>[];
 };
 
 /**
- * Owns the left-pane (dataset) filter state: the grid filter model, the option
- * lists derived from the data, and the visible-after-filter dataset list.
+ * Owns the left-pane (dataset) filter state: the grid filter model and the
+ * option lists derived from the data. Which datasets the filters leave listed
+ * is read from the grid itself (see useDownloadColumns), as only the grid
+ * applies its toolbar search.
  *
  * The derivations below are left unmemoized on purpose — React Compiler caches
  * them, and hand-written deps here would only be a second thing to keep in sync.
@@ -31,7 +27,7 @@ export type DatasetFiltersState<T extends BaseSampleMetadata> = {
 export function useDatasetFilters<T extends BaseSampleMetadata>(
   datasets: CatalogDataset<T>[],
   datasetFilters: FilterFieldConfig<T>[]
-): DatasetFiltersState<T> {
+): DatasetFiltersState {
   const [datasetFilterModel, setDatasetFilterModel] = useState<GridFilterModel>({ items: [] });
 
   const filterFields = datasetFilters.map((f) => f.field);
@@ -61,8 +57,6 @@ export function useDatasetFilters<T extends BaseSampleMetadata>(
     setDatasetFilterModel((prev) => withFieldFilter(prev, field, value ?? [], datasetOptionsMap[field]));
   };
 
-  const visibleDatasets = datasets.filter((d) => passesFilter(d as Record<string, unknown>, datasetFilterModel));
-
   return {
     datasetFilterModel,
     setDatasetFilterModel,
@@ -70,6 +64,5 @@ export function useDatasetFilters<T extends BaseSampleMetadata>(
     datasetSelectedValues,
     handleDatasetToggleChange,
     hasActiveDatasetFilter: hasActiveFilter(datasetFilterModel),
-    visibleDatasets,
   };
 }

@@ -1,5 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import type { GridFilterModel, GridRowSelectionModel } from "@mui/x-data-grid-premium";
+import type { GridFilterModel, GridRowId, GridRowSelectionModel } from "@mui/x-data-grid-premium";
 import { TableColDef } from "@weng-lab/ui-components";
 import { useOmeCatalog } from "@/common/hooks/useOmeCatalog";
 import { useDatasetFilters } from "@/common/hooks/downloads/useDatasetFilters";
@@ -64,11 +64,10 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   deselectFile: (datasetId: string, filename: string) => void;
   deselectDataset: (datasetId: string) => void;
   datasetCheckState: Map<string, CheckState>;
-  allCheckState: CheckState;
-  toggleAll: () => void;
+  allCheckStateOf: (datasetIds: readonly GridRowId[]) => CheckState;
+  toggleAll: (datasetIds: readonly GridRowId[]) => void;
   toggleDataset: (datasetId: string) => void;
   selectableByDataset: Map<string, Set<string>>;
-  visibleDatasets: CatalogDataset<T>[];
 
   filePaths: string[];
   totalSize: number;
@@ -130,7 +129,6 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
 
   const selectionState = useDownloadSelection({
     selectableByDataset,
-    visibleDatasets: datasetFiltersState.visibleDatasets,
     activeDataset,
     activeFiles,
   });
@@ -202,7 +200,6 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     datasetSelectedValues: datasetFiltersState.datasetSelectedValues,
     handleDatasetToggleChange: datasetFiltersState.handleDatasetToggleChange,
     hasActiveDatasetFilter: datasetFiltersState.hasActiveDatasetFilter,
-    visibleDatasets: datasetFiltersState.visibleDatasets,
 
     fileFilterModel: fileFiltersState.fileFilterModel,
     setFileFilterModel: fileFiltersState.setFileFilterModel,
@@ -218,7 +215,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     deselectFile: selectionState.deselectFile,
     deselectDataset: selectionState.deselectDataset,
     datasetCheckState: selectionState.datasetCheckState,
-    allCheckState: selectionState.allCheckState,
+    allCheckStateOf: selectionState.allCheckStateOf,
     toggleAll: selectionState.toggleAll,
     toggleDataset: selectionState.toggleDataset,
     selectableByDataset,
