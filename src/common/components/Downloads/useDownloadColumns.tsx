@@ -1,7 +1,13 @@
 import { Checkbox, IconButton, Tooltip } from "@mui/material";
 import { Download, FolderZip } from "@mui/icons-material";
 import Image from "next/image";
-import { GRID_CHECKBOX_SELECTION_COL_DEF } from "@mui/x-data-grid-premium";
+import {
+  GRID_CHECKBOX_SELECTION_COL_DEF,
+  gridFilteredSortedRowIdsSelector,
+  useGridApiContext,
+  useGridSelector,
+  type GridRowId,
+} from "@mui/x-data-grid-premium";
 import { TableColDef } from "@weng-lab/ui-components";
 import { ANVIL_URL } from "@/common/downloads";
 import type { CatalogFile } from "@/common/components/Downloads/types";
@@ -27,16 +33,46 @@ const FileDownloadCell = ({ file }: { file: CatalogFile }) => {
   );
 };
 
+type SelectAllHeaderProps = {
+  allCheckStateOf: (datasetIds: readonly GridRowId[]) => CheckState;
+  selectableByDataset: Map<string, Set<string>>;
+  toggleAll: (datasetIds: readonly GridRowId[]) => void;
+};
+
+/**
+ * The dataset grid's select-all. The rows it covers are read from the grid, as
+ * those its column filters and its toolbar search leave listed - the search is
+ * the grid's alone, matched against each column's displayed text.
+ */
+const SelectAllHeader = ({ allCheckStateOf, selectableByDataset, toggleAll }: SelectAllHeaderProps) => {
+  const apiRef = useGridApiContext();
+  const listedIds = useGridSelector(apiRef, gridFilteredSortedRowIdsSelector);
+  const checkState = allCheckStateOf(listedIds);
+
+  return (
+    <>
+      <Checkbox
+        checked={checkState === "checked"}
+        indeterminate={checkState === "indeterminate"}
+        disabled={checkState === "unchecked" && listedIds.every((id) => !selectableByDataset.get(String(id))?.size)}
+        onClick={() => toggleAll(listedIds)}
+      />
+      <Tooltip title={"Bulk Download"}>
+        <FolderZip color="primary" />
+      </Tooltip>
+    </>
+  );
+};
+
 type UseDownloadColumnsArgs = {
   /** Base (filterable) dataset columns from the state hook. */
   datasetColumns: TableColDef[];
   /** Base (filterable) file columns from the state hook. */
   fileColumns: TableColDef[];
-  allCheckState: CheckState;
-  visibleDatasets: readonly { sample_id: string }[];
+  allCheckStateOf: (datasetIds: readonly GridRowId[]) => CheckState;
   selectableByDataset: Map<string, Set<string>>;
   datasetCheckState: Map<string, CheckState>;
-  toggleAll: () => void;
+  toggleAll: (datasetIds: readonly GridRowId[]) => void;
   toggleDataset: (datasetId: string) => void;
   /** When false (ome has no open-access files) the bulk-select columns are dropped. */
   bulkEnabled: boolean;
@@ -50,8 +86,7 @@ type UseDownloadColumnsArgs = {
 export function useDownloadColumns({
   datasetColumns,
   fileColumns,
-  allCheckState,
-  visibleDatasets,
+  allCheckStateOf,
   selectableByDataset,
   datasetCheckState,
   toggleAll,
@@ -70,19 +105,11 @@ export function useDownloadColumns({
     cellClassName: "MuiDataGrid-cellCheckbox",
     headerClassName: "MuiDataGrid-columnHeaderCheckbox",
     renderHeader: () => (
-      <>
-        <Checkbox
-          checked={allCheckState === "checked"}
-          indeterminate={allCheckState === "indeterminate"}
-          disabled={
-            allCheckState === "unchecked" && visibleDatasets.every((d) => !selectableByDataset.get(d.sample_id)?.size)
-          }
-          onClick={toggleAll}
-        />
-        <Tooltip title={"Bulk Download"}>
-          <FolderZip color="primary" />
-        </Tooltip>
-      </>
+      <SelectAllHeader
+        allCheckStateOf={allCheckStateOf}
+        selectableByDataset={selectableByDataset}
+        toggleAll={toggleAll}
+      />
     ),
     renderCell: (params: { row: { sample_id: string } }) => {
       const checkState = datasetCheckState.get(params.row.sample_id);

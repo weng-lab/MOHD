@@ -1,6 +1,6 @@
 "use client";
 
-import { FilterListOff } from "@mui/icons-material";
+import { ArrowForward, FilterListOff } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -19,9 +19,9 @@ import {
   type SxProps,
   type Theme,
 } from "@mui/material";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { getOmeInfoHref, getOmeLabel } from "@/app/omes/omeContent";
-import { LinkComponent } from "@/common/components/LinkComponent";
 import { PANEL_SX } from "./dimensions";
 import { FEATURE_KINDS, isFeatureColor } from "../model/features";
 import { colorOptionsFor, type ColorBy } from "../model/colorBy";
@@ -29,7 +29,8 @@ import { labelOf, type Field } from "@/common/sampleFields/fields";
 import GeneSearch from "./GeneSearch";
 import { rowsFor, allRows } from "../model/rows";
 import { valuesOf } from "@/common/sampleFields/groups";
-import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "../model/omes";
+import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, type Method } from "../model/omes";
+import { PC_COUNT, pcLabel } from "@/common/components/pcAxis";
 import { switchOme, toggleHidden, type ExplorerState } from "../state/params";
 import QuantificationSearch from "./QuantificationSearch";
 import { NO_SHAPE, shapeOptions, type ShapeBy } from "@/common/sampleFields/shapes";
@@ -111,7 +112,7 @@ const PcSelect = ({ label, value, other, pve, onChange }: PcSelectProps) => (
   >
     {PC_CHOICES.map((pc) => (
       <MenuItem key={pc} value={pc} disabled={pc === other}>
-        {pcLabel(pc, pve)}
+        {pcLabel(pc, pve[pc - 1])}
       </MenuItem>
     ))}
   </TextField>
@@ -217,9 +218,16 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
               </ToggleButton>
             ))}
           </Box>
-          <LinkComponent href={getOmeInfoHref(ome)} variant="caption" sx={{ alignSelf: "flex-start" }}>
+          {/* A text button, not outlined like the omes above it, so it can't pass for another one of them. */}
+          <Button
+            LinkComponent={Link}
+            href={getOmeInfoHref(ome)}
+            endIcon={<ArrowForward />}
+            // Its padding pulled back, so the label lines up with the ome buttons' left edge.
+            sx={{ alignSelf: "flex-start", ml: -1 }}
+          >
             Go to {getOmeLabel(ome)} page
-          </LinkComponent>
+          </Button>
         </Section>
 
         <ReductionSection state={state} pve={pve} update={update} />

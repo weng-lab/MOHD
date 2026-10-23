@@ -54,7 +54,7 @@ export type PlotCardProps<K extends ColorField> = {
   onColorByChange: (key: K) => void;
   shapeBy: K | null;
   onShapeByChange: (key: K | null) => void;
-  /** Whether a field can be shaped by: not age, with its order, and not one with too many values. Only these are listed. */
+  /** Whether a field can be shaped by: not one with too many values. Only these are listed. */
   canShape: (key: K) => boolean;
   color: LegendRow;
   /** While the plot is shaped. Merged into the color chips where both name the same field. */

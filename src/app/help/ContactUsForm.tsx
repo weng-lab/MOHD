@@ -60,7 +60,7 @@ export default function ContactForm() {
         ref={form}
         id="contact-us"
         sx={{
-          "& > :not(style)": { width: "50ch" },
+          "& > :not(style)": { width: "50ch", maxWidth: "100%" },
         }}
         noValidate
         autoComplete="off"

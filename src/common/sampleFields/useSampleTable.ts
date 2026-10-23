@@ -1,13 +1,10 @@
-import type { GridSortModel } from "@mui/x-data-grid-premium";
 import { useTablePlotSync } from "@weng-lab/ui-components";
 import { useMemo } from "react";
 import type { OmesDataType } from "@/common/types/globalTypes";
 import { QC_GROUP, columnOf, fieldsFor, plottedOnly, type Field, type SampleGroups } from "./fields";
 import { groupsOf } from "./groups";
-import { isSampleSelectable, sampleColumns } from "./sampleColumns";
+import { INITIAL_SAMPLE_SORT, isSampleSelectable, sampleColumns } from "./sampleColumns";
 import { chipFilters, toggleQc, unshownFilters } from "./tableFilters";
-
-const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
 
 /** What a page has before its query returns: one array, so the table isn't handed a new one each render. */
 const NO_ROWS: never[] = [];
@@ -38,7 +35,7 @@ export const useSampleTable = <R extends SampleGroups>(ome: OmesDataType, data: 
   } = useTablePlotSync({
     rows: samples,
     getRowId: (row) => row.sample_id,
-    initialSort: INITIAL_SORT,
+    initialSort: INITIAL_SAMPLE_SORT,
   });
 
   // By hand, as above: a plot handed new arrays on every render would redraw on every render.

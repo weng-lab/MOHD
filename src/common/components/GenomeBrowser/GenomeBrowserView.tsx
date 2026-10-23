@@ -1,11 +1,13 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Stack, useMediaQuery } from "@mui/system";
 import { ScreenApolloWrapper } from "@/common/apollo/apollo-wrapper";
 import { GenomeBrowser, createBrowserStore, createTrackStore } from "@weng-lab/genomebrowser";
 import BrowserControls from "./_components/BrowserControls";
 import DomainDisplay from "./_components/DomainDisplay";
 import { DEFAULT_BROWSER_STATE } from "./defaultBrowserState";
+import { REGION_PARAM, formatRegion, parseRegionParam } from "./regionParam";
 import {
   MohdTooltipContext,
   RULER_TRACK_ID,
@@ -27,12 +29,59 @@ export type GenomeBrowserViewProps = {
   mohdOme?: MohdOme;
 };
 
-export default function GenomeBrowserView({ initialSelectedIds, sessionStorageKey, mohdOme }: GenomeBrowserViewProps) {
+/** Opens on the region in ?region= when there is one (see regionParam.ts). */
+export default function GenomeBrowserView(props: GenomeBrowserViewProps) {
+  // The address isn't known when the page is prerendered, so the static HTML holds the browser at
+  // its default region. Client navigations have the address already and never show the fallback.
+  return (
+    <Suspense fallback={<Browser {...props} regionParam={null} />}>
+      <LinkedBrowser {...props} />
+    </Suspense>
+  );
+}
+
+function LinkedBrowser(props: GenomeBrowserViewProps) {
+  return <Browser {...props} regionParam={useSearchParams().get(REGION_PARAM)} />;
+}
+
+function Browser({
+  initialSelectedIds,
+  sessionStorageKey,
+  mohdOme,
+  regionParam,
+}: GenomeBrowserViewProps & { regionParam: string | null }) {
   // Keep the collections stable: rebuilding the array re-parses every collection
   // and can restart TrackSelect's initialization.
   const { collections, mohdTrackInfoById, validTrackIds } = useMemo(() => createTrackCollections(mohdOme), [mohdOme]);
 
-  const [useBrowserStore] = useState(() => createBrowserStore(DEFAULT_BROWSER_STATE));
+  const [useBrowserStore] = useState(() =>
+    createBrowserStore({
+      ...DEFAULT_BROWSER_STATE,
+      region: parseRegionParam(regionParam) ?? DEFAULT_BROWSER_STATE.region,
+    })
+  );
+
+  // A link followed while the browser is open, such as a gene from the header search, moves the view
+  // rather than remounting the browser. Keyed on the string, so a re-render can't snap a pan back.
+  useEffect(() => {
+    const linked = parseRegionParam(regionParam);
+    const { region, setRegion } = useBrowserStore.getState();
+    if (linked && formatRegion(linked) !== formatRegion(region)) setRegion(linked);
+  }, [regionParam, useBrowserStore]);
+
+  // The address follows the view, so a reload or a copied link opens where the user is, and a link
+  // back to a region they've panned away from changes the parameter, which the effect above needs.
+  // Regions commit once per pan or zoom, not per frame, which keeps this under replaceState's limits.
+  useEffect(
+    () =>
+      useBrowserStore.subscribe(({ region }, previous) => {
+        if (region === previous.region) return;
+        // Rather than router.replace: Next keeps useSearchParams in step, with no server round trip.
+        window.history.replaceState(null, "", `?${REGION_PARAM}=${formatRegion(region)}`);
+      }),
+    [useBrowserStore]
+  );
+
   // v2 core ships no track types of its own, and the coordinate ruler is now an
   // ordinary (pinned) track rather than browser chrome.
   const [useTrackStore] = useState(() =>

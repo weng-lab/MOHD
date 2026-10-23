@@ -1,10 +1,16 @@
 import type { ReactNode } from "react";
 import { Box, Tooltip } from "@mui/material";
-import { GRID_CHECKBOX_SELECTION_COL_DEF } from "@mui/x-data-grid-premium";
+import {
+  GRID_CHECKBOX_SELECTION_COL_DEF,
+  type GridRenderCellParams,
+  type GridSortDirection,
+  type GridSortModel,
+} from "@mui/x-data-grid-premium";
 import type { TableColDef } from "@weng-lab/ui-components";
 import {
   QC_GROUP,
   columnOf,
+  compareGroups,
   groupOf,
   isNeutralGroup,
   labelOf,
@@ -55,6 +61,26 @@ const cellOf = (field: Field, value: string, formattedValue: ReactNode): ReactNo
 };
 
 /**
+ * Every table of samples starts sorted by site, QC samples last - see sampleFieldColumn. The rows
+ * arrive in sample ID order and the grid's sort is stable, so each site lists its samples by ID.
+ */
+export const INITIAL_SAMPLE_SORT: GridSortModel = [{ field: columnOf("site"), sort: "asc" }];
+
+/**
+ * What a field's column does in every table of samples, an ome page's or a downloads page's, so
+ * both list QC samples alike: muted "QC / Reference" under Status, blank elsewhere, and last
+ * however the column is sorted, after any participant with no value. Given only a sortComparator,
+ * the grid reverses it for a descending sort, which would bring them to the top. That comparator
+ * stays, ascending, for a grouped table's group rows, the one place the grid still uses it.
+ */
+export const sampleFieldColumn = (field: Field) => ({
+  sortComparator: compareGroups(field),
+  getSortComparator: (direction: GridSortDirection) => compareGroups(field, direction ?? "asc"),
+  renderCell: ({ value, formattedValue }: GridRenderCellParams) =>
+    value === undefined || value === null ? null : cellOf(field, value, formattedValue),
+});
+
+/**
  * The selection column, the Dataset column, then one per field. A field's column holds the chips'
  * groups rather than the raw value, so filtering it and clicking a chip are the same thing - see
  * cellOf for how they read.
@@ -73,6 +99,6 @@ export const sampleColumns = <R extends SampleGroups>(
     // otherwise read as a sample with no value - "Unknown".
     valueGetter: (_value, row) => (row.sample_id === undefined ? undefined : groupOf(key, row)),
     valueOptions: groupsOf(samples, key).map((value) => ({ value, label: labelOf(key, value) })),
-    renderCell: ({ value, formattedValue }) => (value === undefined ? null : cellOf(key, value, formattedValue)),
+    ...sampleFieldColumn(key),
   })),
 ];

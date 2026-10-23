@@ -98,7 +98,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100017",
@@ -864,17 +864,17 @@
       "id": "MOHD_EA100137",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "CPT method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100138",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "CPT method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100139",
@@ -1066,7 +1066,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100173",
@@ -1394,7 +1394,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100251",
@@ -1402,7 +1402,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100252",
@@ -1418,7 +1418,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100254",
@@ -1426,7 +1426,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100255",
@@ -1434,7 +1434,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100258",
@@ -1450,15 +1450,15 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100261",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100262",
@@ -1666,7 +1666,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100336",
@@ -1674,7 +1674,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100337",
@@ -1682,7 +1682,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100338",
@@ -1690,7 +1690,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100339",
@@ -1698,7 +1698,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100340",
@@ -1778,7 +1778,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100352",
@@ -1794,7 +1794,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100356",
@@ -1810,7 +1810,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100358",
@@ -1818,7 +1818,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100360",
@@ -1826,7 +1826,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100361",
@@ -2034,7 +2034,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100389",
@@ -2050,7 +2050,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100392",
@@ -2088,15 +2088,15 @@
       "id": "MOHD_EA100397",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100399",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -2104,23 +2104,23 @@
       "id": "MOHD_EA100400",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100401",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100402",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -2706,7 +2706,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100486",
@@ -2714,7 +2714,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100487",
@@ -2730,7 +2730,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100489",
@@ -2738,7 +2738,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100490",
@@ -2746,7 +2746,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100493",
@@ -2754,7 +2754,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100494",
@@ -2762,7 +2762,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100495",
@@ -2770,7 +2770,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100496",
@@ -2778,7 +2778,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100497",
@@ -2794,7 +2794,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100499",
@@ -2810,7 +2810,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100501",
@@ -2818,7 +2818,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100503",
@@ -2826,7 +2826,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100504",
@@ -2834,7 +2834,7 @@
       "site": "EXPAND-Asthma",
       "status": "control",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100505",
@@ -2842,7 +2842,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100506",
@@ -2864,15 +2864,15 @@
       "id": "MOHD_EA100508",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100509",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -2880,39 +2880,39 @@
       "id": "MOHD_EA100510",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100511",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100512",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100513",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100514",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -2920,40 +2920,40 @@
       "id": "MOHD_EA100515",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method"
     },
     {
       "id": "MOHD_EA100516",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100517",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100518",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100519",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100521",
@@ -3513,7 +3513,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100599",
@@ -3527,15 +3527,15 @@
       "id": "MOHD_EA100601",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100602",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -3543,7 +3543,7 @@
       "id": "MOHD_EA100603",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -3551,23 +3551,23 @@
       "id": "MOHD_EA100604",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100605",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100606",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -3575,9 +3575,9 @@
       "id": "MOHD_EA100608",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100610",
@@ -3825,7 +3825,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100661",
@@ -3841,7 +3841,7 @@
       "site": "EXPAND-Asthma",
       "status": "case",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100664",
@@ -3887,7 +3887,7 @@
       "id": "MOHD_EA100669",
       "sex": "female",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -3895,15 +3895,15 @@
       "id": "MOHD_EA100670",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100671",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
       "ageBin": "8-12"
     },
@@ -3911,9 +3911,9 @@
       "id": "MOHD_EA100673",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "protocol": "OPC method",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EA100676",

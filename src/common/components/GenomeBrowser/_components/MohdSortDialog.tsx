@@ -7,8 +7,8 @@ import type { MohdOme, MohdTrackInfo } from "../tracks";
 
 type MohdSortOption = TrackSortOption<MohdTrackInfo>;
 
-/** Cases first, then risk tiers from most to least, then controls; unlisted values follow. */
-const STATUS_ORDER = ["case", "high risk", "low risk", "control"];
+/** Cases first, then risk tiers from most to least, then controls, then those still pending; unlisted values follow. */
+const STATUS_ORDER = ["case", "high risk", "low risk", "control", "pending"];
 
 function rankIn(order: readonly string[], value: string) {
   const index = order.indexOf(value);

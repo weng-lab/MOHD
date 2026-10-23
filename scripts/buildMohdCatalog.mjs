@@ -42,7 +42,7 @@ const BASE_URL = "https://downloads.mohdconsortium.org";
 const MOHD_API_URL = JSON.parse(readFileSync(join(REPO_ROOT, "src/common/config.json"), "utf8")).API.MOHDAPI;
 
 /** The bins the API groups ages into - see src/common/ageBins.ts. */
-const AGE_BINS = new Set(["8-12", "13-17", "18-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"]);
+const AGE_BINS = new Set(["8-12", "13-18", "18-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"]);
 
 /** The manifest columns the catalog is built from, whatever the ome. */
 const FILE_COLUMNS = ["sample_id", "filename", "file_type", "open_access", "url"];

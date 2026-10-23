@@ -8,9 +8,9 @@
  * genotype coordinates.
  *
  * Small categories are therefore folded into one bin before the data leaves the
- * server, for the same reason age is binned before it ever reaches here - the raw
- * category has to stay out of the cache and the RSC payload, not just off the
- * legend. Binning on the client would leave it in both, and in the point tooltip.
+ * server, for the same reason a participant's ID, status and age are left out
+ * there - the raw category has to stay out of the cache and the RSC payload, not
+ * just off the legend. Binning on the client would leave it in both, and in the point tooltip.
  *
  * The folded labels ride along as a plain list, so the legend can still show the
  * survey's response set with no count attached to any one of them.
