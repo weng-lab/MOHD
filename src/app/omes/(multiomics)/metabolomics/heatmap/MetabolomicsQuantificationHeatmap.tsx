@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ColumnDatum } from "@weng-lab/visualization";
 import { SharedMetabolomicsProps } from "./page";
 import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
 import HeatmapScaleToggle from "@/common/components/OmeQuantification/HeatmapScaleToggle";
 import {
   buildHeatmapColorScale,
+  heatmapValues,
   HeatmapScaleMode,
   valuesByRow,
   Z_SCORED_MODES,
@@ -14,9 +14,6 @@ import PlotTooltip from "@/common/components/PlotTooltip";
 import { tooltipRowsOf } from "@/common/sampleFields/fields";
 
 const compoundKey = (compound: string, mode: string) => `${compound}::${mode}`;
-const truncateCompoundName = (name: string) => (name.length > 10 ? `${name.slice(0, 10)}…` : name);
-
-type CompoundRowMeta = { fullName: string; mode: string; rawValue: number };
 
 const valueByCompound = (sample: MetabolomicsSample) =>
   new Map(sample.quantification.map((q) => [compoundKey(q.compound, q.mode), q.value]));
@@ -37,27 +34,14 @@ const MetabolomicsQuantificationHeatmap = ({ metabolomicsData, sampleTable, ref 
   const valueByCompoundPerSample = samples.map(valueByCompound);
 
   const scale = buildHeatmapColorScale(scaleMode, valuesByRow(compoundKeys, rows.map(valueByCompound)), "compound");
-
-  const heatmapData: ColumnDatum<MetabolomicsSample, CompoundRowMeta>[] = samples.map((sample, sampleIndex) => ({
-    columnName: sample.sample_id,
-    metadata: sample,
-    rows: compounds.map((compound, compoundIndex) => {
-      const key = compoundKeys[compoundIndex];
-      const rawValue = valueByCompoundPerSample[sampleIndex].get(key) ?? null;
-      return {
-        rowName: truncateCompoundName(compound.compound),
-        // Unclamped where a colorbar can move the range: the heatmap holds colors at its ends itself.
-        count: rawValue === null ? null : (scale.colorbar?.value ?? scale.toCount)(key, rawValue),
-        metadata: rawValue === null ? undefined : { fullName: compound.compound, mode: compound.mode, rawValue },
-      };
-    }),
-  }));
+  const values = heatmapValues(scale, compoundKeys, valueByCompoundPerSample);
 
   return (
     <OmeHeatmapShell
       loading={loading}
       samples={samples}
-      heatmapData={heatmapData}
+      rowNames={compounds.map((compound) => compound.compound)}
+      values={values}
       selected={selected}
       setSelected={setSelected}
       autoSort={autoSort}
@@ -69,25 +53,20 @@ const MetabolomicsQuantificationHeatmap = ({ metabolomicsData, sampleTable, ref 
       total={rows.length}
       controls={<HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />}
       ref={ref}
-      tooltipBody={(bin, domain) => {
-        const rowMeta = bin.bin.metadata as CompoundRowMeta | undefined;
-        const sample = bin.datum.metadata as MetabolomicsSample | undefined;
+      tooltipBody={(cell, domain) => {
+        const sample = samples[cell.column];
+        const compound = compounds[cell.row];
+        const key = compoundKeys[cell.row];
+        const rawValue = valueByCompoundPerSample[cell.column].get(key) ?? null;
         return (
           <PlotTooltip
-            title={bin.datum.columnName}
+            title={sample.sample_id}
             rows={[
-              ...(sample ? tooltipRowsOf(fields, sample) : []),
-              { label: "Compound", value: rowMeta?.fullName ?? bin.bin.rowName },
-              { label: "Mode", value: rowMeta?.mode },
-              { label: "Value", value: rowMeta?.rawValue ?? "No data" },
-              ...(rowMeta
-                ? [
-                    {
-                      label: "Color",
-                      value: scale.describe(compoundKey(rowMeta.fullName, rowMeta.mode), rowMeta.rawValue, domain),
-                    },
-                  ]
-                : []),
+              ...tooltipRowsOf(fields, sample),
+              { label: "Compound", value: compound.compound },
+              { label: "Mode", value: compound.mode },
+              { label: "Value", value: rawValue ?? "No data" },
+              ...(rawValue === null ? [] : [{ label: "Color", value: scale.describe(key, rawValue, domain) }]),
             ]}
           />
         );
