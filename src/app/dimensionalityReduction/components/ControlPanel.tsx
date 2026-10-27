@@ -36,7 +36,7 @@ import QuantificationSearch from "./QuantificationSearch";
 import { NO_SHAPE, shapeOptions, type ShapeBy } from "@/common/sampleFields/shapes";
 import type { ExplorerData } from "../model/types";
 import { SHOW_UMAP } from "@/common/umap";
-import type { AtacProtocol, AtacProtocolKey } from "@/common/atacProtocols";
+import type { AtacProtocolKey } from "@/common/atacProtocols";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
 
@@ -119,35 +119,42 @@ const PcSelect = ({ label, value, other, pve, onChange }: PcSelectProps) => (
   </TextField>
 );
 
-type ProtocolSelectProps = {
-  protocols: readonly AtacProtocol[];
-  value: AtacProtocolKey | null;
-  onChange: (protocol: AtacProtocolKey) => void;
+type ProtocolSectionProps = {
+  state: ExplorerState;
+  update: (patch: Partial<ExplorerState>) => void;
 };
 
-/** Which protocol's samples are plotted, on an ome whose protocols each had a PCA of their own. */
-const ProtocolSelect = ({ protocols, value, onChange }: ProtocolSelectProps) => (
-  <Stack gap={0.5}>
-    <ToggleButtonGroup
-      exclusive
-      fullWidth
-      size="small"
-      color="primary"
-      value={value}
-      onChange={(_, next: AtacProtocolKey | null) => next && onChange(next)}
-      aria-label="Protocol"
-    >
-      {protocols.map((protocol) => (
-        <ToggleButton key={protocol.key} value={protocol.key} sx={{ textTransform: "none" }}>
-          {labelOf("protocol", protocol.value)}
-        </ToggleButton>
-      ))}
-    </ToggleButtonGroup>
-    <Typography variant="caption" color="text.secondary">
-      Each protocol&apos;s samples have a PCA of their own.
-    </Typography>
-  </Stack>
-);
+/**
+ * Which protocol's samples are plotted, on an ome whose protocols each had a PCA of their own. Its
+ * own section, ahead of the axes, as it decides which PCA they're from. Nothing on any other ome.
+ */
+const ProtocolSection = ({ state, update }: ProtocolSectionProps) => {
+  const { protocols } = OME_CAPABILITIES[state.ome];
+  if (protocols.length === 0) return null;
+
+  return (
+    <Section title="Protocol">
+      <ToggleButtonGroup
+        exclusive
+        fullWidth
+        size="small"
+        color="primary"
+        value={state.protocol}
+        onChange={(_, protocol: AtacProtocolKey | null) => protocol && update({ protocol })}
+        aria-label="Protocol"
+      >
+        {protocols.map((protocol) => (
+          <ToggleButton key={protocol.key} value={protocol.key} sx={{ textTransform: "none" }}>
+            {labelOf("protocol", protocol.value)}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+      <Typography variant="caption" color="text.secondary">
+        Each protocol&apos;s samples have a PCA of their own.
+      </Typography>
+    </Section>
+  );
+};
 
 type ReductionSectionProps = {
   state: ExplorerState;
@@ -155,19 +162,13 @@ type ReductionSectionProps = {
   update: (patch: Partial<ExplorerState>) => void;
 };
 
-/**
- * The method and, for PCA, its axes, after the protocol on an ome plotted a protocol at a time. No
- * method while UMAP is off site-wide - see SHOW_UMAP.
- */
+/** The method and, for PCA, its axes. Just the axes while UMAP is off site-wide - see SHOW_UMAP. */
 const ReductionSection = ({ state, pve, update }: ReductionSectionProps) => {
   const { ome, method, x, y } = state;
-  const { umap, protocols } = OME_CAPABILITIES[ome];
+  const { umap } = OME_CAPABILITIES[ome];
 
   return (
     <Section title={SHOW_UMAP ? "Method" : "Principal components"}>
-      {protocols.length > 0 && (
-        <ProtocolSelect protocols={protocols} value={state.protocol} onChange={(protocol) => update({ protocol })} />
-      )}
       {SHOW_UMAP && (
         <ToggleButtonGroup
           exclusive
@@ -266,6 +267,8 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
             Go to {getOmeLabel(ome)} page
           </Button>
         </Section>
+
+        <ProtocolSection state={state} update={update} />
 
         <ReductionSection state={state} pve={pve} update={update} />
 

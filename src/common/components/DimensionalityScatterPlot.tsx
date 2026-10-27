@@ -44,7 +44,8 @@ export type DimensionalityScatterPlotProps<T extends SampleGroups> = {
   table: SampleTableState<T>;
   /**
    * Draws only this protocol's samples, as on ATAC, whose protocols each had a PCA of their own. The
-   * plot isn't colored or shaped by protocol then, since every point shares it.
+   * plot isn't colored or shaped by protocol then, since every point shares it, and the page is to
+   * filter the table down to the protocol as the plot's tab opens - see protocolScope.
    */
   protocol?: string;
   loading: boolean;
@@ -56,6 +57,27 @@ export type DimensionalityScatterPlotProps<T extends SampleGroups> = {
   /** More controls for the header, after color and shape - a PCA's axes. */
   axisSelectors?: ReactNode;
   ref?: Ref<DownloadPlotHandle>;
+};
+
+/**
+ * What of the table a plot draws on: every plotted sample, or one protocol's alone, with the table
+ * filtered down to them. Then protocol isn't offered to color or shape by, its filter needs no
+ * explaining while it keeps the protocol in, and clearing the filters keeps the protocol's.
+ */
+const protocolScope = <T extends SampleGroups>(table: SampleTableState<T>, protocol: string | undefined) => {
+  if (protocol === undefined) {
+    return { samples: table.plotted, fields: table.fields, namedFields: [], clearFilters: table.clearFilters };
+  }
+  return {
+    samples: table.plotted.filter((sample) => sample.protocol === protocol),
+    fields: table.fields.filter(({ key }) => key !== "protocol"),
+    // The tab names the protocol, so a filter keeping it goes without saying - one leaving it out doesn't.
+    namedFields: table.filters.hidden.protocol.has(protocol) ? [] : (["protocol"] as const),
+    clearFilters: () => {
+      table.clearFilters();
+      table.filterTo("protocol", protocol);
+    },
+  };
 };
 
 /**
@@ -80,17 +102,18 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
 
   // The plotted samples alone, so the legend counts only what can be drawn.
   const { filters, isListed, selected, setSelected } = table;
-  const samples =
-    protocol === undefined ? table.plotted : table.plotted.filter((sample) => sample.protocol === protocol);
-  const fields = protocol === undefined ? table.fields : table.fields.filter(({ key }) => key !== "protocol");
+  const { samples, fields, namedFields, clearFilters } = protocolScope(table, protocol);
 
   const shapeable = shapeOptions(fields, samples);
   const shaping = shapingOf(shape, shapeable, samples);
 
   // Filters no legend row shows, named so the reader knows why points are faded.
-  const unshown = table.unshownFilters(shaping ? [color, shaping.key] : [color]);
+  const unshown = table.unshownFilters([color, ...(shaping ? [shaping.key] : []), ...namedFields]);
 
-  const selectedIds = new Set(selected.map(({ sample_id }) => sample_id));
+  // Only this plot's: a sample selected on another protocol's tab, which the table hides on this one,
+  // doesn't fade every point here.
+  const sampleIds = new Set(samples.map(({ sample_id }) => sample_id));
+  const selectedIds = new Set(selected.map(({ sample_id }) => sample_id).filter((id) => sampleIds.has(id)));
 
   const plotted = samples.flatMap((sample): Point<PointMeta<T>>[] => {
     const x = getX(sample);
@@ -200,7 +223,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
                 <Typography variant="caption" color="text.secondary">
                   Also filtered in the table by {listOf(unshown)}.
                 </Typography>
-                <Button size="small" onClick={table.clearFilters} sx={{ py: 0 }}>
+                <Button size="small" onClick={clearFilters} sx={{ py: 0 }}>
                   Clear all filters
                 </Button>
               </Stack>

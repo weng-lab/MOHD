@@ -11,7 +11,7 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
   WGS: [
     {
       value: "dimensionalityReduction",
-      label: "Dimensionality Reduction",
+      label: "Principal Component Analysis",
       icon: dimensionalityReductionIcon,
       href: "/omes/WGS/dimensionalityReduction",
     },
@@ -20,7 +20,7 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
   WGBS: [
     {
       value: "dimensionalityReduction",
-      label: "Dimensionality Reduction",
+      label: "Principal Component Analysis",
       icon: dimensionalityReductionIcon,
       href: "/omes/WGBS/dimensionalityReduction",
     },
@@ -30,7 +30,7 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
   ATAC: [
     {
       value: "dimensionalityReduction",
-      label: "Dimensionality Reduction",
+      label: "Principal Component Analysis",
       icon: dimensionalityReductionIcon,
       href: "/omes/ATAC/dimensionalityReduction",
     },
@@ -40,7 +40,7 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
   RNA: [
     {
       value: "dimensionalityReduction",
-      label: "Dimensionality Reduction",
+      label: "Principal Component Analysis",
       icon: dimensionalityReductionIcon,
       href: "/omes/RNA/dimensionalityReduction",
     },
@@ -50,7 +50,7 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
   proteomics: [
     {
       value: "dimensionalityReduction",
-      label: "Dimensionality Reduction",
+      label: "Principal Component Analysis",
       icon: dimensionalityReductionIcon,
       href: "/omes/proteomics/dimensionalityReduction",
     },
@@ -60,7 +60,7 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
   metabolomics: [
     {
       value: "dimensionalityReduction",
-      label: "Dimensionality Reduction",
+      label: "Principal Component Analysis",
       icon: dimensionalityReductionIcon,
       href: "/omes/metabolomics/dimensionalityReduction",
     },
@@ -70,7 +70,7 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
   lipidomics: [
     {
       value: "dimensionalityReduction",
-      label: "Dimensionality Reduction",
+      label: "Principal Component Analysis",
       icon: dimensionalityReductionIcon,
       href: "/omes/lipidomics/dimensionalityReduction",
     },
@@ -86,7 +86,7 @@ export const OME_TABS: Record<OmesDataType, TabItem[]> = {
   metallomics: [
     {
       value: "dimensionalityReduction",
-      label: "Dimensionality Reduction",
+      label: "Principal Component Analysis",
       icon: dimensionalityReductionIcon,
       href: "/omes/metallomics/dimensionalityReduction",
     },
