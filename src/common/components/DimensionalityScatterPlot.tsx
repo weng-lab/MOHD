@@ -42,6 +42,11 @@ const listOf = (names: readonly string[]) =>
 export type DimensionalityScatterPlotProps<T extends SampleGroups> = {
   /** The page's table: the samples, and the selection and filters the plot shares with it. */
   table: SampleTableState<T>;
+  /**
+   * Draws only this protocol's samples, as on ATAC, whose protocols each had a PCA of their own. The
+   * plot isn't colored or shaped by protocol then, since every point shares it.
+   */
+  protocol?: string;
   loading: boolean;
   getX: (row: T) => number | null | undefined;
   getY: (row: T) => number | null | undefined;
@@ -60,6 +65,7 @@ export type DimensionalityScatterPlotProps<T extends SampleGroups> = {
  */
 const DimensionalityScatterPlot = <T extends SampleGroups>({
   table,
+  protocol,
   loading,
   getX,
   getY,
@@ -73,7 +79,10 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
   const [shape, setShape] = useState<ShapeBy>(NO_SHAPE);
 
   // The plotted samples alone, so the legend counts only what can be drawn.
-  const { plotted: samples, fields, filters, isListed, selected, setSelected } = table;
+  const { filters, isListed, selected, setSelected } = table;
+  const samples =
+    protocol === undefined ? table.plotted : table.plotted.filter((sample) => sample.protocol === protocol);
+  const fields = protocol === undefined ? table.fields : table.fields.filter(({ key }) => key !== "protocol");
 
   const shapeable = shapeOptions(fields, samples);
   const shaping = shapingOf(shape, shapeable, samples);

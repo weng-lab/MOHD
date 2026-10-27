@@ -27,7 +27,7 @@ import { FEATURE_KINDS, isFeatureColor } from "../model/features";
 import { colorOptionsFor, type ColorBy } from "../model/colorBy";
 import { labelOf, type Field } from "@/common/sampleFields/fields";
 import GeneSearch from "./GeneSearch";
-import { rowsFor, allRows } from "../model/rows";
+import { rowsFor, allRows, pveFor } from "../model/rows";
 import { valuesOf } from "@/common/sampleFields/groups";
 import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, type Method } from "../model/omes";
 import { PC_COUNT, pcLabel } from "@/common/components/pcAxis";
@@ -36,6 +36,7 @@ import QuantificationSearch from "./QuantificationSearch";
 import { NO_SHAPE, shapeOptions, type ShapeBy } from "@/common/sampleFields/shapes";
 import type { ExplorerData } from "../model/types";
 import { SHOW_UMAP } from "@/common/umap";
+import type { AtacProtocol, AtacProtocolKey } from "@/common/atacProtocols";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
 
@@ -118,19 +119,55 @@ const PcSelect = ({ label, value, other, pve, onChange }: PcSelectProps) => (
   </TextField>
 );
 
+type ProtocolSelectProps = {
+  protocols: readonly AtacProtocol[];
+  value: AtacProtocolKey | null;
+  onChange: (protocol: AtacProtocolKey) => void;
+};
+
+/** Which protocol's samples are plotted, on an ome whose protocols each had a PCA of their own. */
+const ProtocolSelect = ({ protocols, value, onChange }: ProtocolSelectProps) => (
+  <Stack gap={0.5}>
+    <ToggleButtonGroup
+      exclusive
+      fullWidth
+      size="small"
+      color="primary"
+      value={value}
+      onChange={(_, next: AtacProtocolKey | null) => next && onChange(next)}
+      aria-label="Protocol"
+    >
+      {protocols.map((protocol) => (
+        <ToggleButton key={protocol.key} value={protocol.key} sx={{ textTransform: "none" }}>
+          {labelOf("protocol", protocol.value)}
+        </ToggleButton>
+      ))}
+    </ToggleButtonGroup>
+    <Typography variant="caption" color="text.secondary">
+      Each protocol&apos;s samples have a PCA of their own.
+    </Typography>
+  </Stack>
+);
+
 type ReductionSectionProps = {
   state: ExplorerState;
   pve: readonly (number | null)[];
   update: (patch: Partial<ExplorerState>) => void;
 };
 
-/** The method and, for PCA, its axes. Just the axes while UMAP is off site-wide - see SHOW_UMAP. */
+/**
+ * The method and, for PCA, its axes, after the protocol on an ome plotted a protocol at a time. No
+ * method while UMAP is off site-wide - see SHOW_UMAP.
+ */
 const ReductionSection = ({ state, pve, update }: ReductionSectionProps) => {
   const { ome, method, x, y } = state;
-  const { umap } = OME_CAPABILITIES[ome];
+  const { umap, protocols } = OME_CAPABILITIES[ome];
 
   return (
     <Section title={SHOW_UMAP ? "Method" : "Principal components"}>
+      {protocols.length > 0 && (
+        <ProtocolSelect protocols={protocols} value={state.protocol} onChange={(protocol) => update({ protocol })} />
+      )}
       {SHOW_UMAP && (
         <ToggleButtonGroup
           exclusive
@@ -177,11 +214,11 @@ export type ControlPanelProps = {
 };
 
 const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) => {
-  const { ome, method, color, shape, hideQc } = state;
+  const { ome, protocol, method, color, shape, hideQc } = state;
   const { fields, metrics, feature } = colorOptionsFor(ome);
-  const { pve } = data[ome];
+  const pve = pveFor(data, ome, protocol);
   const features = data[ome].features ?? [];
-  const rows = rowsFor(data, ome, method);
+  const rows = rowsFor(data, ome, method, protocol);
   const options: Partial<Record<Field, string[]>> = Object.fromEntries(
     fields.map(({ key }) => [key, valuesOf(rows, key)])
   );

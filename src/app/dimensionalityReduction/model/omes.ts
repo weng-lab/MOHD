@@ -1,6 +1,7 @@
 import type { OmesDataType } from "@/common/types/globalTypes";
 import type { FeatureKind } from "./features";
 import { SHOW_UMAP } from "@/common/umap";
+import { ATAC_PROTOCOLS, type AtacProtocol } from "@/common/atacProtocols";
 
 /**
  * In switcher order, named as the app's routes name them (?ome=lipidomics, as in /omes/lipidomics)
@@ -24,15 +25,20 @@ export type OmeCapabilities = {
   metrics: boolean;
   /** The kind of feature whose quantification can color the plot - see features.ts. */
   feature: FeatureKind | null;
+  /**
+   * The protocols whose samples each had a PCA of their own, plotted one at a time, the first by
+   * default. Empty where the ome had one PCA throughout.
+   */
+  protocols: readonly AtacProtocol[];
 };
 
 export const OME_CAPABILITIES: Record<ExplorerOme, OmeCapabilities> = {
-  ATAC: { umap: SHOW_UMAP, metrics: true, feature: null },
-  RNA: { umap: SHOW_UMAP, metrics: false, feature: "gene" },
-  WGBS: { umap: SHOW_UMAP, metrics: false, feature: null },
-  lipidomics: { umap: false, metrics: false, feature: "lipid" },
-  metabolomics: { umap: false, metrics: false, feature: "metabolite" },
-  metallomics: { umap: false, metrics: false, feature: "metal" },
+  ATAC: { umap: SHOW_UMAP, metrics: true, feature: null, protocols: ATAC_PROTOCOLS },
+  RNA: { umap: SHOW_UMAP, metrics: false, feature: "gene", protocols: [] },
+  WGBS: { umap: SHOW_UMAP, metrics: false, feature: null, protocols: [] },
+  lipidomics: { umap: false, metrics: false, feature: "lipid", protocols: [] },
+  metabolomics: { umap: false, metrics: false, feature: "metabolite", protocols: [] },
+  metallomics: { umap: false, metrics: false, feature: "metal", protocols: [] },
 };
 
 /** Case-insensitive, so a hand-typed ?ome=rna still finds RNA. */

@@ -11,6 +11,8 @@ import { useSampleTable, type SampleTableState } from "@/common/sampleFields/use
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 import { SHOW_UMAP } from "@/common/umap";
+import { ATAC_PROTOCOLS, type AtacProtocolKey } from "@/common/atacProtocols";
+import { labelOf } from "@/common/sampleFields/fields";
 
 export type ATACMetadata = NonNullable<UseATACDataReturn["data"]>;
 
@@ -22,7 +24,12 @@ export type SharedATACDimenionalityProps = {
 
 const ATACDimensionalityReduction = () => {
   const { ref: umapRef, ...umapDownload } = usePlotDownload();
-  const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
+  // Spelled out, as hooks can't be called in a loop: a protocol added without one fails to compile.
+  const pcaDownloads: Record<AtacProtocolKey, ReturnType<typeof usePlotDownload>> = {
+    CPT: usePlotDownload(),
+    OPC: usePlotDownload(),
+    BuffyCoat: usePlotDownload(),
+  };
   const ATACData = useATACData({ skip: false });
 
   const sampleTable = useSampleTable("ATAC", ATACData.data);
@@ -46,12 +53,19 @@ const ATACDimensionalityReduction = () => {
         />
       }
       plots={[
-        {
-          tabTitle: "PCA",
-          icon: <ScatterPlot />,
-          plotComponent: <ATACDimensionalityPCAPlot ref={pcaRef} {...SharedATACDimenionalityProps} />,
-          ...pcaDownload,
-        },
+        // A tab per protocol, since each protocol's samples had a PCA of their own. The table lists
+        // them all, and each tab draws its own protocol's.
+        ...ATAC_PROTOCOLS.map((protocol) => {
+          const { ref, ...download } = pcaDownloads[protocol.key];
+          return {
+            tabTitle: `${labelOf("protocol", protocol.value)} PCA`,
+            icon: <ScatterPlot />,
+            plotComponent: (
+              <ATACDimensionalityPCAPlot ref={ref} protocol={protocol} {...SharedATACDimenionalityProps} />
+            ),
+            ...download,
+          };
+        }),
         // Off until UMAP comes back - see SHOW_UMAP.
         ...(SHOW_UMAP
           ? [

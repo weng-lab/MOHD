@@ -3,13 +3,15 @@
  * DEFAULT_STATE is written, so the default view is a bare path.
  *
  *   ome     ATAC | RNA | WGBS | lipidomics | metabolomics | metallomics   (case-insensitive)
+ *   protocol on ATAC CPT | OPC | BuffyCoat (case-insensitive), whose samples are plotted with
+ *           their own PCA
  *   method  PCA | UMAP
  *   x, y    principal component on each axis, 1-10
- *   color   site | status | sex | age | protocol, on ATAC tss | frip | reads, on RNA expression,
- *           and on lipidomics, metabolomics and metallomics feature
+ *   color   site | status | sex | age, on ATAC tss | frip | reads, on RNA expression, and on
+ *           lipidomics, metabolomics and metallomics feature
  *   feature on RNA an Ensembl id without its version (ENSG00000000971), on the mass-spec omes a
  *           name as the data spells it (Metformin, TG(52:2) [SIM]); kept whatever colors the plot
- *   shape   none | site | status | sex | protocol - not age, which has too many bins to shape by
+ *   shape   none | site | status | sex - not age, which has too many bins to shape by
  *   hide    repeated; "field:value" fades one value's samples, "qc" fades the QC ones
  *           e.g. ?hide=site:LEON&hide=age:80%2B&hide=qc
  *   range   low,high - where a metric's or feature's colors stop, in the data's own units (reads,
@@ -17,14 +19,20 @@
  */
 
 import { isFeatureId } from "../model/features";
-import { isColorBy, isContinuous, offersColor, type ColorBy } from "../model/colorBy";
+import { explorerFieldsFor, isColorBy, isContinuous, offersColor, type ColorBy } from "../model/colorBy";
 import { isField, type Field } from "@/common/sampleFields/fields";
 import { PC_COUNT } from "@/common/components/pcAxis";
 import { OME_CAPABILITIES, findOme, type ExplorerOme, type Method } from "../model/omes";
-import { NO_SHAPE, isShapeBy, shapeFieldsFor, type ShapeBy } from "@/common/sampleFields/shapes";
+import { NO_SHAPE, isShapeBy, type ShapeBy } from "@/common/sampleFields/shapes";
+import { ATAC_PROTOCOLS, findAtacProtocol, type AtacProtocolKey } from "@/common/atacProtocols";
 
 export type ExplorerState = {
   ome: ExplorerOme;
+  /**
+   * The protocol whose samples are plotted, on an ome whose protocols each had a PCA of their own
+   * (ATAC); null on the rest. Dropped with a change of ome, as the feature is.
+   */
+  protocol: AtacProtocolKey | null;
   method: Method;
   /** PC on each axis, 1-based as it is labeled. Kept through a switch to UMAP and back. */
   x: number;
@@ -50,6 +58,7 @@ export type ExplorerState = {
 
 export const DEFAULT_STATE: ExplorerState = {
   ome: "ATAC",
+  protocol: ATAC_PROTOCOLS[0].key,
   method: "PCA",
   x: 1,
   y: 2,
@@ -69,19 +78,28 @@ const featureFor = (ome: ExplorerOme, feature: string | null): string | null => 
   return kind !== null && isFeatureId(kind, feature) ? feature : null;
 };
 
+/** The protocol, if it's one of the ome's, or else the ome's first; null on an ome plotted whole. */
+const protocolFor = (ome: ExplorerOme, protocol: AtacProtocolKey | null): AtacProtocolKey | null => {
+  const { protocols } = OME_CAPABILITIES[ome];
+  return (protocols.find(({ key }) => key === protocol) ?? protocols[0])?.key ?? null;
+};
+
 /**
  * Brings a state inside what its ome supports, on every read and write, so hand-edited links and
- * ome switches land somewhere valid: UMAP falls back to PCA, an unoffered coloring to site, an
- * unoffered shape to none, and a PC on both axes moves off y.
+ * ome switches land somewhere valid: a missing or unknown protocol falls back to the ome's first,
+ * UMAP to PCA, an unoffered coloring to site, an unoffered shape to none, and a PC on both axes
+ * moves off y.
  */
 export const normalize = (state: ExplorerState): ExplorerState => {
   const color = offersColor(state.ome, state.color) ? state.color : DEFAULT_STATE.color;
+  const shapeable = explorerFieldsFor(state.ome).filter(({ shapeable }) => shapeable);
   return {
     ...state,
+    protocol: protocolFor(state.ome, state.protocol),
     method: state.method === "UMAP" && !OME_CAPABILITIES[state.ome].umap ? "PCA" : state.method,
     color,
     feature: featureFor(state.ome, state.feature),
-    shape: shapeFieldsFor(state.ome).some(({ key }) => key === state.shape) ? state.shape : NO_SHAPE,
+    shape: shapeable.some(({ key }) => key === state.shape) ? state.shape : NO_SHAPE,
     y: state.y === state.x ? (state.x === 1 ? 2 : 1) : state.y,
     range: isContinuous(color) ? state.range : null,
   };
@@ -142,6 +160,7 @@ export const parseState = (params: ReadableParams): ExplorerState => {
 
   return normalize({
     ome: findOme(params.get("ome")) ?? DEFAULT_STATE.ome,
+    protocol: findAtacProtocol(params.get("protocol")) ?? null,
     method: params.get("method")?.toUpperCase() === "UMAP" ? "UMAP" : "PCA",
     x: parsePc(params.get("x"), DEFAULT_STATE.x),
     y: parsePc(params.get("y"), DEFAULT_STATE.y),
@@ -160,6 +179,7 @@ export const serializeState = (state: ExplorerState): string => {
   const params = new URLSearchParams();
 
   if (state.ome !== DEFAULT_STATE.ome) params.set("ome", state.ome);
+  if (state.protocol !== null && state.protocol !== DEFAULT_STATE.protocol) params.set("protocol", state.protocol);
   if (state.method !== DEFAULT_STATE.method) params.set("method", state.method);
   if (state.x !== DEFAULT_STATE.x) params.set("x", String(state.x));
   if (state.y !== DEFAULT_STATE.y) params.set("y", String(state.y));
