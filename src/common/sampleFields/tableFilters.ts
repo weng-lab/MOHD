@@ -46,6 +46,18 @@ export const onlyValue = (model: GridFilterModel, field: Field, value: string): 
 };
 
 /**
+ * QC filtered out of the Status column, as its chip writes it there. A heatmap page's starting filters
+ * where QC samples would otherwise take up columns for little - see HeatmapQcToggle.
+ */
+export const QC_HIDDEN: GridFilterModel = withExcludedValues(
+  { items: [] },
+  columnOf("status"),
+  new Set([QC_GROUP]),
+  [QC_GROUP],
+  "singleSelect"
+);
+
+/**
  * QC's chip clicked: clears QC from every column that filters it out, or filters it out of this
  * field's. The columns are singleSelects - see sampleColumns.
  */

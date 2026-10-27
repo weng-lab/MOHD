@@ -3,6 +3,7 @@ import { SharedMetabolomicsProps } from "./page";
 import { MetabolomicsSample } from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
 import OmeHeatmapShell from "@/common/components/OmeQuantification/OmeHeatmapShell";
 import HeatmapScaleToggle from "@/common/components/OmeQuantification/HeatmapScaleToggle";
+import HeatmapQcToggle from "@/common/components/OmeQuantification/HeatmapQcToggle";
 import {
   buildHeatmapColorScale,
   heatmapValues,
@@ -51,7 +52,12 @@ const MetabolomicsQuantificationHeatmap = ({ metabolomicsData, sampleTable, ref 
       colorDomain={scale.colorDomain}
       colorbar={scale.colorbar}
       total={rows.length}
-      controls={<HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />}
+      controls={
+        <>
+          <HeatmapScaleToggle modes={Z_SCORED_MODES} value={scaleMode} onChange={setScaleMode} />
+          <HeatmapQcToggle table={sampleTable} />
+        </>
+      }
       ref={ref}
       tooltipBody={(cell, domain) => {
         const sample = samples[cell.column];

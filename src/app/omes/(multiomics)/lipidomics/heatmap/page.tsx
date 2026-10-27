@@ -10,6 +10,7 @@ import {
 } from "@/common/hooks/omeHooks/useLipidomicsQuantification";
 import SampleTable from "@/common/sampleFields/SampleTable";
 import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
+import { QC_HIDDEN } from "@/common/sampleFields/tableFilters";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
@@ -23,7 +24,7 @@ const LipidomicsHeatmap = () => {
   const { ref: heatmapRef, ...heatmapDownload } = usePlotDownload();
   const lipidomicsData = useLipidomicsQuantification({ skip: false });
 
-  const sampleTable = useSampleTable("lipidomics", lipidomicsData.data);
+  const sampleTable = useSampleTable("lipidomics", lipidomicsData.data, { initialFilters: QC_HIDDEN });
 
   const SharedLipidomicsProps: SharedLipidomicsProps = { lipidomicsData, sampleTable };
 

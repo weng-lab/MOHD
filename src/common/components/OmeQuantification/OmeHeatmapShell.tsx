@@ -81,10 +81,17 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
   }
 
   const title = <PlotHeaderTitle title="Samples" shown={samples.length} total={total} />;
+  // Further apart than PlotHeader's gap, which suits its rows of selects: a switch that close to the
+  // scale toggle reads as part of it. A column gap, so a control wrapped onto its own line isn't indented.
+  const headerControls = controls && (
+    <Stack direction="row" alignItems="center" flexWrap="wrap" columnGap={2} rowGap={1}>
+      {controls}
+    </Stack>
+  );
 
   if (samples.length === 0) {
     return (
-      <PaneFigure title={title} controls={controls}>
+      <PaneFigure title={title} controls={headerControls}>
         <Stack flexGrow={1} alignItems="center" justifyContent="center">
           <Typography color="text.secondary">{emptyMessage}</Typography>
         </Stack>
@@ -93,7 +100,7 @@ const OmeHeatmapShell = <TSample extends CellSelectionSample>({
   }
 
   return (
-    <PaneFigure title={title} controls={controls}>
+    <PaneFigure title={title} controls={headerControls}>
       <Box sx={{ flexGrow: 1, minHeight: 0, minWidth: 0 }}>
         <ZoomableHeatmap
           ref={ref}
