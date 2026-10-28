@@ -121,7 +121,7 @@ export const toQuantificationSample = <R extends Omit<SampleGroups, "qc">>(row: 
 export const QC_GROUP = "QC / Reference";
 
 /** A participant's sample with no value recorded for the field. */
-const UNKNOWN_GROUP = "Unknown";
+export const UNKNOWN_GROUP = "Unknown";
 
 /** No value, or one recorded as "unknown", which means the same. */
 const isUnknown = (value: string | null | undefined) => !value || value.toLowerCase() === UNKNOWN_GROUP.toLowerCase();

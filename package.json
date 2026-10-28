@@ -31,6 +31,7 @@
     "@mui/x-data-grid-premium": "^8",
     "@mui/x-license": "^8",
     "@mui/x-tree-view": "^8.25.0",
+    "@vercel/analytics": "^2.0.1",
     "@visx/visx": "^4",
     "@weng-lab/genomebrowser": "2.0.0",
     "@weng-lab/genomebrowser-tracks": "2.0.0",

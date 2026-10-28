@@ -7,6 +7,7 @@ import ClientAppWrapper from "@/common/components/ClientAppWrapper";
 import { MenuControlProvider } from "@/common/components/Header/MenuContext";
 import MuiXLicense from "@/common/components/MuiXLicense";
 import { ApolloWrapper } from "@/common/apollo/apollo-wrapper";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata = {
   title: "MOHD Data Portal",
@@ -29,6 +30,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </AppRouterCacheProvider>
         </ApolloWrapper>
         <MuiXLicense />
+        {/* Page views, plus the download events in @/common/analytics. Logs to the console in development. */}
+        <Analytics />
       </body>
     </html>
   );

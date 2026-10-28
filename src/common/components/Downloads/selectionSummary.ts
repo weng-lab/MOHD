@@ -40,6 +40,17 @@ export function collectFilePaths(selection: Selection, filesByDataset: FilesByDa
   return paths;
 }
 
+/** The file types in the selection, skipping files without a `bulk_path` as `collectFilePaths` does. */
+export function selectedFileTypes(selection: Selection, filesByDataset: FilesByDataset): Set<string> {
+  const types = new Set<string>();
+  for (const [datasetId, filenames] of selection) {
+    for (const file of filesByDataset.get(datasetId) ?? []) {
+      if (filenames.has(file.filename) && file.bulk_path) types.add(file.file_type);
+    }
+  }
+  return types;
+}
+
 /** Total size in bytes across every selected file. */
 export function totalSelectedSize(selection: Selection, filesByDataset: FilesByDataset): number {
   let sum = 0;

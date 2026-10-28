@@ -9,25 +9,34 @@ import {
   type GridRowId,
 } from "@mui/x-data-grid-premium";
 import { TableColDef } from "@weng-lab/ui-components";
+import { use } from "react";
 import { ANVIL_URL } from "@/common/downloads";
+import { DownloadTrackingContext } from "@/common/components/Downloads/downloadTracking";
 import type { CatalogFile } from "@/common/components/Downloads/types";
 import type { CheckState } from "@/common/hooks/downloads/useDownloadSelection";
 
 /** Per-file download affordance: direct link when open, AnVIL request otherwise. */
 const FileDownloadCell = ({ file }: { file: CatalogFile }) => {
   const { open_access, url } = file;
+  const tracking = use(DownloadTrackingContext);
 
   if (!open_access) {
     return (
       <Tooltip title="This file is restricted. Please visit the MOHD page on AnVIL to register for access to restricted files.">
-        <IconButton component="a" href={ANVIL_URL} target="_blank" rel="noopener noreferrer">
+        <IconButton
+          component="a"
+          href={ANVIL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => tracking?.restricted(file.file_type)}
+        >
           <Image src="/logo-mark-Anvil.png" alt="AnVIL" width={28} height={28} />
         </IconButton>
       </Tooltip>
     );
   }
   return (
-    <IconButton component="a" href={url} download color="primary" disabled={!url}>
+    <IconButton component="a" href={url} download color="primary" disabled={!url} onClick={() => tracking?.file(file)}>
       <Download />
     </IconButton>
   );

@@ -23,6 +23,7 @@ import type {
 } from "@/common/components/Downloads/types";
 import type { OmeDownloadsConfig } from "@/common/components/Downloads/OmeDualPaneDownloads";
 import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
+import { downloadTracking, type DownloadTracking } from "@/common/components/Downloads/downloadTracking";
 import { QC_GROUP, fieldOfColumn } from "@/common/sampleFields/fields";
 import { sampleFieldColumn } from "@/common/sampleFields/sampleColumns";
 
@@ -72,6 +73,9 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   filePaths: string[];
   totalSize: number;
   bulkDownloadItems: BulkDownloadDatasetItem[];
+
+  /** Analytics for each download, given to the page's download links through DownloadTrackingContext. */
+  tracking: DownloadTracking;
 
   datasetColumns: TableColDef<T>[];
   fileColumns: TableColDef<CatalogFile>[];
@@ -183,6 +187,17 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   const totalSize = totalSelectedSize(selection, filesByDataset);
   const bulkDownloadItems = buildBulkDownloadItems(selection, filesByDataset);
 
+  const tracking = downloadTracking({
+    omeKey,
+    datasets,
+    datasetColumns: datasetFilters.map((f) => f.field),
+    datasetFilterModel: datasetFiltersState.datasetFilterModel,
+    selection,
+    filesByDataset,
+    bulkDownloadItems,
+    totalSize,
+  });
+
   return {
     loading,
     error,
@@ -223,6 +238,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     filePaths,
     totalSize,
     bulkDownloadItems,
+    tracking,
     datasetColumns,
     fileColumns,
     displayName,
