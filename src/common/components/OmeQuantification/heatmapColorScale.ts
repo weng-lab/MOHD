@@ -59,7 +59,7 @@ export const valuesByRow = (rowKeys: string[], valueBySample: ReadonlyMap<string
  * holds the colors at the ends, so moving the range recolors without rebuilding the grid.
  */
 export type HeatmapColorbar = {
-  /** Which mode this is, so a range set in one is dropped on switching to another. */
+  /** Which mode this is, which names the colorbar for screen readers. */
   mode: HeatmapScaleMode;
   kind: RampKind;
   /** A cell's unclamped value on the scale: what is colored, and what a sweep matches. */
@@ -84,6 +84,26 @@ export type HeatmapColorScale = {
   describe: (rowKey: string, value: number, domain?: ColorRange) => string;
   /** Undefined only where no cell has a value for the scale to span. */
   colorbar?: HeatmapColorbar;
+};
+
+/**
+ * Every cell's value on the scale, a sample (column) at a time, as ZoomableHeatmap takes them: NaN where
+ * a sample has none. Unclamped where there's a colorbar, whose range the heatmap holds colors at.
+ */
+export const heatmapValues = (
+  scale: HeatmapColorScale,
+  rowKeys: string[],
+  valueBySample: ReadonlyMap<string, number | null>[]
+) => {
+  const toValue = scale.colorbar?.value ?? scale.toCount;
+  const values = new Float32Array(rowKeys.length * valueBySample.length);
+  valueBySample.forEach((valueByRow, column) =>
+    rowKeys.forEach((key, row) => {
+      const value = valueByRow.get(key);
+      values[column * rowKeys.length + row] = value == null ? NaN : toValue(key, value);
+    })
+  );
+  return values;
 };
 
 /** The ends of values sorted ascending, or `fallback` where there are none. */

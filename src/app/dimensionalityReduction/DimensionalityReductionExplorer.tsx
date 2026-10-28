@@ -5,15 +5,7 @@ import { getOmeLabel } from "@/app/omes/omeContent";
 import { shapeOf } from "@/common/components/pointShapes";
 import { toLogValue } from "@/common/quantification";
 import FieldLegends from "@/common/sampleFields/FieldLegends";
-import {
-  QC_GROUP,
-  colorOf,
-  fieldsFor,
-  groupOf,
-  isField,
-  isNeutralGroup,
-  type Field,
-} from "@/common/sampleFields/fields";
+import { QC_GROUP, colorOf, groupOf, isField, isNeutralGroup, labelOf, type Field } from "@/common/sampleFields/fields";
 import { passesFilters, toHiddenSets, type Filters } from "@/common/sampleFields/groups";
 import { shapeOptions, shapingOf } from "@/common/sampleFields/shapes";
 import ControlPanel from "./components/ControlPanel";
@@ -21,16 +13,18 @@ import ExplorerLayout from "./components/ExplorerLayout";
 import ExplorerPlot, { type PointMeta } from "./components/ExplorerPlot";
 import FeatureLegend from "./legends/FeatureLegend";
 import MetricLegend from "./legends/MetricLegend";
-import { colorLabel, isContinuous } from "./model/colorBy";
+import { colorLabel, explorerFieldsFor, isContinuous } from "./model/colorBy";
 import { FEATURE_KINDS, featureLabel, isFeatureColor } from "./model/features";
 import { isMetric, metricColor, metricDefinition } from "./model/metrics";
-import { OME_CAPABILITIES, pcLabel } from "./model/omes";
-import { allRows, rowsFor } from "./model/rows";
+import { pcLabel } from "@/common/components/pcAxis";
+import { OME_CAPABILITIES } from "./model/omes";
+import { allRows, pveFor, rowsFor } from "./model/rows";
 import type { ExplorerData, ExplorerRow } from "./model/types";
 import { toggleHidden } from "./state/params";
 import { useColorRange } from "./state/useColorRange";
 import { useExplorerState } from "./state/useExplorerState";
 import { useFeature } from "./data/useFeature";
+import { atacProtocol } from "@/common/atacProtocols";
 
 export type DimensionalityReductionExplorerProps = {
   data: ExplorerData;
@@ -44,13 +38,17 @@ export type DimensionalityReductionExplorerProps = {
 const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplorerProps) => {
   const [state, setState] = useExplorerState();
 
-  const { ome, method, x, y, color, hideQc } = state;
+  const { ome, protocol, method, x, y, color, hideQc } = state;
   const featureKind = OME_CAPABILITIES[ome].feature;
   // Null, skipping the fetch, unless a feature colors the plot.
   const feature = useFeature(ome, isFeatureColor(color) ? state.feature : null);
-  const { pve } = data[ome];
-  const rows = rowsFor(data, ome, method);
-  const fields = fieldsFor(ome);
+  const pve = pveFor(data, ome, protocol);
+  const rows = rowsFor(data, ome, method, protocol);
+  const fields = explorerFieldsFor(ome);
+  // "ATAC-seq (CPT)", where the plot shows one protocol's samples.
+  const omeTitle = protocol
+    ? `${getOmeLabel(ome)} (${labelOf("protocol", atacProtocol(protocol).value)})`
+    : getOmeLabel(ome);
 
   // What the URL asks to shape by, if the data can carry it. Shapes are assigned across every ome.
   const everyRow = allRows(data);
@@ -135,7 +133,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
       }
       plot={
         <ExplorerPlot
-          title={`${getOmeLabel(ome)} · ${method}`}
+          title={`${omeTitle} · ${method}`}
           subtitle={[
             `Colored by ${isFeatureColor(color) && featureKind ? featureLabel(featureKind, feature) : colorLabel(ome, color)}`,
             shaping && `Shaped by ${shaping.label}`,
@@ -143,12 +141,12 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
           ]
             .filter(Boolean)
             .join(" · ")}
-          viewKey={`${ome}-${method}-${x}-${y}`}
+          viewKey={`${ome}-${protocol}-${method}-${x}-${y}`}
           points={points}
           shown={shown}
           domains={domains}
-          xLabel={pca ? pcLabel(x, pve) : "UMAP-1"}
-          yLabel={pca ? pcLabel(y, pve) : "UMAP-2"}
+          xLabel={pca ? pcLabel(x, pve[x - 1]) : "UMAP-1"}
+          yLabel={pca ? pcLabel(y, pve[y - 1]) : "UMAP-2"}
           feature={
             featureKind && feature.name ? { name: feature.name, format: FEATURE_KINDS[featureKind].format } : null
           }
@@ -215,7 +213,7 @@ const DimensionalityReductionExplorer = ({ data }: DimensionalityReductionExplor
               </>
             );
           }}
-          downloadFileName={`MOHD_${ome}_${method}`}
+          downloadFileName={["MOHD", ome, protocol, method].filter(Boolean).join("_")}
         />
       }
     />

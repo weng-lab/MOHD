@@ -11,6 +11,9 @@ import { useSampleTable, type SampleTableState } from "@/common/sampleFields/use
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 import { SHOW_UMAP } from "@/common/umap";
+import { ATAC_PROTOCOLS, type AtacProtocolKey } from "@/common/atacProtocols";
+import { labelOf } from "@/common/sampleFields/fields";
+import { onlyValue } from "@/common/sampleFields/tableFilters";
 
 export type ATACMetadata = NonNullable<UseATACDataReturn["data"]>;
 
@@ -22,10 +25,18 @@ export type SharedATACDimenionalityProps = {
 
 const ATACDimensionalityReduction = () => {
   const { ref: umapRef, ...umapDownload } = usePlotDownload();
-  const { ref: pcaRef, ...pcaDownload } = usePlotDownload();
+  // Spelled out, as hooks can't be called in a loop: a protocol added without one fails to compile.
+  const pcaDownloads: Record<AtacProtocolKey, ReturnType<typeof usePlotDownload>> = {
+    CPT: usePlotDownload(),
+    OPC: usePlotDownload(),
+    BuffyCoat: usePlotDownload(),
+  };
   const ATACData = useATACData({ skip: false });
 
-  const sampleTable = useSampleTable("ATAC", ATACData.data);
+  // The layout opens on the first protocol's tab, so the table starts on that protocol's samples alone.
+  const sampleTable = useSampleTable("ATAC", ATACData.data, {
+    initialFilters: onlyValue({ items: [] }, "protocol", ATAC_PROTOCOLS[0].value),
+  });
 
   const SharedATACDimenionalityProps: SharedATACDimenionalityProps = {
     ATACData,
@@ -37,6 +48,11 @@ const ATACDimensionalityReduction = () => {
       showTabLabels
       direction={{ xs: "column", lg: "row" }}
       {...TWO_PANE_HEIGHTS}
+      // A protocol's tab filters the table down to its samples, the ones its plot draws, keeping the
+      // other filters. The UMAP tab, after the protocols' (off - see SHOW_UMAP), leaves the table be.
+      onTabChange={(index) => {
+        if (index < ATAC_PROTOCOLS.length) sampleTable.filterTo("protocol", ATAC_PROTOCOLS[index].value);
+      }}
       TableComponent={
         <SampleTable
           label="ATAC-seq Dimensionality Reduction"
@@ -46,12 +62,19 @@ const ATACDimensionalityReduction = () => {
         />
       }
       plots={[
-        {
-          tabTitle: "PCA",
-          icon: <ScatterPlot />,
-          plotComponent: <ATACDimensionalityPCAPlot ref={pcaRef} {...SharedATACDimenionalityProps} />,
-          ...pcaDownload,
-        },
+        // A tab per protocol, since each protocol's samples had a PCA of their own. Named
+        // "Protocol: CPT", as a bare "CPT" doesn't say what it is.
+        ...ATAC_PROTOCOLS.map((protocol) => {
+          const { ref, ...download } = pcaDownloads[protocol.key];
+          return {
+            tabTitle: `Protocol: ${labelOf("protocol", protocol.value)}`,
+            icon: <ScatterPlot />,
+            plotComponent: (
+              <ATACDimensionalityPCAPlot ref={ref} protocol={protocol} {...SharedATACDimenionalityProps} />
+            ),
+            ...download,
+          };
+        }),
         // Off until UMAP comes back - see SHOW_UMAP.
         ...(SHOW_UMAP
           ? [

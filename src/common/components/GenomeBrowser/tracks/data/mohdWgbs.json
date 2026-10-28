@@ -67,7 +67,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100008",
@@ -81,7 +81,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100010",
@@ -466,7 +466,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100065",
@@ -487,7 +487,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100068",
@@ -515,7 +515,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100072",
@@ -536,28 +536,28 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100075",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100076",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100077",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100078",
@@ -1467,7 +1467,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100211",
@@ -1481,7 +1481,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100213",
@@ -1502,35 +1502,35 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100216",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100217",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100218",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100219",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100220",
@@ -1544,21 +1544,21 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100222",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100223",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100224",
@@ -1572,14 +1572,14 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100226",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100227",
@@ -1593,49 +1593,49 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100229",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100230",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100232",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100233",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100234",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100235",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100236",
@@ -2363,28 +2363,28 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100341",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100342",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100343",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100344",
@@ -2853,7 +2853,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100412",
@@ -2867,14 +2867,14 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100414",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100415",
@@ -2888,7 +2888,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100417",
@@ -2916,7 +2916,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100421",
@@ -2943,29 +2943,29 @@
       "id": "MOHD_EB100425",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100426",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100428",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100429",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100430",
@@ -3469,7 +3469,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100505",
@@ -3483,7 +3483,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100507",
@@ -3497,49 +3497,49 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100509",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100510",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100511",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100512",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100513",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100514",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100515",
@@ -3553,7 +3553,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100517",
@@ -3567,69 +3567,69 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100519",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100520",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100521",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100522",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100523",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100524",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100525",
       "sex": "female",
       "site": "LEON",
-      "status": "case"
+      "status": "pending"
     },
     {
       "id": "MOHD_EB100526",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100527",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100528",
@@ -4007,28 +4007,28 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100583",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100584",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100585",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100586",
@@ -4048,29 +4048,29 @@
       "id": "MOHD_EB100588",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100589",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100590",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100591",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100593",
@@ -4532,7 +4532,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100660",
@@ -4546,7 +4546,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100662",
@@ -4581,7 +4581,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100667",
@@ -4595,7 +4595,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100669",
@@ -4622,49 +4622,49 @@
       "id": "MOHD_EB100672",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100673",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100674",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100675",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100676",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100677",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100679",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
@@ -5050,7 +5050,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100736",
@@ -5596,21 +5596,21 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100818",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100819",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100820",
@@ -5624,7 +5624,7 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100822",
@@ -5638,7 +5638,7 @@
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100824",
@@ -5680,28 +5680,28 @@
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100830",
       "sex": "female",
       "site": "EXPAND-Asthma",
       "status": "case",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100831",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100832",
       "sex": "male",
       "site": "EXPAND-Asthma",
       "status": "control",
-      "ageBin": "13-17"
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100835",
@@ -5763,64 +5763,64 @@
       "id": "MOHD_EB100843",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100844",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100846",
       "sex": "female",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100847",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100848",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100849",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100851",
       "sex": "female",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100852",
       "sex": "male",
       "site": "LEON",
-      "status": "control",
+      "status": "pending",
       "ageBin": "8-12"
     },
     {
       "id": "MOHD_EB100853",
       "sex": "male",
       "site": "LEON",
-      "status": "case",
-      "ageBin": "13-17"
+      "status": "pending",
+      "ageBin": "13-18"
     },
     {
       "id": "MOHD_EB100854",

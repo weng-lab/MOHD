@@ -1,16 +1,19 @@
-import type { GridSortModel } from "@mui/x-data-grid-premium";
 import { useTablePlotSync } from "@weng-lab/ui-components";
+import type { GridFilterModel } from "@mui/x-data-grid-premium";
 import { useMemo } from "react";
 import type { OmesDataType } from "@/common/types/globalTypes";
 import { QC_GROUP, columnOf, fieldsFor, plottedOnly, type Field, type SampleGroups } from "./fields";
 import { groupsOf } from "./groups";
-import { isSampleSelectable, sampleColumns } from "./sampleColumns";
-import { chipFilters, toggleQc, unshownFilters } from "./tableFilters";
-
-const INITIAL_SORT: GridSortModel = [{ field: "sample_id", sort: "asc" }];
+import { INITIAL_SAMPLE_SORT, isSampleSelectable, sampleColumns } from "./sampleColumns";
+import { chipFilters, onlyValue, toggleQc, unshownFilters } from "./tableFilters";
 
 /** What a page has before its query returns: one array, so the table isn't handed a new one each render. */
 const NO_ROWS: never[] = [];
+
+export type SampleTableOptions = {
+  /** The filters the table starts with, and what clearing them goes back to. None by default. */
+  initialFilters?: GridFilterModel;
+};
 
 /**
  * An ome page's table of samples, and what its plot shares with it: the selection, the table's
@@ -20,7 +23,11 @@ const NO_ROWS: never[] = [];
  * `data` is the page's data hook's, whose rows come with their QC flagged - see toSample and
  * toQuantificationSample. The table lists every row; a plot draws only `plotted`.
  */
-export const useSampleTable = <R extends SampleGroups>(ome: OmesDataType, data: R[] | undefined) => {
+export const useSampleTable = <R extends SampleGroups>(
+  ome: OmesDataType,
+  data: R[] | undefined,
+  { initialFilters }: SampleTableOptions = {}
+) => {
   const samples: R[] = data ?? NO_ROWS;
   // Memoized by hand: React Compiler won't, as both go on into calls it assumes may change them, with
   // hooks called in between. New columns on every render would send the grid back through its row
@@ -38,7 +45,8 @@ export const useSampleTable = <R extends SampleGroups>(ome: OmesDataType, data: 
   } = useTablePlotSync({
     rows: samples,
     getRowId: (row) => row.sample_id,
-    initialSort: INITIAL_SORT,
+    initialSort: INITIAL_SAMPLE_SORT,
+    initialFilters,
   });
 
   // By hand, as above: a plot handed new arrays on every render would redraw on every render.
@@ -74,6 +82,8 @@ export const useSampleTable = <R extends SampleGroups>(ome: OmesDataType, data: 
         ? tableFilters.setModel((model) => toggleQc(model, field, fields, samples))
         : tableFilters.toggle(columnOf(field), value, groupsOf(samples, field)),
     clearFilters: tableFilters.clear,
+    /** Filters a field down to one value, its other filters left be - see onlyValue. */
+    filterTo: (field: Field, value: string) => tableFilters.setModel((model) => onlyValue(model, field, value)),
     /** What the table filters by that the given legend rows don't show. */
     unshownFilters: (shownFields: readonly Field[]) => unshownFilters(tableFilters, fields, shownFields),
   };

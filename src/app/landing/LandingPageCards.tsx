@@ -80,10 +80,10 @@ const LandingPageCards = () => {
                     sx={{
                       display: "flex",
                       flexDirection: "column",
-                      zIndex: 2,
                       backgroundImage:
-                        "linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.82) 45%, rgba(255, 255, 255, 0) 100%)",
+                        "linear-gradient(to bottom,rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) calc(100% - 48px), rgba(255, 255, 255, 0) 100%)",
                       p: 2,
+                      pb: 6,
                     }}
                   >
                     <Typography

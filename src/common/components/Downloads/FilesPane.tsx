@@ -1,9 +1,10 @@
 import { Box, Button, Tooltip, Typography } from "@mui/material";
 import { Download } from "@mui/icons-material";
 import { Table, TableColDef } from "@weng-lab/ui-components";
-import type { Dispatch, SetStateAction } from "react";
+import { use, type Dispatch, type SetStateAction } from "react";
 import type { GridFilterModel, GridRowSelectionModel } from "@mui/x-data-grid-premium";
 import { formatBytes, isFileBulkSelectable } from "@/common/downloads";
+import { DownloadTrackingContext } from "@/common/components/Downloads/downloadTracking";
 import type { CatalogFile, DatasetBundle } from "@/common/components/Downloads/types";
 
 type FilesPaneProps = {
@@ -33,6 +34,8 @@ export default function FilesPane({
   filterModel,
   onFilterModelChange,
 }: FilesPaneProps) {
+  const tracking = use(DownloadTrackingContext);
+
   return (
     <Box
       sx={{
@@ -61,6 +64,7 @@ export default function FilesPane({
                       component="a"
                       href={bundle.url}
                       download
+                      onClick={() => tracking?.bundle(bundle)}
                       size="small"
                       variant="outlined"
                       startIcon={<Download />}

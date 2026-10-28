@@ -3,10 +3,11 @@
  * uneven because the consortium sets them, so they're listed rather than derived from edges. A value
  * missing here has no color and sorts after "80+" in every legend: when the API's bins change, so must this,
  * and so must AGE_BINS in scripts/buildMohdCatalog.mjs, which plain node can't import from here.
+ *
+ * "13-18" and "18-29" both hold 18 on purpose: some sites enroll an 18-year-old as pediatric and
+ * some as adult, and the bin follows the site.
  */
-export const AGE_BIN_LABELS = ["8-12", "13-17", "18-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"];
-
-const AGE_UNKNOWN_LABEL = "unknown";
+export const AGE_BIN_LABELS = ["8-12", "13-18", "18-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+"];
 
 // Classic rainbow/jet-style spectral ramp (young -> old): blue -> teal -> green -> yellow -> orange -> red.
 const AGE_GRADIENT_STOPS: [number, number, number][] = [
@@ -41,7 +42,7 @@ const AGE_BIN_RAMP = AGE_BIN_LABELS.map((_, i) => {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 });
 
-export const age_bin_color_map: Record<string, string> = {
-  ...Object.fromEntries(AGE_BIN_LABELS.map((label, i) => [label, AGE_BIN_RAMP[i]])),
-  [AGE_UNKNOWN_LABEL]: "#CCCCCC",
-};
+/** No entry for a missing age: that sample is in the Unknown group, which every page colors gray itself. */
+export const age_bin_color_map: Record<string, string> = Object.fromEntries(
+  AGE_BIN_LABELS.map((label, i) => [label, AGE_BIN_RAMP[i]])
+);

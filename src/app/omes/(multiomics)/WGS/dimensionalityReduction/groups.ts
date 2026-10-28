@@ -4,9 +4,7 @@
  *
  * The per-field tables this reads - which palette and which labels a field gets,
  * and which fallback pool its cohort draws from - are declared in fields.ts. What
- * lives here is the algorithm, and the one fallback that is not per-cohort: a
- * sequential ramp for ordered values (the age bands), so that where an ordering
- * exists it reads off the color.
+ * lives here is the algorithm.
  */
 
 import { NEUTRAL_DARK } from "@/common/neutralColors";
@@ -24,27 +22,6 @@ import { VALUE_LABEL_OVERRIDES } from "@/common/colors";
  * walk back the reason it is slate at all - see PRIVACY_BIN_COLOR.
  */
 const UNKNOWN_COLOR = NEUTRAL_DARK;
-
-/** Sequential ramp (YlOrBr-like), interpolated for however many bands exist. */
-const RAMP: [number, number, number][] = [
-  [255, 247, 188],
-  [254, 153, 41],
-  [127, 39, 4],
-];
-
-const lerp = (a: number, b: number, t: number) => Math.round(a + (b - a) * t);
-
-const sequentialColor = (index: number, count: number): string => {
-  if (count <= 1) return `rgb(${RAMP[1].join(",")})`;
-  const t = (index / (count - 1)) * (RAMP.length - 1);
-  const i = Math.min(Math.floor(t), RAMP.length - 2);
-  const [from, to] = [RAMP[i], RAMP[i + 1]];
-  const f = t - i;
-  return `rgb(${lerp(from[0], to[0], f)},${lerp(from[1], to[1], f)},${lerp(from[2], to[2], f)})`;
-};
-
-/** True when every value is an age band ("40-49", "80+"). "Unknown" is not one. */
-const isAgeBand = (values: string[]) => values.every((v) => /^\d+(-\d+|\+)$/.test(v));
 
 /**
  * Legend position for the two groups that are not categories. The privacy bin and
@@ -109,21 +86,10 @@ export const buildGroups = <T>(
     counts.set(value, (counts.get(value) ?? 0) + 1);
   }
 
-  // "Unknown" is held out of the age test, and of the ordering and ramp that
-  // follow from it. It is not a band, so leaving it in used to make one missing
-  // age enough to fail the test: the field then fell back to count order while
-  // the ramp was still applied over it, and the age scale came out scrambled.
-  const values = [...counts.keys()];
-  const bands = values.filter((v) => v !== "Unknown");
-  const sequential = isAgeBand(bands);
-
-  // Age bands sort numerically, with any "Unknown" pinned after them - it has no
-  // position on the scale, and parseInt("Unknown") is NaN, which would leave the
-  // whole comparator, and so the whole legend order, undefined. Everything else
-  // sorts by descending count, "Unknown" included.
-  const ordered = sequential
-    ? [...bands.sort((a, b) => parseInt(a, 10) - parseInt(b, 10)), ...(counts.has("Unknown") ? ["Unknown"] : [])]
-    : values.sort((a, b) => rank(a) - rank(b) || (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || a.localeCompare(b));
+  // By descending count, after the privacy bin and "Unknown" are set apart - see rank.
+  const ordered = [...counts.keys()].sort(
+    (a, b) => rank(a) - rank(b) || (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || a.localeCompare(b)
+  );
 
   const palette: Palette = FIELD_PALETTES[key] ?? {};
 
@@ -138,12 +104,11 @@ export const buildGroups = <T>(
   // "prefer no answer" used to come out the same green as "male".
   let cursor = 0;
 
-  return ordered.map((value, i) => ({
+  return ordered.map((value) => ({
     value,
     label: displayValue(key, value),
     count: counts.get(value) ?? 0,
     members: value === PRIVACY_BIN ? binMembers : undefined,
-    // The palette wins even for "Unknown" - the status map names its own gray.
     // The bin is answered before the qualitative fallback so it takes its own
     // color without advancing the cursor past a real category's.
     color:
@@ -152,11 +117,7 @@ export const buildGroups = <T>(
         ? PRIVACY_BIN_COLOR
         : value === "Unknown"
           ? UNKNOWN_COLOR
-          : sequential
-            ? // Ramped across the bands alone; "Unknown" sorts after them, so a
-              // band's legend index is its band index.
-              sequentialColor(i, bands.length)
-            : fallback[cursor++ % fallback.length]),
+          : fallback[cursor++ % fallback.length]),
   }));
 };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import {
   Alert,
   Box,
@@ -18,6 +18,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import type { BulkDownloadDatasetItem } from "@/common/hooks/useOmeDownloadsState";
 import SelectedFilesReview from "@/common/components/Downloads/SelectedFilesReview";
+import { DownloadTrackingContext } from "@/common/components/Downloads/downloadTracking";
 import { BulkDownloadFormat, useBulkDownloadJob } from "@/common/hooks/useBulkDownloadJob";
 import { ARCHIVE_SIZE_LIMIT_BYTES, formatBytes } from "@/common/downloads";
 import { Start } from "@mui/icons-material";
@@ -73,6 +74,7 @@ const BulkDownloadModal = ({
 }: BulkDownloadModalProps) => {
   const [format, setFormat] = useState<BulkDownloadFormat>("zip");
   const { submit, status, reset } = useBulkDownloadJob();
+  const tracking = use(DownloadTrackingContext);
 
   const isSubmitting = status === "submitting";
 
@@ -97,7 +99,9 @@ const BulkDownloadModal = ({
   };
 
   const handleSubmit = async () => {
-    if (await submit(filePaths, effectiveFormat, ome)) handleClose();
+    if (!(await submit(filePaths, effectiveFormat, ome))) return;
+    tracking?.bulk(effectiveFormat);
+    handleClose();
   };
 
   return (

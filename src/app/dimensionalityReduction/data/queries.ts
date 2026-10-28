@@ -1,6 +1,9 @@
 import { gql } from "@/common/types/generated/gql";
 
-/** Every ome the explorer offers, in one round trip, with the mass-spec omes' feature names for the picker. */
+/**
+ * Every ome the explorer offers, in one round trip, with the mass-spec omes' feature names for the
+ * picker. Each variance row says which protocol's PCA it's from, as ATAC's protocols each had one.
+ */
 export const GET_DIMENSIONALITY_REDUCTION = gql(`
 query fetchDimensionalityReductionExplorer {
   atac_metadata {
@@ -135,26 +138,32 @@ query fetchDimensionalityReductionExplorer {
   atac_variance: pca_variance(ome: ATAC) {
     pc
     pve
+    protocol
   }
   rna_variance: pca_variance(ome: RNA) {
     pc
     pve
+    protocol
   }
   wgbs_variance: pca_variance(ome: WGBS) {
     pc
     pve
+    protocol
   }
   lipidomics_variance: pca_variance(ome: Lipidomics) {
     pc
     pve
+    protocol
   }
   metabolomics_variance: pca_variance(ome: Metabolomics) {
     pc
     pve
+    protocol
   }
   metallomics_variance: pca_variance(ome: Metallomics) {
     pc
     pve
+    protocol
   }
   lipidomics_molecules {
     molecule_name

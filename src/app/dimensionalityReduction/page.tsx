@@ -5,9 +5,10 @@ import DimensionalityReductionExplorer from "./DimensionalityReductionExplorer";
 import ExplorerSkeleton from "./components/ExplorerSkeleton";
 import { sortFeatures } from "./model/features";
 import { isQcKit } from "@/common/sampleFields/fields";
-import { OME_CAPABILITIES, PC_COUNT, type ExplorerOme } from "./model/omes";
+import { PC_COUNT } from "@/common/components/pcAxis";
+import { OME_CAPABILITIES, type ExplorerOme } from "./model/omes";
 import { GET_DIMENSIONALITY_REDUCTION } from "./data/queries";
-import type { ExplorerData, ExplorerRow, OmeData } from "./model/types";
+import type { ExplorerData, ExplorerRow, OmeData, Pca } from "./model/types";
 
 const PC_KEYS = ["pc1", "pc2", "pc3", "pc4", "pc5", "pc6", "pc7", "pc8", "pc9", "pc10"] as const;
 
@@ -28,12 +29,29 @@ type MetadataRow = {
   umap_y?: number | null;
 } & Partial<Record<(typeof PC_KEYS)[number], number | null>>;
 
-type VarianceRow = { pc?: number | null; pve?: number | null };
+type VarianceRow = { pc?: number | null; pve?: number | null; protocol?: string | null };
 
 /** Coordinate precision, in decimal places: more than a plot can draw, and it nearly halves the payload. */
 const COORDINATE_DECIMALS = 5;
 
 const round = (value: number) => Number(value.toFixed(COORDINATE_DECIMALS));
+
+/**
+ * The ome's PCAs: one per protocol where each protocol's samples had their own, and one of the whole
+ * ome elsewhere, from the rows under no protocol. Matched exactly, so a PCA split up later reads as
+ * bare PCs rather than the splits' numbers mixed.
+ */
+const toPcas = (ome: ExplorerOme, variance: readonly VarianceRow[]): Pca[] => {
+  const { protocols } = OME_CAPABILITIES[ome];
+  const keys = protocols.length > 0 ? protocols.map(({ key }) => key) : [null];
+  return keys.map((protocol) => {
+    // Indexed by pc rather than row order, so a reordered or missing row can't shift the rest.
+    const pveByPc = new Map(
+      variance.filter((row) => (row.protocol ?? null) === protocol).map(({ pc, pve }) => [pc, pve])
+    );
+    return { protocol, pve: Array.from({ length: PC_COUNT }, (_, i) => pveByPc.get(i + 1) ?? null) };
+  });
+};
 
 const toOmeData = (
   ome: ExplorerOme,
@@ -41,8 +59,6 @@ const toOmeData = (
   variance: readonly VarianceRow[] = []
 ): OmeData => {
   const { metrics, umap } = OME_CAPABILITIES[ome];
-  // Indexed by pc rather than row order, so a reordered or missing row can't shift the rest.
-  const pveByPc = new Map(variance.map(({ pc, pve }) => [pc, pve]));
 
   const out: ExplorerRow[] = [];
   for (const row of rows) {
@@ -76,7 +92,7 @@ const toOmeData = (
     });
   }
 
-  return { rows: out, pve: Array.from({ length: PC_COUNT }, (_, i) => pveByPc.get(i + 1) ?? null) };
+  return { rows: out, pcas: toPcas(ome, variance) };
 };
 
 /**

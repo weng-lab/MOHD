@@ -10,6 +10,7 @@ import {
 } from "@/common/hooks/omeHooks/useMetabolomicsQuantification";
 import SampleTable from "@/common/sampleFields/SampleTable";
 import { useSampleTable, type SampleTableState } from "@/common/sampleFields/useSampleTable";
+import { QC_HIDDEN } from "@/common/sampleFields/tableFilters";
 import usePlotDownload from "@/common/hooks/usePlotDownload";
 import { TWO_PANE_HEIGHTS } from "@/common/components/OmeDetails/omePageHeight";
 
@@ -23,7 +24,7 @@ const MetabolomicsHeatmap = () => {
   const { ref: heatmapRef, ...heatmapDownload } = usePlotDownload();
   const metabolomicsData = useMetabolomicsQuantification({ skip: false });
 
-  const sampleTable = useSampleTable("metabolomics", metabolomicsData.data);
+  const sampleTable = useSampleTable("metabolomics", metabolomicsData.data, { initialFilters: QC_HIDDEN });
 
   const SharedMetabolomicsProps: SharedMetabolomicsProps = { metabolomicsData, sampleTable };
 

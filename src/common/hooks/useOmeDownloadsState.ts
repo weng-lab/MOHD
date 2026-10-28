@@ -1,5 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import type { GridFilterModel, GridRowSelectionModel } from "@mui/x-data-grid-premium";
+import type { GridFilterModel, GridRowId, GridRowSelectionModel } from "@mui/x-data-grid-premium";
 import { TableColDef } from "@weng-lab/ui-components";
 import { useOmeCatalog } from "@/common/hooks/useOmeCatalog";
 import { useDatasetFilters } from "@/common/hooks/downloads/useDatasetFilters";
@@ -23,6 +23,9 @@ import type {
 } from "@/common/components/Downloads/types";
 import type { OmeDownloadsConfig } from "@/common/components/Downloads/OmeDualPaneDownloads";
 import type { MultiSelectOnChange } from "@/common/components/Downloads/MultiSelect";
+import { downloadTracking, type DownloadTracking } from "@/common/components/Downloads/downloadTracking";
+import { QC_GROUP, fieldOfColumn } from "@/common/sampleFields/fields";
+import { sampleFieldColumn } from "@/common/sampleFields/sampleColumns";
 
 export type { BulkDownloadDatasetItem, BulkDownloadFileItem } from "@/common/components/Downloads/selectionSummary";
 
@@ -62,15 +65,17 @@ export type OmeDownloadsState<T extends BaseSampleMetadata> = {
   deselectFile: (datasetId: string, filename: string) => void;
   deselectDataset: (datasetId: string) => void;
   datasetCheckState: Map<string, CheckState>;
-  allCheckState: CheckState;
-  toggleAll: () => void;
+  allCheckStateOf: (datasetIds: readonly GridRowId[]) => CheckState;
+  toggleAll: (datasetIds: readonly GridRowId[]) => void;
   toggleDataset: (datasetId: string) => void;
   selectableByDataset: Map<string, Set<string>>;
-  visibleDatasets: CatalogDataset<T>[];
 
   filePaths: string[];
   totalSize: number;
   bulkDownloadItems: BulkDownloadDatasetItem[];
+
+  /** Analytics for each download, given to the page's download links through DownloadTrackingContext. */
+  tracking: DownloadTracking;
 
   datasetColumns: TableColDef<T>[];
   fileColumns: TableColDef<CatalogFile>[];
@@ -128,7 +133,6 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
 
   const selectionState = useDownloadSelection({
     selectableByDataset,
-    visibleDatasets: datasetFiltersState.visibleDatasets,
     activeDataset,
     activeFiles,
   });
@@ -137,16 +141,25 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   // Column definitions.
   const datasetColumns: TableColDef<T>[] = [
     { field: "sample_id", headerName: "Dataset", flex: 1, minWidth: 120 },
-    ...datasetFilters.map((f) => ({
-      field: f.field,
-      headerName: f.label,
-      type: "singleSelect" as const,
-      valueOptions: datasetFiltersState.datasetOptionsMap[f.field].map((value) => ({
-        value,
-        label: VALUE_LABEL_OVERRIDES[value] ?? value,
-      })),
-      filterOperators: customSingleSelectOperators,
-    })),
+    ...datasetFilters.map((f) => {
+      const sampleField = fieldOfColumn(f.field);
+      return {
+        field: f.field,
+        headerName: f.label,
+        type: "singleSelect" as const,
+        valueOptions: datasetFiltersState.datasetOptionsMap[f.field].map((value) => ({
+          value,
+          label: VALUE_LABEL_OVERRIDES[value] ?? value,
+        })),
+        filterOperators: customSingleSelectOperators,
+        ...(sampleField && {
+          // A QC sample's status is its only field the catalog fills in. Grouped under it in every
+          // column, as on the ome pages, it sorts and reads as it does there.
+          valueGetter: (value: unknown, row: T) => (row.status === QC_GROUP ? QC_GROUP : value),
+          ...sampleFieldColumn(sampleField),
+        }),
+      };
+    }),
   ];
 
   const fileColumns: TableColDef<CatalogFile>[] = [
@@ -174,6 +187,17 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
   const totalSize = totalSelectedSize(selection, filesByDataset);
   const bulkDownloadItems = buildBulkDownloadItems(selection, filesByDataset);
 
+  const tracking = downloadTracking({
+    omeKey,
+    datasets,
+    datasetColumns: datasetFilters.map((f) => f.field),
+    datasetFilterModel: datasetFiltersState.datasetFilterModel,
+    selection,
+    filesByDataset,
+    bulkDownloadItems,
+    totalSize,
+  });
+
   return {
     loading,
     error,
@@ -191,7 +215,6 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     datasetSelectedValues: datasetFiltersState.datasetSelectedValues,
     handleDatasetToggleChange: datasetFiltersState.handleDatasetToggleChange,
     hasActiveDatasetFilter: datasetFiltersState.hasActiveDatasetFilter,
-    visibleDatasets: datasetFiltersState.visibleDatasets,
 
     fileFilterModel: fileFiltersState.fileFilterModel,
     setFileFilterModel: fileFiltersState.setFileFilterModel,
@@ -207,7 +230,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     deselectFile: selectionState.deselectFile,
     deselectDataset: selectionState.deselectDataset,
     datasetCheckState: selectionState.datasetCheckState,
-    allCheckState: selectionState.allCheckState,
+    allCheckStateOf: selectionState.allCheckStateOf,
     toggleAll: selectionState.toggleAll,
     toggleDataset: selectionState.toggleDataset,
     selectableByDataset,
@@ -215,6 +238,7 @@ export function useOmeDownloadsState<T extends BaseSampleMetadata>(
     filePaths,
     totalSize,
     bulkDownloadItems,
+    tracking,
     datasetColumns,
     fileColumns,
     displayName,

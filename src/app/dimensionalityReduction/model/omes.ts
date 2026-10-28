@@ -1,6 +1,7 @@
 import type { OmesDataType } from "@/common/types/globalTypes";
 import type { FeatureKind } from "./features";
 import { SHOW_UMAP } from "@/common/umap";
+import { ATAC_PROTOCOLS, type AtacProtocol } from "@/common/atacProtocols";
 
 /**
  * In switcher order, named as the app's routes name them (?ome=lipidomics, as in /omes/lipidomics)
@@ -24,15 +25,20 @@ export type OmeCapabilities = {
   metrics: boolean;
   /** The kind of feature whose quantification can color the plot - see features.ts. */
   feature: FeatureKind | null;
+  /**
+   * The protocols whose samples each had a PCA of their own, plotted one at a time, the first by
+   * default. Empty where the ome had one PCA throughout.
+   */
+  protocols: readonly AtacProtocol[];
 };
 
 export const OME_CAPABILITIES: Record<ExplorerOme, OmeCapabilities> = {
-  ATAC: { umap: SHOW_UMAP, metrics: true, feature: null },
-  RNA: { umap: SHOW_UMAP, metrics: false, feature: "gene" },
-  WGBS: { umap: SHOW_UMAP, metrics: false, feature: null },
-  lipidomics: { umap: false, metrics: false, feature: "lipid" },
-  metabolomics: { umap: false, metrics: false, feature: "metabolite" },
-  metallomics: { umap: false, metrics: false, feature: "metal" },
+  ATAC: { umap: SHOW_UMAP, metrics: true, feature: null, protocols: ATAC_PROTOCOLS },
+  RNA: { umap: SHOW_UMAP, metrics: false, feature: "gene", protocols: [] },
+  WGBS: { umap: SHOW_UMAP, metrics: false, feature: null, protocols: [] },
+  lipidomics: { umap: false, metrics: false, feature: "lipid", protocols: [] },
+  metabolomics: { umap: false, metrics: false, feature: "metabolite", protocols: [] },
+  metallomics: { umap: false, metrics: false, feature: "metal", protocols: [] },
 };
 
 /** Case-insensitive, so a hand-typed ?ome=rna still finds RNA. */
@@ -42,12 +48,3 @@ export const findOme = (value: string | null): ExplorerOme | undefined =>
 export const METHODS = ["PCA", "UMAP"] as const;
 
 export type Method = (typeof METHODS)[number];
-
-/** Number of principal components the API exposes per ome. */
-export const PC_COUNT = 10;
-
-/** "PC1 (22.2%)", or "PC1" where the API has no variance for it. The API's pve is already a percentage. */
-export const pcLabel = (pc: number, pve: readonly (number | null)[]) => {
-  const value = pve[pc - 1];
-  return value === null || value === undefined ? `PC${pc}` : `PC${pc} (${value.toFixed(1)}%)`;
-};

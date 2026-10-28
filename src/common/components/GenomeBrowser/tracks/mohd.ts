@@ -197,7 +197,8 @@ function createFileTrack(
       base: {
         ...(isAnnotation ? BIGBED_DEFAULTS : BIGWIG_DEFAULTS),
         id: trackId,
-        title: `${sample.id} ${file.fileType}`,
+        // The ome leads because the omes' signal files are named much alike.
+        title: `${label} ${sample.id} ${file.fileType}`,
         color,
       },
       config: {
@@ -240,7 +241,7 @@ function createWgbsMethylTrack(data: MohdOmeData, sample: MohdSample): { track: 
       base: {
         ...METHYLC_DEFAULTS,
         id: sample.id,
-        title: `${sample.id} ${WGBS_DESCRIPTION}`,
+        title: `${info.ome} ${sample.id} ${WGBS_DESCRIPTION}`,
       },
       config: {
         urls: {

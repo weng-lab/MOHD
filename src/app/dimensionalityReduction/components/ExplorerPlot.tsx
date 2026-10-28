@@ -35,8 +35,6 @@ export type PointMeta = {
   rampValue: number | null;
 };
 
-const MINIMAP = { position: { right: 50, bottom: 50 } };
-
 /** The grouped fields a participant's sample is described by on hover. Protocol is among the details below. */
 const TOOLTIP_FIELDS = FIELDS.filter(({ key }) => key !== "protocol");
 
@@ -193,7 +191,6 @@ const ExplorerPlot = ({
             onHoveredPointChange={(point) => setPlotHover(point?.metaData?.row ?? null)}
             // No groupPointsAnchor: it could only swell one of the color and shape groups; the chips show both.
             controlsPosition={"right"}
-            miniMap={MINIMAP}
             downloadButton
             downloadFileName={downloadFileName}
           />

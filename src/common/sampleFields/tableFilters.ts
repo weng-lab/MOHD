@@ -7,7 +7,7 @@
  */
 
 import { excludedValues, withExcludedValues, type TableFilters } from "@weng-lab/ui-components";
-import type { GridFilterModel } from "@mui/x-data-grid-premium";
+import { GridLogicOperator, type GridFilterModel } from "@mui/x-data-grid-premium";
 import { QC_GROUP, columnOf, fieldOfColumn, type Field, type FieldDefinition, type SampleGroups } from "./fields";
 import { groupsOf, toHiddenSets, type Filters } from "./groups";
 import { DATASET_COLUMN } from "./sampleColumns";
@@ -27,6 +27,35 @@ export const chipFilters = (
   }
   return { fields: fields.map(({ key }) => key), hidden: toHiddenSets(hidden), hideQc };
 };
+
+/**
+ * The model with a field's column filtered down to one value, as "is any of" it - the item a chip
+ * legend writes when it keeps one value of three or more - and every other column's filters kept. A
+ * tab that plots that value's samples alone sets it, so the table lists the samples its plot draws.
+ */
+export const onlyValue = (model: GridFilterModel, field: Field, value: string): GridFilterModel => {
+  const column = columnOf(field);
+  return {
+    ...model,
+    logicOperator: GridLogicOperator.And,
+    items: [
+      ...model.items.filter((item) => item.field !== column),
+      { id: `${column}:kept`, field: column, operator: "isAnyOf", value: [value] },
+    ],
+  };
+};
+
+/**
+ * QC filtered out of the Status column, as its chip writes it there. A heatmap page's starting filters
+ * where QC samples would otherwise take up columns for little - see HeatmapQcToggle.
+ */
+export const QC_HIDDEN: GridFilterModel = withExcludedValues(
+  { items: [] },
+  columnOf("status"),
+  new Set([QC_GROUP]),
+  [QC_GROUP],
+  "singleSelect"
+);
 
 /**
  * QC's chip clicked: clears QC from every column that filters it out, or filters it out of this
