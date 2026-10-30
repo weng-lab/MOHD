@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { GridRowSelectionModel } from "@mui/x-data-grid-premium";
+import type { GridRowId, GridRowSelectionModel } from "@mui/x-data-grid-premium";
 import type { CatalogFile } from "@/common/components/Downloads/types";
 
 export type CheckState = "checked" | "indeterminate" | "unchecked";
@@ -7,8 +7,6 @@ export type CheckState = "checked" | "indeterminate" | "unchecked";
 type UseDownloadSelectionArgs = {
   /** sample_id -> filenames eligible for bulk selection (open, not the bundle, passes file filter) */
   selectableByDataset: Map<string, Set<string>>;
-  /** datasets currently visible after left-pane filters (only sample_id is read) */
-  visibleDatasets: readonly { sample_id: string }[];
   activeDataset: string | null;
   activeFiles: CatalogFile[];
 };
@@ -23,8 +21,10 @@ export type DownloadSelectionState = {
   deselectFile: (datasetId: string, filename: string) => void;
   deselectDataset: (datasetId: string) => void;
   datasetCheckState: Map<string, CheckState>;
-  allCheckState: CheckState;
-  toggleAll: () => void;
+  /** Header checkbox state over the given datasets - the ones the dataset grid lists. */
+  allCheckStateOf: (datasetIds: readonly GridRowId[]) => CheckState;
+  /** Selects every selectable file of the given datasets, or deselects them all when they already are. */
+  toggleAll: (datasetIds: readonly GridRowId[]) => void;
   toggleDataset: (datasetId: string) => void;
 };
 
@@ -53,19 +53,19 @@ function buildDatasetCheckState(
   return map;
 }
 
-/** Header checkbox state, summed across the datasets currently visible. */
+/** Header checkbox state, summed across the given datasets. */
 function buildAllCheckState(
-  visibleDatasets: readonly { sample_id: string }[],
+  datasetIds: readonly GridRowId[],
   selectableByDataset: ReadonlyMap<string, Set<string>>,
   selection: ReadonlyMap<string, Set<string>>
 ): CheckState {
   let totalSelectable = 0;
   let totalSelected = 0;
-  for (const dataset of visibleDatasets) {
-    const selectable = selectableByDataset.get(dataset.sample_id);
+  for (const id of datasetIds) {
+    const selectable = selectableByDataset.get(String(id));
     if (!selectable) continue;
     totalSelectable += selectable.size;
-    totalSelected += countSelected(selectable, selection.get(dataset.sample_id));
+    totalSelected += countSelected(selectable, selection.get(String(id)));
   }
   return checkStateFor(totalSelected, totalSelectable);
 }
@@ -81,7 +81,6 @@ function buildAllCheckState(
  */
 export function useDownloadSelection({
   selectableByDataset,
-  visibleDatasets,
   activeDataset,
   activeFiles,
 }: UseDownloadSelectionArgs): DownloadSelectionState {
@@ -137,17 +136,19 @@ export function useDownloadSelection({
   };
 
   const datasetCheckState = buildDatasetCheckState(selectableByDataset, selection);
-  const allCheckState = buildAllCheckState(visibleDatasets, selectableByDataset, selection);
+  const allCheckStateOf = (datasetIds: readonly GridRowId[]) =>
+    buildAllCheckState(datasetIds, selectableByDataset, selection);
 
-  const toggleAll = () => {
-    const deselect = allCheckState === "checked";
+  const toggleAll = (datasetIds: readonly GridRowId[]) => {
+    const deselect = allCheckStateOf(datasetIds) === "checked";
     setSelection((prev) => {
       const nextMap = new Map(prev);
-      for (const dataset of visibleDatasets) {
-        const selectable = selectableByDataset.get(dataset.sample_id);
+      for (const id of datasetIds) {
+        const datasetId = String(id);
+        const selectable = selectableByDataset.get(datasetId);
         if (!selectable || selectable.size === 0) continue;
-        if (deselect) nextMap.delete(dataset.sample_id);
-        else nextMap.set(dataset.sample_id, new Set(selectable));
+        if (deselect) nextMap.delete(datasetId);
+        else nextMap.set(datasetId, new Set(selectable));
       }
       return nextMap;
     });
@@ -174,7 +175,7 @@ export function useDownloadSelection({
     deselectFile,
     deselectDataset,
     datasetCheckState,
-    allCheckState,
+    allCheckStateOf,
     toggleAll,
     toggleDataset,
   };

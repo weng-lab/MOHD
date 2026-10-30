@@ -1,3 +1,4 @@
+import type { AtacProtocolKey } from "@/common/atacProtocols";
 import type { FeatureOption } from "./features";
 import type { Metric } from "./metrics";
 import type { ExplorerOme } from "./omes";
@@ -25,10 +26,17 @@ export type ExplorerRow = {
   metrics?: Record<Metric, number | null>;
 };
 
+/** One PCA's percent of variance explained, zero-indexed to match `pcs`: pve[0] is PC1's. */
+export type Pca = {
+  /** The protocol whose samples it placed, on an ome with a PCA per protocol; null for the whole ome. */
+  protocol: AtacProtocolKey | null;
+  pve: (number | null)[];
+};
+
 export type OmeData = {
   rows: ExplorerRow[];
-  /** Percent of variance explained, zero-indexed to match `pcs`: pve[0] is PC1's. */
-  pve: (number | null)[];
+  /** One per protocol on an ome whose protocols each had their own - see OME_CAPABILITIES - and one elsewhere. */
+  pcas: Pca[];
   /** What the mass-spec picker lists, in order. Values are fetched a feature at a time. */
   features?: FeatureOption[];
 };

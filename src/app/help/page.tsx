@@ -7,7 +7,14 @@ export default function About() {
       <Grid
         container
         spacing={3}
-        sx={{ maxWidth: "min(70%, 1000px)", minWidth: "600px", marginX: "auto", marginY: "3rem" }}
+        sx={{
+          maxWidth: "min(70%, 1000px)",
+          // Never narrower than 600px, unless the screen is: then fill it, less a 1rem margin each side
+          minWidth: "min(600px, 100% - 2rem)",
+          marginX: "auto",
+          marginY: "3rem",
+          overflowWrap: "anywhere",
+        }}
       >
         {/* Contact Us */}
         <Grid id="contact-us" size={12}>
@@ -37,7 +44,7 @@ export default function About() {
           </Box>
           <Box mb={2}>
             <Typography display={"inline"} variant="body1">
-              If you would like to send an attachment, feel free to email us directly at&nbsp;
+              If you would like to send an attachment, feel free to email us directly at{" "}
             </Typography>
             <Link
               display={"inline"}

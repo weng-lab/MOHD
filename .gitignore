@@ -43,3 +43,6 @@ next-env.d.ts
 # dev tools
 .devserve
 .opencode
+
+# IDE
+/.vscode

@@ -1,15 +1,13 @@
 import { formatValue, formatValueBound, fromLogValue, toLogValue } from "@/common/quantification";
+import { CLIP_PERCENTILE, SEQUENTIAL_RAMP, defaultRange } from "@/common/colorRamp";
 import {
-  CLIP_PERCENTILE,
-  SEQUENTIAL_RAMP,
-  defaultRange,
   percentilePresets,
   reachOf,
   symmetricPresets,
   type ColorRange,
   type RampKind,
   type RangePreset,
-} from "@/common/components/Colorbar/colorbarAxis";
+} from "@weng-lab/visualization";
 import { zScoreByRow } from "./zScoreByRow";
 
 /**
@@ -61,12 +59,14 @@ export const valuesByRow = (rowKeys: string[], valueBySample: ReadonlyMap<string
  * holds the colors at the ends, so moving the range recolors without rebuilding the grid.
  */
 export type HeatmapColorbar = {
-  /** Which mode this is, so a range set in one is dropped on switching to another. */
+  /** Which mode this is, which names the colorbar for screen readers. */
   mode: HeatmapScaleMode;
   kind: RampKind;
   /** A cell's unclamped value on the scale: what is colored, and what a sweep matches. */
   value: (rowKey: string, value: number) => number;
   presets: RangePreset[];
+  /** The lowest and highest value any cell has, shown or not: how far the range editor reaches. */
+  extent: ColorRange;
   /** Writes a value on the scale the way the legend labels it. */
   format: (value: number) => string;
   /** A cell's own value, where it wants more precision than the legend's ends; `format` otherwise. */
@@ -85,6 +85,30 @@ export type HeatmapColorScale = {
   /** Undefined only where no cell has a value for the scale to span. */
   colorbar?: HeatmapColorbar;
 };
+
+/**
+ * Every cell's value on the scale, a sample (column) at a time, as ZoomableHeatmap takes them: NaN where
+ * a sample has none. Unclamped where there's a colorbar, whose range the heatmap holds colors at.
+ */
+export const heatmapValues = (
+  scale: HeatmapColorScale,
+  rowKeys: string[],
+  valueBySample: ReadonlyMap<string, number | null>[]
+) => {
+  const toValue = scale.colorbar?.value ?? scale.toCount;
+  const values = new Float32Array(rowKeys.length * valueBySample.length);
+  valueBySample.forEach((valueByRow, column) =>
+    rowKeys.forEach((key, row) => {
+      const value = valueByRow.get(key);
+      values[column * rowKeys.length + row] = value == null ? NaN : toValue(key, value);
+    })
+  );
+  return values;
+};
+
+/** The ends of values sorted ascending, or `fallback` where there are none. */
+const extentOf = (sorted: Float64Array, fallback: ColorRange): ColorRange =>
+  sorted.length ? [sorted[0], sorted[sorted.length - 1]] : fallback;
 
 const formatZ = (z: number) => `${z < 0 ? "−" : ""}${Math.abs(z).toFixed(1)}`;
 
@@ -112,11 +136,10 @@ export const buildHeatmapColorScale = (
     );
     const z = (key: string, value: number) => zByRow.get(key)!(transform(value));
     // Every cell's z, not only the shown ones', so a table filter can't move where "All" reaches.
-    const reach = reachOf(
-      Float64Array.from(
-        [...reference].flatMap(([key, values]) => values.flatMap((v) => (v === null ? [] : [z(key, v)])))
-      ).sort()
-    );
+    const everyZ = Float64Array.from(
+      [...reference].flatMap(([key, values]) => values.flatMap((v) => (v === null ? [] : [z(key, v)])))
+    ).sort();
+    const reach = reachOf(everyZ);
     const signedZ = (end: number) => `${end > 0 ? "+" : ""}${formatZ(end)}`;
     return {
       colors: DIVERGING_COLORS,
@@ -131,6 +154,7 @@ export const buildHeatmapColorScale = (
         kind: "diverging",
         value: z,
         presets: symmetricPresets(Math.max(reach, Z_LIMIT)),
+        extent: extentOf(everyZ, [-Z_LIMIT, Z_LIMIT]),
         format: formatZ,
         notes: [
           `Colors follow each ${rowNoun}'s z-score of ${of}, across every sample.`,
@@ -170,6 +194,7 @@ export const buildHeatmapColorScale = (
               kind: "sequential",
               value: (_, value) => toLogValue(value),
               presets: percentilePresets(sorted),
+              extent: extentOf(sorted, domain),
               format,
               formatValue: (log) => formatValue(fromLogValue(log)),
               notes: [

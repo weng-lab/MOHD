@@ -13,14 +13,12 @@ import {
   type FieldDefinition,
   type SampleGroups,
 } from "@/common/sampleFields/fields";
-import { passesFilters } from "@/common/sampleFields/groups";
 import { NO_SHAPE, shapeOptions, shapingOf, type ShapeBy } from "@/common/sampleFields/shapes";
 import FieldLegends, { type GroupHover } from "@/common/sampleFields/FieldLegends";
 import type { SampleTableState } from "@/common/sampleFields/useSampleTable";
 import PaneFigure from "./PaneFigure";
 import { PlotHeaderTitle } from "./PlotHeader";
 import { HEADER_SELECT_SX } from "./plotHeaderSx";
-import { dimHidden, spotlight } from "./plotDimming";
 import { shapeOf } from "./pointShapes";
 import PlotTooltip from "./PlotTooltip";
 
@@ -35,8 +33,6 @@ const FADED_NOTES = {
   unselected: "Not in the current selection",
 };
 
-const MINIMAP = { position: { right: 50, bottom: 50 } };
-
 const SELECT_SLOT_PROPS = { select: { MenuProps: { disableScrollLock: true } } };
 
 /** "Sex", "Sex and search", "Sex, Dataset and search". */
@@ -46,6 +42,12 @@ const listOf = (names: readonly string[]) =>
 export type DimensionalityScatterPlotProps<T extends SampleGroups> = {
   /** The page's table: the samples, and the selection and filters the plot shares with it. */
   table: SampleTableState<T>;
+  /**
+   * Draws only this protocol's samples, as on ATAC, whose protocols each had a PCA of their own. The
+   * plot isn't colored or shaped by protocol then, since every point shares it, and the page is to
+   * filter the table down to the protocol as the plot's tab opens - see protocolScope.
+   */
+  protocol?: string;
   loading: boolean;
   getX: (row: T) => number | null | undefined;
   getY: (row: T) => number | null | undefined;
@@ -58,12 +60,34 @@ export type DimensionalityScatterPlotProps<T extends SampleGroups> = {
 };
 
 /**
+ * What of the table a plot draws on: every plotted sample, or one protocol's alone, with the table
+ * filtered down to them. Then protocol isn't offered to color or shape by, its filter needs no
+ * explaining while it keeps the protocol in, and clearing the filters keeps the protocol's.
+ */
+const protocolScope = <T extends SampleGroups>(table: SampleTableState<T>, protocol: string | undefined) => {
+  if (protocol === undefined) {
+    return { samples: table.plotted, fields: table.fields, namedFields: [], clearFilters: table.clearFilters };
+  }
+  return {
+    samples: table.plotted.filter((sample) => sample.protocol === protocol),
+    fields: table.fields.filter(({ key }) => key !== "protocol"),
+    // The tab names the protocol, so a filter keeping it goes without saying - one leaving it out doesn't.
+    namedFields: table.filters.hidden.protocol.has(protocol) ? [] : (["protocol"] as const),
+    clearFilters: () => {
+      table.clearFilters();
+      table.filterTo("protocol", protocol);
+    },
+  };
+};
+
+/**
  * An ome's PCA or UMAP beside its table, colored and shaped by the explorer's fields with the same
  * chip legends. The table's filters decide what's faded, and the chips edit them; a selection from
  * the table or the plot fades the rest.
  */
 const DimensionalityScatterPlot = <T extends SampleGroups>({
   table,
+  protocol,
   loading,
   getX,
   getY,
@@ -77,26 +101,26 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
   const [shape, setShape] = useState<ShapeBy>(NO_SHAPE);
 
   // The plotted samples alone, so the legend counts only what can be drawn.
-  const { plotted: samples, fields, filters, selected, setSelected } = table;
+  const { filters, isListed, selected, setSelected } = table;
+  const { samples, fields, namedFields, clearFilters } = protocolScope(table, protocol);
 
   const shapeable = shapeOptions(fields, samples);
   const shaping = shapingOf(shape, shapeable, samples);
 
   // Filters no legend row shows, named so the reader knows why points are faded.
-  const unshown = table.unshownFilters(shaping ? [color, shaping.key] : [color]);
+  const unshown = table.unshownFilters([color, ...(shaping ? [shaping.key] : []), ...namedFields]);
 
-  const selectedIds = new Set(selected.map(({ sample_id }) => sample_id));
+  // Only this plot's: a sample selected on another protocol's tab, which the table hides on this one,
+  // doesn't fade every point here.
+  const sampleIds = new Set(samples.map(({ sample_id }) => sample_id));
+  const selectedIds = new Set(selected.map(({ sample_id }) => sample_id).filter((id) => sampleIds.has(id)));
 
   const plotted = samples.flatMap((sample): Point<PointMeta<T>>[] => {
     const x = getX(sample);
     const y = getY(sample);
     if (x == null || y == null) return [];
     const isSelected = selectedIds.has(sample.sample_id);
-    const faded = !passesFilters(sample, filters)
-      ? "filtered"
-      : selectedIds.size > 0 && !isSelected
-        ? "unselected"
-        : null;
+    const faded = !isListed(sample) ? "filtered" : selectedIds.size > 0 && !isSelected ? "unselected" : null;
     return [
       {
         x,
@@ -105,6 +129,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
         color: colorOf(color, groupOf(color, sample)),
         // Undefined where nothing is shaped, leaving the default to the plot.
         shape: shaping ? shapeOf(shaping.scale, groupOf(shaping.key, sample)) : undefined,
+        dimmed: faded !== null,
         metaData: { sample, faded },
       },
     ];
@@ -112,10 +137,8 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
 
   // Neutral groups first, so they're drawn beneath the rest.
   const isNeutral = ({ metaData }: Point<PointMeta<T>>) => isNeutralGroup(groupOf(color, metaData!.sample));
-  const { points, shown } = dimHidden(
-    [...plotted.filter(isNeutral), ...plotted.filter((point) => !isNeutral(point))],
-    (point) => point.metaData!.faded === null
-  );
+  const points = [...plotted.filter(isNeutral), ...plotted.filter((point) => !isNeutral(point))];
+  const shown = points.filter(({ dimmed }) => !dimmed);
 
   const selectPoints = (picked: Point<PointMeta<T>>[]) => {
     // A filtered-out sample stays out of play; the rest are faded only by the selection being added to.
@@ -186,6 +209,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
             <FieldLegends
               rows={samples}
               filters={filters}
+              listed={isListed}
               color={{ key: color, label: fields.find(({ key }) => key === color)?.label ?? color }}
               shape={shaping}
               onToggle={table.toggleFilter}
@@ -199,7 +223,7 @@ const DimensionalityScatterPlot = <T extends SampleGroups>({
                 <Typography variant="caption" color="text.secondary">
                   Also filtered in the table by {listOf(unshown)}.
                 </Typography>
-                <Button size="small" onClick={table.clearFilters} sx={{ py: 0 }}>
+                <Button size="small" onClick={clearFilters} sx={{ py: 0 }}>
                   Clear all filters
                 </Button>
               </Stack>
@@ -238,7 +262,7 @@ const ShapeSelect = ({ shapeable, value, onChange }: ShapeSelectProps) => (
 );
 
 type LinkedPlotProps<T extends SampleGroups> = {
-  /** Every point, the faded ones first - what dimHidden returns. */
+  /** Every point, the faded ones `dimmed`. */
   points: Point<PointMeta<T>>[];
   /** The points in focus, which a hovered chip can swell and set apart. */
   shown: Point<PointMeta<T>>[];
@@ -285,12 +309,12 @@ const LinkedPlot = <T extends SampleGroups>({
   const [plotHover, setPlotHover] = useState<SampleGroups | null>(null);
   const [legendHover, setLegendHover] = useState<GroupHover | null>(null);
 
-  // A hovered chip's points, from those in focus, with the rest dimmed around them. A chip with none
-  // in focus - one switched off - leaves the plot as it is.
+  // A hovered chip's points, from those in focus, spotlit with the rest dimmed around them. A chip with
+  // none in focus - one switched off - leaves the plot as it is.
   const group = legendHover
     ? shown.filter(({ metaData }) => groupOf(legendHover.field, metaData!.sample) === legendHover.value)
     : [];
-  const highlighted = group.length > 0 ? group : null;
+  const spotlit = group.length > 0 ? group : undefined;
 
   return (
     <>
@@ -298,21 +322,22 @@ const LinkedPlot = <T extends SampleGroups>({
       <Box sx={{ flexGrow: 1, minWidth: 0, minHeight: 0 }}>
         <ScatterPlot
           ref={plotRef}
-          pointData={spotlight(points, highlighted)}
+          pointData={points}
           loading={loading}
           selectable
           // Pan first, so a drag moves around the plot; the toolbar switches to lasso selection.
           initialState={{ controls: { selectionType: "pan" } }}
           onSelectionChange={onSelectPoints}
           onPointClicked={onTogglePoint}
-          hoveredPoints={highlighted ?? undefined}
+          hoveredPoints={spotlit}
+          spotlight
           onHoveredPointChange={(point) => setPlotHover(point?.metaData?.sample ?? null)}
           tooltipBody={({ metaData }) => {
             const { sample, faded } = metaData!;
             return (
               <PlotTooltip
                 title={sample.sample_id}
-                // Faded points can win the hit test, so a faded sample says why it's faded.
+                // A faded point can still be hovered where nothing in focus is near, so it says why.
                 note={faded ? FADED_NOTES[faded] : undefined}
                 rows={tooltipRowsOf(tooltipFields, sample)}
               />
@@ -320,7 +345,6 @@ const LinkedPlot = <T extends SampleGroups>({
           }}
           controlsHighlight={theme.palette.primary.main}
           controlsPosition="right"
-          miniMap={MINIMAP}
           leftAxisLabel={leftAxisLabel}
           bottomAxisLabel={bottomAxisLabel}
           downloadFileName={downloadFileName}

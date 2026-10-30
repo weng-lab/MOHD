@@ -22,8 +22,15 @@ export type ColorOptions = {
   feature: FeatureKind | null;
 };
 
+/**
+ * The fields an ome's samples are colored, shaped and filtered by: its own, less protocol. ATAC, the
+ * one ome whose protocols vary, is plotted a protocol at a time, each having had its own PCA.
+ */
+export const explorerFieldsFor = (ome: ExplorerOme): FieldDefinition[] =>
+  fieldsFor(ome).filter(({ key }) => key !== "protocol");
+
 export const colorOptionsFor = (ome: ExplorerOme): ColorOptions => ({
-  fields: fieldsFor(ome),
+  fields: explorerFieldsFor(ome),
   metrics: OME_CAPABILITIES[ome].metrics ? METRICS : [],
   feature: OME_CAPABILITIES[ome].feature,
 });

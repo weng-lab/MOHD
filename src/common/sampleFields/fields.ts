@@ -11,7 +11,7 @@ import {
   status_color_map,
   VALUE_LABEL_OVERRIDES,
 } from "@/common/colors";
-import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/components/plotDimming";
+import { NEUTRAL_DARK, NEUTRAL_MID } from "@/common/neutralColors";
 import type { OmesDataType } from "@/common/types/globalTypes";
 
 /**
@@ -36,15 +36,9 @@ export const isField = (value: string | null): value is Field => FIELDS.some(({ 
 /** The omes whose samples were taken by more than one protocol: every other ome has one throughout. */
 const VARIED_PROTOCOL_OMES: readonly OmesDataType[] = ["ATAC"];
 
-/** The omes the API records no age for, so an Age column would read "Unknown" for everyone. */
-const AGELESS_OMES: readonly OmesDataType[] = ["exposomics"];
-
-/** All of them, less protocol wherever it doesn't vary and age wherever there is none. */
+/** All of them, less protocol wherever it doesn't vary. */
 export const fieldsFor = (ome: OmesDataType): FieldDefinition[] =>
-  FIELDS.filter(
-    ({ key }) =>
-      (key !== "protocol" || VARIED_PROTOCOL_OMES.includes(ome)) && (key !== "age" || !AGELESS_OMES.includes(ome))
-  );
+  FIELDS.filter(({ key }) => key !== "protocol" || VARIED_PROTOCOL_OMES.includes(ome));
 
 /** What a sample's groups are read from: any page's row, with `qc` and `unplotted` set by toSample. */
 export type SampleGroups = {
@@ -127,16 +121,24 @@ export const toQuantificationSample = <R extends Omit<SampleGroups, "qc">>(row: 
 export const QC_GROUP = "QC / Reference";
 
 /** A participant's sample with no value recorded for the field. */
-const UNKNOWN_GROUP = "Unknown";
+export const UNKNOWN_GROUP = "Unknown";
+
+/** No value, or one recorded as "unknown", which means the same. */
+const isUnknown = (value: string | null | undefined) => !value || value.toLowerCase() === UNKNOWN_GROUP.toLowerCase();
+
+/**
+ * 0 for a value. The neutral groups follow the values, Unknown then QC / Reference, as the legends
+ * list them. Takes raw values too, as a downloads table holds them.
+ */
+const neutralRank = (value: string | null | undefined) => (value === QC_GROUP ? 2 : isUnknown(value) ? 1 : 0);
 
 /** Groups colored neutral, drawn beneath the rest and listed after them. */
-export const isNeutralGroup = (value: string) => value === QC_GROUP || value === UNKNOWN_GROUP;
+export const isNeutralGroup = (value: string) => neutralRank(value) > 0;
 
 export const groupOf = (field: Field, row: SampleGroups): string => {
   if (row.qc) return QC_GROUP;
   const value = row[ROW_KEYS[field]];
-  // A recorded "unknown" means the same as no value, and its palette gray would read as faded.
-  return !value || value.toLowerCase() === UNKNOWN_GROUP.toLowerCase() ? UNKNOWN_GROUP : value;
+  return value && !isUnknown(value) ? value : UNKNOWN_GROUP;
 };
 
 /** The app's color maps, so a value is the same color here as on every ome page. */
@@ -187,13 +189,25 @@ export const tooltipRowsOf = (fields: readonly FieldDefinition[], row: SampleGro
     ? [{ label: "Sample", value: "QC / reference" }]
     : fields.map(({ key, label }) => ({ label, value: labelOf(key, groupOf(key, row)) }));
 
-/** Distinct values: age by band, the rest alphabetically, neutral groups last. Never by count, so order holds across omes. */
-export const sortValues = (field: Field, values: Iterable<string>): string[] => {
+/** Two of a field's values in display order: age by band, the rest alphabetically. */
+const compareValues = (field: Field, a: string, b: string) => {
   const band = (value: string) => {
     const index = AGE_BIN_LABELS.indexOf(value);
     return field === "age" && index !== -1 ? index : AGE_BIN_LABELS.length;
   };
-  return [...new Set(values)].sort(
-    (a, b) => Number(isNeutralGroup(a)) - Number(isNeutralGroup(b)) || band(a) - band(b) || a.localeCompare(b)
-  );
+  return band(a) - band(b) || a.localeCompare(b);
 };
+
+/**
+ * Orders a field's groups, or its raw values: the values in display order, ascending or descending,
+ * then Unknown and QC / Reference after them whichever the direction.
+ */
+export const compareGroups =
+  (field: Field, direction: "asc" | "desc" = "asc") =>
+  (a: string | null | undefined, b: string | null | undefined): number =>
+    neutralRank(a) - neutralRank(b) ||
+    (neutralRank(a) === 0 ? (direction === "desc" ? -1 : 1) * compareValues(field, a ?? "", b ?? "") : 0);
+
+/** Distinct values: age by band, the rest alphabetically, neutral groups last. Never by count, so order holds across omes. */
+export const sortValues = (field: Field, values: Iterable<string>): string[] =>
+  [...new Set(values)].sort(compareGroups(field));

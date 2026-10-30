@@ -6,9 +6,6 @@
  * one shape, so every row carries nulls for the other cohort's fields.
  */
 
-/** Number of principal components exposed by the API. */
-export const PC_COUNT = 10;
-
 /** 1000G+HGDP reference samples. */
 export type ReferenceRow = {
   sample_id: string;
@@ -20,18 +17,18 @@ export type ReferenceRow = {
   project: string | null;
 };
 
-/** MOHD cohort samples. Raw age is never included - the API only ever returns age_bin. */
+/**
+ * MOHD cohort samples. Their sample ID, case status and age are left out on the server, so none
+ * reaches the page: beside a participant's genotype coordinates, each brings them closer to being
+ * identified. Nothing is keyed on a row's identity, and the order the rows arrive in carries none.
+ */
 export type MohdRow = {
-  sample_id: string;
   pcs: number[];
-  case_status: string | null;
   sex_at_birth: string | null;
   site: string | null;
   recruited_condition: string | null;
   /** May arrive as PRIVACY_BIN rather than a category - see binReportedRace(). */
   reported_race_ethnicity: string | null;
-  /** 10-year band, top-coded at "80+", binned by the API. */
-  age_bin: string | null;
 };
 
 export type PCAData = {

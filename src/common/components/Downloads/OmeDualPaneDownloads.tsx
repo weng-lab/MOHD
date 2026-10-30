@@ -7,6 +7,7 @@ import DownloadFiltersPanel from "./DownloadFiltersPanel";
 import DatasetsPane from "./DatasetsPane";
 import FilesPane from "./FilesPane";
 import BulkDownloadChip from "./BulkDownloadChip";
+import { DownloadTrackingContext } from "./downloadTracking";
 import { LinkComponent } from "@/common/components/LinkComponent";
 import { ANVIL_URL } from "@/common/downloads";
 import type { BaseSampleMetadata, FilterFieldConfig } from "@/common/components/Downloads/types";
@@ -101,14 +102,14 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({ config }: Ome
     deselectFile,
     deselectDataset,
     datasetCheckState,
-    allCheckState,
+    allCheckStateOf,
     toggleAll,
     toggleDataset,
     selectableByDataset,
-    visibleDatasets,
     filePaths,
     totalSize,
     bulkDownloadItems,
+    tracking,
     datasetColumns,
     fileColumns,
     displayName,
@@ -117,8 +118,7 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({ config }: Ome
   const { datasetColumnsWithSelect, fileColumnsWithDownload } = useDownloadColumns({
     datasetColumns,
     fileColumns,
-    allCheckState,
-    visibleDatasets,
+    allCheckStateOf,
     selectableByDataset,
     datasetCheckState,
     toggleAll,
@@ -129,78 +129,80 @@ const OmeDualPaneDownloadsInner = <T extends BaseSampleMetadata>({ config }: Ome
   useMeasuredHeightVar(`#${BAR_ID}`, BAR_HEIGHT_VAR);
 
   return (
-    <Box>
-      <Box id={BAR_ID} display="flex" flexDirection="column">
-        {noOpenAccess && (
-          <Alert severity="warning" sx={{ mb: 1 }}>
-            This ome&apos;s files are all restricted. Please visit{" "}
-            <LinkComponent href={ANVIL_URL} openInNewTab showExternalIcon>
-              the MOHD page on AnVIL
-            </LinkComponent>{" "}
-            to register for access to restricted files.
-          </Alert>
+    <DownloadTrackingContext value={tracking}>
+      <Box>
+        <Box id={BAR_ID} display="flex" flexDirection="column">
+          {noOpenAccess && (
+            <Alert severity="warning" sx={{ mb: 1 }}>
+              This ome&apos;s files are all restricted. Please visit{" "}
+              <LinkComponent href={ANVIL_URL} openInNewTab showExternalIcon onClick={() => tracking.restricted(null)}>
+                the MOHD page on AnVIL
+              </LinkComponent>{" "}
+              to register for access to restricted files.
+            </Alert>
+          )}
+          <DownloadFiltersPanel
+            datasetFilters={config.datasetFilters}
+            datasetOptionsMap={datasetOptionsMap}
+            datasetSelectedValues={datasetSelectedValues}
+            onDatasetToggle={handleDatasetToggleChange}
+            datasetFilterModel={datasetFilterModel}
+            onResetDatasetFilters={() => setDatasetFilterModel({ items: [] })}
+            fileTypeOptions={fileTypeOptions}
+            fileSelectedValues={fileSelectedValues}
+            onFileTypeChange={handleFileTypeSelectChange}
+            fileFilterModel={fileFilterModel}
+            onResetFileFilters={() => setFileFilterModel({ items: [] })}
+          />
+        </Box>
+        <ResizablePanes
+          direction={{ xs: "column", lg: "row" }}
+          min={15}
+          max={85}
+          {...PANE_HEIGHTS}
+          first={
+            <DatasetsPane
+              datasets={datasets}
+              omeFiles={omeFiles}
+              columns={datasetColumnsWithSelect}
+              loading={loading}
+              error={error}
+              activeDataset={activeDataset}
+              onActivate={setActiveDataset}
+              filterModel={datasetFilterModel}
+              onFilterModelChange={setDatasetFilterModel}
+            />
+          }
+          second={
+            <FilesPane
+              activeDataset={activeDataset}
+              files={activeFiles}
+              bundle={activeBundle}
+              columns={fileColumnsWithDownload}
+              loading={loading}
+              selectionEnabled={!noOpenAccess}
+              selectionModel={activeSelectionModel}
+              onSelectionModelChange={setActiveSelection}
+              filterModel={fileFilterModel}
+              onFilterModelChange={setFileFilterModel}
+            />
+          }
+        />
+        {!noOpenAccess && (
+          <BulkDownloadChip
+            visible={numSelectedFiles > 0}
+            filePaths={filePaths}
+            totalSize={totalSize}
+            numFiles={numSelectedFiles}
+            onClear={clearSelection}
+            ome={displayName}
+            bulkDownloadItems={bulkDownloadItems}
+            onRemoveFile={deselectFile}
+            onRemoveDataset={deselectDataset}
+          />
         )}
-        <DownloadFiltersPanel
-          datasetFilters={config.datasetFilters}
-          datasetOptionsMap={datasetOptionsMap}
-          datasetSelectedValues={datasetSelectedValues}
-          onDatasetToggle={handleDatasetToggleChange}
-          datasetFilterModel={datasetFilterModel}
-          onResetDatasetFilters={() => setDatasetFilterModel({ items: [] })}
-          fileTypeOptions={fileTypeOptions}
-          fileSelectedValues={fileSelectedValues}
-          onFileTypeChange={handleFileTypeSelectChange}
-          fileFilterModel={fileFilterModel}
-          onResetFileFilters={() => setFileFilterModel({ items: [] })}
-        />
       </Box>
-      <ResizablePanes
-        direction={{ xs: "column", lg: "row" }}
-        min={15}
-        max={85}
-        {...PANE_HEIGHTS}
-        first={
-          <DatasetsPane
-            datasets={datasets}
-            omeFiles={omeFiles}
-            columns={datasetColumnsWithSelect}
-            loading={loading}
-            error={error}
-            activeDataset={activeDataset}
-            onActivate={setActiveDataset}
-            filterModel={datasetFilterModel}
-            onFilterModelChange={setDatasetFilterModel}
-          />
-        }
-        second={
-          <FilesPane
-            activeDataset={activeDataset}
-            files={activeFiles}
-            bundle={activeBundle}
-            columns={fileColumnsWithDownload}
-            loading={loading}
-            selectionEnabled={!noOpenAccess}
-            selectionModel={activeSelectionModel}
-            onSelectionModelChange={setActiveSelection}
-            filterModel={fileFilterModel}
-            onFilterModelChange={setFileFilterModel}
-          />
-        }
-      />
-      {!noOpenAccess && (
-        <BulkDownloadChip
-          visible={numSelectedFiles > 0}
-          filePaths={filePaths}
-          totalSize={totalSize}
-          numFiles={numSelectedFiles}
-          onClear={clearSelection}
-          ome={displayName}
-          bulkDownloadItems={bulkDownloadItems}
-          onRemoveFile={deselectFile}
-          onRemoveDataset={deselectDataset}
-        />
-      )}
-    </Box>
+    </DownloadTrackingContext>
   );
 };
 

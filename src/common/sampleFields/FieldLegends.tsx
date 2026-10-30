@@ -1,8 +1,8 @@
 "use client";
 
-import PlotLegend from "@/common/components/PlotLegend";
 import ShapeLegend from "@/common/components/ShapeLegend";
 import { shapeOf } from "@/common/components/pointShapes";
+import { ChipLegend } from "@weng-lab/visualization";
 import { QC_GROUP, type Field, type SampleGroups } from "./fields";
 import { legendGroups, type Filters } from "./groups";
 import type { Shaping } from "./shapes";
@@ -12,7 +12,10 @@ export type GroupHover = { field: Field; value: string };
 
 export type FieldLegendsProps = {
   rows: readonly SampleGroups[];
+  /** The groups switched off. */
   filters: Filters;
+  /** Whether a sample is in focus, which the chips count. */
+  listed: (row: SampleGroups) => boolean;
   /** The field coloring the plot, or null where a colorbar stands in for its chips. */
   color: { key: Field; label: string } | null;
   shape: Shaping | null;
@@ -28,7 +31,7 @@ export type FieldLegendsProps = {
  * where it names another field; otherwise the color chips carry the glyphs. Both rows toggle the
  * same per-field filters.
  */
-const FieldLegends = ({ rows, filters, color, shape, onToggle, ringed, onHover }: FieldLegendsProps) => {
+const FieldLegends = ({ rows, filters, listed, color, shape, onToggle, ringed, onHover }: FieldLegendsProps) => {
   const shapeRow = shape && shape.key !== color?.key ? shape : null;
   const hover = (field: Field) => (value: string | null) => onHover(value === null ? null : { field, value });
   // The QC chip stands for hideQc, whichever row it's in.
@@ -41,7 +44,7 @@ const FieldLegends = ({ rows, filters, color, shape, onToggle, ringed, onHover }
         <ShapeLegend
           label={shapeRow.label}
           scale={shapeRow.scale}
-          groups={legendGroups(rows, shapeRow.key, filters)}
+          groups={legendGroups(rows, shapeRow.key, hiddenOf(shapeRow.key), listed)}
           hidden={hiddenOf(shapeRow.key)}
           onToggle={(value) => onToggle(shapeRow.key, value)}
           highlighted={ringed(shapeRow.key)}
@@ -49,16 +52,17 @@ const FieldLegends = ({ rows, filters, color, shape, onToggle, ringed, onHover }
         />
       )}
       {color && (
-        <PlotLegend
+        <ChipLegend
           // Named only beneath a shape row, to tell the two apart.
           label={shapeRow ? color.label : undefined}
-          groups={legendGroups(rows, color.key, filters).map((group) =>
+          groups={legendGroups(rows, color.key, hiddenOf(color.key), listed).map((group) =>
             shape?.key === color.key ? { ...group, shape: shapeOf(shape.scale, group.value) } : group
           )}
           hidden={hiddenOf(color.key)}
           onToggle={(value) => onToggle(color.key, value)}
           highlighted={ringed(color.key)}
           onHover={hover(color.key)}
+          scrollable
         />
       )}
     </>

@@ -1,10 +1,12 @@
 import { Box, Button, Tooltip } from "@mui/material";
 import { Download } from "@mui/icons-material";
 import { Table, TableColDef } from "@weng-lab/ui-components";
-import type { Dispatch, SetStateAction } from "react";
+import { use, type Dispatch, type SetStateAction } from "react";
 import type { GridFilterModel } from "@mui/x-data-grid-premium";
 import { formatBytes } from "@/common/downloads";
+import { DownloadTrackingContext } from "@/common/components/Downloads/downloadTracking";
 import type { BaseSampleMetadata, CatalogDataset, OmeFile } from "@/common/components/Downloads/types";
+import { INITIAL_SAMPLE_SORT } from "@/common/sampleFields/sampleColumns";
 
 type DatasetsPaneProps = {
   datasets: CatalogDataset<BaseSampleMetadata>[];
@@ -31,6 +33,8 @@ export default function DatasetsPane({
   filterModel,
   onFilterModelChange,
 }: DatasetsPaneProps) {
+  const tracking = use(DownloadTrackingContext);
+
   return (
     <Box
       sx={{
@@ -58,6 +62,7 @@ export default function DatasetsPane({
                           component="a"
                           href={file.url}
                           download
+                          onClick={() => tracking?.joinedQuant(file)}
                           size="small"
                           variant="outlined"
                           startIcon={<Download />}
@@ -91,7 +96,7 @@ export default function DatasetsPane({
           filterModel={filterModel}
           onFilterModelChange={onFilterModelChange}
           initialState={{
-            sorting: { sortModel: [{ field: "sample_id", sort: "asc" }] },
+            sorting: { sortModel: INITIAL_SAMPLE_SORT },
           }}
         />
       </Box>

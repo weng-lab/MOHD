@@ -1,6 +1,6 @@
 "use client";
 
-import { FilterListOff } from "@mui/icons-material";
+import { ArrowForward, FilterListOff } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -19,22 +19,24 @@ import {
   type SxProps,
   type Theme,
 } from "@mui/material";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { getOmeInfoHref, getOmeLabel } from "@/app/omes/omeContent";
-import { LinkComponent } from "@/common/components/LinkComponent";
 import { PANEL_SX } from "./dimensions";
 import { FEATURE_KINDS, isFeatureColor } from "../model/features";
 import { colorOptionsFor, type ColorBy } from "../model/colorBy";
 import { labelOf, type Field } from "@/common/sampleFields/fields";
 import GeneSearch from "./GeneSearch";
-import { rowsFor, allRows } from "../model/rows";
+import { rowsFor, allRows, pveFor } from "../model/rows";
 import { valuesOf } from "@/common/sampleFields/groups";
-import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, PC_COUNT, pcLabel, type Method } from "../model/omes";
+import { EXPLORER_OMES, METHODS, OME_CAPABILITIES, type Method } from "../model/omes";
+import { PC_COUNT, pcLabel } from "@/common/components/pcAxis";
 import { switchOme, toggleHidden, type ExplorerState } from "../state/params";
 import QuantificationSearch from "./QuantificationSearch";
 import { NO_SHAPE, shapeOptions, type ShapeBy } from "@/common/sampleFields/shapes";
 import type { ExplorerData } from "../model/types";
 import { SHOW_UMAP } from "@/common/umap";
+import type { AtacProtocolKey } from "@/common/atacProtocols";
 
 const PC_CHOICES = Array.from({ length: PC_COUNT }, (_, i) => i + 1);
 
@@ -111,11 +113,48 @@ const PcSelect = ({ label, value, other, pve, onChange }: PcSelectProps) => (
   >
     {PC_CHOICES.map((pc) => (
       <MenuItem key={pc} value={pc} disabled={pc === other}>
-        {pcLabel(pc, pve)}
+        {pcLabel(pc, pve[pc - 1])}
       </MenuItem>
     ))}
   </TextField>
 );
+
+type ProtocolSectionProps = {
+  state: ExplorerState;
+  update: (patch: Partial<ExplorerState>) => void;
+};
+
+/**
+ * Which protocol's samples are plotted, on an ome whose protocols each had a PCA of their own. Its
+ * own section, ahead of the axes, as it decides which PCA they're from. Nothing on any other ome.
+ */
+const ProtocolSection = ({ state, update }: ProtocolSectionProps) => {
+  const { protocols } = OME_CAPABILITIES[state.ome];
+  if (protocols.length === 0) return null;
+
+  return (
+    <Section title="Protocol">
+      <ToggleButtonGroup
+        exclusive
+        fullWidth
+        size="small"
+        color="primary"
+        value={state.protocol}
+        onChange={(_, protocol: AtacProtocolKey | null) => protocol && update({ protocol })}
+        aria-label="Protocol"
+      >
+        {protocols.map((protocol) => (
+          <ToggleButton key={protocol.key} value={protocol.key} sx={{ textTransform: "none" }}>
+            {labelOf("protocol", protocol.value)}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+      <Typography variant="caption" color="text.secondary">
+        Each protocol&apos;s samples have a PCA of their own.
+      </Typography>
+    </Section>
+  );
+};
 
 type ReductionSectionProps = {
   state: ExplorerState;
@@ -176,11 +215,11 @@ export type ControlPanelProps = {
 };
 
 const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) => {
-  const { ome, method, color, shape, hideQc } = state;
+  const { ome, protocol, method, color, shape, hideQc } = state;
   const { fields, metrics, feature } = colorOptionsFor(ome);
-  const { pve } = data[ome];
+  const pve = pveFor(data, ome, protocol);
   const features = data[ome].features ?? [];
-  const rows = rowsFor(data, ome, method);
+  const rows = rowsFor(data, ome, method, protocol);
   const options: Partial<Record<Field, string[]>> = Object.fromEntries(
     fields.map(({ key }) => [key, valuesOf(rows, key)])
   );
@@ -217,10 +256,19 @@ const ControlPanel = ({ state, onChange, data, geneLabel }: ControlPanelProps) =
               </ToggleButton>
             ))}
           </Box>
-          <LinkComponent href={getOmeInfoHref(ome)} variant="caption" sx={{ alignSelf: "flex-start" }}>
+          {/* A text button, not outlined like the omes above it, so it can't pass for another one of them. */}
+          <Button
+            LinkComponent={Link}
+            href={getOmeInfoHref(ome)}
+            endIcon={<ArrowForward />}
+            // Its padding pulled back, so the label lines up with the ome buttons' left edge.
+            sx={{ alignSelf: "flex-start", ml: -1 }}
+          >
             Go to {getOmeLabel(ome)} page
-          </LinkComponent>
+          </Button>
         </Section>
+
+        <ProtocolSection state={state} update={update} />
 
         <ReductionSection state={state} pve={pve} update={update} />
 

@@ -1,13 +1,12 @@
 "use client";
 import { Box, Divider, Drawer, IconButton, List, ListItem, useMediaQuery, useTheme } from "@mui/material";
-import MuiLink from "@mui/material/Link";
-import Link from "next/link";
 import CloseIcon from "@mui/icons-material/Close";
 import { useMenuControl } from "./MenuContext";
 import { useEffect } from "react";
-import { PageInfo } from "./types";
+import { isExternalLink, PageInfo } from "./types";
 import { Search } from "@mui/icons-material";
 import AutoComplete from "../autocomplete";
+import { LinkComponent } from "../LinkComponent";
 
 export type MobileMenuProps = {
   pageLinks: PageInfo[];
@@ -102,23 +101,23 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
                     <List sx={{ pl: 2 }}>
                       {page.subPages.map((subPage) => (
                         <ListItem key={subPage.pageName} sx={{ py: 0 }} onClick={handleCloseDrawer}>
-                          <MuiLink
-                            component={Link}
+                          <LinkComponent
                             href={subPage.link}
                             sx={{ color: "gray", textTransform: "none", fontFamily: "inherit" }}
                             underline="none"
                           >
                             {subPage.pageName}
-                          </MuiLink>
+                          </LinkComponent>
                         </ListItem>
                       ))}
                     </List>
                   </>
                 ) : (
                   <ListItem onClick={handleCloseDrawer}>
-                    <MuiLink
-                      component={Link}
+                    <LinkComponent
                       href={page.link}
+                      openInNewTab={isExternalLink(page.link)}
+                      showExternalIcon={isExternalLink(page.link)}
                       sx={{
                         color: "black",
                         textTransform: "none",
@@ -129,7 +128,7 @@ export default function MobileMenu({ pageLinks }: MobileMenuProps) {
                       underline="none"
                     >
                       {page.pageName}
-                    </MuiLink>
+                    </LinkComponent>
                   </ListItem>
                 )}
                 <Divider />
