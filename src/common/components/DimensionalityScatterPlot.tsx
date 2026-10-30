@@ -344,7 +344,6 @@ const LinkedPlot = <T extends SampleGroups>({
             );
           }}
           controlsHighlight={theme.palette.primary.main}
-          controlsPosition="right"
           leftAxisLabel={leftAxisLabel}
           bottomAxisLabel={bottomAxisLabel}
           downloadFileName={downloadFileName}

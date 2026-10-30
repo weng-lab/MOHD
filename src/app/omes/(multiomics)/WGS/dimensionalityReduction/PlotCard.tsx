@@ -1,13 +1,12 @@
 "use client";
 
 import { Box, MenuItem, Paper, Stack, TextField } from "@mui/material";
-import { useState, type ReactNode, type RefObject } from "react";
+import { useState, type ReactNode } from "react";
 import PlotHeader, { PlotHeaderTitle } from "@/common/components/PlotHeader";
 import { HEADER_SELECT_SX } from "@/common/components/plotHeaderSx";
 import ShapeLegend from "@/common/components/ShapeLegend";
 import { shapeOf, type ShapeScale } from "@/common/components/pointShapes";
 import { ChipLegend, type LegendGroup } from "@weng-lab/visualization";
-import { CARD_SX } from "./dimensions";
 import type { ColorField, ColorOption } from "./fields";
 import type { GroupInfo } from "./groups";
 import PrivacyBinNote from "./PrivacyBinNote";
@@ -59,8 +58,6 @@ export type PlotCardProps<K extends ColorField> = {
   color: LegendRow;
   /** While the plot is shaped. Merged into the color chips where both name the same field. */
   shape: (LegendRow & { scale: ShapeScale }) | null;
-  /** Measured by the parent so both plots can be given one shared size. */
-  plotRef: RefObject<HTMLDivElement | null>;
   /**
    * The plot, built for the hover this card is tracking: `legendHover` is the chip under the cursor,
    * whose group the plot renders as `hoveredPoints`, and `onPlotHover` is what it calls with the
@@ -99,7 +96,6 @@ const PlotCard = <K extends ColorField>({
   canShape,
   color,
   shape,
-  plotRef,
   children,
 }: PlotCardProps<K>) => {
   // The highlight runs both ways. plotHover is the point under the cursor in the plot, which rings
@@ -132,11 +128,10 @@ const PlotCard = <K extends ColorField>({
       sx={{
         display: "flex",
         flexDirection: "column",
+        height: "100%",
         minWidth: 0,
-        minHeight: 0,
         overflow: "hidden",
         borderRadius: 2,
-        ...CARD_SX,
       }}
     >
       <PlotHeader
@@ -204,13 +199,7 @@ const PlotCard = <K extends ColorField>({
           onHover={hover("color")}
           scrollable
         />
-        {/*
-        Bottom-aligned, not centered. Both plots render at the smaller of the two containers, so
-        the card with the shorter legend has room to spare below its plot. Pinning the plot to
-        the bottom puts both x-axes on the same line, which is what makes the two cohorts
-        readable side by side.
-      */}
-        <Box ref={plotRef} flex={1} minHeight={0} display="flex" flexDirection="column" justifyContent="flex-end">
+        <Box flex={1} minHeight={0}>
           {children({ legendHover, onPlotHover: setPlotHover })}
         </Box>
       </Stack>

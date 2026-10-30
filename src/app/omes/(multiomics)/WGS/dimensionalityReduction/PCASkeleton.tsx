@@ -1,5 +1,8 @@
+"use client";
+
 import { Box, Skeleton, Stack } from "@mui/material";
-import { AXIS_CLUSTER_SIZE, CARD_SX, PLOT_HEIGHT } from "./dimensions";
+import { ResizablePanes } from "@weng-lab/ui-components";
+import { AXIS_CLUSTER_SIZE, PANES } from "./dimensions";
 
 /**
  * Stand-in for the real layout, shaped like it.
@@ -9,6 +12,8 @@ import { AXIS_CLUSTER_SIZE, CARD_SX, PLOT_HEIGHT } from "./dimensions";
  * covers the query behind it. Rendering the same skeleton in both means the
  * placeholder holds its shape across the handover, and the plots land in the
  * space their skeleton was already occupying.
+ *
+ * A client component for the panes, which the library doesn't mark as one.
  */
 const PCASkeleton = () => (
   <Stack gap={2}>
@@ -23,10 +28,11 @@ const PCASkeleton = () => (
         sx={{ justifySelf: { sm: "center" }, borderRadius: 2 }}
       />
     </Box>
-    <Stack direction={{ xs: "column", lg: "row" }} gap={2} height={{ lg: PLOT_HEIGHT }}>
-      <Skeleton variant="rounded" sx={{ ...CARD_SX, borderRadius: 2 }} />
-      <Skeleton variant="rounded" sx={{ ...CARD_SX, borderRadius: 2 }} />
-    </Stack>
+    <ResizablePanes
+      {...PANES}
+      first={<Skeleton variant="rounded" height="100%" sx={{ borderRadius: 2 }} />}
+      second={<Skeleton variant="rounded" height="100%" sx={{ borderRadius: 2 }} />}
+    />
   </Stack>
 );
 
