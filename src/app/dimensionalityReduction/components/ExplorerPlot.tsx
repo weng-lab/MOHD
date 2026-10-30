@@ -190,7 +190,6 @@ const ExplorerPlot = ({
             spotlight
             onHoveredPointChange={(point) => setPlotHover(point?.metaData?.row ?? null)}
             // No groupPointsAnchor: it could only swell one of the color and shape groups; the chips show both.
-            controlsPosition={"right"}
             downloadButton
             downloadFileName={downloadFileName}
           />

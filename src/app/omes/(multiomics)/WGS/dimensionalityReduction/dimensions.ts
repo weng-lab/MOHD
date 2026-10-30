@@ -1,3 +1,4 @@
+import type { ResizablePanesProps } from "@weng-lab/ui-components";
 import { OME_PAGE_CHROME, omePageHeight, stackedOmePageHeight } from "@/common/components/OmeDetails/omePageHeight";
 
 /**
@@ -35,26 +36,23 @@ const PAGE_CHROME =
   16; // page padding, bottom
 
 /**
- * Height of a single card.
+ * The cards' resizable panes, shared with the skeleton standing in for them.
  *
- * Sized off the viewport rather than a flat 60vh: the app bar, the ome header,
- * this page's padding and the header row all sit above the cards, and
- * max(60vh, 520px) plus that chrome is taller than a 900px window - which
- * scrolled the whole shell rather than just this page. The floor keeps the
- * plots usable on short screens, where scrolling is the right trade.
+ * Each card's height is sized off the viewport rather than a flat 60vh: the app
+ * bar, the ome header, this page's padding and the header row all sit above the
+ * cards, and max(60vh, 520px) plus that chrome is taller than a 900px window -
+ * which scrolled the whole shell rather than just this page. The floor keeps the
+ * plots usable on short screens, where scrolling is the right trade. Stacked,
+ * each card is held clear of a phone browser's toolbars - see
+ * stackedOmePageHeight.
  *
- * Applied to the row when the cards sit side by side, and (as
- * STACKED_PLOT_HEIGHT) to each card once they stack - a fixed height on the row
- * would then have to hold both, clipping the second into the footer instead of
- * letting the page grow.
+ * Neither card can be dragged narrower than 30%, which still leaves a plot
+ * worth reading under the header's wrapped selects.
  */
-export const PLOT_HEIGHT = omePageHeight(PAGE_CHROME, 460);
-
-/** PLOT_HEIGHT for a stacked card, held clear of a phone browser's toolbars - see stackedOmePageHeight. */
-const STACKED_PLOT_HEIGHT = stackedOmePageHeight(PAGE_CHROME, 460);
-
-/** Sizing applied to each card, and to the skeleton standing in for it. */
-export const CARD_SX = {
-  flex: { xs: "0 0 auto", lg: 1 },
-  height: { xs: STACKED_PLOT_HEIGHT, lg: "auto" },
-} as const;
+export const PANES = {
+  direction: { xs: "column", lg: "row" },
+  min: 30,
+  max: 70,
+  rowHeight: omePageHeight(PAGE_CHROME, 460),
+  columnHeight: stackedOmePageHeight(PAGE_CHROME, 460),
+} satisfies Partial<ResizablePanesProps>;

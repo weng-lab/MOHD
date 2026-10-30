@@ -1,10 +1,11 @@
 "use client";
 
 import { Box, MenuItem, Select, Stack, Typography } from "@mui/material";
+import { ResizablePanes } from "@weng-lab/ui-components";
 import { ScatterPlot, ScatterPlotSync, getSharedDomains, type Point } from "@weng-lab/visualization";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { shapeOf } from "@/common/components/pointShapes";
-import { PLOT_HEIGHT } from "./dimensions";
+import { PANES } from "./dimensions";
 import {
   MOHD_COLOR_OPTIONS,
   REFERENCE_COLOR_OPTIONS,
@@ -16,7 +17,6 @@ import {
 import { buildGroups, displayValue, groupValue, recount, shapeScaleFor, type GroupInfo } from "./groups";
 import PlotCard, { type LegendHover, type LegendRow } from "./PlotCard";
 import PlotTooltip from "@/common/components/PlotTooltip";
-import { useSharedPlotSize } from "./useSharedPlotSize";
 import { PC_COUNT, pcLabel } from "@/common/components/pcAxis";
 import type { MohdRow, ReferenceRow } from "./types";
 
@@ -221,12 +221,6 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
   // hands it back to the plot below - see that component for why the points must not be built
   // beside it.
 
-  // One size drives both plots - see useSharedPlotSize for why they can't size
-  // themselves here.
-  const refPlotRef = useRef<HTMLDivElement>(null);
-  const mohdPlotRef = useRef<HTMLDivElement>(null);
-  const plotSize = useSharedPlotSize(refPlotRef, mohdPlotRef);
-
   const refCohort = encodeCohort(reference, refView, setRefView, REFERENCE_COLOR_OPTIONS, xPc, yPc);
   const mohdCohort = encodeCohort(mohd, mohdView, setMohdView, MOHD_COLOR_OPTIONS, xPc, yPc, binnedRaceEthnicity);
 
@@ -240,10 +234,10 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
   return (
     <Stack gap={2}>
       {/*
-        Three columns so the axis cluster lands over the gutter between the two
-        cards, equidistant from both: it drives them both, and nothing about its
-        position should suggest otherwise. The empty third column is what centers
-        it - there is no content for it to hold.
+        Three columns so the axis cluster lands over the divider between the two
+        cards as they open, equidistant from both: it drives them both, and nothing
+        about its position should suggest otherwise. The empty third column is what
+        centers it - there is no content for it to hold.
       */}
       <Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "1fr auto 1fr" }} alignItems="center" gap={1}>
         <Typography variant="h5">Ancestry PCA</Typography>
@@ -273,88 +267,85 @@ const WGSPCAPlots = ({ reference, mohd, pve, binnedRaceEthnicity }: WGSPCAPlotsP
       </Box>
 
       {/*
-        The shared size goes here rather than on each plot. ScatterPlotSync forwards its own
-        width and height to both children, so a {...sync} spread after {...plotSize} on a plot
-        overwrites the shared size with undefined and sends each plot back to measuring its own
-        container - which only diverges once the two legends differ in height, and then
-        the synced zoom drifts because its transform is in pixels.
+        Each plot fills its own card, which can be dragged wider than the other: ScatterPlotSync
+        shares the view in the data's terms, so plots of different sizes stay on the same part of it.
       */}
-      <ScatterPlotSync {...domains} {...plotSize}>
+      <ScatterPlotSync {...domains}>
         {(sync) => (
-          <Stack direction={{ xs: "column", lg: "row" }} gap={2} height={{ lg: PLOT_HEIGHT }}>
-            <PlotCard
-              title="MOHD"
-              shown={mohdCohort.shown.length}
-              total={mohdCohort.points.length}
-              options={MOHD_COLOR_OPTIONS}
-              colorBy={mohdView.colorBy}
-              onColorByChange={(colorBy) => setMohdView(encode(mohdView, { colorBy }))}
-              shapeBy={mohdCohort.shapeBy}
-              onShapeByChange={(shapeBy) => setMohdView(encode(mohdView, { shapeBy }))}
-              canShape={mohdCohort.canShape}
-              color={mohdCohort.color}
-              shape={mohdCohort.shape}
-              plotRef={mohdPlotRef}
-            >
-              {({ legendHover, onPlotHover }) => (
-                <ScatterPlot
-                  pointData={mohdCohort.points}
-                  hoveredPoints={hoveredGroup(mohdCohort.shown, legendHover)}
-                  spotlight
-                  loading={false}
-                  bottomAxisLabel={xLabel}
-                  leftAxisLabel={yLabel}
-                  controlsPosition="right"
-                  tooltipBody={(p) => (
-                    <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} dimmed={p.dimmed ?? false} />
-                  )}
-                  onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
-                  downloadButton
-                  downloadFileName="MOHD_WGS_PCA_MOHD"
-                  {...sync}
-                />
-              )}
-            </PlotCard>
-
-            <PlotCard
-              title="1000G+HGDP"
-              shown={refCohort.shown.length}
-              total={refCohort.points.length}
-              options={REFERENCE_COLOR_OPTIONS}
-              colorBy={refView.colorBy}
-              onColorByChange={(colorBy) => setRefView(encode(refView, { colorBy }))}
-              shapeBy={refCohort.shapeBy}
-              onShapeByChange={(shapeBy) => setRefView(encode(refView, { shapeBy }))}
-              canShape={refCohort.canShape}
-              color={refCohort.color}
-              shape={refCohort.shape}
-              plotRef={refPlotRef}
-            >
-              {({ legendHover, onPlotHover }) => (
-                <ScatterPlot
-                  pointData={refCohort.points}
-                  hoveredPoints={hoveredGroup(refCohort.shown, legendHover)}
-                  spotlight
-                  loading={false}
-                  bottomAxisLabel={xLabel}
-                  leftAxisLabel={yLabel}
-                  controlsPosition="right"
-                  tooltipBody={(p) => (
-                    <Tooltip
-                      title={p.metaData!.row.sample_id}
-                      row={p.metaData!.row}
-                      options={REFERENCE_COLOR_OPTIONS}
-                      dimmed={p.dimmed ?? false}
-                    />
-                  )}
-                  onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
-                  downloadButton
-                  downloadFileName="MOHD_WGS_PCA_1000G_HGDP"
-                  {...sync}
-                />
-              )}
-            </PlotCard>
-          </Stack>
+          <ResizablePanes
+            {...PANES}
+            first={
+              <PlotCard
+                title="MOHD"
+                shown={mohdCohort.shown.length}
+                total={mohdCohort.points.length}
+                options={MOHD_COLOR_OPTIONS}
+                colorBy={mohdView.colorBy}
+                onColorByChange={(colorBy) => setMohdView(encode(mohdView, { colorBy }))}
+                shapeBy={mohdCohort.shapeBy}
+                onShapeByChange={(shapeBy) => setMohdView(encode(mohdView, { shapeBy }))}
+                canShape={mohdCohort.canShape}
+                color={mohdCohort.color}
+                shape={mohdCohort.shape}
+              >
+                {({ legendHover, onPlotHover }) => (
+                  <ScatterPlot
+                    pointData={mohdCohort.points}
+                    hoveredPoints={hoveredGroup(mohdCohort.shown, legendHover)}
+                    spotlight
+                    loading={false}
+                    bottomAxisLabel={xLabel}
+                    leftAxisLabel={yLabel}
+                    tooltipBody={(p) => (
+                      <Tooltip row={p.metaData!.row} options={MOHD_COLOR_OPTIONS} dimmed={p.dimmed ?? false} />
+                    )}
+                    onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
+                    downloadButton
+                    downloadFileName="MOHD_WGS_PCA_MOHD"
+                    {...sync}
+                  />
+                )}
+              </PlotCard>
+            }
+            second={
+              <PlotCard
+                title="1000G+HGDP"
+                shown={refCohort.shown.length}
+                total={refCohort.points.length}
+                options={REFERENCE_COLOR_OPTIONS}
+                colorBy={refView.colorBy}
+                onColorByChange={(colorBy) => setRefView(encode(refView, { colorBy }))}
+                shapeBy={refCohort.shapeBy}
+                onShapeByChange={(shapeBy) => setRefView(encode(refView, { shapeBy }))}
+                canShape={refCohort.canShape}
+                color={refCohort.color}
+                shape={refCohort.shape}
+              >
+                {({ legendHover, onPlotHover }) => (
+                  <ScatterPlot
+                    pointData={refCohort.points}
+                    hoveredPoints={hoveredGroup(refCohort.shown, legendHover)}
+                    spotlight
+                    loading={false}
+                    bottomAxisLabel={xLabel}
+                    leftAxisLabel={yLabel}
+                    tooltipBody={(p) => (
+                      <Tooltip
+                        title={p.metaData!.row.sample_id}
+                        row={p.metaData!.row}
+                        options={REFERENCE_COLOR_OPTIONS}
+                        dimmed={p.dimmed ?? false}
+                      />
+                    )}
+                    onHoveredPointChange={(p) => onPlotHover(p?.metaData ?? null)}
+                    downloadButton
+                    downloadFileName="MOHD_WGS_PCA_1000G_HGDP"
+                    {...sync}
+                  />
+                )}
+              </PlotCard>
+            }
+          />
         )}
       </ScatterPlotSync>
     </Stack>
