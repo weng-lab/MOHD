@@ -52,7 +52,7 @@ export default function Footer() {
               <Image src={"/logo_on_dark.png"} alt="Logo" width={60} height={60} />
               <Stack>
                 <Typography variant="body1" sx={{ textAlign: "left" }}>
-                  Multiomics for Health and Diseases
+                  Multi-Omics for Health and Disease
                 </Typography>
                 <Typography variant="body1" sx={{ textAlign: "left" }}>
                   Data Portal
