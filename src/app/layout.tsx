@@ -11,7 +11,7 @@ import { Analytics } from "@vercel/analytics/next";
 
 export const metadata = {
   title: "MOHD Data Portal",
-  description: "MOHD Data Portal: Multiomics for Health and Disease",
+  description: "MOHD Data Portal: Multi-Omics for Health and Disease",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
