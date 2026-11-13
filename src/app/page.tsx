@@ -38,7 +38,7 @@ export default function Home() {
           </Box>
           <Stack alignItems="center" flexWrap={"wrap"} textAlign={"center"}>
             <Typography variant="h4" fontWeight={500}>
-              Multi-Omics for Health and Disease
+              Multiomics for Health and Diseases
             </Typography>
             <Typography variant="h6" fontWeight={400}>
               DATA PORTAL
